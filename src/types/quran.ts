@@ -12,7 +12,6 @@ export interface Surah {
   id: number;
   name: string;
   name_arabic: string;
-  name_simple: string;
   revelation_place: 'Makkah' | 'Madinah';
   revelation_order: number;
   bismillah_pre: boolean;
