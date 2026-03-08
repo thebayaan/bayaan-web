@@ -7,6 +7,11 @@ import { Divider } from "@/components/ui/Divider";
 import { Mic2, BookOpen, Star, ChevronRight, Clock, Play } from "lucide-react";
 import { useState } from "react";
 
+// Import real data
+import reciterData from "@/data/reciters.json";
+import surahData from "@/data/surahData.json";
+import adhkarData from "@/data/adhkar.json";
+
 type Tab = "reciters" | "surahs" | "adhkar";
 
 interface TabConfig {
@@ -20,6 +25,95 @@ const TABS: TabConfig[] = [
   { id: "surahs", label: "Surahs", icon: BookOpen },
   { id: "adhkar", label: "Adhkar", icon: Star },
 ];
+
+// Data transformation functions
+function getReciters(): ReciterRowProps[] {
+  return reciterData.slice(0, 6).map((reciter) => {
+    // Find the first rewayat with the most complete data
+    const primaryRewayat = reciter.rewayat.reduce((prev, current) =>
+      (current.surah_total > prev.surah_total) ? current : prev
+    );
+
+    return {
+      name: reciter.name,
+      rewayah: primaryRewayat.name,
+      surahs: primaryRewayat.surah_total
+    };
+  });
+}
+
+function getSurahs() {
+  return surahData.slice(0, 8).map((surah) => ({
+    number: surah.id,
+    name: surah.name,
+    transliteration: surah.translated_name_english,
+    ayahs: surah.verses_count,
+    arabic: surah.name_arabic,
+  }));
+}
+
+function getAdhkarCategories() {
+  const emojiMap: { [key: string]: string } = {
+    'morning': '🌅',
+    'evening': '🌙',
+    'prayer': '🤲',
+    'sleep': '😴',
+    'food': '🍽️',
+    'travel': '🚶',
+    'default': '📿'
+  };
+
+  return adhkarData.categories.slice(0, 6).map((category) => {
+    // Simple emoji assignment based on keywords in title
+    const title = category.title.toLowerCase();
+    let emoji = emojiMap.default;
+
+    if (title.includes('morning')) emoji = emojiMap.morning;
+    else if (title.includes('evening')) emoji = emojiMap.evening;
+    else if (title.includes('prayer')) emoji = emojiMap.prayer;
+    else if (title.includes('sleep')) emoji = emojiMap.sleep;
+    else if (title.includes('food') || title.includes('drink')) emoji = emojiMap.food;
+    else if (title.includes('travel') || title.includes('going')) emoji = emojiMap.travel;
+
+    return {
+      emoji,
+      title: category.title,
+      count: category.dhikr_count
+    };
+  });
+}
+
+function getRecentActivity(): RecentCardProps[] {
+  // For now, create a simple recent activity from popular items
+  // In a real app, this would come from user's actual activity
+  return [
+    {
+      title: getSurahs()[0].name,
+      subtitle: `${getSurahs()[0].ayahs} verses`,
+      type: "Surah" as const,
+    },
+    {
+      title: getReciters()[0].name,
+      subtitle: getReciters()[0].rewayah,
+      type: "Reciter" as const,
+    },
+    {
+      title: getAdhkarCategories()[0].title,
+      subtitle: `${getAdhkarCategories()[0].count} adhkar`,
+      type: "Adhkar" as const,
+    },
+    {
+      title: getSurahs()[1].name,
+      subtitle: `${getSurahs()[1].ayahs} verses`,
+      type: "Surah" as const,
+    },
+    {
+      title: getReciters()[1].name,
+      subtitle: getReciters()[1].rewayah,
+      type: "Reciter" as const,
+    },
+  ];
+}
 
 /**
  * HomeContent — client component powering the home page tab UI.
@@ -56,7 +150,7 @@ export function HomeContent() {
         </div>
 
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
-          {RECENT_PLACEHOLDER.map((item, i) => (
+          {getRecentActivity().map((item, i) => (
             <RecentCard key={i} {...item} />
           ))}
         </div>
@@ -127,7 +221,7 @@ function RecitersPanel() {
   return (
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
       <SectionHeader className="col-span-full mb-1">All Reciters</SectionHeader>
-      {RECITERS_PLACEHOLDER.map((reciter, i) => (
+      {getReciters().map((reciter, i) => (
         <ReciterRow key={i} {...reciter} />
       ))}
     </div>
@@ -139,7 +233,7 @@ function SurahsPanel() {
     <div>
       <SectionHeader className="mb-3">114 Surahs</SectionHeader>
       <Card>
-        {SURAHS_PLACEHOLDER.map((surah, i) => (
+        {getSurahs().map((surah, i) => (
           <div key={i}>
             {i > 0 && <Divider />}
             <button
@@ -202,7 +296,7 @@ function AdhkarPanel() {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <SectionHeader className="col-span-full mb-1">Categories</SectionHeader>
-      {ADHKAR_PLACEHOLDER.map((category, i) => (
+      {getAdhkarCategories().map((category, i) => (
         <Card
           key={i}
           className="group cursor-pointer hover:border-[var(--color-hover)]"
@@ -348,97 +442,4 @@ function ReciterRow({ name, rewayah, surahs }: ReciterRowProps) {
   );
 }
 
-/* ─── Placeholder data ───────────────────────────────────────────────────────── */
-
-const RECENT_PLACEHOLDER: RecentCardProps[] = [
-  {
-    title: "Mishary Rashid",
-    subtitle: "Al-Fatiha · 7 verses",
-    type: "Reciter",
-  },
-  { title: "Al-Baqarah", subtitle: "Abdul Basit", type: "Surah" },
-  { title: "Morning Adhkar", subtitle: "32 adhkar", type: "Adhkar" },
-  {
-    title: "Abdur-Rahman As-Sudais",
-    subtitle: "Al-Kahf · 110 verses",
-    type: "Reciter",
-  },
-  { title: "Yaseen", subtitle: "Saad Al-Ghamdi", type: "Surah" },
-];
-
-const RECITERS_PLACEHOLDER: ReciterRowProps[] = [
-  { name: "Mishary Rashid Al-Afasy", rewayah: "Hafs 'an Asim", surahs: 114 },
-  { name: "Abdul Basit Abdus Samad", rewayah: "Hafs 'an Asim", surahs: 114 },
-  { name: "Abdur-Rahman As-Sudais", rewayah: "Hafs 'an Asim", surahs: 114 },
-  { name: "Saad Al-Ghamdi", rewayah: "Hafs 'an Asim", surahs: 114 },
-  { name: "Maher Al-Muaiqly", rewayah: "Hafs 'an Asim", surahs: 114 },
-  { name: "Muhammad Ayyub", rewayah: "Hafs 'an Asim", surahs: 114 },
-];
-
-const SURAHS_PLACEHOLDER = [
-  {
-    number: 1,
-    name: "Al-Fatiha",
-    transliteration: "The Opening",
-    ayahs: 7,
-    arabic: "الفاتحة",
-  },
-  {
-    number: 2,
-    name: "Al-Baqarah",
-    transliteration: "The Cow",
-    ayahs: 286,
-    arabic: "البقرة",
-  },
-  {
-    number: 3,
-    name: "Ali Imran",
-    transliteration: "The Family of Imran",
-    ayahs: 200,
-    arabic: "آل عمران",
-  },
-  {
-    number: 4,
-    name: "An-Nisa",
-    transliteration: "The Women",
-    ayahs: 176,
-    arabic: "النساء",
-  },
-  {
-    number: 5,
-    name: "Al-Maidah",
-    transliteration: "The Table Spread",
-    ayahs: 120,
-    arabic: "المائدة",
-  },
-  {
-    number: 36,
-    name: "Yaseen",
-    transliteration: "Yaseen",
-    ayahs: 83,
-    arabic: "يس",
-  },
-  {
-    number: 67,
-    name: "Al-Mulk",
-    transliteration: "The Sovereignty",
-    ayahs: 30,
-    arabic: "الملك",
-  },
-  {
-    number: 112,
-    name: "Al-Ikhlas",
-    transliteration: "The Sincerity",
-    ayahs: 4,
-    arabic: "الإخلاص",
-  },
-];
-
-const ADHKAR_PLACEHOLDER = [
-  { emoji: "🌅", title: "Morning Adhkar", count: 32 },
-  { emoji: "🌙", title: "Evening Adhkar", count: 28 },
-  { emoji: "🤲", title: "After Prayer", count: 15 },
-  { emoji: "😴", title: "Before Sleep", count: 12 },
-  { emoji: "🍽️", title: "Food & Drink", count: 8 },
-  { emoji: "🚶", title: "Going Out", count: 6 },
-];
+// Placeholder data removed - now using real data from JSON files
