@@ -6,6 +6,7 @@ import { useTranslationStore } from '@/stores/useTranslationStore';
 import { getTranslationForVerse } from '@/lib/translationService';
 import { TranslationDisplay } from '@/components/translations/TranslationDisplay';
 import { TranslationToggle } from '@/components/translations/TranslationToggle';
+import { TranslationErrorBoundary } from '@/components/translations/TranslationErrorBoundary';
 import type { Verse } from "@/types/quran";
 
 interface VerseDisplayProps {
@@ -20,10 +21,17 @@ export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayPro
   // Translation functionality
   const { showTranslations, selectedTranslation } = useTranslationStore();
 
-  // Get translation data
-  const translation = selectedTranslation && showTranslations
-    ? getTranslationForVerse(verse.verse_key, selectedTranslation)
-    : null;
+  // Get translation data with error handling
+  const translation = (() => {
+    try {
+      return selectedTranslation && showTranslations
+        ? getTranslationForVerse(verse.verse_key, selectedTranslation)
+        : null;
+    } catch (error) {
+      console.error('Error fetching translation in VerseDisplay:', error);
+      return null;
+    }
+  })();
 
   const handleBookmark = () => {
     setIsBookmarked(!isBookmarked);
@@ -55,7 +63,9 @@ export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayPro
             <p className="flex-1 text-right text-xl leading-relaxed font-normal text-[color:var(--color-label)]" dir="rtl">
               {verse.text}
             </p>
-            <TranslationToggle className="flex-shrink-0" />
+            <TranslationErrorBoundary>
+              <TranslationToggle className="flex-shrink-0" />
+            </TranslationErrorBoundary>
           </div>
 
           {/* Legacy translation support */}
@@ -67,10 +77,12 @@ export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayPro
 
           {/* New translation system */}
           {showTranslations && (
-            <TranslationDisplay
-              translation={translation}
-              className="mt-2"
-            />
+            <TranslationErrorBoundary>
+              <TranslationDisplay
+                translation={translation}
+                className="mt-2"
+              />
+            </TranslationErrorBoundary>
           )}
         </div>
       </div>
