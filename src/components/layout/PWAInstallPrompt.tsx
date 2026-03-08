@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { usePWA } from './PWAProvider';
 
-export function PWAInstallPrompt() {
+function PWAInstallPromptContent() {
   const { isInstallable, promptInstall, dismissInstall } = usePWA();
   const [isVisible, setIsVisible] = useState(false);
 
@@ -111,4 +111,19 @@ export function PWAInstallPrompt() {
       </div>
     </div>
   );
+}
+
+export function PWAInstallPrompt() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Only render after client-side hydration
+  if (!isMounted) {
+    return null;
+  }
+
+  return <PWAInstallPromptContent />;
 }

@@ -13,6 +13,7 @@ const DHIKR_COUNTS_KEY = 'bayaan-dhikr-counts';
 const SAVED_ADHKAR_KEY = 'bayaan-saved-adhkar';
 
 const getDhikrCounts = (): Record<string, DhikrCount> => {
+  if (typeof window === 'undefined') return {};
   try {
     const stored = localStorage.getItem(DHIKR_COUNTS_KEY);
     return stored ? JSON.parse(stored) : {};
@@ -22,6 +23,7 @@ const getDhikrCounts = (): Record<string, DhikrCount> => {
 };
 
 const saveDhikrCounts = (counts: Record<string, DhikrCount>) => {
+  if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(DHIKR_COUNTS_KEY, JSON.stringify(counts));
   } catch (error) {
@@ -30,6 +32,7 @@ const saveDhikrCounts = (counts: Record<string, DhikrCount>) => {
 };
 
 const getSavedAdhkar = (): Record<string, SavedDhikr> => {
+  if (typeof window === 'undefined') return {};
   try {
     const stored = localStorage.getItem(SAVED_ADHKAR_KEY);
     return stored ? JSON.parse(stored) : {};
@@ -39,6 +42,7 @@ const getSavedAdhkar = (): Record<string, SavedDhikr> => {
 };
 
 const saveSavedAdhkar = (saved: Record<string, SavedDhikr>) => {
+  if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(SAVED_ADHKAR_KEY, JSON.stringify(saved));
   } catch (error) {

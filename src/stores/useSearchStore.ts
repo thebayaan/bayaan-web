@@ -7,6 +7,7 @@ const SEARCH_HISTORY_KEY = 'bayaan-search-history';
 const MAX_HISTORY_ITEMS = 10;
 
 const getSearchHistory = (): string[] => {
+  if (typeof window === 'undefined') return [];
   try {
     const stored = localStorage.getItem(SEARCH_HISTORY_KEY);
     return stored ? JSON.parse(stored) : [];
@@ -16,6 +17,7 @@ const getSearchHistory = (): string[] => {
 };
 
 const saveSearchHistory = (history: string[]) => {
+  if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(history));
   } catch (error) {
