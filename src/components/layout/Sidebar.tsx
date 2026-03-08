@@ -10,6 +10,7 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  Mic,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -23,9 +24,10 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/", icon: Home },
+  { label: "Mushaf", href: "/mushaf", icon: BookOpen },
+  { label: "Reciters", href: "/reciters", icon: Mic },
   { label: "Search", href: "/search", icon: Search },
   { label: "Collection", href: "/collection", icon: Library },
-  { label: "Mushaf", href: "/mushaf", icon: BookOpen },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
