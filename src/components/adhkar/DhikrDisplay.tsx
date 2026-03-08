@@ -7,6 +7,7 @@ import { IconButton } from '@/components/ui/IconButton';
 import { Dhikr } from '@/types/adhkar';
 import { useAdhkarStore } from '@/stores/useAdhkarStore';
 import { cn } from '@/lib/cn';
+import { toast } from '@/components/ui/Toast';
 
 interface DhikrDisplayProps {
   dhikr: Dhikr;
@@ -41,15 +42,39 @@ export function DhikrDisplay({ dhikr, className }: DhikrDisplayProps) {
     toggleSavedDhikr(dhikr.id);
   };
 
-  const handleCopy = () => {
-    const text = [
-      dhikr.arabic,
-      dhikr.translation,
-      dhikr.transliteration
-    ].filter(Boolean).join('\n\n');
+  const handleCopy = async () => {
+    try {
+      const text = [
+        dhikr.arabic,
+        dhikr.translation,
+        dhikr.transliteration
+      ].filter(Boolean).join('\n\n');
 
-    navigator.clipboard.writeText(text);
-    // TODO: Show toast notification
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        toast.success('Dhikr copied to clipboard', 'copy');
+      } else {
+        // Fallback for browsers without clipboard API
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+
+        try {
+          document.execCommand('copy');
+          toast.success('Dhikr text selected for copying', 'copy');
+        } catch {
+          toast.error('Failed to copy dhikr');
+        }
+
+        document.body.removeChild(textArea);
+      }
+    } catch (error) {
+      console.error('Copy dhikr failed:', error);
+      toast.error('Failed to copy dhikr');
+    }
   };
 
   return (
