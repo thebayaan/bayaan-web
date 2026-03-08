@@ -89,7 +89,7 @@ export default async function SurahPage({ params }: SurahPageProps) {
         {/* Verses */}
         <div className="space-y-1">
           {verses.map(verse => (
-            <VerseDisplay key={verse.id} verse={verse} />
+            <VerseDisplay key={verse.id} verse={verse} surahNumber={surahId} />
           ))}
         </div>
 

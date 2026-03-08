@@ -9,6 +9,23 @@ jest.mock('@/stores/useTranslationStore', () => ({
   }),
 }));
 
+// Mock verse annotation store
+jest.mock('@/stores/useVerseAnnotationStore', () => ({
+  useVerseAnnotationStore: () => ({
+    loadAnnotationsForSurah: jest.fn(),
+    isBookmarked: jest.fn(() => false),
+    hasNote: jest.fn(() => false),
+    getHighlightColor: jest.fn(() => null),
+    addBookmark: jest.fn(),
+    removeBookmark: jest.fn(),
+    addNote: jest.fn(),
+    updateNote: jest.fn(),
+    removeNote: jest.fn(),
+    setHighlight: jest.fn(),
+    removeHighlight: jest.fn(),
+  }),
+}));
+
 // Mock translation service
 jest.mock('@/lib/translationService', () => ({
   getTranslationForVerse: jest.fn(() => ({
@@ -27,7 +44,7 @@ describe('VerseDisplay with Translations', () => {
       text: 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ',
     };
 
-    render(<VerseDisplay verse={mockVerse} />);
+    render(<VerseDisplay verse={mockVerse} surahNumber={1} />);
 
     expect(screen.getByText(/In the name of Allah/)).toBeInTheDocument();
     expect(screen.getByText(/بِسْمِ ٱللَّهِ/)).toBeInTheDocument();

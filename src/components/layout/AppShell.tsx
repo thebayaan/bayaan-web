@@ -1,6 +1,7 @@
 import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 import { PlayerBar } from "./PlayerBar";
+import { CollectionProvider } from "./CollectionProvider";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -22,30 +23,32 @@ interface AppShellProps {
  */
 export function AppShell({ children }: AppShellProps) {
   return (
-    <div
-      className="flex h-screen overflow-hidden"
-      style={{ backgroundColor: "var(--color-background)" }}
-    >
-      {/* Sidebar */}
-      <Sidebar />
+    <CollectionProvider>
+      <div
+        className="flex h-screen overflow-hidden"
+        style={{ backgroundColor: "var(--color-background)" }}
+      >
+        {/* Sidebar */}
+        <Sidebar />
 
-      {/* Right column: TopBar + content + PlayerBar */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {/* Top bar */}
-        <TopBar />
+        {/* Right column: TopBar + content + PlayerBar */}
+        <div className="flex flex-col flex-1 overflow-hidden">
+          {/* Top bar */}
+          <TopBar />
 
-        {/* Scrollable main content */}
-        <main
-          className="flex-1 overflow-y-auto overflow-x-hidden"
-          id="main-content"
-          role="main"
-        >
-          {children}
-        </main>
+          {/* Scrollable main content */}
+          <main
+            className="flex-1 overflow-y-auto overflow-x-hidden"
+            id="main-content"
+            role="main"
+          >
+            {children}
+          </main>
 
-        {/* Sticky player bar */}
-        <PlayerBar />
+          {/* Sticky player bar */}
+          <PlayerBar />
+        </div>
       </div>
-    </div>
+    </CollectionProvider>
   );
 }

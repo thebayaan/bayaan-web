@@ -1,25 +1,54 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IconButton } from "@/components/ui/IconButton";
 import { useTranslationStore } from '@/stores/useTranslationStore';
+import { useVerseAnnotationStore } from '@/stores/useVerseAnnotationStore';
 import { getTranslationForVerse } from '@/lib/translationService';
 import { TranslationDisplay } from '@/components/translations/TranslationDisplay';
 import { TranslationToggle } from '@/components/translations/TranslationToggle';
 import { TranslationErrorBoundary } from '@/components/translations/TranslationErrorBoundary';
+import { VerseActions } from '@/components/collection/VerseActions';
+import { HighlightColor, HIGHLIGHT_COLORS } from '@/types/verse-annotations';
+import { cn } from '@/lib/cn';
 import type { Verse } from "@/types/quran";
 
 interface VerseDisplayProps {
   verse: Verse;
   showTranslation?: boolean;
+  surahNumber: number;
 }
 
-export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayProps) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
+export function VerseDisplay({ verse, showTranslation = false, surahNumber }: VerseDisplayProps) {
   const [showActions, setShowActions] = useState(false);
 
   // Translation functionality
   const { showTranslations, selectedTranslation } = useTranslationStore();
+
+  // Verse annotation functionality
+  const {
+    loadAnnotationsForSurah,
+    isBookmarked,
+    hasNote,
+    getHighlightColor,
+    addBookmark,
+    removeBookmark,
+    addNote,
+    updateNote,
+    removeNote,
+    setHighlight,
+    removeHighlight,
+  } = useVerseAnnotationStore();
+
+  // Load annotations when component mounts or surah changes
+  useEffect(() => {
+    loadAnnotationsForSurah(surahNumber);
+  }, [surahNumber, loadAnnotationsForSurah]);
+
+  // Get verse annotation state
+  const verseIsBookmarked = isBookmarked(verse.verse_key);
+  const verseHasNote = hasNote(verse.verse_key);
+  const verseHighlightColor = getHighlightColor(verse.verse_key);
 
   // Get translation data with error handling
   const translation = (() => {
@@ -33,9 +62,33 @@ export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayPro
     }
   })();
 
-  const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-    // TODO: Implement bookmark functionality
+  // Verse annotation handlers
+  const handleBookmarkToggle = async (verseKey: string, surahNumber: number, ayahNumber: number, isCurrentlyBookmarked: boolean) => {
+    if (isCurrentlyBookmarked) {
+      await removeBookmark(verseKey);
+    } else {
+      await addBookmark(verseKey, surahNumber, ayahNumber);
+    }
+  };
+
+  const handleHighlight = async (verseKey: string, surahNumber: number, ayahNumber: number, color: HighlightColor) => {
+    await setHighlight(verseKey, surahNumber, ayahNumber, color);
+  };
+
+  const handleRemoveHighlight = async (verseKey: string) => {
+    await removeHighlight(verseKey);
+  };
+
+  const handleAddNote = async (verseKey: string, surahNumber: number, ayahNumber: number, content: string) => {
+    await addNote(verseKey, surahNumber, ayahNumber, content);
+  };
+
+  const handleUpdateNote = async (noteId: string, content: string) => {
+    await updateNote(noteId, content);
+  };
+
+  const handleDeleteNote = async (verseKey: string, noteId: string) => {
+    await removeNote(verseKey, noteId);
   };
 
   const handleShare = () => {
@@ -47,9 +100,17 @@ export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayPro
     // TODO: Show toast notification
   };
 
+  // Get highlight background style
+  const highlightStyle = verseHighlightColor
+    ? { backgroundColor: HIGHLIGHT_COLORS[verseHighlightColor] }
+    : {};
+
   return (
     <div
-      className="group relative rounded-lg p-4 transition-colors hover:bg-[color:var(--color-hover)]"
+      className={cn(
+        "group relative rounded-lg p-4 transition-colors hover:bg-[color:var(--color-hover)]"
+      )}
+      style={highlightStyle}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
     >
@@ -63,9 +124,11 @@ export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayPro
             <p className="flex-1 text-right text-xl leading-relaxed font-normal text-[color:var(--color-label)]" dir="rtl">
               {verse.text}
             </p>
-            <TranslationErrorBoundary>
-              <TranslationToggle className="flex-shrink-0" />
-            </TranslationErrorBoundary>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <TranslationErrorBoundary>
+                <TranslationToggle />
+              </TranslationErrorBoundary>
+            </div>
           </div>
 
           {/* Legacy translation support */}
@@ -89,31 +152,27 @@ export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayPro
 
       {showActions && (
         <div className="absolute right-4 top-4 flex items-center gap-2 rounded-lg bg-[color:var(--color-card)] border border-[color:var(--color-card-border)] p-1 shadow-md">
-          <IconButton
-            onClick={handleBookmark}
-            size="sm"
-            label={isBookmarked ? "Remove bookmark" : "Bookmark verse"}
-            className={isBookmarked ? "bg-[color:var(--color-hover)] text-[color:var(--color-label)]" : ""}
-          >
-            <svg
-              className="h-4 w-4"
-              fill={isBookmarked ? "currentColor" : "none"}
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-              />
-            </svg>
-          </IconButton>
+          <VerseActions
+            verseKey={verse.verse_key}
+            surahNumber={surahNumber}
+            ayahNumber={verse.ayah_number}
+            isBookmarked={verseIsBookmarked}
+            hasNote={verseHasNote}
+            highlightColor={verseHighlightColor}
+            onBookmarkToggle={handleBookmarkToggle}
+            onHighlight={handleHighlight}
+            onRemoveHighlight={handleRemoveHighlight}
+            onAddNote={handleAddNote}
+            onUpdateNote={handleUpdateNote}
+            onDeleteNote={handleDeleteNote}
+          />
+
+          <div className="h-4 w-px bg-[color:var(--color-divider)]" />
 
           <IconButton
             onClick={handleShare}
             size="sm"
-            label="Share verse"
+            title="Share verse"
           >
             <svg
               className="h-4 w-4"
@@ -133,7 +192,7 @@ export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayPro
           <IconButton
             onClick={handleCopy}
             size="sm"
-            label="Copy verse"
+            title="Copy verse"
           >
             <svg
               className="h-4 w-4"
@@ -145,7 +204,7 @@ export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayPro
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z"
               />
             </svg>
           </IconButton>
