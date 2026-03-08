@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
+import { SkeletonText } from '@/components/ui/Skeleton';
 import { useSearchStore } from '@/stores/useSearchStore';
 import { cn } from '@/lib/cn';
 import type { SearchResult } from '@/lib/searchService';
@@ -188,11 +189,38 @@ export function SearchResults() {
 
   if (isSearching) {
     return (
-      <div className="text-center py-12">
-        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-[color:var(--color-secondary)]">
-          Searching for &quot;{query}&quot;...
-        </p>
+      <div className="space-y-4">
+        {/* Search status */}
+        <div className="text-center py-4">
+          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+          <p className="text-sm text-[color:var(--color-secondary)]">
+            Searching for &quot;{query}&quot;...
+          </p>
+        </div>
+
+        {/* Skeleton results */}
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <Card key={index} className="p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-[color:var(--color-card)] flex-shrink-0" />
+                <div className="flex-1 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <SkeletonText lines={1} className="w-48" />
+                    <div className="w-16 h-5 bg-[color:var(--color-card)] rounded-full" />
+                  </div>
+                  <SkeletonText lines={1} className="w-32" />
+                  <SkeletonText lines={2} />
+                  <div className="flex gap-4 text-xs">
+                    <div className="w-20 h-3 bg-[color:var(--color-card)] rounded" />
+                    <div className="w-24 h-3 bg-[color:var(--color-card)] rounded" />
+                  </div>
+                </div>
+                <div className="w-5 h-5 bg-[color:var(--color-card)] rounded flex-shrink-0" />
+              </div>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
