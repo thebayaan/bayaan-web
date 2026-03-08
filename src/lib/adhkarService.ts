@@ -18,11 +18,12 @@ interface RawDhikr {
   id: string;
   category_id: string;
   arabic: string;
-  translation?: string;
-  transliteration?: string;
-  instruction?: string;
+  translation?: string | null;
+  transliteration?: string | null;
+  instruction?: string | null;
   repeat_count?: number;
-  audio_file?: string;
+  audio_file?: string | null;
+  order_index?: number;
 }
 
 // Transform raw data to typed interfaces

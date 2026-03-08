@@ -2,6 +2,8 @@ import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 import { PlayerBar } from "./PlayerBar";
 import { CollectionProvider } from "./CollectionProvider";
+import { PWAProvider } from "./PWAProvider";
+import { PWAInstallPrompt } from "./PWAInstallPrompt";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -23,11 +25,12 @@ interface AppShellProps {
  */
 export function AppShell({ children }: AppShellProps) {
   return (
-    <CollectionProvider>
-      <div
-        className="flex h-screen overflow-hidden"
-        style={{ backgroundColor: "var(--color-background)" }}
-      >
+    <PWAProvider>
+      <CollectionProvider>
+        <div
+          className="flex h-screen overflow-hidden"
+          style={{ backgroundColor: "var(--color-background)" }}
+        >
         {/* Sidebar */}
         <Sidebar />
 
@@ -48,7 +51,11 @@ export function AppShell({ children }: AppShellProps) {
           {/* Sticky player bar */}
           <PlayerBar />
         </div>
+
+        {/* PWA Install Prompt */}
+        <PWAInstallPrompt />
       </div>
-    </CollectionProvider>
+      </CollectionProvider>
+    </PWAProvider>
   );
 }

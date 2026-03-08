@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+
+# Important pages
+Allow: /mushaf
+Allow: /reciters
+Allow: /adhkar
+Allow: /collection
+Allow: /search
+
+# Static assets
+Allow: /icons/
+Allow: /images/
+Allow: /screenshots/
+
+# Block offline page and service worker
+Disallow: /offline
+Disallow: /sw.js
+
+# Block admin/internal paths if they exist
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://bayaan.app/sitemap.xml

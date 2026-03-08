@@ -28,7 +28,6 @@ export default function AdhkarCategoryPage({
     const initPage = async () => {
       try {
         const resolvedParams = await params;
-        setCategoryId(resolvedParams.superId);
 
         // Load adhkar data
         await loadData();
