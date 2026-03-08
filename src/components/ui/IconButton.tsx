@@ -4,7 +4,9 @@ import { type ButtonHTMLAttributes, forwardRef } from "react";
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
   /** Accessible label — required for screen readers */
-  label: string;
+  label?: string;
+  /** Alternative accessible label prop (takes precedence over label if provided) */
+  title?: string;
   /** Visual size of the button */
   size?: "sm" | "md" | "lg";
 }
@@ -24,11 +26,17 @@ const sizeMap = {
  *   </IconButton>
  */
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ className, label, size = "md", children, ...props }, ref) => {
+  ({ className, label, title, size = "md", children, ...props }, ref) => {
+    const accessibleLabel = title || label;
+
+    if (!accessibleLabel) {
+      console.warn('IconButton: Either label or title prop is required for accessibility');
+    }
+
     return (
       <button
         ref={ref}
-        aria-label={label}
+        aria-label={accessibleLabel}
         className={cn(
           "inline-flex items-center justify-center rounded-full",
           "text-[var(--color-icon)]",

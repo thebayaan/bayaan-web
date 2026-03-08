@@ -14,7 +14,7 @@ export function TranslationToggle({ className }: TranslationToggleProps) {
     <IconButton
       onClick={toggleTranslations}
       className={className}
-      label={showTranslations ? 'Hide Translation' : 'Show Translation'}
+      title={showTranslations ? 'Hide Translation' : 'Show Translation'}
     >
       <svg
         width="20"
