@@ -29,6 +29,9 @@ export function SearchInput({
 }: SearchInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Detect platform for appropriate shortcut display
+  const isMac = typeof window !== 'undefined' && navigator.platform.toLowerCase().includes('mac');
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -84,7 +87,7 @@ export function SearchInput({
         {...props}
       />
 
-      {/* Cmd+K hint */}
+      {/* Keyboard shortcut hint */}
       {showShortcut && (
         <kbd
           className={cn(
@@ -98,9 +101,9 @@ export function SearchInput({
             borderColor: "var(--color-card-border)",
             backgroundColor: "var(--color-secondary-bg)",
           }}
-          aria-label="Press Command K to search"
+          aria-label={`Press ${isMac ? 'Command' : 'Ctrl'} K to search`}
         >
-          <span>⌘</span>
+          <span>{isMac ? '⌘' : 'Ctrl'}</span>
           <span>K</span>
         </kbd>
       )}
