@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Card } from "@/components/ui/Card";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import Link from "next/link";
+import { Languages } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -7,11 +10,24 @@ export const metadata: Metadata = {
 
 export default function SettingsPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-8">
-      <Card className="p-8 text-center">
-        <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="mt-2 text-secondary">Coming soon</p>
-      </Card>
-    </main>
+    <div className="space-y-6">
+      <SectionHeader>Settings</SectionHeader>
+
+      <div className="grid gap-4">
+        <Link href="/settings/translations">
+          <Card className="p-6 hover:bg-[var(--color-hover)] transition-colors cursor-pointer">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[var(--color-card)] border border-[var(--color-card-border)]">
+                <Languages size={20} style={{ color: "var(--color-icon)" }} />
+              </div>
+              <div>
+                <h3 className="font-semibold text-[var(--color-text)]">Translations</h3>
+                <p className="text-sm text-[var(--color-label)]">Configure translation preferences</p>
+              </div>
+            </div>
+          </Card>
+        </Link>
+      </div>
+    </div>
   );
 }
