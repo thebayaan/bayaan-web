@@ -11,15 +11,18 @@ import { TranslationErrorBoundary } from '@/components/translations/TranslationE
 import { VerseActions } from '@/components/collection/VerseActions';
 import { HighlightColor, HIGHLIGHT_COLORS } from '@/types/verse-annotations';
 import { cn } from '@/lib/cn';
+import { shareVerse, copyVerse } from '@/lib/shareUtils';
+import { toast } from '@/components/ui/Toast';
 import type { Verse } from "@/types/quran";
 
 interface VerseDisplayProps {
   verse: Verse;
   showTranslation?: boolean;
   surahNumber: number;
+  surahName?: string;
 }
 
-export function VerseDisplay({ verse, showTranslation = false, surahNumber }: VerseDisplayProps) {
+export function VerseDisplay({ verse, showTranslation = false, surahNumber, surahName }: VerseDisplayProps) {
   const [showActions, setShowActions] = useState(false);
 
   // Translation functionality
@@ -91,13 +94,53 @@ export function VerseDisplay({ verse, showTranslation = false, surahNumber }: Ve
     await removeNote(verseKey, noteId);
   };
 
-  const handleShare = () => {
-    // TODO: Implement share functionality
+  const handleShare = async () => {
+    try {
+      // Get current translation if displayed
+      const currentTranslation = translation?.text || undefined;
+
+      const result = await shareVerse({
+        verse,
+        surahName,
+        includeArabic: true,
+        includeTranslation: currentTranslation
+      });
+
+      if (result.success) {
+        // Show appropriate success message based on method
+        const message = result.method === 'native'
+          ? 'Verse shared successfully'
+          : result.method === 'clipboard'
+          ? 'Verse copied to clipboard'
+          : 'Verse text selected for copying';
+
+        toast.success(message, 'share');
+      } else {
+        toast.error('Failed to share verse');
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+      toast.error('Failed to share verse');
+    }
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(verse.text);
-    // TODO: Show toast notification
+  const handleCopy = async () => {
+    try {
+      const result = await copyVerse(verse);
+
+      if (result.success) {
+        const message = result.method === 'clipboard'
+          ? 'Arabic text copied to clipboard'
+          : 'Arabic text selected for copying';
+
+        toast.success(message, 'copy');
+      } else {
+        toast.error('Failed to copy verse');
+      }
+    } catch (error) {
+      console.error('Copy error:', error);
+      toast.error('Failed to copy verse');
+    }
   };
 
   // Get highlight background style
