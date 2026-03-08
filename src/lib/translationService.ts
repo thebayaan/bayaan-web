@@ -19,6 +19,12 @@ export function getAvailableTranslations(): Translation[] {
 }
 
 export function getTranslationForVerse(verseKey: string, translationId: string): TranslationVerse | null {
+  // Validate translation ID exists
+  const translationExists = AVAILABLE_TRANSLATIONS.some(t => t.id === translationId);
+  if (!translationExists) {
+    return null;
+  }
+
   // Find verse in translation data
   const verse = translationData.find((v) => v.verse_key === verseKey);
 
@@ -26,7 +32,13 @@ export function getTranslationForVerse(verseKey: string, translationId: string):
     return null;
   }
 
-  // For now, return the first translation (Saheeh International)
+  // For now, we only support 'saheeh' translation (Saheeh International)
+  // When we add more translations, we'll need to map translationId to resource_id
+  if (translationId !== 'saheeh') {
+    return null;
+  }
+
+  // Return the first translation (Saheeh International with resource_id 131)
   const translation = verse.translations[0];
 
   return {
