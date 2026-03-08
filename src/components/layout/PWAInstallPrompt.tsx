@@ -114,14 +114,8 @@ function PWAInstallPromptContent() {
 }
 
 export function PWAInstallPrompt() {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Only render after client-side hydration
-  if (!isMounted) {
+  // Only render on client-side to avoid SSR hydration mismatch
+  if (typeof window === 'undefined') {
     return null;
   }
 

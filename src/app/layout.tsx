@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
 import "@/styles/globals.css";
 import { AppShell } from "@/components/layout/AppShell";
-// import { StructuredData } from "@/components/seo/StructuredData";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -156,7 +155,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={manrope.variable}>
       <body className="font-[family-name:var(--font-manrope)] antialiased">
-{/* <StructuredData type="website" /> */}
+{/* StructuredData temporarily removed for build issues */}
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-semibold"

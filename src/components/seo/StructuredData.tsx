@@ -43,6 +43,10 @@ export function StructuredData({
   surahData,
   verseData,
 }: StructuredDataProps) {
+  // Only render on client side to avoid SSR issues
+  if (typeof window === 'undefined') {
+    return null;
+  }
   const baseUrl = 'https://bayaan.app';
   const defaultImage = `${baseUrl}/og-image.png`;
 
