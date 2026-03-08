@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Divider } from "@/components/ui/Divider";
 import { Mic2, BookOpen, Star, ChevronRight, Clock, Play } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 // Import real data
 import reciterData from "@/data/reciters.json";
@@ -35,6 +36,7 @@ function getReciters(): ReciterRowProps[] {
     );
 
     return {
+      id: reciter.id,
       name: reciter.name,
       rewayah: primaryRewayat.name,
       surahs: primaryRewayat.surah_total
@@ -84,33 +86,42 @@ function getAdhkarCategories() {
 }
 
 function getRecentActivity(): RecentCardProps[] {
+  const surahs = getSurahs();
+  const reciters = getReciters();
+  const adhkar = getAdhkarCategories();
+
   // For now, create a simple recent activity from popular items
   // In a real app, this would come from user's actual activity
   return [
     {
-      title: getSurahs()[0].name,
-      subtitle: `${getSurahs()[0].ayahs} verses`,
+      title: surahs[0].name,
+      subtitle: `${surahs[0].ayahs} verses`,
       type: "Surah" as const,
+      href: `/mushaf/${surahs[0].number}`,
     },
     {
-      title: getReciters()[0].name,
-      subtitle: getReciters()[0].rewayah,
+      title: reciters[0].name,
+      subtitle: reciters[0].rewayah,
       type: "Reciter" as const,
+      href: `/reciter/${reciters[0].id}`,
     },
     {
-      title: getAdhkarCategories()[0].title,
-      subtitle: `${getAdhkarCategories()[0].count} adhkar`,
+      title: adhkar[0].title,
+      subtitle: `${adhkar[0].count} adhkar`,
       type: "Adhkar" as const,
+      href: `/adhkar`, // Navigate to adhkar main page since we don't have category IDs
     },
     {
-      title: getSurahs()[1].name,
-      subtitle: `${getSurahs()[1].ayahs} verses`,
+      title: surahs[1].name,
+      subtitle: `${surahs[1].ayahs} verses`,
       type: "Surah" as const,
+      href: `/mushaf/${surahs[1].number}`,
     },
     {
-      title: getReciters()[1].name,
-      subtitle: getReciters()[1].rewayah,
+      title: reciters[1].name,
+      subtitle: reciters[1].rewayah,
       type: "Reciter" as const,
+      href: `/reciter/${reciters[1].id}`,
     },
   ];
 }
@@ -141,12 +152,13 @@ export function HomeContent() {
       <section className="mb-8" aria-label="Recently played">
         <div className="flex items-center justify-between mb-3">
           <SectionHeader>Recently Played</SectionHeader>
-          <button
+          <Link
+            href="/collection"
             className="text-[10.5px] font-semibold uppercase tracking-[1.2px] flex items-center gap-0.5 transition-opacity hover:opacity-70"
             style={{ color: "var(--color-section-header)" }}
           >
             See all <ChevronRight size={11} strokeWidth={2} />
-          </button>
+          </Link>
         </div>
 
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
@@ -236,12 +248,14 @@ function SurahsPanel() {
         {getSurahs().map((surah, i) => (
           <div key={i}>
             {i > 0 && <Divider />}
-            <button
+            <Link
+              href={`/mushaf/${surah.number}`}
               className={cn(
                 "flex items-center gap-4 w-full px-4 py-3",
                 "text-left transition-colors duration-100",
                 "hover:bg-[var(--color-hover)]",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-text)]",
+                "block"
               )}
             >
               {/* Number */}
@@ -284,7 +298,7 @@ function SurahsPanel() {
                 strokeWidth={1.8}
                 className="shrink-0"
               />
-            </button>
+            </Link>
           </div>
         ))}
       </Card>
@@ -301,7 +315,7 @@ function AdhkarPanel() {
           key={i}
           className="group cursor-pointer hover:border-[var(--color-hover)]"
         >
-          <button className="flex items-center gap-4 p-4 w-full text-left">
+          <Link href="/adhkar" className="flex items-center gap-4 p-4 w-full text-left block">
             <div
               className="h-10 w-10 rounded-xl flex items-center justify-center text-xl shrink-0"
               style={{ backgroundColor: "var(--color-secondary-bg)" }}
@@ -329,7 +343,7 @@ function AdhkarPanel() {
               style={{ color: "var(--color-icon)" }}
               className="shrink-0 transition-transform group-hover:translate-x-0.5"
             />
-          </button>
+          </Link>
         </Card>
       ))}
     </div>
@@ -342,12 +356,13 @@ interface RecentCardProps {
   title: string;
   subtitle: string;
   type: string;
+  href: string;
 }
 
-function RecentCard({ title, subtitle, type }: RecentCardProps) {
+function RecentCard({ title, subtitle, type, href }: RecentCardProps) {
   return (
     <Card className="shrink-0 w-[160px] cursor-pointer group hover:border-[var(--color-hover)]">
-      <button className="flex flex-col gap-3 p-3.5 w-full text-left">
+      <Link href={href} className="flex flex-col gap-3 p-3.5 w-full text-left block">
         {/* Art placeholder */}
         <div
           className="h-[100px] w-full rounded-lg flex items-center justify-center"
@@ -384,21 +399,22 @@ function RecentCard({ title, subtitle, type }: RecentCardProps) {
         >
           {type}
         </span>
-      </button>
+      </Link>
     </Card>
   );
 }
 
 interface ReciterRowProps {
+  id: string;
   name: string;
   rewayah: string;
   surahs: number;
 }
 
-function ReciterRow({ name, rewayah, surahs }: ReciterRowProps) {
+function ReciterRow({ id, name, rewayah, surahs }: ReciterRowProps) {
   return (
     <Card className="group cursor-pointer">
-      <button className="flex items-center gap-3 p-3.5 w-full text-left">
+      <Link href={`/reciter/${id}`} className="flex items-center gap-3 p-3.5 w-full text-left block">
         {/* Avatar */}
         <div
           className="h-10 w-10 rounded-full shrink-0 flex items-center justify-center text-sm font-semibold"
@@ -437,7 +453,7 @@ function ReciterRow({ name, rewayah, surahs }: ReciterRowProps) {
             className="opacity-0 group-hover:opacity-100 transition-opacity"
           />
         </div>
-      </button>
+      </Link>
     </Card>
   );
 }
