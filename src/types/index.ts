@@ -68,12 +68,12 @@ export {
 
 // Translation types
 export type {
-  BundledTranslationId,
-  TranslationInfo,
-  RemoteTranslationEdition,
-  DownloadedTranslationMeta,
+  Translation,
+  TranslationVerse,
+  TranslationData,
+  TranslationPosition,
+  FontSize,
 } from './translation';
-export { BUNDLED_TRANSLATIONS } from './translation';
 
 // Tafseer types
 export type { TafseerEdition, DownloadedTafseerMeta } from './tafseer';

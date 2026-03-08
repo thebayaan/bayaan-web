@@ -1,43 +1,25 @@
-export type BundledTranslationId = 'saheeh' | 'clear-quran';
-
-export interface TranslationInfo {
+export interface Translation {
   id: string;
   name: string;
   author: string;
   language: string;
-}
-
-export const BUNDLED_TRANSLATIONS: Record<BundledTranslationId, TranslationInfo> = {
-  saheeh: {
-    id: 'saheeh',
-    name: 'Saheeh International',
-    author: 'Saheeh International',
-    language: 'English',
-  },
-  'clear-quran': {
-    id: 'clear-quran',
-    name: 'The Clear Quran',
-    author: 'Dr. Mustafa Khattab',
-    language: 'English',
-  },
-};
-
-export interface RemoteTranslationEdition {
-  identifier: string;
-  language: string;
-  name: string;
-  englishName: string;
-  format: string;
-  type: string;
   direction: 'ltr' | 'rtl';
 }
 
-export interface DownloadedTranslationMeta {
-  identifier: string;
+export interface TranslationVerse {
+  verse_key: string;
+  text: string;
+  resource_id?: number;
+}
+
+export interface TranslationData {
+  id: string;
   name: string;
-  englishName: string;
+  author: string;
   language: string;
   direction: 'ltr' | 'rtl';
-  downloadedAt: number;
-  verseCount: number;
+  verses: TranslationVerse[];
 }
+
+export type TranslationPosition = 'below' | 'side';
+export type FontSize = 'small' | 'medium' | 'large';
