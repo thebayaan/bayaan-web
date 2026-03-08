@@ -1,3 +1,5 @@
+'use client';
+
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { Button } from '@/components/ui/Button';
 
@@ -76,9 +78,3 @@ export default function OfflinePage() {
     </main>
   );
 }
-
-export const metadata = {
-  title: "You're Offline",
-  description: "Offline page for Bayaan - shows available cached content",
-  robots: "noindex, nofollow",
-};
