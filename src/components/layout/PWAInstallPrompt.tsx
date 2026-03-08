@@ -35,7 +35,6 @@ export function PWAInstallPrompt() {
 
   const handleDismiss = () => {
     setIsVisible(false);
-    setIsDismissed(true);
     dismissInstall();
   };
 

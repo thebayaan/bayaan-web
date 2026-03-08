@@ -119,6 +119,29 @@ export function useAmbientAudio() {
     return audio;
   }, [volumes]);
 
+  // Fade out and stop a sound
+  const fadeOutAndStop = useCallback((soundId: string, duration: number) => {
+    const audio = audioContextRef.current.get(soundId);
+    if (!audio) return;
+
+    const startVolume = audio.volume;
+    const steps = 20;
+    const stepTime = duration / steps;
+    const volumeStep = startVolume / steps;
+
+    for (let i = 0; i <= steps; i++) {
+      setTimeout(() => {
+        if (audio) {
+          audio.volume = Math.max(startVolume - (volumeStep * i), 0);
+          if (i === steps) {
+            audio.pause();
+            audio.currentTime = 0;
+          }
+        }
+      }, stepTime * i);
+    }
+  }, []);
+
   // Play a sound effect
   const playSound = useCallback(async (
     soundId: string,
@@ -171,29 +194,6 @@ export function useAmbientAudio() {
       console.warn('Failed to play ambient sound:', soundId, error);
     }
   }, [isEnabled, volumes, createAudio, fadeOutAndStop]);
-
-  // Fade out and stop a sound
-  const fadeOutAndStop = useCallback((soundId: string, duration: number) => {
-    const audio = audioContextRef.current.get(soundId);
-    if (!audio) return;
-
-    const startVolume = audio.volume;
-    const steps = 20;
-    const stepTime = duration / steps;
-    const volumeStep = startVolume / steps;
-
-    for (let i = 0; i <= steps; i++) {
-      setTimeout(() => {
-        if (audio) {
-          audio.volume = Math.max(startVolume - (volumeStep * i), 0);
-          if (i === steps) {
-            audio.pause();
-            audio.currentTime = 0;
-          }
-        }
-      }, stepTime * i);
-    }
-  }, []);
 
   // Stop a sound
   const stopSound = useCallback((soundId: string) => {
