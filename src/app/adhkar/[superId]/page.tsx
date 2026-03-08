@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Metadata } from "next";
 import { Button } from '@/components/ui/Button';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { DhikrList } from '@/components/adhkar/DhikrList';
@@ -18,7 +17,6 @@ export default function AdhkarCategoryPage({
   params,
 }: AdhkarCategoryPageProps) {
   const router = useRouter();
-  const [categoryId, setCategoryId] = useState<string>('');
   const [category, setCategory] = useState<AdhkarCategory | null>(null);
   const [adhkar, setAdhkar] = useState<Dhikr[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,7 +81,7 @@ export default function AdhkarCategoryPage({
             {error || 'Category not found'}
           </h1>
           <p className="text-secondary text-center mb-4">
-            The adhkar category you're looking for doesn't exist or couldn't be loaded.
+            The adhkar category you&apos;re looking for doesn&apos;t exist or couldn&apos;t be loaded.
           </p>
           <Button onClick={() => router.push('/adhkar')}>
             Back to Adhkar

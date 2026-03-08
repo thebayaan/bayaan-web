@@ -88,7 +88,7 @@ export default function PlaylistDetailPage({ params }: PlaylistDetailPageProps) 
   };
 
   const getSurahName = (surahId: string) => {
-    const surah = surahData.find((s: any) => s.id === parseInt(surahId));
+    const surah = surahData.find((s) => s.id === parseInt(surahId));
     return surah ? surah.name : `Surah ${surahId}`;
   };
 
@@ -123,7 +123,7 @@ export default function PlaylistDetailPage({ params }: PlaylistDetailPageProps) 
             {error || 'Playlist not found'}
           </h1>
           <p className="text-secondary text-center mb-4">
-            The playlist you're looking for doesn't exist or couldn't be loaded.
+            The playlist you&apos;re looking for doesn&apos;t exist or couldn&apos;t be loaded.
           </p>
           <Button onClick={() => router.push('/collection')}>
             Back to Collection

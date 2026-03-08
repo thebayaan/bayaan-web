@@ -6,15 +6,34 @@ import {
   AdhkarBroadTag
 } from '@/types/adhkar';
 
+// Raw data types from JSON
+interface RawAdhkarCategory {
+  id: string;
+  title: string;
+  dhikr_count: number;
+  broad_tags: string[];
+}
+
+interface RawDhikr {
+  id: string;
+  category_id: string;
+  arabic: string;
+  translation?: string;
+  transliteration?: string;
+  instruction?: string;
+  repeat_count?: number;
+  audio_file?: string;
+}
+
 // Transform raw data to typed interfaces
-const transformCategory = (rawCategory: any): AdhkarCategory => ({
+const transformCategory = (rawCategory: RawAdhkarCategory): AdhkarCategory => ({
   id: rawCategory.id,
   title: rawCategory.title,
   dhikrCount: rawCategory.dhikr_count,
   broadTags: rawCategory.broad_tags as AdhkarBroadTag[],
 });
 
-const transformDhikr = (rawDhikr: any): Dhikr => ({
+const transformDhikr = (rawDhikr: RawDhikr): Dhikr => ({
   id: rawDhikr.id,
   categoryId: rawDhikr.category_id,
   arabic: rawDhikr.arabic,

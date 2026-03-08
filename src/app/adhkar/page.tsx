@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import type { Metadata } from "next";
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { AdhkarSearch } from '@/components/adhkar/AdhkarSearch';
 import { CategoryCard } from '@/components/adhkar/CategoryCard';

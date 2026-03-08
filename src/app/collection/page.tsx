@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { Metadata } from "next";
 import { usePlaylistStore } from '@/stores/usePlaylistStore';
 import { initializeCollectionDB } from '@/lib/collectionService';
 import { UserPlaylist } from '@/types/playlist';

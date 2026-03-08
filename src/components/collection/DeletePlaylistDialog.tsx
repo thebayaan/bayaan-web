@@ -33,7 +33,7 @@ export function DeletePlaylistDialog({
         </h3>
 
         <p className="text-secondary mb-6">
-          Are you sure you want to delete <strong>"{playlist.name}"</strong>?
+          Are you sure you want to delete <strong>&quot;{playlist.name}&quot;</strong>?
           This action will permanently remove the playlist and all its recitations.
           This cannot be undone.
         </p>

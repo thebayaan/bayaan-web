@@ -70,7 +70,7 @@ export function DhikrList({ adhkar, categoryName, showCompact = false }: DhikrLi
           </div>
         )}
 
-        {adhkar.map((dhikr, index) => (
+        {adhkar.map((dhikr) => (
           <DhikrDisplay
             key={dhikr.id}
             dhikr={dhikr}
