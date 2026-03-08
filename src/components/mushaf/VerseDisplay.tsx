@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { IconButton } from "@/components/ui/IconButton";
+import { useTranslationStore } from '@/stores/useTranslationStore';
+import { getTranslationForVerse } from '@/lib/translationService';
+import { TranslationDisplay } from '@/components/translations/TranslationDisplay';
+import { TranslationToggle } from '@/components/translations/TranslationToggle';
 import type { Verse } from "@/types/quran";
 
 interface VerseDisplayProps {
@@ -12,6 +16,14 @@ interface VerseDisplayProps {
 export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayProps) {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showActions, setShowActions] = useState(false);
+
+  // Translation functionality
+  const { showTranslations, selectedTranslation } = useTranslationStore();
+
+  // Get translation data
+  const translation = selectedTranslation && showTranslations
+    ? getTranslationForVerse(verse.verse_key, selectedTranslation)
+    : null;
 
   const handleBookmark = () => {
     setIsBookmarked(!isBookmarked);
@@ -39,14 +51,26 @@ export function VerseDisplay({ verse, showTranslation = false }: VerseDisplayPro
         </div>
 
         <div className="flex-1 space-y-3">
-          <p className="text-right text-xl leading-relaxed font-normal text-[color:var(--color-label)]" dir="rtl">
-            {verse.text}
-          </p>
+          <div className="flex items-start justify-between gap-2">
+            <p className="flex-1 text-right text-xl leading-relaxed font-normal text-[color:var(--color-label)]" dir="rtl">
+              {verse.text}
+            </p>
+            <TranslationToggle className="flex-shrink-0" />
+          </div>
 
+          {/* Legacy translation support */}
           {showTranslation && verse.translation && (
             <p className="text-base text-[color:var(--color-hint)] leading-relaxed">
               {verse.translation}
             </p>
+          )}
+
+          {/* New translation system */}
+          {showTranslations && (
+            <TranslationDisplay
+              translation={translation}
+              className="mt-2"
+            />
           )}
         </div>
       </div>
