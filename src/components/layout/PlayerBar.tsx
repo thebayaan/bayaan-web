@@ -6,6 +6,7 @@ import { Divider } from "@/components/ui/Divider";
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { usePlayerStore } from "@/stores/usePlayerStore";
 import { getAudioService } from "@/lib/audioService";
+import { usePlayerAnnouncements } from "@/hooks/usePlayerAnnouncements";
 
 /**
  * PlayerBar — sticky bottom audio player bar with full functionality
@@ -34,6 +35,9 @@ export function PlayerBar() {
 
   const currentTrack = getCurrentTrack();
   const audioService = getAudioService();
+
+  // Enable accessibility announcements
+  usePlayerAnnouncements();
 
   // Initialize audio service volume
   useEffect(() => {
@@ -222,7 +226,13 @@ export function PlayerBar() {
           </PlayerControlBtn>
 
           <button
-            aria-label={playback.state === "playing" ? "Pause" : "Play"}
+            aria-label={
+              !currentTrack
+                ? "No track selected"
+                : playback.state === "playing"
+                  ? `Pause ${currentTrack.title}`
+                  : `Play ${currentTrack.title}`
+            }
             disabled={!canPlay || isLoading}
             onClick={handlePlayPause}
             className={cn(
@@ -268,6 +278,11 @@ export function PlayerBar() {
             className="flex-1 h-1 rounded-full overflow-hidden cursor-pointer"
             style={{ backgroundColor: "var(--color-card)" }}
             onMouseDown={handleProgressMouseDown}
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={playback.duration || 100}
+            aria-valuenow={currentPosition}
+            aria-label={`Playback progress: ${formatTime(currentPosition)} of ${formatTime(playback.duration)}`}
           >
             <div
               className="h-full rounded-full transition-all duration-100"
