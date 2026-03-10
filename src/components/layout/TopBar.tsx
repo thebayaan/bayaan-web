@@ -7,6 +7,7 @@ import { Sun, Moon, Keyboard } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { useRouter } from "next/navigation";
 import { getModifierKey } from "@/hooks/useKeyboardShortcuts";
+import { OfflineStatusBadge } from "@/components/ui/OfflineIndicator";
 
 interface TopBarProps {
   onShowShortcutsHelp?: () => void;
@@ -45,6 +46,9 @@ export function TopBar({ onShowShortcutsHelp }: TopBarProps) {
 
       {/* Right actions */}
       <div className="flex items-center gap-1 ml-auto">
+        {/* Offline status indicator */}
+        <OfflineStatusBadge />
+
         {/* Keyboard shortcuts help */}
         {onShowShortcutsHelp && (
           <IconButton

@@ -237,7 +237,6 @@ export function VirtualizedGrid<T>({
     visibleRowEnd,
     columnsPerRow,
     itemWidth,
-    itemHeight,
     gap,
     rowHeight,
     getItemKey,

@@ -113,6 +113,7 @@ export function LazyImage({
   // Error state
   if (isError && fallback) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         ref={imgRef}
         src={fallback}
@@ -132,6 +133,7 @@ export function LazyImage({
 
       {/* Actual image */}
       {shouldLoad && (
+        /* eslint-disable-next-line @next/next/no-img-element */
         <img
           ref={imgRef}
           src={src}

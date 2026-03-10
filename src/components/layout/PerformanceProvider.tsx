@@ -1,10 +1,23 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { usePerformanceMonitor, checkPerformanceBudget } from '@/hooks/usePerformanceMonitor';
 
+interface PerformanceMetrics {
+  lcp?: number;
+  fid?: number;
+  cls?: number;
+  fcp?: number;
+  ttfb?: number;
+  domContentLoaded?: number;
+  loadComplete?: number;
+  timeToInteractive?: number;
+  resourceLoadTime?: number;
+  memoryUsage?: number;
+}
+
 interface PerformanceContextType {
-  metrics: any;
+  metrics: PerformanceMetrics;
   isLoading: boolean;
   performanceScore: 'good' | 'needs improvement' | 'poor' | 'unknown';
   recommendations: string[];
@@ -83,7 +96,7 @@ export function PerformanceProvider({
   }, [metrics]);
 
   // Performance report for developers
-  const showPerformanceReport = () => {
+  const showPerformanceReport = useCallback(() => {
     if (!enableDevMode) return;
 
     console.group('📊 Bayaan Performance Report');
@@ -100,7 +113,7 @@ export function PerformanceProvider({
     }
 
     console.groupEnd();
-  };
+  }, [enableDevMode, getMetricsSummary, performanceScore, metrics, recommendations]);
 
   // Log performance report in dev mode
   useEffect(() => {
@@ -112,7 +125,7 @@ export function PerformanceProvider({
 
       return () => clearTimeout(timer);
     }
-  }, [isLoading, metrics, enableDevMode]);
+  }, [isLoading, metrics, enableDevMode, showPerformanceReport]);
 
   // Performance warning for poor scores
   useEffect(() => {

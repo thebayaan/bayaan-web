@@ -18,7 +18,7 @@ export function usePlayerAnnouncements() {
     if (currentTrack) {
       announce(`Now playing: ${currentTrack.title} by ${currentTrack.reciterName}`);
     }
-  }, [currentTrack?.id, currentTrack?.title, currentTrack?.reciterName, announce]);
+  }, [currentTrack, announce]);
 
   // Announce playback state changes
   useEffect(() => {

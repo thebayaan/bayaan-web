@@ -36,21 +36,168 @@ let observers: PerformanceObserver[] = [];
 export function usePerformanceMonitor(): PerformanceContext {
   const [metrics, setMetrics] = useState<PerformanceMetrics>(globalMetrics);
   const [isLoading, setIsLoading] = useState(true);
-  const startTime = useRef<number>(performance.now());
+  const startTime = useRef<number | null>(null);
 
   useEffect(() => {
+    // Initialize start time in effect
+    if (startTime.current === null && typeof performance !== 'undefined') {
+      startTime.current = performance.now();
+    }
+
     // Check if we're in a browser environment
     if (typeof window === 'undefined' || typeof performance === 'undefined') {
-      setIsLoading(false);
-      return;
+      const timer = setTimeout(() => setIsLoading(false), 0);
+      return () => clearTimeout(timer);
     }
+
+    const updateMetric = (name: keyof PerformanceMetrics, value: number) => {
+      globalMetrics = { ...globalMetrics, [name]: value };
+      setMetrics({ ...globalMetrics });
+    };
+
+    const initializePerformanceMonitoring = () => {
+      // Log initial page load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          const domTime = performance.now();
+          updateMetric('domContentLoaded', domTime);
+        });
+      }
+
+      window.addEventListener('load', () => {
+        const loadTime = performance.now();
+        updateMetric('loadComplete', loadTime);
+      });
+    };
+
+    const getNavigationMetrics = () => {
+      try {
+        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        if (navigation) {
+          updateMetric('ttfb', navigation.responseStart - navigation.fetchStart);
+          updateMetric('domContentLoaded', navigation.domContentLoadedEventEnd - navigation.fetchStart);
+          updateMetric('loadComplete', navigation.loadEventEnd - navigation.fetchStart);
+        }
+      } catch (error) {
+        console.warn('Error getting navigation metrics:', error);
+      }
+    };
+
+    const monitorCoreWebVitals = () => {
+      // Largest Contentful Paint (LCP)
+      try {
+        const lcpObserver = new PerformanceObserver((entryList) => {
+          const entries = entryList.getEntries();
+          const lastEntry = entries[entries.length - 1] as PerformanceEventTiming;
+          if (lastEntry) {
+            updateMetric('lcp', lastEntry.startTime);
+          }
+        });
+        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+        observers.push(lcpObserver);
+      } catch (error) {
+        console.warn('LCP observer not supported:', error);
+      }
+
+      // First Contentful Paint (FCP)
+      try {
+        const fcpObserver = new PerformanceObserver((entryList) => {
+          const entries = entryList.getEntries();
+          entries.forEach((entry) => {
+            if (entry.name === 'first-contentful-paint') {
+              updateMetric('fcp', entry.startTime);
+            }
+          });
+        });
+        fcpObserver.observe({ type: 'paint', buffered: true });
+        observers.push(fcpObserver);
+      } catch (error) {
+        console.warn('FCP observer not supported:', error);
+      }
+
+      // Cumulative Layout Shift (CLS)
+      try {
+        const clsObserver = new PerformanceObserver((entryList) => {
+          let clsValue = globalMetrics.cls || 0;
+          const entries = entryList.getEntries() as PerformanceEventTiming[];
+          entries.forEach((entry) => {
+            // @ts-expect-error - LayoutShift properties
+            if (entry.hadRecentInput) return;
+            // @ts-expect-error - LayoutShift value property
+            clsValue += entry.value;
+          });
+          updateMetric('cls', clsValue);
+        });
+        clsObserver.observe({ type: 'layout-shift', buffered: true });
+        observers.push(clsObserver);
+      } catch (error) {
+        console.warn('CLS observer not supported:', error);
+      }
+
+      // First Input Delay (FID)
+      try {
+        const fidObserver = new PerformanceObserver((entryList) => {
+          const entries = entryList.getEntries() as PerformanceEventTiming[];
+          entries.forEach((entry) => {
+            updateMetric('fid', entry.processingStart - entry.startTime);
+          });
+        });
+        fidObserver.observe({ type: 'first-input', buffered: true });
+        observers.push(fidObserver);
+      } catch (error) {
+        console.warn('FID observer not supported:', error);
+      }
+    };
+
+    const monitorResourceLoading = () => {
+      try {
+        const resourceObserver = new PerformanceObserver((entryList) => {
+          const entries = entryList.getEntries();
+          const totalLoadTime = entries.reduce((sum, entry) => {
+            return sum + entry.duration;
+          }, 0);
+
+          if (entries.length > 0) {
+            updateMetric('resourceLoadTime', totalLoadTime / entries.length);
+          }
+        });
+        resourceObserver.observe({ type: 'resource', buffered: true });
+        observers.push(resourceObserver);
+      } catch (error) {
+        console.warn('Resource observer not supported:', error);
+      }
+    };
+
+    const monitorMemoryUsage = () => {
+      try {
+        // @ts-expect-error - memory API is experimental
+        if (performance.memory) {
+          const checkMemory = () => {
+            // @ts-expect-error - memory API is experimental
+            const memory = performance.memory;
+            const usedMB = Math.round(memory.usedJSHeapSize / 1024 / 1024 * 100) / 100;
+            updateMetric('memoryUsage', usedMB);
+          };
+
+          checkMemory();
+          // Check memory usage every 30 seconds
+          const memoryInterval = setInterval(checkMemory, 30000);
+
+          return () => clearInterval(memoryInterval);
+        }
+      } catch (error) {
+        console.warn('Memory monitoring not supported:', error);
+      }
+    };
 
     // Initialize performance monitoring
     initializePerformanceMonitoring();
 
     // Mark as interactive
-    const interactiveTime = performance.now() - startTime.current;
-    updateMetric('timeToInteractive', interactiveTime);
+    if (startTime.current !== null) {
+      const interactiveTime = performance.now() - startTime.current;
+      updateMetric('timeToInteractive', interactiveTime);
+    }
 
     // Monitor resource loading
     if ('PerformanceObserver' in window) {
@@ -79,146 +226,6 @@ export function usePerformanceMonitor(): PerformanceContext {
     };
   }, []);
 
-  const initializePerformanceMonitoring = () => {
-    // Log initial page load
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
-        const domTime = performance.now();
-        updateMetric('domContentLoaded', domTime);
-      });
-    }
-
-    window.addEventListener('load', () => {
-      const loadTime = performance.now();
-      updateMetric('loadComplete', loadTime);
-    });
-  };
-
-  const getNavigationMetrics = () => {
-    try {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-      if (navigation) {
-        updateMetric('ttfb', navigation.responseStart - navigation.fetchStart);
-        updateMetric('domContentLoaded', navigation.domContentLoadedEventEnd - navigation.fetchStart);
-        updateMetric('loadComplete', navigation.loadEventEnd - navigation.fetchStart);
-      }
-    } catch (error) {
-      console.warn('Error getting navigation metrics:', error);
-    }
-  };
-
-  const monitorCoreWebVitals = () => {
-    // Largest Contentful Paint (LCP)
-    try {
-      const lcpObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        const lastEntry = entries[entries.length - 1] as PerformanceEventTiming;
-        if (lastEntry) {
-          updateMetric('lcp', lastEntry.startTime);
-        }
-      });
-      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
-      observers.push(lcpObserver);
-    } catch (error) {
-      console.warn('LCP observer not supported:', error);
-    }
-
-    // First Contentful Paint (FCP)
-    try {
-      const fcpObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        entries.forEach((entry) => {
-          if (entry.name === 'first-contentful-paint') {
-            updateMetric('fcp', entry.startTime);
-          }
-        });
-      });
-      fcpObserver.observe({ type: 'paint', buffered: true });
-      observers.push(fcpObserver);
-    } catch (error) {
-      console.warn('FCP observer not supported:', error);
-    }
-
-    // Cumulative Layout Shift (CLS)
-    try {
-      const clsObserver = new PerformanceObserver((entryList) => {
-        let clsValue = globalMetrics.cls || 0;
-        const entries = entryList.getEntries() as PerformanceEventTiming[];
-        entries.forEach((entry) => {
-          // @ts-ignore - LayoutShift properties
-          if (entry.hadRecentInput) return;
-          // @ts-ignore
-          clsValue += entry.value;
-        });
-        updateMetric('cls', clsValue);
-      });
-      clsObserver.observe({ type: 'layout-shift', buffered: true });
-      observers.push(clsObserver);
-    } catch (error) {
-      console.warn('CLS observer not supported:', error);
-    }
-
-    // First Input Delay (FID)
-    try {
-      const fidObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries() as PerformanceEventTiming[];
-        entries.forEach((entry) => {
-          updateMetric('fid', entry.processingStart - entry.startTime);
-        });
-      });
-      fidObserver.observe({ type: 'first-input', buffered: true });
-      observers.push(fidObserver);
-    } catch (error) {
-      console.warn('FID observer not supported:', error);
-    }
-  };
-
-  const monitorResourceLoading = () => {
-    try {
-      const resourceObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        const totalLoadTime = entries.reduce((sum, entry) => {
-          return sum + entry.duration;
-        }, 0);
-
-        if (entries.length > 0) {
-          updateMetric('resourceLoadTime', totalLoadTime / entries.length);
-        }
-      });
-      resourceObserver.observe({ type: 'resource', buffered: true });
-      observers.push(resourceObserver);
-    } catch (error) {
-      console.warn('Resource observer not supported:', error);
-    }
-  };
-
-  const monitorMemoryUsage = () => {
-    try {
-      // @ts-ignore - memory API is experimental
-      if (performance.memory) {
-        const checkMemory = () => {
-          // @ts-ignore
-          const memory = performance.memory;
-          const usedMB = Math.round(memory.usedJSHeapSize / 1024 / 1024 * 100) / 100;
-          updateMetric('memoryUsage', usedMB);
-        };
-
-        checkMemory();
-        // Check memory usage every 30 seconds
-        const memoryInterval = setInterval(checkMemory, 30000);
-
-        return () => clearInterval(memoryInterval);
-      }
-    } catch (error) {
-      console.warn('Memory monitoring not supported:', error);
-    }
-  };
-
-  const updateMetric = (name: keyof PerformanceMetrics, value: number) => {
-    globalMetrics = { ...globalMetrics, [name]: value };
-    setMetrics({ ...globalMetrics });
-  };
-
   const logMetric = (name: string, value: number) => {
     console.log(`📊 Performance Metric: ${name} = ${value}ms`);
 
@@ -226,13 +233,13 @@ export function usePerformanceMonitor(): PerformanceContext {
     try {
       // Could integrate with analytics services here
       if (typeof window !== 'undefined' && 'gtag' in window) {
-        // @ts-ignore
+        // @ts-expect-error - gtag is a global from Google Analytics
         window.gtag('event', 'timing_complete', {
           name,
           value: Math.round(value),
         });
       }
-    } catch (error) {
+    } catch {
       // Analytics not available
     }
   };
@@ -264,22 +271,29 @@ export function usePerformanceMonitor(): PerformanceContext {
 export function useRenderPerformance(componentName: string) {
   const renderStart = useRef<number>(0);
   const renderCount = useRef<number>(0);
+  const [currentRenderCount, setCurrentRenderCount] = useState(0);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (typeof performance !== 'undefined') {
+      renderStart.current = performance.now();
+      renderCount.current += 1;
+      setCurrentRenderCount(renderCount.current);
+    }
+  }); // No dependency array - intentionally runs on every render
 
   useEffect(() => {
-    renderStart.current = performance.now();
-    renderCount.current += 1;
-  });
+    if (typeof performance !== 'undefined') {
+      const renderTime = performance.now() - renderStart.current;
 
-  useEffect(() => {
-    const renderTime = performance.now() - renderStart.current;
-
-    if (renderTime > 16) { // Log if render takes longer than one frame (16ms)
-      console.warn(`⚠️ Slow render: ${componentName} took ${Math.round(renderTime * 100) / 100}ms (render #${renderCount.current})`);
+      if (renderTime > 16) { // Log if render takes longer than one frame (16ms)
+        console.warn(`⚠️ Slow render: ${componentName} took ${Math.round(renderTime * 100) / 100}ms (render #${renderCount.current})`);
+      }
     }
   });
 
   return {
-    renderCount: renderCount.current,
+    renderCount: currentRenderCount,
   };
 }
 
