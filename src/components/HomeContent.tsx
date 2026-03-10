@@ -4,6 +4,7 @@ import { cn } from "@/lib/cn";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Card } from "@/components/ui/Card";
 import { Divider } from "@/components/ui/Divider";
+import { ReadingProgressCard } from "@/components/reading/ReadingProgressCard";
 import { Mic2, BookOpen, Star, ChevronRight, Clock, Play } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
@@ -147,6 +148,11 @@ export function HomeContent() {
           What would you like to listen to today?
         </p>
       </div>
+
+      {/* Reading Progress */}
+      <section className="mb-8" aria-label="Reading progress">
+        <ReadingProgressCard compact className="mb-4" />
+      </section>
 
       {/* Recently played — horizontal scroll */}
       <section className="mb-8" aria-label="Recently played">

@@ -7,6 +7,7 @@ import { SurahHeader } from "@/components/mushaf/SurahHeader";
 import { VerseDisplay } from "@/components/mushaf/VerseDisplay";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { NavigationHelper, SequenceNavigation } from "@/components/layout/NavigationHelper";
+import { ReadingSessionManager } from "@/components/reading/ReadingSessionManager";
 import surahData from "@/data/surahData.json";
 import quranData from "@/data/quran.json";
 import type { Surah, QuranData, Verse } from "@/types/quran";
@@ -83,6 +84,14 @@ export default async function SurahPage({ params }: SurahPageProps) {
 
         {/* Surah Header */}
         <SurahHeader surah={surahInfo} />
+
+        {/* Reading Session Manager */}
+        <ReadingSessionManager
+          surahNumber={surahId}
+          surahName={surahInfo.name}
+          totalVerses={surahInfo.verses_count}
+          currentVerse={1}
+        />
 
         {/* Verses */}
         <div className="space-y-1">
