@@ -8,6 +8,7 @@ import { GlobalShortcuts } from "./GlobalShortcuts";
 import { KeyboardShortcutsHelp, useKeyboardShortcutsHelp } from "@/components/ui/KeyboardShortcutsHelp";
 import { PlayerSheet } from "@/components/player/PlayerSheet";
 import { AccessibilityEnhancer } from "./AccessibilityEnhancer";
+import { PerformanceProvider } from "./PerformanceProvider";
 import { FocusManagerProvider, MainContent } from "@/components/ui/FocusManager";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { ContextualHelp, useContextualTips } from "@/components/ui/ContextualHelp";
@@ -40,8 +41,9 @@ export function AppShell({ children }: AppShellProps) {
   const currentPage = pathname.split('/')[1] || 'home';
 
   return (
-    <CollectionProvider>
-      <FocusManagerProvider>
+    <PerformanceProvider>
+      <CollectionProvider>
+        <FocusManagerProvider>
         <AccessibilityEnhancer />
         <GlobalShortcuts onShowShortcutsHelp={shortcuts.open} />
         <KeyboardShortcutsHelp
@@ -80,7 +82,8 @@ export function AppShell({ children }: AppShellProps) {
 
         {/* Contextual help system */}
         <ContextualHelp tips={tips} page={currentPage} />
-      </FocusManagerProvider>
-    </CollectionProvider>
+        </FocusManagerProvider>
+      </CollectionProvider>
+    </PerformanceProvider>
   );
 }
