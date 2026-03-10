@@ -31,14 +31,21 @@ export function ContextualHelp({ tips, page, className }: ContextualHelpProps) {
 
   // Load dismissed tips from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('bayaan-dismissed-tips');
-    if (saved) {
-      try {
-        setDismissedTips(JSON.parse(saved));
-      } catch {
-        setDismissedTips([]);
+    const loadDismissedTips = () => {
+      const saved = localStorage.getItem('bayaan-dismissed-tips');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setDismissedTips(parsed);
+        } catch {
+          setDismissedTips([]);
+        }
       }
-    }
+    };
+
+    // Use setTimeout to avoid setState during render
+    const timer = setTimeout(loadDismissedTips, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   // Save dismissed tips to localStorage

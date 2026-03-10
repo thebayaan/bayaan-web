@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useEffect, useState, useRef } from 'react';
 import { cn } from '@/lib/cn';
 
 interface PageTransitionProps {
@@ -14,20 +13,28 @@ interface PageTransitionProps {
 export function PageTransition({ children }: PageTransitionProps) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [displayChildren, setDisplayChildren] = useState(children);
-  const pathname = usePathname();
+  const prevChildrenRef = useRef(children);
 
   useEffect(() => {
-    if (children !== displayChildren) {
-      setIsTransitioning(true);
+    // Only transition if children actually changed
+    if (children !== prevChildrenRef.current) {
+      prevChildrenRef.current = children;
 
+      // Use a timer to avoid setState during render
       const timer = setTimeout(() => {
-        setDisplayChildren(children);
-        setIsTransitioning(false);
-      }, 150); // Half of transition duration
+        setIsTransitioning(true);
+
+        const transitionTimer = setTimeout(() => {
+          setDisplayChildren(children);
+          setIsTransitioning(false);
+        }, 150);
+
+        return () => clearTimeout(transitionTimer);
+      }, 0);
 
       return () => clearTimeout(timer);
     }
-  }, [children, displayChildren]);
+  }, [children]);
 
   return (
     <div
@@ -46,11 +53,10 @@ export function PageTransition({ children }: PageTransitionProps) {
  */
 interface StaggerContainerProps {
   children: React.ReactNode;
-  delay?: number;
   className?: string;
 }
 
-export function StaggerContainer({ children, delay = 50, className }: StaggerContainerProps) {
+export function StaggerContainer({ children, className }: StaggerContainerProps) {
   return (
     <div className={cn("animate-in fade-in duration-500", className)}>
       {children}
