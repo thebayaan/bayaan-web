@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, BookOpen, Mic } from "lucide-react";
 import { IconButton } from "@/components/ui/IconButton";
 import { SurahHeader } from "@/components/mushaf/SurahHeader";
 import { VerseDisplay } from "@/components/mushaf/VerseDisplay";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { NavigationHelper, SequenceNavigation } from "@/components/layout/NavigationHelper";
 import surahData from "@/data/surahData.json";
 import quranData from "@/data/quran.json";
 import type { Surah, QuranData, Verse } from "@/types/quran";
@@ -48,39 +51,34 @@ export default async function SurahPage({ params }: SurahPageProps) {
   const nextSurah = surahData.find(s => s.id === surahId + 1);
   const prevSurah = surahData.find(s => s.id === surahId - 1);
 
+  // Breadcrumb items for this specific surah page
+  const breadcrumbItems = [
+    { label: 'Mushaf', href: '/mushaf', icon: BookOpen },
+    { label: `${surahInfo.name}`, href: `/mushaf/${surahId}` },
+  ];
+
   return (
     <main className="container mx-auto max-w-4xl p-4" id="main-content">
       <div className="space-y-6">
-        {/* Navigation Header */}
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb items={breadcrumbItems} />
+
+        {/* Quick Actions */}
         <div className="flex items-center justify-between">
           <Link href="/mushaf">
             <IconButton label="Back to Mushaf">
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
+              <ArrowLeft size={20} strokeWidth={2} />
             </IconButton>
           </Link>
 
-          <div className="flex items-center gap-2">
-            {prevSurah && (
-              <Link href={`/mushaf/${prevSurah.id}`}>
-                <IconButton label={`Previous: ${prevSurah.name}`}>
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-                  </svg>
-                </IconButton>
-              </Link>
-            )}
-            {nextSurah && (
-              <Link href={`/mushaf/${nextSurah.id}`}>
-                <IconButton label={`Next: ${nextSurah.name}`}>
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                  </svg>
-                </IconButton>
-              </Link>
-            )}
-          </div>
+          {/* Listen to Audio Action */}
+          <Link
+            href="/reciters"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-[var(--color-icon)] hover:text-[var(--color-label)] hover:bg-[var(--color-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-text)]"
+          >
+            <Mic size={16} strokeWidth={2} />
+            <span>Listen to Audio</span>
+          </Link>
         </div>
 
         {/* Surah Header */}
@@ -98,34 +96,19 @@ export default async function SurahPage({ params }: SurahPageProps) {
           ))}
         </div>
 
-        {/* Bottom Navigation */}
-        {(prevSurah || nextSurah) && (
-          <div className="flex items-center justify-between pt-8">
-            {prevSurah ? (
-              <Link href={`/mushaf/${prevSurah.id}`} className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[color:var(--color-hover)]">
-                <svg className="h-5 w-5 text-[color:var(--color-icon)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                <div>
-                  <p className="text-sm text-[color:var(--color-hint)]">Previous</p>
-                  <p className="font-semibold text-[color:var(--color-label)]">{prevSurah.name}</p>
-                </div>
-              </Link>
-            ) : <div />}
+        {/* Navigation and Suggestions */}
+        <div className="pt-8 border-t space-y-6" style={{ borderColor: 'var(--color-divider)' }}>
+          {/* Sequence Navigation */}
+          <SequenceNavigation
+            previousHref={prevSurah ? `/mushaf/${prevSurah.id}` : undefined}
+            nextHref={nextSurah ? `/mushaf/${nextSurah.id}` : undefined}
+            previousLabel={prevSurah ? `${prevSurah.name}` : undefined}
+            nextLabel={nextSurah ? `${nextSurah.name}` : undefined}
+          />
 
-            {nextSurah ? (
-              <Link href={`/mushaf/${nextSurah.id}`} className="flex items-center gap-3 rounded-lg p-3 text-right transition-colors hover:bg-[color:var(--color-hover)]">
-                <div>
-                  <p className="text-sm text-[color:var(--color-hint)]">Next</p>
-                  <p className="font-semibold text-[color:var(--color-label)]">{nextSurah.name}</p>
-                </div>
-                <svg className="h-5 w-5 text-[color:var(--color-icon)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            ) : <div />}
-          </div>
-        )}
+          {/* Navigation Suggestions */}
+          <NavigationHelper showRelated={true} showNext={true} />
+        </div>
       </div>
     </main>
   );

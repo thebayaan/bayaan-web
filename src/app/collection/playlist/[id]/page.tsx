@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft, Library, Eye, Trash2, BookOpen, Mic, Music, AlertCircle } from 'lucide-react';
 import { usePlaylistStore } from '@/stores/usePlaylistStore';
 import { initializeCollectionDB } from '@/lib/collectionService';
 import { UserPlaylist, PlaylistItem } from '@/types/playlist';
@@ -9,6 +10,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/IconButton';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { NavigationHelper } from '@/components/layout/NavigationHelper';
 import { cn } from '@/lib/cn';
 import Link from 'next/link';
 
@@ -114,10 +117,8 @@ export default function PlaylistDetailPage({ params }: PlaylistDetailPageProps) 
     return (
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col items-center justify-center min-h-[400px]">
-          <div className="w-16 h-16 mb-4 rounded-full bg-red-50 flex items-center justify-center">
-            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+          <div className="w-16 h-16 mb-4 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+            <AlertCircle size={32} className="text-red-500" strokeWidth={1.5} />
           </div>
           <h1 className="text-xl font-semibold text-text mb-2">
             {error || 'Playlist not found'}
@@ -126,6 +127,7 @@ export default function PlaylistDetailPage({ params }: PlaylistDetailPageProps) 
             The playlist you&apos;re looking for doesn&apos;t exist or couldn&apos;t be loaded.
           </p>
           <Button onClick={() => router.push('/collection')}>
+            <Library size={16} strokeWidth={2} className="mr-2" />
             Back to Collection
           </Button>
         </div>
@@ -135,8 +137,19 @@ export default function PlaylistDetailPage({ params }: PlaylistDetailPageProps) 
 
   const colorClass = PLAYLIST_COLOR_CLASSES[playlist.color] || 'bg-blue-500';
 
+  // Breadcrumb items for playlist page
+  const breadcrumbItems = [
+    { label: 'Collection', href: '/collection', icon: Library },
+    { label: playlist.name, href: `/collection/playlist/${params.id}` },
+  ];
+
   return (
     <main className="container mx-auto px-4 py-8">
+      {/* Breadcrumb Navigation */}
+      <div className="mb-6">
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
+
       {/* Header */}
       <div className="flex items-start gap-4 mb-8">
         <Button
@@ -145,9 +158,7 @@ export default function PlaylistDetailPage({ params }: PlaylistDetailPageProps) 
           onClick={() => router.push('/collection')}
           className="mt-1"
         >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          <ArrowLeft size={16} strokeWidth={2} className="mr-2" />
           Back
         </Button>
 
@@ -172,9 +183,7 @@ export default function PlaylistDetailPage({ params }: PlaylistDetailPageProps) 
       {items.length === 0 ? (
         <Card className="p-8 text-center">
           <div className="w-16 h-16 mb-4 rounded-full bg-card flex items-center justify-center mx-auto">
-            <svg className="w-8 h-8 text-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-            </svg>
+            <Music size={32} className="text-icon" strokeWidth={1.5} />
           </div>
           <h3 className="text-lg font-medium text-text mb-2">
             No recitations yet
@@ -184,9 +193,11 @@ export default function PlaylistDetailPage({ params }: PlaylistDetailPageProps) 
           </p>
           <div className="flex gap-3 justify-center">
             <Button onClick={() => router.push('/mushaf')} variant="ghost">
+              <BookOpen size={16} strokeWidth={2} className="mr-2" />
               Browse Surahs
             </Button>
             <Button onClick={() => router.push('/reciters')}>
+              <Mic size={16} strokeWidth={2} className="mr-2" />
               Browse Reciters
             </Button>
           </div>
@@ -219,22 +230,17 @@ export default function PlaylistDetailPage({ params }: PlaylistDetailPageProps) 
                       size="sm"
                       title="View Surah"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
+                      <Eye size={16} strokeWidth={2} />
                     </IconButton>
                   </Link>
 
                   <IconButton
                     size="sm"
                     onClick={() => handleRemoveItem(item.id)}
-                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                    className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                     title="Remove from playlist"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
+                    <Trash2 size={16} strokeWidth={2} />
                   </IconButton>
                 </div>
               </div>
@@ -242,6 +248,11 @@ export default function PlaylistDetailPage({ params }: PlaylistDetailPageProps) 
           ))}
         </div>
       )}
+
+      {/* Navigation Suggestions */}
+      <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--color-divider)' }}>
+        <NavigationHelper showRelated={true} showNext={true} />
+      </div>
     </main>
   );
 }
