@@ -149,22 +149,31 @@ export function VerseDisplay({ verse, showTranslation = false, surahNumber, sura
     : {};
 
   return (
-    <div
+    <article
       className={cn(
         "group relative rounded-lg p-4 transition-colors hover:bg-[color:var(--color-hover)]"
       )}
       style={highlightStyle}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
+      aria-label={`Verse ${verse.ayah_number} from Surah ${surahName || surahNumber}`}
     >
       <div className="flex items-start gap-4">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[color:var(--color-card-border)] text-sm">
+        <div
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[color:var(--color-card-border)] text-sm"
+          aria-label={`Verse number ${verse.ayah_number}`}
+        >
           {verse.ayah_number}
         </div>
 
         <div className="flex-1 space-y-3">
           <div className="flex items-start justify-between gap-2">
-            <p className="flex-1 text-right text-xl leading-relaxed font-normal text-[color:var(--color-label)]" dir="rtl">
+            <p
+              className="flex-1 text-right text-xl leading-relaxed font-normal text-[color:var(--color-label)]"
+              dir="rtl"
+              lang="ar"
+              aria-label={`Arabic text of verse ${verse.ayah_number}`}
+            >
               {verse.text}
             </p>
             <div className="flex items-center gap-2 flex-shrink-0">
@@ -253,6 +262,6 @@ export function VerseDisplay({ verse, showTranslation = false, surahNumber, sura
           </IconButton>
         </div>
       )}
-    </div>
+    </article>
   );
 }

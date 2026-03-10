@@ -131,14 +131,29 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "google-verification-code", // TODO: Add actual verification codes
-    yandex: "yandex-verification-code",
-    yahoo: "yahoo-verification-code",
-    other: {
-      "msvalidate.01": "bing-verification-code",
-    },
-  },
+  ...(process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION_CODE ||
+      process.env.NEXT_PUBLIC_YANDEX_VERIFICATION_CODE ||
+      process.env.NEXT_PUBLIC_YAHOO_VERIFICATION_CODE ||
+      process.env.NEXT_PUBLIC_BING_VERIFICATION_CODE
+    ? {
+        verification: {
+          ...(process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION_CODE && {
+            google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION_CODE,
+          }),
+          ...(process.env.NEXT_PUBLIC_YANDEX_VERIFICATION_CODE && {
+            yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION_CODE,
+          }),
+          ...(process.env.NEXT_PUBLIC_YAHOO_VERIFICATION_CODE && {
+            yahoo: process.env.NEXT_PUBLIC_YAHOO_VERIFICATION_CODE,
+          }),
+          ...(process.env.NEXT_PUBLIC_BING_VERIFICATION_CODE && {
+            other: {
+              "msvalidate.01": process.env.NEXT_PUBLIC_BING_VERIFICATION_CODE,
+            },
+          }),
+        },
+      }
+    : {}),
 };
 
 export const viewport: Viewport = {
