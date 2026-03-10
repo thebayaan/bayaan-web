@@ -3,15 +3,20 @@
 import { cn } from "@/lib/cn";
 import { IconButton } from "@/components/ui/IconButton";
 import { SearchInput } from "@/components/ui/SearchInput";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Keyboard } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { useRouter } from "next/navigation";
+import { getModifierKey } from "@/hooks/useKeyboardShortcuts";
+
+interface TopBarProps {
+  onShowShortcutsHelp?: () => void;
+}
 
 /**
- * TopBar — App header with logo, search, and theme toggle.
+ * TopBar — App header with search, theme indicator, and keyboard shortcuts help.
  * Rendered on the client for theme detection and navigation.
  */
-export function TopBar() {
+export function TopBar({ onShowShortcutsHelp }: TopBarProps) {
   const theme = useTheme();
   const router = useRouter();
 
@@ -40,6 +45,17 @@ export function TopBar() {
 
       {/* Right actions */}
       <div className="flex items-center gap-1 ml-auto">
+        {/* Keyboard shortcuts help */}
+        {onShowShortcutsHelp && (
+          <IconButton
+            label={`Keyboard shortcuts (${getModifierKey()} + ?)`}
+            size="md"
+            onClick={onShowShortcutsHelp}
+          >
+            <Keyboard size={16} strokeWidth={1.8} />
+          </IconButton>
+        )}
+
         {/* Theme indicator — display only, system theme is auto */}
         <IconButton
           label={theme === "dark" ? "Dark mode active" : "Light mode active"}

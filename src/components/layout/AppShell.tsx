@@ -1,7 +1,12 @@
+"use client";
+
 import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 import { PlayerBar } from "./PlayerBar";
 import { CollectionProvider } from "./CollectionProvider";
+import { GlobalShortcuts } from "./GlobalShortcuts";
+import { KeyboardShortcutsHelp, useKeyboardShortcutsHelp } from "@/components/ui/KeyboardShortcutsHelp";
+import { PlayerSheet } from "@/components/player/PlayerSheet";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -22,8 +27,16 @@ interface AppShellProps {
  * Sidebar and TopBar are client components; main + PlayerBar are server-rendered.
  */
 export function AppShell({ children }: AppShellProps) {
+  const shortcuts = useKeyboardShortcutsHelp();
+
   return (
     <CollectionProvider>
+      <GlobalShortcuts onShowShortcutsHelp={shortcuts.open} />
+      <KeyboardShortcutsHelp
+        isOpen={shortcuts.isOpen}
+        onClose={shortcuts.close}
+      />
+      <PlayerSheet />
       <div
         className="flex h-screen overflow-hidden"
         style={{ backgroundColor: "var(--color-background)" }}
@@ -34,7 +47,7 @@ export function AppShell({ children }: AppShellProps) {
       {/* Right column: TopBar + content + PlayerBar */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top bar */}
-        <TopBar />
+        <TopBar onShowShortcutsHelp={shortcuts.open} />
 
         {/* Scrollable main content */}
         <main

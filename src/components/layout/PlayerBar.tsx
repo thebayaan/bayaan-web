@@ -22,6 +22,7 @@ export function PlayerBar() {
     pause,
     skipNext,
     skipPrevious,
+    setSheetMode,
   } = usePlayerStore();
 
   const [volume, setVolume] = useState(0.75);
@@ -135,6 +136,13 @@ export function PlayerBar() {
     }
   };
 
+  // Open player sheet handler
+  const handleOpenPlayerSheet = () => {
+    if (currentTrack) {
+      setSheetMode('full');
+    }
+  };
+
   // Calculate progress percentage
   const currentPosition = isDraggingProgress ? tempPosition : playback.position;
   const progressPercent = playback.duration > 0 ? (currentPosition / playback.duration) * 100 : 0;
@@ -155,7 +163,19 @@ export function PlayerBar() {
       aria-label="Audio player"
     >
       {/* Track info */}
-      <div className="flex items-center gap-3 w-[220px] shrink-0">
+      <button
+        className={cn(
+          "flex items-center gap-3 w-[220px] shrink-0 text-left",
+          "rounded-lg px-2 py-1 -mx-2 -my-1",
+          "transition-all duration-150",
+          currentTrack
+            ? "hover:bg-[var(--color-hover)] cursor-pointer"
+            : "cursor-default"
+        )}
+        onClick={handleOpenPlayerSheet}
+        disabled={!currentTrack}
+        aria-label={currentTrack ? "Open full player" : undefined}
+      >
         {/* Album art placeholder */}
         <div
           className="h-10 w-10 rounded-lg shrink-0"
@@ -185,7 +205,7 @@ export function PlayerBar() {
             {currentTrack?.reciterName || "Select a reciter to begin"}
           </span>
         </div>
-      </div>
+      </button>
 
       <Divider orientation="vertical" className="h-6" />
 
