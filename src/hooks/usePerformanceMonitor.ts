@@ -211,7 +211,8 @@ export function usePerformanceMonitor(): PerformanceContext {
     // Monitor memory usage (if available)
     monitorMemoryUsage();
 
-    setIsLoading(false);
+    // Set loading state after initialization
+    const loadingTimer = setTimeout(() => setIsLoading(false), 0);
 
     return () => {
       // Cleanup observers
@@ -223,6 +224,7 @@ export function usePerformanceMonitor(): PerformanceContext {
         }
       });
       observers = [];
+      clearTimeout(loadingTimer);
     };
   }, []);
 

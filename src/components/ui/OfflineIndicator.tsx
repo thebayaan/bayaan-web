@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/cn';
 import {
   Wifi,
@@ -26,6 +26,7 @@ interface OfflineIndicatorProps {
  */
 export function OfflineIndicator({ className, showDetails = false }: OfflineIndicatorProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
   const { isOnline, wasOffline } = useNetworkStatus();
   const {
     syncInProgress,
@@ -35,6 +36,15 @@ export function OfflineIndicator({ className, showDetails = false }: OfflineIndi
     forceSync,
     clearAllData
   } = useOfflineSync();
+
+  // Update current time periodically for accurate relative timestamps
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 10000); // Update every 10 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   const getStatusIcon = () => {
     if (syncInProgress) {
@@ -69,14 +79,13 @@ export function OfflineIndicator({ className, showDetails = false }: OfflineIndi
   const formatLastSync = useMemo(() => {
     if (!lastSync) return 'Never';
 
-    const now = Date.now();
-    const diff = now - lastSync;
+    const diff = currentTime - lastSync;
 
     if (diff < 60000) return 'Just now';
     if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
     if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
     return `${Math.floor(diff / 86400000)}d ago`;
-  }, [lastSync]);
+  }, [lastSync, currentTime]);
 
   const formatStorage = () => {
     const total = storageStats.totalEntries;
@@ -188,7 +197,7 @@ export function OfflineIndicator({ className, showDetails = false }: OfflineIndi
         <div className="flex items-center justify-between text-xs">
           <span style={{ color: 'var(--color-hint)' }}>Last sync:</span>
           <span style={{ color: 'var(--color-hint)' }}>
-            {formatLastSync()}
+            {formatLastSync}
           </span>
         </div>
 
