@@ -2,11 +2,13 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the Vite scaffold with a fully configured Next.js 15 app with Clerk auth, Bayaan theme system, custom icons, Spotify-style responsive layout shell, and API proxy routes.
+**Goal:** Replace the Vite scaffold with a fully configured Next.js 15 app with Bayaan theme system, custom icons, Spotify-style responsive layout shell, API proxy routes, and comprehensive tests.
 
-**Architecture:** Next.js 15 App Router with Clerk auth middleware protecting all routes. Zustand stores for theme and settings, persisted to localStorage. Tailwind + shadcn/ui (New York style) with Bayaan's exact color tokens mapped to CSS variables. Responsive three-zone layout (sidebar + content + player bar) on desktop, collapsed sidebar on tablet, bottom tab bar on mobile.
+**Architecture:** Next.js 15 App Router with Zustand stores for theme and settings, persisted to localStorage. Tailwind + shadcn/ui (New York style) with Bayaan's exact color tokens mapped to CSS variables. Responsive three-zone layout (sidebar + content + player bar) on desktop, collapsed sidebar on tablet, bottom tab bar on mobile. Auth deferred to a dedicated plan — all routes are open for now.
 
-**Tech Stack:** Next.js 15, React 19, TypeScript (strict), Tailwind CSS, shadcn/ui, Clerk, Zustand, SWR
+**Tech Stack:** Next.js 15, React 19, TypeScript (strict), Tailwind CSS, shadcn/ui, Zustand, SWR, Vitest, React Testing Library
+
+**Testing:** Every task includes unit/component tests. Vitest for test runner (fast, Vite-compatible), React Testing Library for component tests, MSW for API mocking where needed.
 
 **Spec:** `docs/superpowers/specs/2026-04-13-bayaan-web-design.md`
 
@@ -15,9 +17,10 @@
 2. **Audio Player** — AudioService, playerStore, AudioCoordinator, player UI components
 3. **Listening Pages** — Home, reciter profiles, surah pages, search
 4. **Quran Reader** — Mushaf view (QCF), reading view (Uthmani Hafs), verse actions, translations, tafseer
-5. **Backend User Data** — New tables, Clerk webhook, user CRUD endpoints
+5. **Backend User Data** — New tables, user CRUD endpoints
 6. **Collection & User Features** — Playlists, favorites, bookmarks, notes, history, reading progress
 7. **Adhkar & Settings** — Adhkar pages, tasbeeh counter, settings page
+8. **Authentication** — Clerk setup, protected routes, webhook sync, sign-in/sign-up pages
 
 ---
 
@@ -30,13 +33,14 @@ bayaan-web/
 ├── tsconfig.json
 ├── package.json
 ├── postcss.config.mjs
+├── vitest.config.ts                # Vitest configuration
+├── vitest.setup.ts                 # Test setup (RTL matchers)
 ├── components.json                 # shadcn config
-├── middleware.ts                    # Clerk auth middleware
 ├── src/
 │   ├── app/
 │   │   ├── globals.css             # Tailwind + Bayaan theme CSS vars
-│   │   ├── layout.tsx              # Root layout (Clerk, fonts, theme)
-│   │   ├── (app)/                  # Auth-protected group
+│   │   ├── layout.tsx              # Root layout (fonts, theme)
+│   │   ├── (app)/                  # App route group
 │   │   │   ├── layout.tsx          # App shell (sidebar + content + player bar)
 │   │   │   ├── page.tsx            # Home (placeholder)
 │   │   │   ├── search/page.tsx
@@ -55,8 +59,6 @@ bayaan-web/
 │   │   │   ├── adhkar/[superId]/page.tsx
 │   │   │   ├── adhkar/[superId]/[dhikrId]/page.tsx
 │   │   │   └── settings/page.tsx
-│   │   ├── sign-in/[[...sign-in]]/page.tsx
-│   │   ├── sign-up/[[...sign-up]]/page.tsx
 │   │   └── api/
 │   │       ├── bayaan/[...path]/route.ts
 │   │       └── quran/[...path]/route.ts
@@ -80,9 +82,22 @@ bayaan-web/
 │   │   ├── quran.ts
 │   │   ├── audio.ts
 │   │   └── reciter.ts
-│   └── data/
-│       ├── surah-data.json         # Copied from mobile app
-│       └── surah-glyph-map.ts
+│   ├── data/
+│   │   ├── surah-data.json         # Copied from mobile app
+│   │   └── surah-glyph-map.ts
+│   └── __tests__/
+│       ├── stores/
+│       │   └── theme-store.test.ts
+│       ├── components/
+│       │   ├── icons.test.tsx
+│       │   └── layout/
+│       │       ├── sidebar.test.tsx
+│       │       ├── mobile-tab-bar.test.tsx
+│       │       └── app-shell.test.tsx
+│       ├── lib/
+│       │   └── api.test.ts
+│       └── types/
+│           └── reciter.test.ts
 ├── public/
 │   └── fonts/
 │       ├── Manrope-Regular.ttf
@@ -121,8 +136,8 @@ npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --
 Note: This will detect existing files and merge. If it fails due to existing `package.json`, remove it first (`rm package.json package-lock.json`) and re-run. After creation, install additional dependencies:
 
 ```bash
-npm install zustand @clerk/nextjs swr framer-motion fuse.js @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
-npm install -D @types/node
+npm install zustand swr framer-motion fuse.js @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
+npm install -D @types/node vitest @vitejs/plugin-react @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom msw
 ```
 
 - [ ] **Step 3: Configure TypeScript strict mode**
@@ -542,134 +557,101 @@ git commit -m "feat: add Manrope and surah names fonts"
 
 ---
 
-### Task 4: Set Up Clerk Authentication
+### Task 4: Set Up Testing Infrastructure
 
 **Files:**
-- Create: `middleware.ts`, `src/app/sign-in/[[...sign-in]]/page.tsx`, `src/app/sign-up/[[...sign-up]]/page.tsx`
-- Modify: `src/app/layout.tsx`
+- Create: `vitest.config.ts`, `vitest.setup.ts`, `src/__tests__/setup-smoke.test.ts`
+- Modify: `package.json`
 
-- [ ] **Step 1: Create `.env.local` with Clerk keys**
+- [ ] **Step 1: Create `.env.local` with API config**
 
 Create `.env.local`:
 
 ```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YOUR_KEY_HERE
-CLERK_SECRET_KEY=sk_test_YOUR_KEY_HERE
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 NEXT_PUBLIC_BAYAAN_API_URL=https://api.thebayaan.com
 NEXT_PUBLIC_BAYAAN_CDN_URL=https://cdn.thebayaan.com
 BAYAAN_API_KEY=byn_YOUR_API_KEY_HERE
 ```
 
-Note: Get the Clerk keys from https://dashboard.clerk.com after creating a Bayaan project. Enable email+password, Google OAuth, and Apple OAuth in the Clerk dashboard. The `BAYAAN_API_KEY` is the existing API key for your backend — create a `web` platform key via your admin API if one doesn't exist.
+Note: The `BAYAAN_API_KEY` is the existing API key for your backend — create a `web` platform key via your admin API if one doesn't exist.
 
-- [ ] **Step 2: Add Clerk provider to root layout**
+- [ ] **Step 2: Create Vitest configuration**
 
-Update `src/app/layout.tsx`:
-
-```tsx
-import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
-import { manrope, surahNames } from "@/lib/fonts";
-import "./globals.css";
-
-export const metadata: Metadata = {
-  title: "Bayaan — Quran Listening & Reading",
-  description: "Listen to and read the Holy Quran with beautiful recitations",
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <ClerkProvider>
-      <html lang="en" dir="ltr" suppressHydrationWarning>
-        <body
-          className={`${manrope.variable} ${surahNames.variable} font-sans antialiased`}
-        >
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
-  );
-}
-```
-
-- [ ] **Step 3: Create Clerk middleware**
-
-Create `middleware.ts` in the project root (not inside `src/`):
+Create `vitest.config.ts`:
 
 ```typescript
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
-const isPublicRoute = createRouteMatcher([
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/api/quran(.*)",
-]);
-
-export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
-    await auth.protect();
-  }
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./vitest.setup.ts"],
+    include: ["src/**/*.test.{ts,tsx}"],
+    globals: true,
+    css: false,
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 });
-
-export const config = {
-  matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
-  ],
-};
 ```
 
-- [ ] **Step 4: Create sign-in page**
+- [ ] **Step 3: Create test setup file**
 
-Create `src/app/sign-in/[[...sign-in]]/page.tsx`:
+Create `vitest.setup.ts`:
 
-```tsx
-import { SignIn } from "@clerk/nextjs";
-
-export default function SignInPage() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <SignIn />
-    </div>
-  );
-}
+```typescript
+import "@testing-library/jest-dom/vitest";
 ```
 
-- [ ] **Step 5: Create sign-up page**
+- [ ] **Step 4: Add test script to package.json**
 
-Create `src/app/sign-up/[[...sign-up]]/page.tsx`:
+Add to `package.json` scripts:
 
-```tsx
-import { SignUp } from "@clerk/nextjs";
-
-export default function SignUpPage() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <SignUp />
-    </div>
-  );
-}
+```json
+"test": "vitest run",
+"test:watch": "vitest",
+"test:coverage": "vitest run --coverage"
 ```
 
-- [ ] **Step 6: Verify auth flow**
+- [ ] **Step 5: Write smoke test to verify setup**
 
-Run `npm run dev`. Navigate to `http://localhost:3000`:
-- Should redirect to `/sign-in` (since all routes are protected)
-- Sign-in page should render Clerk's UI
-- After signing in, should redirect to home page showing "Bayaan"
-- `/sign-up` should show the sign-up form
+Create `src/__tests__/setup-smoke.test.ts`:
+
+```typescript
+import { describe, it, expect } from "vitest";
+
+describe("test setup", () => {
+  it("runs a basic assertion", () => {
+    expect(1 + 1).toBe(2);
+  });
+
+  it("has access to jsdom", () => {
+    const div = document.createElement("div");
+    div.textContent = "Bayaan";
+    expect(div.textContent).toBe("Bayaan");
+  });
+});
+```
+
+- [ ] **Step 6: Run tests to verify setup**
+
+```bash
+npm test
+```
+
+Expected: 2 tests pass. Output shows `✓ src/__tests__/setup-smoke.test.ts`.
 
 - [ ] **Step 7: Commit**
 
 ```bash
 git add -A
-git commit -m "feat: set up Clerk authentication with protected routes"
+git commit -m "feat: set up Vitest with React Testing Library"
 ```
 
 ---
@@ -759,7 +741,6 @@ Update `src/app/layout.tsx`:
 
 ```tsx
 import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
 import { manrope, surahNames } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
@@ -775,24 +756,74 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en" dir="ltr" suppressHydrationWarning>
-        <body
-          className={`${manrope.variable} ${surahNames.variable} font-sans antialiased`}
-        >
-          <ThemeProvider>{children}</ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" dir="ltr" suppressHydrationWarning>
+      <body
+        className={`${manrope.variable} ${surahNames.variable} font-sans antialiased`}
+      >
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
+    </html>
   );
 }
 ```
 
-- [ ] **Step 4: Verify dark mode**
+- [ ] **Step 4: Write theme store tests**
+
+Create `src/__tests__/stores/theme-store.test.ts`:
+
+```typescript
+import { describe, it, expect, beforeEach } from "vitest";
+import { useThemeStore, getResolvedTheme } from "@/stores/theme-store";
+
+describe("theme-store", () => {
+  beforeEach(() => {
+    useThemeStore.setState({ themeMode: "dark" });
+  });
+
+  it("defaults to dark mode", () => {
+    expect(useThemeStore.getState().themeMode).toBe("dark");
+  });
+
+  it("switches to light mode", () => {
+    useThemeStore.getState().setThemeMode("light");
+    expect(useThemeStore.getState().themeMode).toBe("light");
+  });
+
+  it("switches to system mode", () => {
+    useThemeStore.getState().setThemeMode("system");
+    expect(useThemeStore.getState().themeMode).toBe("system");
+  });
+});
+
+describe("getResolvedTheme", () => {
+  it("resolves light mode", () => {
+    expect(getResolvedTheme("light")).toBe("light");
+  });
+
+  it("resolves dark mode", () => {
+    expect(getResolvedTheme("dark")).toBe("dark");
+  });
+
+  it("resolves system mode to dark or light", () => {
+    const result = getResolvedTheme("system");
+    expect(["light", "dark"]).toContain(result);
+  });
+});
+```
+
+- [ ] **Step 5: Run tests**
+
+```bash
+npm test
+```
+
+Expected: All theme store tests pass.
+
+- [ ] **Step 6: Verify dark mode visually**
 
 Run `npm run dev`. The app should default to dark mode (`#050b10` background). Inspect the `<html>` element — it should have class `dark`. The body should have the deep navy background.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add -A
@@ -976,15 +1007,97 @@ export function LogoIcon({ size = 24, isDarkMode = true, ...props }: IconProps) 
 
 Note: This covers the 11 most critical navigation and player icons. The remaining ~55 icons from the mobile app's `Icons.tsx` follow the exact same conversion pattern (`Svg` → `svg`, `Path` → `path`, remove `react-native-svg` import, use `SVGProps`). They should be ported in a batch pass by reading the source file and doing the mechanical conversion.
 
-- [ ] **Step 2: Run type check**
+- [ ] **Step 2: Write icon tests**
 
-```bash
-npx tsc --noEmit
+Create `src/__tests__/components/icons.test.tsx`:
+
+```tsx
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import {
+  HomeIcon,
+  SearchIcon,
+  PlayIcon,
+  PauseIcon,
+  LogoIcon,
+  HeartIcon,
+} from "@/components/icons";
+
+describe("icons", () => {
+  it("renders HomeIcon with default size", () => {
+    const { container } = render(<HomeIcon />);
+    const svg = container.querySelector("svg");
+    expect(svg).toBeInTheDocument();
+    expect(svg).toHaveAttribute("width", "24");
+    expect(svg).toHaveAttribute("height", "24");
+  });
+
+  it("renders HomeIcon with custom size", () => {
+    const { container } = render(<HomeIcon size={32} />);
+    const svg = container.querySelector("svg");
+    expect(svg).toHaveAttribute("width", "32");
+  });
+
+  it("renders HomeIcon outline by default", () => {
+    const { container } = render(<HomeIcon />);
+    const paths = container.querySelectorAll("path");
+    expect(paths.length).toBeGreaterThan(1); // outline has multiple paths
+  });
+
+  it("renders HomeIcon filled variant", () => {
+    const { container } = render(<HomeIcon filled />);
+    const path = container.querySelector("path");
+    expect(path).toHaveAttribute("fill");
+  });
+
+  it("renders SearchIcon", () => {
+    const { container } = render(<SearchIcon />);
+    expect(container.querySelector("svg")).toBeInTheDocument();
+  });
+
+  it("renders PlayIcon", () => {
+    const { container } = render(<PlayIcon />);
+    expect(container.querySelector("svg")).toBeInTheDocument();
+  });
+
+  it("renders PauseIcon", () => {
+    const { container } = render(<PauseIcon />);
+    const paths = container.querySelectorAll("path");
+    expect(paths.length).toBe(2); // two bars
+  });
+
+  it("renders HeartIcon outline and filled", () => {
+    const { container: outline } = render(<HeartIcon />);
+    const { container: filled } = render(<HeartIcon filled />);
+    const outlinePath = outline.querySelector("path");
+    const filledPath = filled.querySelector("path");
+    expect(outlinePath).toHaveAttribute("fill", "none");
+    expect(filledPath).not.toHaveAttribute("fill", "none");
+  });
+
+  it("renders LogoIcon with dark mode colors", () => {
+    const { container } = render(<LogoIcon isDarkMode />);
+    const path = container.querySelector("path");
+    expect(path).toHaveAttribute("fill", "#FFFFFF");
+  });
+
+  it("renders LogoIcon with light mode colors", () => {
+    const { container } = render(<LogoIcon isDarkMode={false} />);
+    const path = container.querySelector("path");
+    expect(path).toHaveAttribute("fill", "#101820");
+  });
+});
 ```
 
-Expected: No errors.
+- [ ] **Step 3: Run type check and tests**
 
-- [ ] **Step 3: Commit**
+```bash
+npx tsc --noEmit && npm test
+```
+
+Expected: No type errors. All icon tests pass.
+
+- [ ] **Step 4: Commit**
 
 ```bash
 git add -A
@@ -1183,9 +1296,87 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 }
 ```
 
-- [ ] **Step 7: Verify layout renders**
+- [ ] **Step 7: Write layout tests**
 
-Run `npm run dev`. After signing in, the home page should show:
+Create `src/__tests__/components/layout/sidebar.test.tsx`:
+
+```tsx
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { SidebarNavItem } from "@/components/layout/sidebar-nav-item";
+
+// Mock next/navigation
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+}));
+
+describe("SidebarNavItem", () => {
+  const MockIcon = ({ size, filled }: { size?: number; filled?: boolean }) => (
+    <svg data-testid="icon" data-filled={filled} width={size} height={size} />
+  );
+
+  it("renders label and icon", () => {
+    render(<SidebarNavItem href="/" icon={MockIcon} label="Home" />);
+    expect(screen.getByText("Home")).toBeInTheDocument();
+    expect(screen.getByTestId("icon")).toBeInTheDocument();
+  });
+
+  it("marks active route with filled icon", () => {
+    render(<SidebarNavItem href="/" icon={MockIcon} label="Home" />);
+    const icon = screen.getByTestId("icon");
+    expect(icon).toHaveAttribute("data-filled", "true");
+  });
+
+  it("renders inactive for non-matching route", () => {
+    render(<SidebarNavItem href="/search" icon={MockIcon} label="Search" />);
+    const icon = screen.getByTestId("icon");
+    expect(icon).toHaveAttribute("data-filled", "false");
+  });
+});
+```
+
+Create `src/__tests__/components/layout/mobile-tab-bar.test.tsx`:
+
+```tsx
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+}));
+
+describe("MobileTabBar", () => {
+  it("renders all 5 tab items", () => {
+    render(<MobileTabBar />);
+    expect(screen.getByText("Home")).toBeInTheDocument();
+    expect(screen.getByText("Search")).toBeInTheDocument();
+    expect(screen.getByText("Read")).toBeInTheDocument();
+    expect(screen.getByText("Collection")).toBeInTheDocument();
+    expect(screen.getByText("Settings")).toBeInTheDocument();
+  });
+
+  it("renders tab links with correct hrefs", () => {
+    render(<MobileTabBar />);
+    const homeLink = screen.getByText("Home").closest("a");
+    expect(homeLink).toHaveAttribute("href", "/");
+    const searchLink = screen.getByText("Search").closest("a");
+    expect(searchLink).toHaveAttribute("href", "/search");
+  });
+});
+```
+
+- [ ] **Step 8: Run tests**
+
+```bash
+npm test
+```
+
+Expected: All layout tests pass.
+
+- [ ] **Step 9: Verify layout renders visually**
+
+Run `npm run dev`. The home page should show:
 - Left sidebar with Bayaan logo and nav items (on desktop)
 - Bottom player bar placeholder (on desktop)
 - Bottom tab bar (resize browser to mobile width)
@@ -1211,17 +1402,11 @@ Create `src/app/api/bayaan/[...path]/route.ts`:
 
 ```typescript
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 
 const BAYAAN_API_URL = process.env.NEXT_PUBLIC_BAYAAN_API_URL ?? "https://api.thebayaan.com";
 const BAYAAN_API_KEY = process.env.BAYAAN_API_KEY ?? "";
 
 async function proxyToBayaan(request: NextRequest, params: { path: string[] }): Promise<NextResponse> {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const path = params.path.join("/");
   const url = new URL(`/v1/${path}`, BAYAAN_API_URL);
   request.nextUrl.searchParams.forEach((value, key) => {
@@ -1318,15 +1503,82 @@ export async function fetchQuran<T>(path: string, params?: Record<string, string
 }
 ```
 
-- [ ] **Step 4: Run type check**
+- [ ] **Step 4: Write API client tests**
 
-```bash
-npx tsc --noEmit
+Create `src/__tests__/lib/api.test.ts`:
+
+```typescript
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { fetchBayaan, fetchQuran } from "@/lib/api";
+
+describe("fetchBayaan", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("calls the correct proxy URL", async () => {
+    const mockResponse = { data: "test" };
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(mockResponse),
+    });
+
+    const result = await fetchBayaan("reciters");
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/api/bayaan/reciters"),
+      undefined
+    );
+    expect(result).toEqual(mockResponse);
+  });
+
+  it("throws on non-ok response", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+    });
+
+    await expect(fetchBayaan("reciters")).rejects.toThrow("Bayaan API error: 500");
+  });
+});
+
+describe("fetchQuran", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("calls the correct proxy URL with params", async () => {
+    const mockResponse = { verses: [] };
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(mockResponse),
+    });
+
+    await fetchQuran("verses/by_chapter/1", { per_page: "10" });
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/api/quran/verses/by_chapter/1?per_page=10"),
+    );
+  });
+
+  it("throws on non-ok response", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+    });
+
+    await expect(fetchQuran("verses/by_chapter/999")).rejects.toThrow("Quran API error: 404");
+  });
+});
 ```
 
-Expected: No errors.
+- [ ] **Step 5: Run type check and tests**
 
-- [ ] **Step 5: Commit**
+```bash
+npx tsc --noEmit && npm test
+```
+
+Expected: No type errors. All API tests pass.
+
+- [ ] **Step 6: Commit**
 
 ```bash
 git add -A
@@ -1527,15 +1779,84 @@ export const surahGlyphMap: Record<number, string> = {
 };
 ```
 
-- [ ] **Step 5: Run type check**
+- [ ] **Step 5: Write type validation tests**
 
-```bash
-npx tsc --noEmit
+Create `src/__tests__/types/reciter.test.ts`:
+
+```typescript
+import { describe, it, expect } from "vitest";
+import type { Reciter, Rewayat } from "@/types/reciter";
+import type { Track } from "@/types/audio";
+import type { Surah, AyahTimestamp } from "@/types/quran";
+
+describe("type contracts", () => {
+  it("Reciter has required fields", () => {
+    const reciter: Reciter = {
+      id: "abc-123",
+      name: "Mishary Alafasy",
+      slug: "mishary-alafasy",
+      is_featured: true,
+      rewayat: [],
+    };
+    expect(reciter.id).toBe("abc-123");
+    expect(reciter.rewayat).toHaveLength(0);
+  });
+
+  it("Rewayat has required fields", () => {
+    const rewayat: Rewayat = {
+      id: "rw-1",
+      reciter_id: "abc-123",
+      name: "Hafs A'n Assem",
+      style: "murattal",
+      server: "https://cdn.thebayaan.com/quran/recitations/mishary-alafasy/hafs/murattal/default",
+      source_type: "bayaan",
+      surah_total: 114,
+      surah_list: [1, 2, 3],
+      mp3quran_read_id: 12,
+      qdc_reciter_id: null,
+    };
+    expect(rewayat.style).toBe("murattal");
+    expect(rewayat.surah_list).toContain(1);
+  });
+
+  it("Track has all audio metadata", () => {
+    const track: Track = {
+      id: "t-1",
+      url: "https://cdn.thebayaan.com/quran/recitations/test/001.mp3",
+      title: "Al-Fatiha",
+      artist: "Mishary Alafasy",
+      artwork: "https://cdn.thebayaan.com/assets/reciter-images/mishary.jpg",
+      duration: 60000,
+      reciterId: "abc-123",
+      reciterName: "Mishary Alafasy",
+      surahId: 1,
+      rewayatId: "rw-1",
+    };
+    expect(track.url).toContain("cdn.thebayaan.com");
+  });
+
+  it("AyahTimestamp has timing data", () => {
+    const ts: AyahTimestamp = {
+      surah_number: 1,
+      ayah_number: 1,
+      timestamp_from: 0,
+      timestamp_to: 5000,
+      duration_ms: 5000,
+    };
+    expect(ts.duration_ms).toBe(ts.timestamp_to - ts.timestamp_from);
+  });
+});
 ```
 
-Expected: No errors.
+- [ ] **Step 6: Run type check and tests**
 
-- [ ] **Step 6: Commit**
+```bash
+npx tsc --noEmit && npm test
+```
+
+Expected: No type errors. All type tests pass.
+
+- [ ] **Step 7: Commit**
 
 ```bash
 git add -A
@@ -1700,12 +2021,12 @@ git commit -m "feat: add placeholder pages for all routes"
 
 After completing all 10 tasks, the app should:
 1. Start with `npm run dev` without errors
-2. Redirect unauthenticated users to `/sign-in`
-3. After auth, show the Spotify-style layout: sidebar + content + player bar
-4. Dark mode by default with Bayaan's exact color palette
-5. Manrope font renders across all text
-6. Custom Bayaan icons display in sidebar and mobile tab bar
-7. All routes navigable from sidebar/tab bar
-8. API proxy routes respond at `/api/bayaan/*` and `/api/quran/*`
-9. `npx tsc --noEmit` passes with zero errors
+2. Show the Spotify-style layout: sidebar + content + player bar
+3. Dark mode by default with Bayaan's exact color palette
+4. Manrope font renders across all text
+5. Custom Bayaan icons display in sidebar and mobile tab bar
+6. All routes navigable from sidebar/tab bar
+7. API proxy routes respond at `/api/bayaan/*` and `/api/quran/*`
+8. `npx tsc --noEmit` passes with zero errors
+9. `npm test` passes with all tests green
 10. `npx prettier --write` produces no changes
