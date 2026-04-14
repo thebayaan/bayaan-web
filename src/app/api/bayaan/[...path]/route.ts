@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
 const BAYAAN_API_URL =
   process.env.NEXT_PUBLIC_BAYAAN_API_URL ?? "https://api.thebayaan.com";
@@ -15,9 +16,19 @@ async function proxyToBayaan(
   });
 
   const headers: HeadersInit = {
-    Authorization: `Bearer ${BAYAAN_API_KEY}`,
     "Content-Type": "application/json",
   };
+
+  // For user-specific routes, use Clerk JWT. For everything else, use API key.
+  if (path.startsWith("user/")) {
+    const { getToken } = await auth();
+    const clerkToken = await getToken();
+    if (clerkToken) {
+      headers["Authorization"] = `Bearer ${clerkToken}`;
+    }
+  } else {
+    headers["Authorization"] = `Bearer ${BAYAAN_API_KEY}`;
+  }
 
   const fetchOptions: RequestInit = {
     method: request.method,
