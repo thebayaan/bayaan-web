@@ -67,6 +67,6 @@ describe("BottomPlayerBar", () => {
 
   it("renders play/pause button", () => {
     render(<BottomPlayerBar />);
-    expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Play" })).toBeInTheDocument();
   });
 });

@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { usePlayerStore } from "@/stores/player-store";
 import { PlayerControls } from "./player-controls";
 import { ProgressBar } from "./progress-bar";
 import { VolumeControl } from "./volume-control";
+import { FullPlayerView } from "./full-player-view";
+import { QueuePanel } from "./queue-panel";
 import { audioService } from "@/services/audio/audio-service";
 import type { RepeatMode } from "@/types/audio";
 import { useAudioEvents } from "@/hooks/use-audio-events";
@@ -26,6 +29,9 @@ export function BottomPlayerBar() {
   const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
 
   const currentTrack = tracks[currentIndex];
+
+  const [showFullPlayer, setShowFullPlayer] = useState(false);
+  const [showQueue, setShowQueue] = useState(false);
 
   if (!currentTrack) {
     return (
@@ -66,7 +72,11 @@ export function BottomPlayerBar() {
   return (
     <footer className="h-20 border-t border-border bg-background/80 backdrop-blur-2xl flex items-center px-4 gap-4">
       {/* Track Info — Left */}
-      <div className="flex items-center gap-3 w-[240px] min-w-0">
+      <button
+        onClick={() => setShowFullPlayer(true)}
+        className="flex items-center gap-3 w-[240px] min-w-0 text-left"
+        aria-label="Open full player"
+      >
         <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden shrink-0">
           {currentTrack.artwork && (
             <Image
@@ -84,7 +94,7 @@ export function BottomPlayerBar() {
             {currentTrack.artist}
           </p>
         </div>
-      </div>
+      </button>
 
       {/* Controls + Progress — Center */}
       <div className="flex-1 flex flex-col items-center gap-1 max-w-[600px]">
@@ -105,8 +115,29 @@ export function BottomPlayerBar() {
         />
       </div>
 
-      {/* Volume — Right */}
-      <div className="flex items-center justify-end w-[200px]">
+      {/* Volume + Queue Toggle — Right */}
+      <div className="flex items-center justify-end gap-2 w-[200px]">
+        <button
+          onClick={() => setShowQueue(!showQueue)}
+          className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Toggle queue"
+        >
+          <svg
+            width={16}
+            height={16}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+            <line x1="3" y1="18" x2="3.01" y2="18" />
+          </svg>
+        </button>
         <VolumeControl
           volume={playback.volume}
           isMuted={playback.isMuted}
@@ -114,6 +145,8 @@ export function BottomPlayerBar() {
           onMuteToggle={handleMuteToggle}
         />
       </div>
+      <FullPlayerView open={showFullPlayer} onOpenChange={setShowFullPlayer} />
+      <QueuePanel open={showQueue} onOpenChange={setShowQueue} />
     </footer>
   );
 }
