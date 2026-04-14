@@ -7,8 +7,12 @@ import { ProgressBar } from "./progress-bar";
 import { VolumeControl } from "./volume-control";
 import { audioService } from "@/services/audio/audio-service";
 import type { RepeatMode } from "@/types/audio";
+import { useAudioEvents } from "@/hooks/use-audio-events";
+import { useMediaSession } from "@/hooks/use-media-session";
 
 export function BottomPlayerBar() {
+  useAudioEvents();
+  useMediaSession();
   const tracks = usePlayerStore((s) => s.queue.tracks);
   const currentIndex = usePlayerStore((s) => s.queue.currentIndex);
   const playback = usePlayerStore((s) => s.playback);
