@@ -10,6 +10,7 @@ import {
 } from "@/components/icons";
 import { SidebarNavItem } from "./sidebar-nav-item";
 import { useThemeStore, getResolvedTheme } from "@/stores/theme-store";
+import { UserButton } from "@clerk/nextjs";
 
 const NAV_ITEMS = [
   { href: "/", icon: HomeIcon, label: "Home" },
@@ -35,7 +36,17 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="mt-auto px-2 pb-4">
+      <div className="mt-auto px-2 pb-4 space-y-2">
+        <div className="flex items-center gap-3 px-3 py-2">
+          <UserButton
+            appearance={{
+              elements: { avatarBox: "w-7 h-7" },
+            }}
+          />
+          <span className="hidden lg:inline text-sm text-muted-foreground">
+            Account
+          </span>
+        </div>
         <SidebarNavItem href="/settings" icon={SettingsIcon} label="Settings" />
       </div>
     </aside>
