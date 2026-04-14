@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
+import { manrope, surahNames } from "@/lib/fonts";
 import "./globals.css";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Bayaan — Quran Listening & Reading",
@@ -16,8 +13,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" dir="ltr" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
-      <body>{children}</body>
+    <html lang="en" dir="ltr" suppressHydrationWarning>
+      <body
+        className={`${manrope.variable} ${surahNames.variable} font-sans antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
