@@ -16,6 +16,11 @@ export class AudioService {
   private listeners: Map<AudioEventType, Set<AudioEventListener>> = new Map();
 
   private constructor() {
+    if (typeof window === "undefined") {
+      // SSR: create a no-op stub to prevent crashes during server-side rendering
+      this.audio = {} as HTMLAudioElement;
+      return;
+    }
     this.audio = new Audio();
     this.audio.preload = "auto";
   }
