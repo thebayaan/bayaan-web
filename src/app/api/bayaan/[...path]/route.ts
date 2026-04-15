@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
+// Use internal Railway URL in production (faster, no public internet hop)
 const BAYAAN_API_URL =
-  process.env.NEXT_PUBLIC_BAYAAN_API_URL ?? "https://api.thebayaan.com";
+  process.env.BAYAAN_INTERNAL_API_URL ??
+  process.env.NEXT_PUBLIC_BAYAAN_API_URL ??
+  "https://api.thebayaan.com";
 const BAYAAN_API_KEY = process.env.BAYAAN_API_KEY ?? "";
 
 async function proxyToBayaan(
