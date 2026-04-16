@@ -1,20 +1,13 @@
 "use client";
 
-import {
-  LogoIcon,
-  HomeIcon,
-  SearchIcon,
-  QuranIcon,
-  CollectionIcon,
-  SettingsIcon,
-} from "@/components/icons";
+import { LogoIcon, HomeIcon, QuranIcon, CollectionIcon, SettingsIcon } from "@/components/icons";
 import { SidebarNavItem } from "./sidebar-nav-item";
+import { ContinueReadingCard } from "./continue-reading-card";
 import { useThemeStore, getResolvedTheme } from "@/stores/theme-store";
 import { UserButton } from "@clerk/nextjs";
 
 const NAV_ITEMS = [
   { href: "/", icon: HomeIcon, label: "Home" },
-  { href: "/search", icon: SearchIcon, label: "Search" },
   { href: "/quran", icon: QuranIcon, label: "Read Quran" },
   { href: "/collection", icon: CollectionIcon, label: "Collection" },
 ] as const;
@@ -37,6 +30,10 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-auto space-y-2 px-2 pb-4">
+        <div className="px-1">
+          <ContinueReadingCard />
+        </div>
+        <SidebarNavItem href="/settings" icon={SettingsIcon} label="Settings" />
         <div className="flex items-center gap-3 px-3 py-2">
           <UserButton
             appearance={{
@@ -45,7 +42,6 @@ export function Sidebar() {
           />
           <span className="text-muted-foreground hidden text-sm lg:inline">Account</span>
         </div>
-        <SidebarNavItem href="/settings" icon={SettingsIcon} label="Settings" />
       </div>
     </aside>
   );
