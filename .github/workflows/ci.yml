@@ -115,26 +115,6 @@ jobs:
           cp -r public .next/standalone/
           cp -r .next/static .next/standalone/.next/
 
-      - name: Smoke-test the standalone server directly
-        run: |
-          node .next/standalone/server.js > /tmp/server.log 2>&1 &
-          SERVER_PID=$!
-          echo "server pid $SERVER_PID"
-          for i in $(seq 1 60); do
-            if curl -fsS -o /dev/null -w "%{http_code}\n" http://localhost:3000/ 2>&1 | tee -a /tmp/probe.log; then
-              break
-            fi
-            sleep 1
-          done
-          echo "--- final probes ---"
-          curl -I -s --max-time 10 http://localhost:3000/ || echo "curl / failed"
-          curl -I -s --max-time 10 http://localhost:3000/sign-in || echo "curl /sign-in failed"
-          curl -I -s --max-time 10 http://localhost:3000/file.svg || echo "curl /file.svg failed"
-          echo "--- server log ---"
-          cat /tmp/server.log
-          kill $SERVER_PID 2>/dev/null || true
-          wait $SERVER_PID 2>/dev/null || true
-
       - name: Run E2E
         run: npm run test:e2e
 

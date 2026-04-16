@@ -20,17 +20,17 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  // next.config.ts uses output: "standalone" for Railway, which makes
-  // `next start` a no-op. CI pre-builds and stages assets in a separate
-  // step; the webServer only boots the standalone server. Locally, the
-  // command does the full build+stage+start so `npm run test:e2e` works
-  // with no extra setup.
+  // next.config.ts uses output: "standalone" (required by Railway),
+  // which means `next start` is a no-op. The standalone bundle must be
+  // run from .next/standalone/ for its internal path resolution to
+  // work. CI pre-builds and stages assets in earlier steps; locally
+  // we do the full build+stage first so `npm run test:e2e` still works.
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
         command: process.env.CI
-          ? "node .next/standalone/server.js"
-          : "npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
+          ? "cd .next/standalone && node server.js"
+          : "npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && cd .next/standalone && node server.js",
         url: BASE_URL,
         timeout: 120_000,
         reuseExistingServer: !process.env.CI,
