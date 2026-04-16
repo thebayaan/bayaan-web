@@ -3,15 +3,27 @@
 import { PlayIcon, PauseIcon } from "@/components/icons";
 import type { Surah } from "@/types/quran";
 import { cn } from "@/lib/utils";
+import { AddToPlaylistButton } from "@/components/playlists/add-to-playlist";
 
 interface SurahListItemProps {
   surah: Surah;
   onPlay: (surahId: number) => void;
   isPlaying?: boolean;
   isCurrentTrack?: boolean;
+  /** When provided, renders an "add to playlist" action. */
+  playlistItem?: {
+    reciter_id: string;
+    rewayat_id: string;
+  };
 }
 
-export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack }: SurahListItemProps) {
+export function SurahListItem({
+  surah,
+  onPlay,
+  isPlaying,
+  isCurrentTrack,
+  playlistItem,
+}: SurahListItemProps) {
   return (
     <div
       className={cn(
@@ -39,6 +51,14 @@ export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack }: Sura
           <span>{surah.verses_count} verses</span>
         </p>
       </div>
+
+      {playlistItem ? (
+        <AddToPlaylistButton
+          label={`Add ${surah.name} to a playlist`}
+          item={{ ...playlistItem, surah_id: surah.id }}
+          className="text-muted-foreground hover:text-foreground rounded-full p-2 opacity-0 transition-colors group-hover:opacity-100 hover:bg-[var(--text-alpha-06)] focus:opacity-100"
+        />
+      ) : null}
 
       <button
         onClick={() => onPlay(surah.id)}

@@ -128,6 +128,11 @@ export default function ReciterPage({ params }: { params: Promise<{ slug: string
                 onPlay={handlePlaySurah}
                 isPlaying={isPlaying && isCurrent}
                 isCurrentTrack={isCurrent}
+                playlistItem={
+                  selectedRewayat
+                    ? { reciter_id: reciter.id, rewayat_id: selectedRewayat.id }
+                    : undefined
+                }
               />
             </div>
           );
