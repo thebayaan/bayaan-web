@@ -20,12 +20,16 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
+  // next.config.ts uses output: "standalone" for Railway, which makes
+  // `next start` a no-op. Build, stage the assets the standalone bundle
+  // doesn't copy (public/, .next/static), then run the bundled server.
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: "npm run build && npm run start",
+        command:
+          "npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
         url: BASE_URL,
-        timeout: 120_000,
+        timeout: 180_000,
         reuseExistingServer: !process.env.CI,
       },
 });
