@@ -1,11 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { QuranIcon } from "@/components/icons";
-import Link from "next/link";
+import surahData from "@/data/surah-data.json";
+import type { Surah } from "@/types/quran";
+
+const surahs = surahData as unknown as Surah[];
+const surahById = new Map<number, Surah>(surahs.map((s) => [s.id, s]));
 
 export default function BookmarksPage() {
-  const { bookmarks, isLoading } = useBookmarks();
+  const { bookmarks, isLoading, removeBookmark } = useBookmarks();
 
   return (
     <div className="p-6">
@@ -21,29 +26,54 @@ export default function BookmarksPage() {
           <QuranIcon size={48} className="text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">No bookmarks yet</p>
           <p className="text-muted-foreground mt-1 text-sm">
-            Bookmark verses while reading the Quran
+            Tap the bookmark icon next to any verse while reading.
           </p>
         </div>
       ) : (
-        <div className="space-y-2">
-          {bookmarks.map((bm) => (
-            <Link
-              key={bm.id}
-              href={`/quran/${bm.surah_number}`}
-              className="flex items-center justify-between rounded-lg bg-[var(--text-alpha-04)] p-3 transition-colors hover:bg-[var(--text-alpha-06)]"
-            >
-              <div>
-                <p className="text-sm font-medium">{bm.verse_key}</p>
-                {bm.note && (
-                  <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">{bm.note}</p>
-                )}
-              </div>
-              <span className="text-muted-foreground text-xs">
-                {new Date(bm.created_at).toLocaleDateString()}
-              </span>
-            </Link>
-          ))}
-        </div>
+        <ul className="space-y-2">
+          {bookmarks.map((bm) => {
+            const surah = surahById.get(bm.surah_number);
+            return (
+              <li
+                key={bm.id}
+                className="group relative flex items-center justify-between rounded-lg bg-[var(--text-alpha-04)] pr-2 transition-colors hover:bg-[var(--text-alpha-06)]"
+              >
+                <Link
+                  href={`/quran/${bm.surah_number}/${bm.ayah_number}`}
+                  className="block flex-1 p-3"
+                >
+                  <p className="text-sm font-medium">
+                    {surah ? `Surah ${surah.name}` : `Surah ${bm.surah_number}`}{" "}
+                    <span className="text-muted-foreground">· {bm.verse_key}</span>
+                  </p>
+                  {surah ? (
+                    <p className="text-muted-foreground mt-0.5 text-xs">
+                      {surah.translated_name_english}
+                    </p>
+                  ) : null}
+                  {bm.note ? (
+                    <p className="text-muted-foreground mt-1 line-clamp-2 text-xs">{bm.note}</p>
+                  ) : null}
+                </Link>
+                <button
+                  onClick={() => void removeBookmark(bm.verse_key)}
+                  aria-label={`Remove bookmark from ${bm.verse_key}`}
+                  className="text-muted-foreground hover:text-destructive shrink-0 rounded-full p-2 opacity-0 transition-colors group-hover:opacity-100 focus:opacity-100"
+                >
+                  <svg
+                    width={16}
+                    height={16}
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                  </svg>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </div>
   );

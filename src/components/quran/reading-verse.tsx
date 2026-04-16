@@ -2,6 +2,7 @@
 import { forwardRef } from "react";
 import type { QcfVerse } from "@/types/quran-api";
 import { VerseText } from "./verse-text";
+import { BookmarkToggle } from "./bookmark-toggle";
 import { sanitizeHtml } from "@/lib/sanitize";
 
 interface ReadingVerseProps {
@@ -26,8 +27,12 @@ export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(functi
         isTarget ? "-mx-2 rounded-lg bg-[var(--text-alpha-06)] px-2" : ""
       }`}
     >
-      <div className="mb-2 flex items-center gap-2">
+      <div className="mb-2 flex items-center justify-between gap-2">
         <span className="text-muted-foreground text-xs font-medium">{verse.verse_key}</span>
+        <BookmarkToggle
+          verseKey={verse.verse_key}
+          className="text-muted-foreground hover:text-foreground rounded-full p-1 transition-colors hover:bg-[var(--text-alpha-06)]"
+        />
       </div>
       <div className="mb-3">
         <VerseText
