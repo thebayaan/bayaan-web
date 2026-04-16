@@ -32,8 +32,9 @@ export function MushafView() {
     <div className="flex h-full flex-col">
       <div className="border-border flex items-center justify-between border-b px-4 py-2">
         <button
-          onClick={() => goToPage(currentPage + 1)}
-          disabled={currentPage >= TOTAL_PAGES}
+          onClick={() => goToPage(currentPage - 1)}
+          disabled={currentPage <= 1}
+          aria-label="Previous page"
           className="rounded-lg bg-[var(--text-alpha-06)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--text-alpha-10)] disabled:opacity-30"
         >
           &#8594; Previous
@@ -51,8 +52,9 @@ export function MushafView() {
           <span className="text-muted-foreground text-sm">/ {TOTAL_PAGES}</span>
         </div>
         <button
-          onClick={() => goToPage(currentPage - 1)}
-          disabled={currentPage <= 1}
+          onClick={() => goToPage(currentPage + 1)}
+          disabled={currentPage >= TOTAL_PAGES}
+          aria-label="Next page"
           className="rounded-lg bg-[var(--text-alpha-06)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--text-alpha-10)] disabled:opacity-30"
         >
           Next &#8592;
