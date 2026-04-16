@@ -20,6 +20,28 @@ export const handlers = [
   http.get(`${API}/bayaan/user/favorites`, () => HttpResponse.json({ data: [] })),
   http.get(`${API}/bayaan/user/favorite-reciters`, () => HttpResponse.json({ data: [] })),
   http.get(`${API}/bayaan/user/bookmarks`, () => HttpResponse.json({ data: [] })),
+  http.post(`${API}/bayaan/user/bookmarks`, async ({ request }) => {
+    const body = (await request.json()) as {
+      verse_key: string;
+      surah_number: number;
+      ayah_number: number;
+      note?: string;
+    };
+    return HttpResponse.json(
+      {
+        data: {
+          id: `bookmark-${body.verse_key}`,
+          user_id: "mock-user",
+          ...body,
+          created_at: new Date().toISOString(),
+        },
+      },
+      { status: 201 },
+    );
+  }),
+  http.delete(`${API}/bayaan/user/bookmarks/:verseKey`, () =>
+    HttpResponse.json({ data: { deleted: true } }),
+  ),
   http.get(`${API}/bayaan/user/notes`, () => HttpResponse.json({ data: [] })),
   http.get(`${API}/bayaan/user/playlists`, () => HttpResponse.json({ data: [] })),
   http.get(`${API}/bayaan/user/playlists/:id`, ({ params }) =>
