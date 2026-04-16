@@ -22,6 +22,53 @@ export const handlers = [
   http.get(`${API}/bayaan/user/bookmarks`, () => HttpResponse.json({ data: [] })),
   http.get(`${API}/bayaan/user/notes`, () => HttpResponse.json({ data: [] })),
   http.get(`${API}/bayaan/user/playlists`, () => HttpResponse.json({ data: [] })),
+  http.get(`${API}/bayaan/user/playlists/:id`, ({ params }) =>
+    HttpResponse.json({
+      data: {
+        playlist: {
+          id: String(params.id),
+          name: "Mock playlist",
+          description: "",
+          is_public: false,
+          created_at: "2025-01-01T00:00:00Z",
+          updated_at: "2025-01-01T00:00:00Z",
+        },
+        items: [],
+      },
+    }),
+  ),
+  http.post(`${API}/bayaan/user/playlists`, async ({ request }) => {
+    const body = (await request.json()) as { name: string; description?: string };
+    return HttpResponse.json(
+      {
+        data: {
+          id: "playlist-created",
+          name: body.name,
+          description: body.description ?? "",
+          is_public: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      },
+      { status: 201 },
+    );
+  }),
+  http.put(`${API}/bayaan/user/playlists/:id`, async ({ params, request }) => {
+    const body = (await request.json()) as { name?: string; description?: string };
+    return HttpResponse.json({
+      data: {
+        id: String(params.id),
+        name: body.name ?? "Renamed",
+        description: body.description ?? "",
+        is_public: false,
+        created_at: "2025-01-01T00:00:00Z",
+        updated_at: new Date().toISOString(),
+      },
+    });
+  }),
+  http.delete(`${API}/bayaan/user/playlists/:id`, () =>
+    HttpResponse.json({ data: { deleted: true } }),
+  ),
 
   http.get(`${API}/quran/verses/by_chapter/:chapter`, ({ params }) =>
     HttpResponse.json({

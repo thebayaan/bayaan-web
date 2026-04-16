@@ -11,4 +11,5 @@ playwright-report
 test-results
 .playwright-mcp
 .superpowers
+.claude
 .DS_Store
