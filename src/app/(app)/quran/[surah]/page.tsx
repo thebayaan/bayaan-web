@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import { ReadingView } from "@/components/quran/reading-view";
+import { ReadingSubHeader } from "@/components/quran/reading-sub-header";
 
 const surahs = surahData as unknown as Surah[];
 
@@ -30,5 +31,10 @@ export default async function QuranSurahPage({ params }: { params: Promise<{ sur
   const { surah } = await params;
   const match = resolveSurah(surah);
   if (!match) notFound();
-  return <ReadingView surahId={match.id} />;
+  return (
+    <>
+      <ReadingSubHeader surah={match} />
+      <ReadingView surahId={match.id} />
+    </>
+  );
 }
