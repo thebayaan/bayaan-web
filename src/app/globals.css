@@ -39,10 +39,10 @@
   --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);
   --color-surface-sunken: var(--surface-sunken);
-  --color-accent-main: var(--accent-main);
-  --color-accent-strong: var(--accent-strong);
-  --color-accent-weak: var(--accent-weak);
-  --color-accent-light: var(--accent-light);
+  --color-brand-main: var(--brand-main);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-weak: var(--brand-weak);
+  --color-brand-light: var(--brand-light);
   --color-border-divider: var(--border-divider);
   --color-overlay: var(--overlay);
 }
@@ -183,11 +183,11 @@
   --surface-raised: var(--card);
   --surface-sunken: oklch(0.92 0.01 90);
 
-  /* Accent ladder — Deezer purple */
-  --accent-main: #a238ff;
-  --accent-strong: #9333e8;
-  --accent-weak: rgba(162, 56, 255, 0.2);
-  --accent-light: rgba(162, 56, 255, 0.08);
+  /* Brand accent ladder — Deezer purple */
+  --brand-main: #a238ff;
+  --brand-strong: #9333e8;
+  --brand-weak: rgba(162, 56, 255, 0.2);
+  --brand-light: rgba(162, 56, 255, 0.08);
 
   /* Border and divider */
   --border-divider: oklch(0.92 0.01 90);
@@ -210,7 +210,7 @@
 }
 
 [data-theme="dark"] {
-  --surface-sunken: oklch(0.14 0.02 250);
+  --surface-sunken: oklch(0.07 0.02 250);
   --border-divider: oklch(0.2 0.02 250);
   --overlay: rgba(0, 0, 0, 0.8);
   --elevation-s: 0 1px 20px rgba(0, 0, 0, 0.5);
@@ -220,10 +220,10 @@
 
 [data-theme="sepia"] {
   --surface-sunken: oklch(0.88 0.04 78);
-  --accent-main: #72603f;
-  --accent-strong: #5a4a30;
-  --accent-weak: rgba(114, 96, 63, 0.2);
-  --accent-light: rgba(114, 96, 63, 0.08);
+  --brand-main: #72603f;
+  --brand-strong: #5a4a30;
+  --brand-weak: rgba(114, 96, 63, 0.2);
+  --brand-light: rgba(114, 96, 63, 0.08);
   --border-divider: oklch(0.85 0.04 78);
   --overlay: rgba(0, 0, 0, 0.25);
   --elevation-s: 0 1px 20px rgba(54, 42, 20, 0.12);
