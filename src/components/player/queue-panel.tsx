@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { usePlayerStore } from "@/stores/player-store";
-import { PlayIcon } from "@/components/icons";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import type { Track } from "@/types/audio";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 interface QueuePanelProps {
   open: boolean;
@@ -12,80 +13,197 @@ interface QueuePanelProps {
 export function QueuePanel({ open, onOpenChange }: QueuePanelProps): React.ReactElement {
   const tracks = usePlayerStore((s) => s.queue.tracks);
   const currentIndex = usePlayerStore((s) => s.queue.currentIndex);
-  const isPlaying = usePlayerStore((s) => s.playback.isPlaying);
-  const updateQueue = usePlayerStore((s) => s.updateQueue);
+  const clearQueue = usePlayerStore((s) => s.clearQueue);
+  const removeFromQueue = usePlayerStore((s) => s.removeFromQueue);
+  const skipToIndex = usePlayerStore((s) => s.skipToIndex);
+  const [historyExpanded, setHistoryExpanded] = useState(false);
 
-  const upcomingTracks = tracks.slice(currentIndex + 1);
-  const currentTrack = tracks[currentIndex];
+  // currentIndex of -1 means no active track; treat slice bounds safely.
+  const safeCurrentIndex = currentIndex < 0 ? 0 : currentIndex;
+  const history = currentIndex > 0 ? tracks.slice(0, currentIndex) : [];
+  const upcoming = currentIndex < 0 ? [] : tracks.slice(safeCurrentIndex);
+
+  function handleClose(): void {
+    onOpenChange(false);
+  }
+
+  function handleJump(absoluteIndex: number): void {
+    void skipToIndex(absoluteIndex);
+  }
+
+  function handleRemove(absoluteIndex: number): void {
+    removeFromQueue([absoluteIndex]);
+  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="bg-background border-border w-[380px] p-0">
-        <SheetHeader className="border-border border-b p-4">
-          <SheetTitle>Queue</SheetTitle>
-        </SheetHeader>
-
-        <div className="max-h-[calc(100vh-120px)] overflow-y-auto">
-          {/* Now Playing */}
-          {currentTrack && (
-            <div className="p-4">
-              <p className="text-muted-foreground mb-2 text-xs font-medium tracking-wider uppercase">
-                Now Playing
-              </p>
-              <div className="bg-muted flex items-center gap-3 rounded-lg p-2">
-                <div className="flex w-6 items-center justify-center gap-0.5">
-                  {isPlaying ? (
-                    <>
-                      <span className="bg-foreground h-3 w-0.5 animate-pulse rounded-full" />
-                      <span className="bg-foreground h-4 w-0.5 animate-pulse rounded-full" />
-                      <span className="bg-foreground h-2 w-0.5 animate-pulse rounded-full" />
-                    </>
-                  ) : (
-                    <PlayIcon size={12} />
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{currentTrack.title}</p>
-                  <p className="text-muted-foreground truncate text-xs">{currentTrack.artist}</p>
-                </div>
-              </div>
+      <SheetContent className="bg-surface-raised border-border-divider w-[380px] border-l p-0">
+        <aside className="flex h-full w-full flex-col">
+          <header className="border-border-divider flex items-center justify-between border-b px-5 py-4">
+            <div className="flex items-baseline gap-3">
+              <h2 className="text-foreground text-base font-bold">Up Next</h2>
+              <span className="text-muted-foreground text-xs font-medium">
+                {upcoming.length} {upcoming.length === 1 ? "track" : "tracks"}
+              </span>
             </div>
-          )}
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={clearQueue}
+                className="text-muted-foreground hover:text-foreground duration-fast ease-standard rounded px-2 py-1 text-xs font-semibold transition-colors"
+              >
+                Clear queue
+              </button>
+              <button
+                type="button"
+                onClick={handleClose}
+                aria-label="Close queue"
+                className="text-muted-foreground hover:bg-surface-sunken flex h-8 w-8 items-center justify-center rounded-lg"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          </header>
 
-          {/* Upcoming */}
-          {upcomingTracks.length > 0 && (
-            <div className="p-4 pt-0">
-              <p className="text-muted-foreground mb-2 text-xs font-medium tracking-wider uppercase">
-                Next Up ({upcomingTracks.length})
-              </p>
-              <div className="space-y-1">
-                {upcomingTracks.map((track, idx) => (
-                  <button
-                    key={`${track.id}-${idx}`}
-                    onClick={() => {
-                      void updateQueue(tracks, currentIndex + 1 + idx);
-                    }}
-                    className="hover:bg-muted flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors"
+          <div className="flex-1 overflow-y-auto">
+            {history.length > 0 ? (
+              <div className="border-border-divider border-b">
+                <button
+                  type="button"
+                  onClick={() => setHistoryExpanded((v) => !v)}
+                  className="hover:bg-surface-sunken duration-fast ease-standard flex w-full items-center justify-between px-5 py-3 text-left transition-colors"
+                >
+                  <span className="text-muted-foreground text-[11px] font-bold tracking-[0.08em] uppercase">
+                    History · {history.length}
+                  </span>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`text-muted-foreground duration-fast transition-transform ${
+                      historyExpanded ? "rotate-180" : ""
+                    }`}
                   >
-                    <span className="text-muted-foreground w-6 text-center text-xs">{idx + 1}</span>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm">{track.title}</p>
-                      <p className="text-muted-foreground truncate text-xs">{track.artist}</p>
-                    </div>
-                  </button>
-                ))}
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                {historyExpanded ? (
+                  <ul className="pb-2">
+                    {history.map((track, i) => (
+                      <QueueRow
+                        key={`history-${track.id}-${i}`}
+                        track={track}
+                        isActive={false}
+                        onJump={() => handleJump(i)}
+                        onRemove={() => handleRemove(i)}
+                      />
+                    ))}
+                  </ul>
+                ) : null}
               </div>
-            </div>
-          )}
+            ) : null}
 
-          {tracks.length === 0 && (
-            <div className="text-muted-foreground p-8 text-center">
-              <p>Queue is empty</p>
-              <p className="mt-1 text-xs">Select a reciter and surah to start listening</p>
-            </div>
-          )}
-        </div>
+            {upcoming.length > 0 ? (
+              <ul className="py-2">
+                {upcoming.map((track, offset) => {
+                  const absoluteIndex = safeCurrentIndex + offset;
+                  return (
+                    <QueueRow
+                      key={`up-${track.id}-${absoluteIndex}`}
+                      track={track}
+                      isActive={offset === 0 && currentIndex >= 0}
+                      onJump={() => handleJump(absoluteIndex)}
+                      onRemove={() => handleRemove(absoluteIndex)}
+                    />
+                  );
+                })}
+              </ul>
+            ) : null}
+
+            {tracks.length === 0 ? (
+              <div className="text-muted-foreground p-8 text-center">
+                <p>Queue is empty</p>
+                <p className="mt-1 text-xs">Select a reciter and surah to start listening</p>
+              </div>
+            ) : null}
+          </div>
+        </aside>
       </SheetContent>
     </Sheet>
+  );
+}
+
+interface QueueRowProps {
+  track: Track;
+  isActive: boolean;
+  onJump: () => void;
+  onRemove: () => void;
+}
+
+function QueueRow({ track, isActive, onJump, onRemove }: QueueRowProps): React.ReactElement {
+  return (
+    <li className="group/qrow relative">
+      <button
+        type="button"
+        onClick={onJump}
+        className={`hover:bg-surface-sunken duration-fast ease-standard flex w-full items-center gap-3 px-5 py-3 pr-12 text-left transition-colors ${
+          isActive ? "bg-brand-light" : ""
+        }`}
+      >
+        <div className="bg-surface-sunken h-10 w-10 shrink-0 overflow-hidden rounded-md">
+          {track.artwork ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={track.artwork} alt="" className="h-full w-full object-cover" />
+          ) : null}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div
+            className={`truncate text-sm font-semibold ${
+              isActive ? "text-brand-main" : "text-foreground"
+            }`}
+          >
+            {track.title}
+          </div>
+          <div className="text-muted-foreground truncate text-xs">{track.reciterName}</div>
+        </div>
+      </button>
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label="Remove from queue"
+        className="text-muted-foreground hover:text-foreground hover:bg-surface-raised absolute top-1/2 right-3 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md opacity-0 transition-opacity group-hover/qrow:opacity-100"
+      >
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </li>
   );
 }

@@ -43,12 +43,14 @@ interface PlayerStoreState {
   addToQueue: (tracks: Track[]) => Promise<void>;
   removeFromQueue: (indices: number[]) => void;
   moveInQueue: (from: number, to: number) => void;
+  clearQueue: () => void;
 
   // Playback actions
   play: () => Promise<void>;
   pause: () => void;
   skipToNext: () => Promise<void>;
   skipToPrevious: () => Promise<void>;
+  skipToIndex: (index: number) => Promise<void>;
   seekTo: (positionMs: number) => void;
 
   // Settings actions
@@ -145,6 +147,15 @@ export const usePlayerStore = create<PlayerStoreState>()(
             },
           };
         });
+      },
+
+      clearQueue: () => {
+        audioService.cleanup();
+        audioCoordinator.sourceDidStop("main");
+        set((s) => ({
+          queue: { tracks: [], currentIndex: -1, shuffleOrder: null, shufflePosition: 0 },
+          playback: { ...s.playback, isPlaying: false, positionMs: 0, durationMs: 0 },
+        }));
       },
 
       moveInQueue: (from, to) => {
@@ -303,6 +314,34 @@ export const usePlayerStore = create<PlayerStoreState>()(
             isLoading: false,
           }));
         }
+      },
+
+      skipToIndex: async (index) => {
+        const state = get();
+        const { tracks, shuffleOrder } = state.queue;
+        if (index < 0 || index >= tracks.length) return;
+        const target = tracks[index];
+        if (!target) return;
+
+        // Re-sync shuffle position so subsequent next/prev align with the
+        // new currentIndex without rebuilding the permutation.
+        const nextShufflePosition = shuffleOrder ? Math.max(0, shuffleOrder.indexOf(index)) : 0;
+
+        set((s) => ({
+          queue: {
+            ...s.queue,
+            currentIndex: index,
+            shufflePosition: nextShufflePosition,
+          },
+          isLoading: true,
+        }));
+        audioService.load(target.url);
+        audioCoordinator.mainWillPlay();
+        await audioService.play();
+        set((s) => ({
+          playback: { ...s.playback, isPlaying: true, positionMs: 0 },
+          isLoading: false,
+        }));
       },
 
       seekTo: (positionMs) => {
