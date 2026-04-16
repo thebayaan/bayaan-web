@@ -35,9 +35,7 @@ export function useVersesByChapter(
   });
 
   const { data, error, isLoading } = useSWR<VersesResponse>(
-    chapterId > 0
-      ? `verses/by_chapter/${chapterId}?${params.toString()}`
-      : null,
+    chapterId > 0 ? `verses/by_chapter/${chapterId}?${params.toString()}` : null,
     fetchVersesByChapter,
     { revalidateOnFocus: false, dedupingInterval: 300000 },
   );

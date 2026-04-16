@@ -2,11 +2,7 @@
 import { use } from "react";
 import { ReadingView } from "@/components/quran/reading-view";
 
-export default function QuranSurahPage({
-  params,
-}: {
-  params: Promise<{ surah: string }>;
-}) {
+export default function QuranSurahPage({ params }: { params: Promise<{ surah: string }> }) {
   const { surah } = use(params);
   const surahId = parseInt(surah, 10);
   if (isNaN(surahId) || surahId < 1 || surahId > 114) {

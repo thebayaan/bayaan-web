@@ -57,6 +57,7 @@ src/
 ### Task 1: AudioService — HTML5 Audio Wrapper
 
 **Files:**
+
 - Create: `src/services/audio/audio-service.ts`
 - Test: `src/__tests__/services/audio-service.test.ts`
 
@@ -95,7 +96,10 @@ let mockAudio: ReturnType<typeof createMockAudio>;
 beforeEach(async () => {
   vi.resetModules();
   mockAudio = createMockAudio();
-  vi.stubGlobal("Audio", vi.fn(() => mockAudio));
+  vi.stubGlobal(
+    "Audio",
+    vi.fn(() => mockAudio),
+  );
   const mod = await import("@/services/audio/audio-service");
   AudioService = mod.AudioService;
 });
@@ -331,6 +335,7 @@ git commit -m "feat: add AudioService wrapping HTML5 Audio element"
 ### Task 2: AudioCoordinator — Mutual Exclusion
 
 **Files:**
+
 - Create: `src/services/audio/audio-coordinator.ts`
 - Test: `src/__tests__/services/audio-coordinator.test.ts`
 
@@ -413,10 +418,7 @@ export class AudioCoordinator {
     return this.activeSource;
   }
 
-  registerPauseHandler(
-    source: "main" | "mushaf",
-    handler: () => void
-  ): void {
+  registerPauseHandler(source: "main" | "mushaf", handler: () => void): void {
     if (source === "main") {
       this.onPauseMain = handler;
     } else {
@@ -468,6 +470,7 @@ git commit -m "feat: add AudioCoordinator for main/mushaf mutual exclusion"
 ### Task 3: Player Store — Zustand State Management
 
 **Files:**
+
 - Create: `src/stores/player-store.ts`
 - Test: `src/__tests__/stores/player-store.test.ts`
 
@@ -701,10 +704,21 @@ export function getInitialState(): Omit<PlayerStoreState, keyof PlayerActions> {
 
 type PlayerActions = Pick<
   PlayerStoreState,
-  | "updateQueue" | "addToQueue" | "removeFromQueue" | "moveInQueue"
-  | "play" | "pause" | "skipToNext" | "skipToPrevious" | "seekTo"
-  | "setRepeatMode" | "toggleShuffle" | "setSleepTimer" | "setRate"
-  | "updatePlayback" | "reset"
+  | "updateQueue"
+  | "addToQueue"
+  | "removeFromQueue"
+  | "moveInQueue"
+  | "play"
+  | "pause"
+  | "skipToNext"
+  | "skipToPrevious"
+  | "seekTo"
+  | "setRepeatMode"
+  | "toggleShuffle"
+  | "setSleepTimer"
+  | "setRate"
+  | "updatePlayback"
+  | "reset"
 >;
 
 export const usePlayerStore = create<PlayerStoreState>()(
@@ -745,9 +759,7 @@ export const usePlayerStore = create<PlayerStoreState>()(
           let currentIndex = s.queue.currentIndex;
 
           // Adjust currentIndex for removed items before it
-          const removedBefore = indices.filter(
-            (i) => i < s.queue.currentIndex
-          ).length;
+          const removedBefore = indices.filter((i) => i < s.queue.currentIndex).length;
           currentIndex -= removedBefore;
 
           if (currentIndex >= tracks.length) {
@@ -919,25 +931,24 @@ export const usePlayerStore = create<PlayerStoreState>()(
         if (!state) return;
         // Discard stale URLs (non-cdn.thebayaan.com)
         const hasBadUrls = state.queue.tracks.some(
-          (t) =>
-            t.url.includes("mp3quran.net") ||
-            t.url.includes("supabase.co")
+          (t) => t.url.includes("mp3quran.net") || t.url.includes("supabase.co"),
         );
         if (hasBadUrls) {
           state.queue = { tracks: [], currentIndex: -1 };
         }
       },
-    }
-  )
+    },
+  ),
 );
 
 // Expose getInitialState for testing
-usePlayerStore.getInitialState = () => ({
-  queue: { tracks: [], currentIndex: -1 },
-  playback: { ...INITIAL_PLAYBACK },
-  settings: { ...INITIAL_SETTINGS },
-  isLoading: false,
-}) as unknown as () => PlayerStoreState;
+usePlayerStore.getInitialState = () =>
+  ({
+    queue: { tracks: [], currentIndex: -1 },
+    playback: { ...INITIAL_PLAYBACK },
+    settings: { ...INITIAL_SETTINGS },
+    isLoading: false,
+  }) as unknown as () => PlayerStoreState;
 ```
 
 - [ ] **Step 4: Run tests — they should pass**
@@ -968,6 +979,7 @@ git commit -m "feat: add Zustand player store with queue and playback management
 ### Task 4: Player UI Components — ProgressBar and PlayerControls
 
 **Files:**
+
 - Create: `src/components/player/progress-bar.tsx`, `src/components/player/player-controls.tsx`, `src/components/player/volume-control.tsx`
 - Test: `src/__tests__/components/player/progress-bar.test.tsx`, `src/__tests__/components/player/player-controls.test.tsx`
 
@@ -988,21 +1000,13 @@ import { ProgressBar } from "@/components/player/progress-bar";
 
 describe("ProgressBar", () => {
   it("displays formatted time values", () => {
-    render(
-      <ProgressBar
-        positionMs={90000}
-        durationMs={300000}
-        onSeek={vi.fn()}
-      />
-    );
+    render(<ProgressBar positionMs={90000} durationMs={300000} onSeek={vi.fn()} />);
     expect(screen.getByText("1:30")).toBeInTheDocument();
     expect(screen.getByText("5:00")).toBeInTheDocument();
   });
 
   it("displays 0:00 when no duration", () => {
-    render(
-      <ProgressBar positionMs={0} durationMs={0} onSeek={vi.fn()} />
-    );
+    render(<ProgressBar positionMs={0} durationMs={0} onSeek={vi.fn()} />);
     const zeros = screen.getAllByText("0:00");
     expect(zeros).toHaveLength(2);
   });
@@ -1091,26 +1095,18 @@ interface ProgressBarProps {
   compact?: boolean;
 }
 
-export function ProgressBar({
-  positionMs,
-  durationMs,
-  onSeek,
-  compact,
-}: ProgressBarProps) {
+export function ProgressBar({ positionMs, durationMs, onSeek, compact }: ProgressBarProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragValue, setDragValue] = useState(0);
 
   const progress = durationMs > 0 ? (positionMs / durationMs) * 100 : 0;
   const displayProgress = isDragging ? dragValue : progress;
 
-  const handleValueChange = useCallback(
-    (value: number[]) => {
-      const v = value[0] ?? 0;
-      setDragValue(v);
-      setIsDragging(true);
-    },
-    []
-  );
+  const handleValueChange = useCallback((value: number[]) => {
+    const v = value[0] ?? 0;
+    setDragValue(v);
+    setIsDragging(true);
+  }, []);
 
   const handleValueCommit = useCallback(
     (value: number[]) => {
@@ -1119,14 +1115,14 @@ export function ProgressBar({
       onSeek(seekMs);
       setIsDragging(false);
     },
-    [durationMs, onSeek]
+    [durationMs, onSeek],
   );
 
   if (compact) {
     return (
-      <div className="w-full h-1 bg-[var(--text-alpha-06)] rounded-full overflow-hidden">
+      <div className="h-1 w-full overflow-hidden rounded-full bg-[var(--text-alpha-06)]">
         <div
-          className="h-full bg-foreground/60 transition-[width] duration-200"
+          className="bg-foreground/60 h-full transition-[width] duration-200"
           style={{ width: `${displayProgress}%` }}
         />
       </div>
@@ -1134,8 +1130,8 @@ export function ProgressBar({
   }
 
   return (
-    <div className="flex items-center gap-2 w-full">
-      <span className="text-[10px] text-muted-foreground w-10 text-right tabular-nums">
+    <div className="flex w-full items-center gap-2">
+      <span className="text-muted-foreground w-10 text-right text-[10px] tabular-nums">
         {formatTime(isDragging ? (dragValue / 100) * durationMs : positionMs)}
       </span>
       <Slider
@@ -1146,7 +1142,7 @@ export function ProgressBar({
         onValueCommit={handleValueCommit}
         className="flex-1"
       />
-      <span className="text-[10px] text-muted-foreground w-10 tabular-nums">
+      <span className="text-muted-foreground w-10 text-[10px] tabular-nums">
         {formatTime(durationMs)}
       </span>
     </div>
@@ -1194,14 +1190,19 @@ export function PlayerControls({
         <button
           onClick={onShuffleToggle}
           className={cn(
-            "p-1.5 rounded-full transition-colors",
-            shuffle
-              ? "text-foreground"
-              : "text-muted-foreground hover:text-foreground"
+            "rounded-full p-1.5 transition-colors",
+            shuffle ? "text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
           aria-label={shuffle ? "Disable shuffle" : "Enable shuffle"}
         >
-          <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+          <svg
+            width={16}
+            height={16}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
             <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
           </svg>
         </button>
@@ -1209,7 +1210,7 @@ export function PlayerControls({
 
       <button
         onClick={onPrevious}
-        className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+        className="text-muted-foreground hover:text-foreground p-1.5 transition-colors"
         aria-label="Previous track"
       >
         <PreviousIcon size={compact ? 16 : 20} />
@@ -1218,8 +1219,8 @@ export function PlayerControls({
       <button
         onClick={onPlayPause}
         className={cn(
-          "flex items-center justify-center rounded-full bg-foreground text-background transition-transform hover:scale-105",
-          compact ? "w-8 h-8" : "w-9 h-9"
+          "bg-foreground text-background flex items-center justify-center rounded-full transition-transform hover:scale-105",
+          compact ? "h-8 w-8" : "h-9 w-9",
         )}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
@@ -1232,7 +1233,7 @@ export function PlayerControls({
 
       <button
         onClick={onNext}
-        className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+        className="text-muted-foreground hover:text-foreground p-1.5 transition-colors"
         aria-label="Next track"
       >
         <NextIcon size={compact ? 16 : 20} />
@@ -1242,22 +1243,27 @@ export function PlayerControls({
         <button
           onClick={onRepeatChange}
           className={cn(
-            "p-1.5 rounded-full transition-colors",
+            "rounded-full p-1.5 transition-colors",
             repeatMode !== "none"
               ? "text-foreground"
-              : "text-muted-foreground hover:text-foreground"
+              : "text-muted-foreground hover:text-foreground",
           )}
           aria-label={`Repeat: ${repeatMode}`}
         >
-          <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+          <svg
+            width={16}
+            height={16}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
             <path d="M17 1l4 4-4 4" />
             <path d="M3 11V9a4 4 0 014-4h14" />
             <path d="M7 23l-4-4 4-4" />
             <path d="M21 13v2a4 4 0 01-4 4H3" />
           </svg>
-          {repeatMode === "track" && (
-            <span className="absolute text-[8px] font-bold">1</span>
-          )}
+          {repeatMode === "track" && <span className="absolute text-[8px] font-bold">1</span>}
         </button>
       )}
     </div>
@@ -1305,10 +1311,19 @@ export function VolumeControl({
     <div className="flex items-center gap-2">
       <button
         onClick={handleMuteToggle}
-        className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+        className="text-muted-foreground hover:text-foreground p-1 transition-colors"
         aria-label={isMuted ? "Unmute" : "Mute"}
       >
-        <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width={16}
+          height={16}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           {isMuted || displayVolume === 0 ? (
             <>
               <path d="M11 5L6 9H2v6h4l5 4V5z" />
@@ -1333,9 +1348,7 @@ export function VolumeControl({
         value={[displayVolume * 100]}
         max={100}
         step={1}
-        onValueChange={([v]) =>
-          v !== undefined && onVolumeChange(v / 100)
-        }
+        onValueChange={([v]) => v !== undefined && onVolumeChange(v / 100)}
         className="w-24"
       />
     </div>
@@ -1363,6 +1376,7 @@ git commit -m "feat: add player UI components — controls, progress bar, volume
 ### Task 5: BottomPlayerBar — Replace Placeholder
 
 **Files:**
+
 - Modify: `src/components/layout/bottom-player-bar.tsx` (replace entirely)
 - Create: `src/__tests__/components/player/bottom-player-bar.test.tsx`
 
@@ -1413,7 +1427,7 @@ vi.mock("@/stores/player-store", () => ({
       };
       return selector(state);
     },
-    { getState: vi.fn() }
+    { getState: vi.fn() },
   ),
 }));
 
@@ -1471,8 +1485,8 @@ export function BottomPlayerBar() {
 
   if (!currentTrack) {
     return (
-      <footer className="h-20 border-t border-border bg-background/80 backdrop-blur-2xl flex items-center justify-center px-4">
-        <p className="text-sm text-muted-foreground">Select a reciter to start listening</p>
+      <footer className="border-border bg-background/80 flex h-20 items-center justify-center border-t px-4 backdrop-blur-2xl">
+        <p className="text-muted-foreground text-sm">Select a reciter to start listening</p>
       </footer>
     );
   }
@@ -1504,30 +1518,28 @@ export function BottomPlayerBar() {
   };
 
   return (
-    <footer className="h-20 border-t border-border bg-background/80 backdrop-blur-2xl flex items-center px-4 gap-4">
+    <footer className="border-border bg-background/80 flex h-20 items-center gap-4 border-t px-4 backdrop-blur-2xl">
       {/* Track Info — Left */}
-      <div className="flex items-center gap-3 w-[240px] min-w-0">
-        <div className="w-12 h-12 rounded-lg bg-[var(--text-alpha-06)] overflow-hidden shrink-0">
+      <div className="flex w-[240px] min-w-0 items-center gap-3">
+        <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-[var(--text-alpha-06)]">
           {currentTrack.artwork && (
             <Image
               src={currentTrack.artwork}
               alt={currentTrack.title}
               width={48}
               height={48}
-              className="object-cover w-full h-full"
+              className="h-full w-full object-cover"
             />
           )}
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-medium truncate">{currentTrack.title}</p>
-          <p className="text-xs text-muted-foreground truncate">
-            {currentTrack.artist}
-          </p>
+          <p className="truncate text-sm font-medium">{currentTrack.title}</p>
+          <p className="text-muted-foreground truncate text-xs">{currentTrack.artist}</p>
         </div>
       </div>
 
       {/* Controls + Progress — Center */}
-      <div className="flex-1 flex flex-col items-center gap-1 max-w-[600px]">
+      <div className="flex max-w-[600px] flex-1 flex-col items-center gap-1">
         <PlayerControls
           isPlaying={playback.isPlaying}
           onPlayPause={handlePlayPause}
@@ -1546,7 +1558,7 @@ export function BottomPlayerBar() {
       </div>
 
       {/* Volume — Right */}
-      <div className="flex items-center justify-end w-[200px]">
+      <div className="flex w-[200px] items-center justify-end">
         <VolumeControl
           volume={playback.volume}
           isMuted={playback.isMuted}
@@ -1581,6 +1593,7 @@ git commit -m "feat: build Spotify-style bottom player bar with controls and pro
 ### Task 6: Audio Event Binding — Connect AudioService to Store
 
 **Files:**
+
 - Create: `src/hooks/use-audio-events.ts`
 - Modify: `src/components/player/bottom-player-bar.tsx` (add hook call)
 
@@ -1655,6 +1668,7 @@ git commit -m "feat: bind AudioService events to player store"
 ### Task 7: Keyboard Shortcuts
 
 **Files:**
+
 - Create: `src/hooks/use-keyboard-shortcuts.ts`
 - Modify: `src/app/(app)/layout.tsx` (add hook)
 
@@ -1736,7 +1750,7 @@ export function useKeyboardShortcuts(): void {
         case "Slash": {
           e.preventDefault();
           const searchInput = document.querySelector<HTMLInputElement>(
-            'input[type="search"], input[placeholder*="Search"]'
+            'input[type="search"], input[placeholder*="Search"]',
           );
           searchInput?.focus();
           break;
@@ -1786,6 +1800,7 @@ git commit -m "feat: add keyboard shortcuts for player controls"
 ### Task 8: Media Session API
 
 **Files:**
+
 - Create: `src/hooks/use-media-session.ts`
 - Modify: `src/components/player/bottom-player-bar.tsx` (add hook call)
 
@@ -1834,9 +1849,7 @@ export function useMediaSession(): void {
     navigator.mediaSession.setActionHandler("play", () => play());
     navigator.mediaSession.setActionHandler("pause", () => pause());
     navigator.mediaSession.setActionHandler("nexttrack", () => skipToNext());
-    navigator.mediaSession.setActionHandler("previoustrack", () =>
-      skipToPrevious()
-    );
+    navigator.mediaSession.setActionHandler("previoustrack", () => skipToPrevious());
 
     return () => {
       navigator.mediaSession.setActionHandler("play", null);
@@ -1877,6 +1890,7 @@ git commit -m "feat: add Media Session API for OS-level playback controls"
 ## Completion Criteria
 
 After completing all 8 tasks:
+
 1. `npm run dev` starts without errors
 2. AudioService wraps HTML5 Audio with full playback control
 3. Player store manages queue, playback state, settings — persists to localStorage

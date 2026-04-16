@@ -33,7 +33,7 @@ function SheetBackdrop({
     <DrawerPrimitive.Backdrop
       className={cn(
         "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm",
-        "data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 transition-opacity duration-200",
+        "transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0",
         className,
       )}
       {...props}
@@ -51,9 +51,9 @@ function SheetContent({
       <SheetBackdrop />
       <DrawerPrimitive.Popup
         className={cn(
-          "fixed right-0 top-0 bottom-0 z-50 h-full",
-          "border-l border-border bg-background shadow-xl",
-          "data-[starting-style]:translate-x-full data-[ending-style]:translate-x-full",
+          "fixed top-0 right-0 bottom-0 z-50 h-full",
+          "border-border bg-background border-l shadow-xl",
+          "data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full",
           "transition-transform duration-300 ease-in-out",
           className,
         )}
@@ -65,28 +65,14 @@ function SheetContent({
   );
 }
 
-function SheetHeader({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn("flex flex-col space-y-1.5 p-4", className)}
-      {...props}
-    />
-  );
+function SheetHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("flex flex-col space-y-1.5 p-4", className)} {...props} />;
 }
 
-function SheetTitle({
-  className,
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Title>) {
+function SheetTitle({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Title>) {
   return (
     <DrawerPrimitive.Title
-      className={cn(
-        "text-lg font-semibold leading-none tracking-tight",
-        className,
-      )}
+      className={cn("text-lg leading-none font-semibold tracking-tight", className)}
       {...props}
     />
   );
@@ -98,20 +84,17 @@ function SheetDescription({
 }: React.ComponentProps<typeof DrawerPrimitive.Description>) {
   return (
     <DrawerPrimitive.Description
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
   );
 }
 
-function SheetClose({
-  className,
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Close>) {
+function SheetClose({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Close>) {
   return (
     <DrawerPrimitive.Close
       className={cn(
-        "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100",
+        "absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100",
         className,
       )}
       {...props}

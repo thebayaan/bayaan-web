@@ -6,15 +6,11 @@ interface SurahHeaderProps {
   showBismillah: boolean;
 }
 
-export function SurahHeader({
-  surahNumber,
-  surahName,
-  showBismillah,
-}: SurahHeaderProps) {
+export function SurahHeader({ surahNumber, surahName, showBismillah }: SurahHeaderProps) {
   const glyph = surahGlyphMap[surahNumber];
   return (
-    <div className="text-center py-4">
-      <div className="inline-flex items-center justify-center px-8 py-2 rounded-xl bg-[var(--text-alpha-04)] border border-[var(--text-alpha-06)]">
+    <div className="py-4 text-center">
+      <div className="inline-flex items-center justify-center rounded-xl border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] px-8 py-2">
         {glyph ? (
           <span className="font-surah-names text-3xl">{glyph}</span>
         ) : (
@@ -22,7 +18,7 @@ export function SurahHeader({
         )}
       </div>
       {showBismillah && surahNumber !== 9 && surahNumber !== 1 && (
-        <p className="text-2xl mt-4 font-[UthmanicHafs]" dir="rtl">
+        <p className="mt-4 font-[UthmanicHafs] text-2xl" dir="rtl">
           بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
         </p>
       )}

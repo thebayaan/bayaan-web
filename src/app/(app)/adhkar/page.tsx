@@ -6,8 +6,8 @@ import { ADHKAR_CATEGORIES } from "@/data/adhkar-data";
 export default function AdhkarPage() {
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Adhkar</h1>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <h1 className="mb-6 text-3xl font-bold">Adhkar</h1>
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {ADHKAR_CATEGORIES.map((cat) => (
           <Link
             key={cat.id}
@@ -19,13 +19,11 @@ export default function AdhkarPage() {
               borderWidth: 1,
             }}
           >
-            <p className="text-xl font-bold font-[UthmanicHafs]" dir="rtl">
+            <p className="font-[UthmanicHafs] text-xl font-bold" dir="rtl">
               {cat.name_arabic}
             </p>
-            <p className="text-sm font-medium mt-1">{cat.name}</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {cat.count} adhkar
-            </p>
+            <p className="mt-1 text-sm font-medium">{cat.name}</p>
+            <p className="text-muted-foreground mt-1 text-xs">{cat.count} adhkar</p>
           </Link>
         ))}
       </div>

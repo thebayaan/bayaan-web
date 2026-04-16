@@ -60,6 +60,7 @@ src/
 ### Task 1: SWR Data Hooks
 
 **Files:**
+
 - Create: `src/hooks/use-reciters.ts`, `src/hooks/use-reciter.ts`
 - Test: `src/__tests__/hooks/use-reciters.test.ts`
 
@@ -87,7 +88,8 @@ vi.mock("@/lib/api", () => ({
             reciter_id: "r-1",
             name: "Hafs A'n Assem",
             style: "murattal",
-            server: "https://cdn.thebayaan.com/quran/recitations/mishary-alafasy/hafs/murattal/default",
+            server:
+              "https://cdn.thebayaan.com/quran/recitations/mishary-alafasy/hafs/murattal/default",
             source_type: "bayaan",
             surah_total: 114,
             surah_list: Array.from({ length: 114 }, (_, i) => i + 1),
@@ -144,7 +146,7 @@ export function useReciters() {
     {
       revalidateOnFocus: false,
       dedupingInterval: 60000,
-    }
+    },
   );
 
   const reciters = data?.data ?? [];
@@ -178,7 +180,7 @@ export function useReciter(slug: string) {
     fetchBayaan,
     {
       revalidateOnFocus: false,
-    }
+    },
   );
 
   return {
@@ -207,6 +209,7 @@ git commit -m "feat: add SWR data hooks for reciters"
 ### Task 2: Audio Utilities — Track Creation
 
 **Files:**
+
 - Create: `src/lib/audio-utils.ts`
 - Test: `src/__tests__/lib/audio-utils.test.ts`
 
@@ -245,7 +248,7 @@ describe("buildAudioUrl", () => {
   it("builds correct URL with zero-padded surah number", () => {
     const url = buildAudioUrl(mockRewayat.server, 1);
     expect(url).toBe(
-      "https://cdn.thebayaan.com/quran/recitations/mishary/hafs/murattal/default/001.mp3"
+      "https://cdn.thebayaan.com/quran/recitations/mishary/hafs/murattal/default/001.mp3",
     );
   });
 
@@ -284,12 +287,7 @@ describe("createQueueFromSurah", () => {
       4: "An-Nisa",
       5: "Al-Maidah",
     };
-    const { tracks, startIndex } = createQueueFromSurah(
-      mockReciter,
-      mockRewayat,
-      3,
-      surahNames
-    );
+    const { tracks, startIndex } = createQueueFromSurah(mockReciter, mockRewayat, 3, surahNames);
     expect(tracks).toHaveLength(5);
     expect(startIndex).toBe(0);
     expect(tracks[0]?.title).toBe("Aal-E-Imran");
@@ -316,7 +314,7 @@ export function createTrack(
   reciter: Reciter,
   rewayat: Rewayat,
   surahId: number,
-  surahName: string
+  surahName: string,
 ): Track {
   return {
     id: `${reciter.id}:${rewayat.id}:${surahId}`,
@@ -336,7 +334,7 @@ export function createQueueFromSurah(
   reciter: Reciter,
   rewayat: Rewayat,
   startSurahId: number,
-  surahNames: Record<number, string>
+  surahNames: Record<number, string>,
 ): { tracks: Track[]; startIndex: number } {
   const surahList = rewayat.surah_list;
   const startIdx = surahList.indexOf(startSurahId);
@@ -345,13 +343,10 @@ export function createQueueFromSurah(
   }
 
   // Reorder: selected surah first, then rest wrapping around
-  const reordered = [
-    ...surahList.slice(startIdx),
-    ...surahList.slice(0, startIdx),
-  ];
+  const reordered = [...surahList.slice(startIdx), ...surahList.slice(0, startIdx)];
 
   const tracks = reordered.map((surahId) =>
-    createTrack(reciter, rewayat, surahId, surahNames[surahId] ?? `Surah ${surahId}`)
+    createTrack(reciter, rewayat, surahId, surahNames[surahId] ?? `Surah ${surahId}`),
   );
 
   return { tracks, startIndex: 0 };
@@ -376,6 +371,7 @@ git commit -m "feat: add audio URL generation and track creation utilities"
 ### Task 3: Reciter Card Component
 
 **Files:**
+
 - Create: `src/components/reciter-card.tsx`
 - Test: `src/__tests__/components/reciter-card.test.tsx`
 
@@ -473,10 +469,10 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
       href={`/reciter/${reciter.slug}`}
       className={cn(
         "group block rounded-xl bg-[var(--text-alpha-04)] p-3 transition-colors hover:bg-[var(--text-alpha-06)]",
-        className
+        className,
       )}
     >
-      <div className="aspect-square relative rounded-lg overflow-hidden bg-[var(--text-alpha-06)] mb-3">
+      <div className="relative mb-3 aspect-square overflow-hidden rounded-lg bg-[var(--text-alpha-06)]">
         {reciter.image_url ? (
           <Image
             src={reciter.image_url}
@@ -486,16 +482,23 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
             sizes="(max-width: 768px) 50vw, 200px"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-            <svg width={48} height={48} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+          <div className="text-muted-foreground flex h-full w-full items-center justify-center">
+            <svg
+              width={48}
+              height={48}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
               <circle cx="12" cy="8" r="4" />
               <path d="M20 21a8 8 0 10-16 0" />
             </svg>
           </div>
         )}
       </div>
-      <p className="font-semibold text-sm truncate">{reciter.name}</p>
-      <p className="text-xs text-muted-foreground mt-0.5 capitalize">
+      <p className="truncate text-sm font-semibold">{reciter.name}</p>
+      <p className="text-muted-foreground mt-0.5 text-xs capitalize">
         {style} &middot; {surahCount} Surahs
       </p>
     </Link>
@@ -521,6 +524,7 @@ git commit -m "feat: add ReciterCard component"
 ### Task 4: Surah List Item Component
 
 **Files:**
+
 - Create: `src/components/surah-list-item.tsx`
 - Test: `src/__tests__/components/surah-list-item.test.tsx`
 
@@ -568,9 +572,7 @@ describe("SurahListItem", () => {
   });
 
   it("shows currently playing indicator", () => {
-    render(
-      <SurahListItem surah={mockSurah} onPlay={vi.fn()} isPlaying />
-    );
+    render(<SurahListItem surah={mockSurah} onPlay={vi.fn()} isPlaying />);
     // When playing, the item should have visual distinction
     const item = screen.getByText("Al-Faatiha").closest("div");
     expect(item?.className).toContain("text-foreground");
@@ -596,55 +598,41 @@ interface SurahListItemProps {
   isCurrentTrack?: boolean;
 }
 
-export function SurahListItem({
-  surah,
-  onPlay,
-  isPlaying,
-  isCurrentTrack,
-}: SurahListItemProps) {
+export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack }: SurahListItemProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-[var(--text-alpha-04)]",
-        isCurrentTrack && "bg-[var(--text-alpha-06)]"
+        "flex items-center gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-[var(--text-alpha-04)]",
+        isCurrentTrack && "bg-[var(--text-alpha-06)]",
       )}
     >
-      <div className="w-8 text-center shrink-0">
+      <div className="w-8 shrink-0 text-center">
         {isCurrentTrack && isPlaying ? (
           <div className="flex items-center justify-center gap-0.5">
-            <span className="w-0.5 h-3 bg-foreground rounded-full animate-pulse" />
-            <span className="w-0.5 h-4 bg-foreground rounded-full animate-pulse delay-75" />
-            <span className="w-0.5 h-2 bg-foreground rounded-full animate-pulse delay-150" />
+            <span className="bg-foreground h-3 w-0.5 animate-pulse rounded-full" />
+            <span className="bg-foreground h-4 w-0.5 animate-pulse rounded-full delay-75" />
+            <span className="bg-foreground h-2 w-0.5 animate-pulse rounded-full delay-150" />
           </div>
         ) : (
-          <span className="text-sm text-muted-foreground">{surah.id}</span>
+          <span className="text-muted-foreground text-sm">{surah.id}</span>
         )}
       </div>
 
-      <div className="flex-1 min-w-0">
-        <p
-          className={cn(
-            "text-sm font-medium truncate",
-            isCurrentTrack ? "text-foreground" : ""
-          )}
-        >
+      <div className="min-w-0 flex-1">
+        <p className={cn("truncate text-sm font-medium", isCurrentTrack ? "text-foreground" : "")}>
           {surah.name}
         </p>
-        <p className="text-xs text-muted-foreground truncate">
+        <p className="text-muted-foreground truncate text-xs">
           {surah.translated_name_english} &middot; {surah.verses_count} verses
         </p>
       </div>
 
       <button
         onClick={() => onPlay(surah.id)}
-        className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-[var(--text-alpha-06)] transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+        className="text-muted-foreground hover:text-foreground rounded-full p-2 opacity-0 transition-colors hover:bg-[var(--text-alpha-06)] focus:opacity-100 group-hover:opacity-100"
         aria-label={isPlaying && isCurrentTrack ? "Pause" : `Play ${surah.name}`}
       >
-        {isPlaying && isCurrentTrack ? (
-          <PauseIcon size={16} />
-        ) : (
-          <PlayIcon size={16} />
-        )}
+        {isPlaying && isCurrentTrack ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
       </button>
     </div>
   );
@@ -669,6 +657,7 @@ git commit -m "feat: add SurahListItem component with play button"
 ### Task 5: Home Page — Featured Reciters
 
 **Files:**
+
 - Modify: `src/app/(app)/page.tsx` (replace placeholder)
 
 - [ ] **Step 1: Install shadcn ScrollArea**
@@ -688,18 +677,12 @@ import { useReciters } from "@/hooks/use-reciters";
 import { ReciterCard } from "@/components/reciter-card";
 import type { Reciter } from "@/types/reciter";
 
-function ReciterSection({
-  title,
-  reciters,
-}: {
-  title: string;
-  reciters: Reciter[];
-}) {
+function ReciterSection({ title, reciters }: { title: string; reciters: Reciter[] }) {
   if (reciters.length === 0) return null;
   return (
     <section className="mb-8">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      <h2 className="mb-4 text-xl font-bold">{title}</h2>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {reciters.map((reciter) => (
           <ReciterCard key={reciter.id} reciter={reciter} />
         ))}
@@ -711,24 +694,20 @@ function ReciterSection({
 export default function HomePage() {
   const { reciters, featured, isLoading } = useReciters();
 
-  const murattal = reciters.filter((r) =>
-    r.rewayat.some((rw) => rw.style === "murattal")
-  );
-  const mojawwad = reciters.filter((r) =>
-    r.rewayat.some((rw) => rw.style === "mojawwad")
-  );
+  const murattal = reciters.filter((r) => r.rewayat.some((rw) => rw.style === "murattal"));
+  const mojawwad = reciters.filter((r) => r.rewayat.some((rw) => rw.style === "mojawwad"));
 
   if (isLoading) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-8">
-          <div className="h-8 w-48 bg-[var(--text-alpha-06)] rounded" />
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <div className="h-8 w-48 rounded bg-[var(--text-alpha-06)]" />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="space-y-3">
-                <div className="aspect-square bg-[var(--text-alpha-06)] rounded-lg" />
-                <div className="h-4 w-3/4 bg-[var(--text-alpha-06)] rounded" />
-                <div className="h-3 w-1/2 bg-[var(--text-alpha-04)] rounded" />
+                <div className="aspect-square rounded-lg bg-[var(--text-alpha-06)]" />
+                <div className="h-4 w-3/4 rounded bg-[var(--text-alpha-06)]" />
+                <div className="h-3 w-1/2 rounded bg-[var(--text-alpha-04)]" />
               </div>
             ))}
           </div>
@@ -739,20 +718,12 @@ export default function HomePage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Good evening</h1>
+      <h1 className="mb-6 text-3xl font-bold">Good evening</h1>
 
       <ReciterSection title="Featured Reciters" reciters={featured} />
-      <ReciterSection
-        title="All Reciters"
-        reciters={reciters.slice(0, 18)}
-      />
+      <ReciterSection title="All Reciters" reciters={reciters.slice(0, 18)} />
       <ReciterSection title="Murattal" reciters={murattal.slice(0, 12)} />
-      {mojawwad.length > 0 && (
-        <ReciterSection
-          title="Mojawwad"
-          reciters={mojawwad.slice(0, 12)}
-        />
-      )}
+      {mojawwad.length > 0 && <ReciterSection title="Mojawwad" reciters={mojawwad.slice(0, 12)} />}
     </div>
   );
 }
@@ -776,6 +747,7 @@ git commit -m "feat: build home page with featured reciters grid"
 ### Task 6: Reciter Profile Page
 
 **Files:**
+
 - Modify: `src/app/(app)/reciter/[slug]/page.tsx` (replace placeholder)
 - Create: `src/components/reciter-header.tsx`
 
@@ -794,18 +766,25 @@ interface ReciterHeaderProps {
 export function ReciterHeader({ reciter }: ReciterHeaderProps) {
   return (
     <div className="flex items-end gap-6 p-6 pb-4">
-      <div className="w-48 h-48 rounded-xl overflow-hidden bg-[var(--text-alpha-06)] shrink-0 shadow-lg">
+      <div className="h-48 w-48 shrink-0 overflow-hidden rounded-xl bg-[var(--text-alpha-06)] shadow-lg">
         {reciter.image_url ? (
           <Image
             src={reciter.image_url}
             alt={reciter.name}
             width={192}
             height={192}
-            className="object-cover w-full h-full"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-            <svg width={64} height={64} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+          <div className="text-muted-foreground flex h-full w-full items-center justify-center">
+            <svg
+              width={64}
+              height={64}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
               <circle cx="12" cy="8" r="4" />
               <path d="M20 21a8 8 0 10-16 0" />
             </svg>
@@ -813,18 +792,15 @@ export function ReciterHeader({ reciter }: ReciterHeaderProps) {
         )}
       </div>
       <div>
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+        <p className="text-muted-foreground mb-1 text-xs font-medium uppercase tracking-wider">
           Reciter
         </p>
-        <h1 className="text-4xl font-bold mb-2">{reciter.name}</h1>
+        <h1 className="mb-2 text-4xl font-bold">{reciter.name}</h1>
         {reciter.bio && (
-          <p className="text-sm text-muted-foreground max-w-lg line-clamp-2">
-            {reciter.bio}
-          </p>
+          <p className="text-muted-foreground line-clamp-2 max-w-lg text-sm">{reciter.bio}</p>
         )}
-        <p className="text-sm text-muted-foreground mt-1">
-          {reciter.rewayat.length} rewayat &middot;{" "}
-          {reciter.rewayat[0]?.surah_total ?? 0} surahs
+        <p className="text-muted-foreground mt-1 text-sm">
+          {reciter.rewayat.length} rewayat &middot; {reciter.rewayat[0]?.surah_total ?? 0} surahs
         </p>
       </div>
     </div>
@@ -850,15 +826,12 @@ import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 
 const surahs = surahData as Surah[];
-const surahNameMap = Object.fromEntries(
-  surahs.map((s) => [s.id, s.name])
-) as Record<number, string>;
+const surahNameMap = Object.fromEntries(surahs.map((s) => [s.id, s.name])) as Record<
+  number,
+  string
+>;
 
-export default function ReciterPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default function ReciterPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const { reciter, isLoading } = useReciter(slug);
   const [selectedRewayatIdx, setSelectedRewayatIdx] = useState(0);
@@ -883,13 +856,13 @@ export default function ReciterPage({
 
   if (isLoading || !reciter) {
     return (
-      <div className="p-6 animate-pulse">
-        <div className="flex items-end gap-6 mb-8">
-          <div className="w-48 h-48 bg-[var(--text-alpha-06)] rounded-xl" />
+      <div className="animate-pulse p-6">
+        <div className="mb-8 flex items-end gap-6">
+          <div className="h-48 w-48 rounded-xl bg-[var(--text-alpha-06)]" />
           <div className="space-y-3">
-            <div className="h-4 w-20 bg-[var(--text-alpha-06)] rounded" />
-            <div className="h-10 w-64 bg-[var(--text-alpha-06)] rounded" />
-            <div className="h-4 w-40 bg-[var(--text-alpha-04)] rounded" />
+            <div className="h-4 w-20 rounded bg-[var(--text-alpha-06)]" />
+            <div className="h-10 w-64 rounded bg-[var(--text-alpha-06)]" />
+            <div className="h-4 w-40 rounded bg-[var(--text-alpha-04)]" />
           </div>
         </div>
       </div>
@@ -913,12 +886,7 @@ export default function ReciterPage({
       return;
     }
 
-    const { tracks } = createQueueFromSurah(
-      reciter,
-      selectedRewayat,
-      surahId,
-      surahNameMap
-    );
+    const { tracks } = createQueueFromSurah(reciter, selectedRewayat, surahId, surahNameMap);
     updateQueue(tracks);
   }
 
@@ -926,12 +894,7 @@ export default function ReciterPage({
     if (!reciter || !selectedRewayat) return;
     const firstSurah = selectedRewayat.surah_list[0];
     if (firstSurah === undefined) return;
-    const { tracks } = createQueueFromSurah(
-      reciter,
-      selectedRewayat,
-      firstSurah,
-      surahNameMap
-    );
+    const { tracks } = createQueueFromSurah(reciter, selectedRewayat, firstSurah, surahNameMap);
     updateQueue(tracks);
   }
 
@@ -941,15 +904,15 @@ export default function ReciterPage({
 
       {/* Rewayat tabs */}
       {reciter.rewayat.length > 1 && (
-        <div className="flex gap-2 px-6 mb-4">
+        <div className="mb-4 flex gap-2 px-6">
           {reciter.rewayat.map((rw, idx) => (
             <button
               key={rw.id}
               onClick={() => setSelectedRewayatIdx(idx)}
-              className={`px-4 py-1.5 text-sm rounded-full transition-colors ${
+              className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
                 idx === selectedRewayatIdx
                   ? "bg-foreground text-background font-medium"
-                  : "bg-[var(--text-alpha-06)] text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground bg-[var(--text-alpha-06)]"
               }`}
             >
               {rw.name}
@@ -959,10 +922,10 @@ export default function ReciterPage({
       )}
 
       {/* Play All button */}
-      <div className="flex items-center gap-3 px-6 mb-4">
+      <div className="mb-4 flex items-center gap-3 px-6">
         <button
           onClick={handlePlayAll}
-          className="flex items-center gap-2 bg-foreground text-background px-6 py-2.5 rounded-full font-medium text-sm hover:scale-105 transition-transform"
+          className="bg-foreground text-background flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium transition-transform hover:scale-105"
         >
           <PlayIcon size={16} color="currentColor" />
           Play All
@@ -1012,6 +975,7 @@ git commit -m "feat: build reciter profile page with surah list and playback"
 ### Task 7: Search Page
 
 **Files:**
+
 - Modify: `src/app/(app)/search/page.tsx` (replace placeholder)
 - Create: `src/components/search/search-input.tsx`
 
@@ -1043,14 +1007,14 @@ export function SearchInput({ value, onChange, className }: SearchInputProps) {
     <div className={cn("relative", className)}>
       <SearchIcon
         size={18}
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+        className="text-muted-foreground pointer-events-none absolute left-3 top-1/2 -translate-y-1/2"
       />
       <Input
         type="search"
         placeholder="Search reciters and surahs..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="pl-10 bg-[var(--text-alpha-04)] border-[var(--text-alpha-06)]"
+        className="border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] pl-10"
       />
     </div>
   );
@@ -1099,7 +1063,7 @@ export default function SearchPage() {
         minMatchCharLength: 2,
         includeScore: true,
       }),
-    [reciters]
+    [reciters],
   );
 
   const surahFuse = useMemo(
@@ -1115,7 +1079,7 @@ export default function SearchPage() {
         minMatchCharLength: 2,
         includeScore: true,
       }),
-    []
+    [],
   );
 
   const results = useMemo<SearchResult[]>(() => {
@@ -1133,28 +1097,20 @@ export default function SearchPage() {
       score: r.score ?? 1,
     }));
 
-    return [...reciterResults, ...surahResults].sort(
-      (a, b) => a.score - b.score
-    );
+    return [...reciterResults, ...surahResults].sort((a, b) => a.score - b.score);
   }, [query, reciterFuse, surahFuse]);
 
   const hasQuery = query.length >= 2;
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Search</h1>
-      <SearchInput
-        value={query}
-        onChange={setQuery}
-        className="max-w-lg mb-6"
-      />
+      <h1 className="mb-4 text-2xl font-bold">Search</h1>
+      <SearchInput value={query} onChange={setQuery} className="mb-6 max-w-lg" />
 
       {hasQuery ? (
         <div>
           {results.length === 0 ? (
-            <p className="text-muted-foreground">
-              No results for &ldquo;{query}&rdquo;
-            </p>
+            <p className="text-muted-foreground">No results for &ldquo;{query}&rdquo;</p>
           ) : (
             <div className="space-y-2">
               {results.map((result) => {
@@ -1163,24 +1119,21 @@ export default function SearchPage() {
                     <Link
                       key={`reciter-${result.reciter.id}`}
                       href={`/reciter/${result.reciter.slug}`}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--text-alpha-04)] transition-colors"
+                      className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
                     >
-                      <div className="w-10 h-10 rounded-lg bg-[var(--text-alpha-06)] overflow-hidden shrink-0">
+                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[var(--text-alpha-06)]">
                         {result.reciter.image_url && (
                           <img
                             src={result.reciter.image_url}
                             alt={result.reciter.name}
-                            className="w-full h-full object-cover"
+                            className="h-full w-full object-cover"
                           />
                         )}
                       </div>
                       <div>
-                        <p className="text-sm font-medium">
-                          {result.reciter.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground capitalize">
-                          Reciter &middot;{" "}
-                          {result.reciter.rewayat[0]?.style ?? ""}
+                        <p className="text-sm font-medium">{result.reciter.name}</p>
+                        <p className="text-muted-foreground text-xs capitalize">
+                          Reciter &middot; {result.reciter.rewayat[0]?.style ?? ""}
                         </p>
                       </div>
                     </Link>
@@ -1191,16 +1144,14 @@ export default function SearchPage() {
                     <Link
                       key={`surah-${result.surah.id}`}
                       href={`/quran/${result.surah.id}`}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--text-alpha-04)] transition-colors"
+                      className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
                     >
-                      <div className="w-10 h-10 rounded-lg bg-[var(--text-alpha-06)] flex items-center justify-center text-sm font-medium shrink-0">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--text-alpha-06)] text-sm font-medium">
                         {result.surah.id}
                       </div>
                       <div>
-                        <p className="text-sm font-medium">
-                          {result.surah.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm font-medium">{result.surah.name}</p>
+                        <p className="text-muted-foreground text-xs">
                           {result.surah.translated_name_english} &middot;{" "}
                           {result.surah.verses_count} verses
                         </p>
@@ -1216,15 +1167,18 @@ export default function SearchPage() {
       ) : (
         /* Explore view when search is empty */
         <div>
-          <h2 className="text-lg font-bold mb-4">Browse</h2>
+          <h2 className="mb-4 text-lg font-bold">Browse</h2>
           {isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="aspect-square bg-[var(--text-alpha-06)] rounded-lg animate-pulse" />
+                <div
+                  key={i}
+                  className="aspect-square animate-pulse rounded-lg bg-[var(--text-alpha-06)]"
+                />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {reciters.slice(0, 24).map((reciter) => (
                 <ReciterCard key={reciter.id} reciter={reciter} />
               ))}
@@ -1255,6 +1209,7 @@ git commit -m "feat: build search page with Fuse.js fuzzy search"
 ### Task 8: Surah Page — All Reciters
 
 **Files:**
+
 - Modify: `src/app/(app)/surah/[id]/page.tsx` (replace placeholder)
 
 - [ ] **Step 1: Implement Surah page**
@@ -1275,11 +1230,7 @@ import Link from "next/link";
 
 const surahs = surahData as Surah[];
 
-export default function SurahPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function SurahPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const surahId = parseInt(id, 10);
   const surah = surahs.find((s) => s.id === surahId);
@@ -1287,11 +1238,8 @@ export default function SurahPage({
   const updateQueue = usePlayerStore((s) => s.updateQueue);
 
   const availableReciters = useMemo(
-    () =>
-      reciters.filter((r) =>
-        r.rewayat.some((rw) => rw.surah_list.includes(surahId))
-      ),
-    [reciters, surahId]
+    () => reciters.filter((r) => r.rewayat.some((rw) => rw.surah_list.includes(surahId))),
+    [reciters, surahId],
   );
 
   if (!surah) {
@@ -1305,9 +1253,7 @@ export default function SurahPage({
   function handlePlayReciter(reciterId: string) {
     const reciter = reciters.find((r) => r.id === reciterId);
     if (!reciter || !surah) return;
-    const rewayat = reciter.rewayat.find((rw) =>
-      rw.surah_list.includes(surahId)
-    );
+    const rewayat = reciter.rewayat.find((rw) => rw.surah_list.includes(surahId));
     if (!rewayat) return;
     const track = createTrack(reciter, rewayat, surahId, surah.name);
     updateQueue([track]);
@@ -1316,62 +1262,56 @@ export default function SurahPage({
   return (
     <div className="p-6">
       <div className="mb-6">
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+        <p className="text-muted-foreground mb-1 text-xs font-medium uppercase tracking-wider">
           Surah {surah.id}
         </p>
         <h1 className="text-4xl font-bold">{surah.name}</h1>
         <p className="text-muted-foreground mt-1">
-          {surah.translated_name_english} &middot; {surah.verses_count} verses
-          &middot; {surah.revelation_place}
+          {surah.translated_name_english} &middot; {surah.verses_count} verses &middot;{" "}
+          {surah.revelation_place}
         </p>
       </div>
 
-      <h2 className="text-lg font-bold mb-3">
-        Available Reciters ({availableReciters.length})
-      </h2>
+      <h2 className="mb-3 text-lg font-bold">Available Reciters ({availableReciters.length})</h2>
 
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-16 bg-[var(--text-alpha-06)] rounded-lg animate-pulse" />
+            <div key={i} className="h-16 animate-pulse rounded-lg bg-[var(--text-alpha-06)]" />
           ))}
         </div>
       ) : (
         <div className="space-y-1">
           {availableReciters.map((reciter) => {
-            const rewayat = reciter.rewayat.find((rw) =>
-              rw.surah_list.includes(surahId)
-            );
+            const rewayat = reciter.rewayat.find((rw) => rw.surah_list.includes(surahId));
             return (
               <div
                 key={reciter.id}
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--text-alpha-04)] transition-colors group"
+                className="group flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
               >
                 <Link
                   href={`/reciter/${reciter.slug}`}
-                  className="flex items-center gap-3 flex-1 min-w-0"
+                  className="flex min-w-0 flex-1 items-center gap-3"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-[var(--text-alpha-06)] overflow-hidden shrink-0">
+                  <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[var(--text-alpha-06)]">
                     {reciter.image_url && (
                       <img
                         src={reciter.image_url}
                         alt={reciter.name}
-                        className="w-full h-full object-cover"
+                        className="h-full w-full object-cover"
                       />
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {reciter.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground capitalize">
+                    <p className="truncate text-sm font-medium">{reciter.name}</p>
+                    <p className="text-muted-foreground text-xs capitalize">
                       {rewayat?.style} &middot; {rewayat?.name}
                     </p>
                   </div>
                 </Link>
                 <button
                   onClick={() => handlePlayReciter(reciter.id)}
-                  className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-[var(--text-alpha-06)] transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                  className="text-muted-foreground hover:text-foreground rounded-full p-2 opacity-0 transition-colors hover:bg-[var(--text-alpha-06)] focus:opacity-100 group-hover:opacity-100"
                   aria-label={`Play ${reciter.name}`}
                 >
                   <PlayIcon size={16} color="currentColor" />
@@ -1404,6 +1344,7 @@ git commit -m "feat: build surah page showing all available reciters"
 ### Task 9: Full Player View + Queue Panel
 
 **Files:**
+
 - Create: `src/components/player/full-player-view.tsx`, `src/components/player/queue-panel.tsx`
 - Modify: `src/components/player/bottom-player-bar.tsx` (add expand click)
 
@@ -1426,11 +1367,7 @@ import { PlayerControls } from "./player-controls";
 import { ProgressBar } from "./progress-bar";
 import { audioService } from "@/services/audio/audio-service";
 import type { RepeatMode } from "@/types/audio";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 interface FullPlayerViewProps {
   open: boolean;
@@ -1475,22 +1412,29 @@ export function FullPlayerView({ open, onOpenChange }: FullPlayerViewProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 bg-background border-border overflow-hidden">
+      <DialogContent className="bg-background border-border max-w-md overflow-hidden p-0">
         <DialogTitle className="sr-only">Now Playing</DialogTitle>
-        <div className="flex flex-col items-center p-8 gap-6">
+        <div className="flex flex-col items-center gap-6 p-8">
           {/* Artwork */}
-          <div className="w-64 h-64 rounded-2xl overflow-hidden bg-[var(--text-alpha-06)] shadow-2xl">
+          <div className="h-64 w-64 overflow-hidden rounded-2xl bg-[var(--text-alpha-06)] shadow-2xl">
             {currentTrack.artwork ? (
               <Image
                 src={currentTrack.artwork}
                 alt={currentTrack.title}
                 width={256}
                 height={256}
-                className="object-cover w-full h-full"
+                className="h-full w-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                <svg width={64} height={64} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+              <div className="text-muted-foreground flex h-full w-full items-center justify-center">
+                <svg
+                  width={64}
+                  height={64}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
                   <circle cx="12" cy="8" r="4" />
                   <path d="M20 21a8 8 0 10-16 0" />
                 </svg>
@@ -1499,11 +1443,9 @@ export function FullPlayerView({ open, onOpenChange }: FullPlayerViewProps) {
           </div>
 
           {/* Track Info */}
-          <div className="text-center w-full">
-            <h2 className="text-xl font-bold truncate">{currentTrack.title}</h2>
-            <p className="text-muted-foreground truncate">
-              {currentTrack.artist}
-            </p>
+          <div className="w-full text-center">
+            <h2 className="truncate text-xl font-bold">{currentTrack.title}</h2>
+            <p className="text-muted-foreground truncate">{currentTrack.artist}</p>
           </div>
 
           {/* Progress */}
@@ -1530,13 +1472,13 @@ export function FullPlayerView({ open, onOpenChange }: FullPlayerViewProps) {
           {/* Rate control */}
           <button
             onClick={cycleRate}
-            className="text-xs text-muted-foreground hover:text-foreground px-3 py-1 rounded-full bg-[var(--text-alpha-06)] transition-colors"
+            className="text-muted-foreground hover:text-foreground rounded-full bg-[var(--text-alpha-06)] px-3 py-1 text-xs transition-colors"
           >
             {settings.rate}x
           </button>
 
           {/* Queue info */}
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Track {currentIndex + 1} of {tracks.length}
           </p>
         </div>
@@ -1555,12 +1497,7 @@ Create `src/components/player/queue-panel.tsx`:
 
 import { usePlayerStore } from "@/stores/player-store";
 import { PlayIcon } from "@/components/icons";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 interface QueuePanelProps {
   open: boolean;
@@ -1578,37 +1515,33 @@ export function QueuePanel({ open, onOpenChange }: QueuePanelProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-[380px] bg-background border-border p-0">
-        <SheetHeader className="p-4 border-b border-border">
+      <SheetContent className="bg-background border-border w-[380px] p-0">
+        <SheetHeader className="border-border border-b p-4">
           <SheetTitle>Queue</SheetTitle>
         </SheetHeader>
 
-        <div className="overflow-y-auto max-h-[calc(100vh-120px)]">
+        <div className="max-h-[calc(100vh-120px)] overflow-y-auto">
           {/* Now Playing */}
           {currentTrack && (
             <div className="p-4">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+              <p className="text-muted-foreground mb-2 text-xs font-medium uppercase tracking-wider">
                 Now Playing
               </p>
-              <div className="flex items-center gap-3 p-2 rounded-lg bg-[var(--text-alpha-06)]">
-                <div className="flex items-center justify-center gap-0.5 w-6">
+              <div className="flex items-center gap-3 rounded-lg bg-[var(--text-alpha-06)] p-2">
+                <div className="flex w-6 items-center justify-center gap-0.5">
                   {isPlaying ? (
                     <>
-                      <span className="w-0.5 h-3 bg-foreground rounded-full animate-pulse" />
-                      <span className="w-0.5 h-4 bg-foreground rounded-full animate-pulse" />
-                      <span className="w-0.5 h-2 bg-foreground rounded-full animate-pulse" />
+                      <span className="bg-foreground h-3 w-0.5 animate-pulse rounded-full" />
+                      <span className="bg-foreground h-4 w-0.5 animate-pulse rounded-full" />
+                      <span className="bg-foreground h-2 w-0.5 animate-pulse rounded-full" />
                     </>
                   ) : (
                     <PlayIcon size={12} />
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">
-                    {currentTrack.title}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {currentTrack.artist}
-                  </p>
+                  <p className="truncate text-sm font-medium">{currentTrack.title}</p>
+                  <p className="text-muted-foreground truncate text-xs">{currentTrack.artist}</p>
                 </div>
               </div>
             </div>
@@ -1617,7 +1550,7 @@ export function QueuePanel({ open, onOpenChange }: QueuePanelProps) {
           {/* Upcoming */}
           {upcomingTracks.length > 0 && (
             <div className="p-4 pt-0">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+              <p className="text-muted-foreground mb-2 text-xs font-medium uppercase tracking-wider">
                 Next Up ({upcomingTracks.length})
               </p>
               <div className="space-y-1">
@@ -1627,16 +1560,12 @@ export function QueuePanel({ open, onOpenChange }: QueuePanelProps) {
                     onClick={() => {
                       updateQueue(tracks, currentIndex + 1 + idx);
                     }}
-                    className="flex items-center gap-3 p-2 rounded-lg w-full text-left hover:bg-[var(--text-alpha-04)] transition-colors"
+                    className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-[var(--text-alpha-04)]"
                   >
-                    <span className="text-xs text-muted-foreground w-6 text-center">
-                      {idx + 1}
-                    </span>
+                    <span className="text-muted-foreground w-6 text-center text-xs">{idx + 1}</span>
                     <div className="min-w-0">
-                      <p className="text-sm truncate">{track.title}</p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {track.artist}
-                      </p>
+                      <p className="truncate text-sm">{track.title}</p>
+                      <p className="text-muted-foreground truncate text-xs">{track.artist}</p>
                     </div>
                   </button>
                 ))}
@@ -1645,11 +1574,9 @@ export function QueuePanel({ open, onOpenChange }: QueuePanelProps) {
           )}
 
           {tracks.length === 0 && (
-            <div className="p-8 text-center text-muted-foreground">
+            <div className="text-muted-foreground p-8 text-center">
               <p>Queue is empty</p>
-              <p className="text-xs mt-1">
-                Select a reciter and surah to start listening
-              </p>
+              <p className="mt-1 text-xs">Select a reciter and surah to start listening</p>
             </div>
           )}
         </div>
@@ -1664,6 +1591,7 @@ export function QueuePanel({ open, onOpenChange }: QueuePanelProps) {
 Update `src/components/player/bottom-player-bar.tsx` to add state for full player and queue panel:
 
 Add these imports at the top:
+
 ```tsx
 import { useState } from "react";
 import { FullPlayerView } from "./full-player-view";
@@ -1671,26 +1599,29 @@ import { QueuePanel } from "./queue-panel";
 ```
 
 Add state inside the component (after the store selectors):
+
 ```tsx
 const [showFullPlayer, setShowFullPlayer] = useState(false);
 const [showQueue, setShowQueue] = useState(false);
 ```
 
 Wrap the track info section (left part) with a click handler:
+
 ```tsx
 <button
   onClick={() => setShowFullPlayer(true)}
-  className="flex items-center gap-3 w-[240px] min-w-0 text-left"
+  className="flex w-[240px] min-w-0 items-center gap-3 text-left"
 >
   {/* existing track info content */}
 </button>
 ```
 
 Add a queue toggle button in the right section (before VolumeControl):
+
 ```tsx
 <button
   onClick={() => setShowQueue(!showQueue)}
-  className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+  className="text-muted-foreground hover:text-foreground p-2 transition-colors"
   aria-label="Toggle queue"
 >
   <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -1705,6 +1636,7 @@ Add a queue toggle button in the right section (before VolumeControl):
 ```
 
 Render the dialogs at the end of the component (before closing `</footer>`):
+
 ```tsx
 <FullPlayerView open={showFullPlayer} onOpenChange={setShowFullPlayer} />
 <QueuePanel open={showQueue} onOpenChange={setShowQueue} />
@@ -1728,6 +1660,7 @@ git commit -m "feat: add full player view and queue panel"
 ## Completion Criteria
 
 After completing all 9 tasks:
+
 1. `npm run dev` starts without errors
 2. Home page shows featured reciters in a responsive grid, fetched from Bayaan API
 3. Clicking a reciter card navigates to the reciter profile

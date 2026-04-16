@@ -45,7 +45,7 @@ function DialogBackdrop({
     <DialogPrimitive.Backdrop
       className={cn(
         "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm",
-        "data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 transition-opacity duration-200",
+        "transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0",
         className,
       )}
       {...props}
@@ -63,10 +63,10 @@ function DialogContent({
       <DialogBackdrop />
       <DialogPrimitive.Popup
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2",
-          "w-full max-w-lg rounded-2xl border border-border bg-background shadow-xl",
-          "data-[starting-style]:opacity-0 data-[starting-style]:scale-95",
-          "data-[ending-style]:opacity-0 data-[ending-style]:scale-95",
+          "fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2",
+          "border-border bg-background w-full max-w-lg rounded-2xl border shadow-xl",
+          "data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
+          "data-[ending-style]:scale-95 data-[ending-style]:opacity-0",
           "transition-all duration-200",
           className,
         )}
@@ -78,16 +78,10 @@ function DialogContent({
   );
 }
 
-function DialogTitle({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Title>) {
+function DialogTitle({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) {
   return (
     <DialogPrimitive.Title
-      className={cn(
-        "text-lg font-semibold leading-none tracking-tight",
-        className,
-      )}
+      className={cn("text-lg leading-none font-semibold tracking-tight", className)}
       {...props}
     />
   );
@@ -99,20 +93,17 @@ function DialogDescription({
 }: React.ComponentProps<typeof DialogPrimitive.Description>) {
   return (
     <DialogPrimitive.Description
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
   );
 }
 
-function DialogClose({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Close>) {
+function DialogClose({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return (
     <DialogPrimitive.Close
       className={cn(
-        "absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100",
+        "absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100",
         className,
       )}
       {...props}

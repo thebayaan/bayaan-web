@@ -29,43 +29,43 @@ export function MushafView() {
   );
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border">
+    <div className="flex h-full flex-col">
+      <div className="border-border flex items-center justify-between border-b px-4 py-2">
         <button
           onClick={() => goToPage(currentPage + 1)}
           disabled={currentPage >= TOTAL_PAGES}
-          className="px-3 py-1.5 text-sm rounded-lg bg-[var(--text-alpha-06)] disabled:opacity-30 hover:bg-[var(--text-alpha-10)] transition-colors"
+          className="rounded-lg bg-[var(--text-alpha-06)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--text-alpha-10)] disabled:opacity-30"
         >
           &#8594; Previous
         </button>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Page</span>
+          <span className="text-muted-foreground text-sm">Page</span>
           <input
             type="number"
             min={1}
             max={TOTAL_PAGES}
             value={currentPage}
             onChange={(e) => goToPage(parseInt(e.target.value, 10) || 1)}
-            className="w-16 text-center text-sm bg-[var(--text-alpha-04)] border border-[var(--text-alpha-06)] rounded px-2 py-1"
+            className="w-16 rounded border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] px-2 py-1 text-center text-sm"
           />
-          <span className="text-sm text-muted-foreground">/ {TOTAL_PAGES}</span>
+          <span className="text-muted-foreground text-sm">/ {TOTAL_PAGES}</span>
         </div>
         <button
           onClick={() => goToPage(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="px-3 py-1.5 text-sm rounded-lg bg-[var(--text-alpha-06)] disabled:opacity-30 hover:bg-[var(--text-alpha-10)] transition-colors"
+          className="rounded-lg bg-[var(--text-alpha-06)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--text-alpha-10)] disabled:opacity-30"
         >
           Next &#8592;
         </button>
       </div>
       <div className="flex-1 overflow-y-auto">
         {isLoading ? (
-          <div className="flex items-center justify-center min-h-[600px]">
-            <div className="animate-pulse space-y-4 w-full max-w-[640px] px-8">
+          <div className="flex min-h-[600px] items-center justify-center">
+            <div className="w-full max-w-[640px] animate-pulse space-y-4 px-8">
               {Array.from({ length: 15 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-6 bg-[var(--text-alpha-06)] rounded"
+                  className="h-6 rounded bg-[var(--text-alpha-06)]"
                   style={{ width: `${70 + ((i * 7) % 30)}%` }}
                 />
               ))}

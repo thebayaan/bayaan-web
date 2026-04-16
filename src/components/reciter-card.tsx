@@ -21,7 +21,7 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
         className,
       )}
     >
-      <div className="aspect-square relative rounded-lg overflow-hidden bg-[var(--text-alpha-06)] mb-3">
+      <div className="relative mb-3 aspect-square overflow-hidden rounded-lg bg-[var(--text-alpha-06)]">
         {reciter.image_url ? (
           <Image
             src={reciter.image_url}
@@ -31,7 +31,7 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
             sizes="(max-width: 768px) 50vw, 200px"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+          <div className="text-muted-foreground flex h-full w-full items-center justify-center">
             <svg
               width={48}
               height={48}
@@ -46,8 +46,8 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
           </div>
         )}
       </div>
-      <p className="font-semibold text-sm truncate">{reciter.name}</p>
-      <p className="text-xs text-muted-foreground mt-0.5 capitalize">
+      <p className="truncate text-sm font-semibold">{reciter.name}</p>
+      <p className="text-muted-foreground mt-0.5 text-xs capitalize">
         {style} &middot; {surahCount} Surahs
       </p>
     </Link>

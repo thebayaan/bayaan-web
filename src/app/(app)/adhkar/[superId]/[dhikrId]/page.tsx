@@ -27,26 +27,21 @@ export default function DhikrPage({
   const offset = circumference - progress * circumference;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] p-6">
+    <div className="flex min-h-[70vh] flex-col items-center justify-center p-6">
       <p
-        className="text-2xl font-[UthmanicHafs] leading-relaxed text-center mb-8 max-w-lg"
+        className="mb-8 max-w-lg text-center font-[UthmanicHafs] text-2xl leading-relaxed"
         dir="rtl"
       >
         {dhikr.text_arabic}
       </p>
-      <p className="text-sm text-muted-foreground text-center max-w-md mb-8">
-        {dhikr.translation}
-      </p>
+      <p className="text-muted-foreground mb-8 max-w-md text-center text-sm">{dhikr.translation}</p>
 
       {/* Tasbeeh Counter */}
       <button
         onClick={() => setCount((c) => c + 1)}
-        className="relative w-40 h-40 rounded-full flex items-center justify-center transition-transform active:scale-95"
+        className="relative flex h-40 w-40 items-center justify-center rounded-full transition-transform active:scale-95"
       >
-        <svg
-          className="absolute inset-0 w-full h-full -rotate-90"
-          viewBox="0 0 128 128"
-        >
+        <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 128 128">
           <circle
             cx="64"
             cy="64"
@@ -70,20 +65,20 @@ export default function DhikrPage({
         </svg>
         <div className="text-center">
           <p className="text-3xl font-bold">{count}</p>
-          <p className="text-xs text-muted-foreground">/ {target}</p>
+          <p className="text-muted-foreground text-xs">/ {target}</p>
         </div>
       </button>
 
-      <div className="flex gap-4 mt-6">
+      <div className="mt-6 flex gap-4">
         <button
           onClick={() => setCount(0)}
-          className="px-4 py-2 text-sm rounded-lg bg-[var(--text-alpha-06)] hover:bg-[var(--text-alpha-10)] transition-colors"
+          className="rounded-lg bg-[var(--text-alpha-06)] px-4 py-2 text-sm transition-colors hover:bg-[var(--text-alpha-10)]"
         >
           Reset
         </button>
       </div>
 
-      <p className="text-xs text-muted-foreground mt-4">{dhikr.reference}</p>
+      <p className="text-muted-foreground mt-4 text-xs">{dhikr.reference}</p>
     </div>
   );
 }

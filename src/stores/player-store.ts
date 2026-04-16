@@ -1,11 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type {
-  Track,
-  RepeatMode,
-  PlaybackState,
-  PlayerSettings,
-} from "@/types/audio";
+import type { Track, RepeatMode, PlaybackState, PlayerSettings } from "@/types/audio";
 import { audioService } from "@/services/audio/audio-service";
 import { audioCoordinator } from "@/services/audio/audio-coordinator";
 
@@ -102,9 +97,7 @@ export const usePlayerStore = create<PlayerStoreState>()(
           let currentIndex = s.queue.currentIndex;
 
           // Adjust currentIndex for removed items before it
-          const removedBefore = indices.filter(
-            (i) => i < s.queue.currentIndex,
-          ).length;
+          const removedBefore = indices.filter((i) => i < s.queue.currentIndex).length;
           currentIndex -= removedBefore;
 
           if (currentIndex >= tracks.length) {
@@ -276,8 +269,7 @@ export const usePlayerStore = create<PlayerStoreState>()(
         if (!state) return;
         // Discard stale URLs (non-cdn.thebayaan.com)
         const hasBadUrls = state.queue.tracks.some(
-          (t) =>
-            t.url.includes("mp3quran.net") || t.url.includes("supabase.co"),
+          (t) => t.url.includes("mp3quran.net") || t.url.includes("supabase.co"),
         );
         if (hasBadUrls) {
           state.queue = { tracks: [], currentIndex: -1 };

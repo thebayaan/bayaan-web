@@ -15,14 +15,14 @@ export function SearchInput({ value, onChange, className }: SearchInputProps) {
     <div className={cn("relative", className)}>
       <SearchIcon
         size={18}
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+        className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
       />
       <Input
         type="search"
         placeholder="Search reciters and surahs..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="pl-10 bg-[var(--text-alpha-04)] border-[var(--text-alpha-06)]"
+        className="border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] pl-10"
       />
     </div>
   );

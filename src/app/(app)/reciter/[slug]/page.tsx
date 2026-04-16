@@ -11,15 +11,12 @@ import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 
 const surahs = surahData as unknown as Surah[];
-const surahNameMap = Object.fromEntries(
-  surahs.map((s) => [s.id, s.name]),
-) as Record<number, string>;
+const surahNameMap = Object.fromEntries(surahs.map((s) => [s.id, s.name])) as Record<
+  number,
+  string
+>;
 
-export default function ReciterPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default function ReciterPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const { reciter, isLoading } = useReciter(slug);
   const [selectedRewayatIdx, setSelectedRewayatIdx] = useState(0);
@@ -44,13 +41,13 @@ export default function ReciterPage({
 
   if (isLoading || !reciter) {
     return (
-      <div className="p-6 animate-pulse">
-        <div className="flex items-end gap-6 mb-8">
-          <div className="w-48 h-48 bg-[var(--text-alpha-06)] rounded-xl" />
+      <div className="animate-pulse p-6">
+        <div className="mb-8 flex items-end gap-6">
+          <div className="h-48 w-48 rounded-xl bg-[var(--text-alpha-06)]" />
           <div className="space-y-3">
-            <div className="h-4 w-20 bg-[var(--text-alpha-06)] rounded" />
-            <div className="h-10 w-64 bg-[var(--text-alpha-06)] rounded" />
-            <div className="h-4 w-40 bg-[var(--text-alpha-04)] rounded" />
+            <div className="h-4 w-20 rounded bg-[var(--text-alpha-06)]" />
+            <div className="h-10 w-64 rounded bg-[var(--text-alpha-06)]" />
+            <div className="h-4 w-40 rounded bg-[var(--text-alpha-04)]" />
           </div>
         </div>
       </div>
@@ -73,12 +70,7 @@ export default function ReciterPage({
       return;
     }
 
-    const { tracks } = createQueueFromSurah(
-      reciter,
-      selectedRewayat,
-      surahId,
-      surahNameMap,
-    );
+    const { tracks } = createQueueFromSurah(reciter, selectedRewayat, surahId, surahNameMap);
     void updateQueue(tracks);
   }
 
@@ -86,12 +78,7 @@ export default function ReciterPage({
     if (!reciter || !selectedRewayat) return;
     const firstSurah = selectedRewayat.surah_list[0];
     if (firstSurah === undefined) return;
-    const { tracks } = createQueueFromSurah(
-      reciter,
-      selectedRewayat,
-      firstSurah,
-      surahNameMap,
-    );
+    const { tracks } = createQueueFromSurah(reciter, selectedRewayat, firstSurah, surahNameMap);
     void updateQueue(tracks);
   }
 
@@ -100,15 +87,15 @@ export default function ReciterPage({
       <ReciterHeader reciter={reciter} />
 
       {reciter.rewayat.length > 1 && (
-        <div className="flex gap-2 px-6 mb-4">
+        <div className="mb-4 flex gap-2 px-6">
           {reciter.rewayat.map((rw, idx) => (
             <button
               key={rw.id}
               onClick={() => setSelectedRewayatIdx(idx)}
-              className={`px-4 py-1.5 text-sm rounded-full transition-colors ${
+              className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
                 idx === selectedRewayatIdx
                   ? "bg-foreground text-background font-medium"
-                  : "bg-[var(--text-alpha-06)] text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground bg-[var(--text-alpha-06)]"
               }`}
             >
               {rw.name}
@@ -117,10 +104,10 @@ export default function ReciterPage({
         </div>
       )}
 
-      <div className="flex items-center gap-3 px-6 mb-4">
+      <div className="mb-4 flex items-center gap-3 px-6">
         <button
           onClick={handlePlayAll}
-          className="flex items-center gap-2 bg-foreground text-background px-6 py-2.5 rounded-full font-medium text-sm hover:scale-105 transition-transform"
+          className="bg-foreground text-background flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium transition-transform hover:scale-105"
         >
           <PlayIcon size={16} color="currentColor" />
           Play All

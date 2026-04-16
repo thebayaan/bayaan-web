@@ -15,6 +15,7 @@
 ### Task 1: Install Clerk and Create Middleware
 
 **Files:**
+
 - Modify: `package.json` (add @clerk/nextjs)
 - Create: `middleware.ts` (project root)
 - Modify: `.env.local` (add Clerk keys)
@@ -28,6 +29,7 @@ npm install @clerk/nextjs
 - [ ] **Step 2: Add Clerk env vars to .env.local**
 
 Add to `.env.local` (keep existing vars):
+
 ```env
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YOUR_KEY_HERE
 CLERK_SECRET_KEY=sk_test_YOUR_KEY_HERE
@@ -44,11 +46,7 @@ Create `middleware.ts` in the project root:
 ```typescript
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isPublicRoute = createRouteMatcher([
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/api/quran(.*)",
-]);
+const isPublicRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)", "/api/quran(.*)"]);
 
 export default clerkMiddleware(async (auth, request) => {
   if (!isPublicRoute(request)) {
@@ -82,6 +80,7 @@ git commit -m "feat: install Clerk and add auth middleware"
 ### Task 2: ClerkProvider + Sign-In/Sign-Up Pages
 
 **Files:**
+
 - Modify: `src/app/layout.tsx` (wrap with ClerkProvider)
 - Create: `src/app/sign-in/[[...sign-in]]/page.tsx`
 - Create: `src/app/sign-up/[[...sign-up]]/page.tsx`
@@ -91,11 +90,13 @@ git commit -m "feat: install Clerk and add auth middleware"
 Modify `src/app/layout.tsx` — wrap the `<html>` element with `<ClerkProvider>`:
 
 Add import:
+
 ```typescript
 import { ClerkProvider } from "@clerk/nextjs";
 ```
 
 Wrap the return:
+
 ```tsx
 return (
   <ClerkProvider>
@@ -117,7 +118,7 @@ import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="bg-background flex min-h-screen items-center justify-center">
       <SignIn />
     </div>
   );
@@ -133,7 +134,7 @@ import { SignUp } from "@clerk/nextjs";
 
 export default function SignUpPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="bg-background flex min-h-screen items-center justify-center">
       <SignUp />
     </div>
   );
@@ -158,6 +159,7 @@ git commit -m "feat: add ClerkProvider and sign-in/sign-up pages"
 ### Task 3: Pass Clerk Token to Bayaan API Proxy
 
 **Files:**
+
 - Modify: `src/app/api/bayaan/[...path]/route.ts`
 
 - [ ] **Step 1: Update Bayaan API proxy to forward Clerk token for user routes**
@@ -165,6 +167,7 @@ git commit -m "feat: add ClerkProvider and sign-in/sign-up pages"
 Modify `src/app/api/bayaan/[...path]/route.ts` to pass the Clerk session token to user endpoints:
 
 Add import at top:
+
 ```typescript
 import { auth } from "@clerk/nextjs/server";
 ```
@@ -172,7 +175,10 @@ import { auth } from "@clerk/nextjs/server";
 Update the `proxyToBayaan` function to get the Clerk token and forward it for `/user/*` routes:
 
 ```typescript
-async function proxyToBayaan(request: NextRequest, params: { path: string[] }): Promise<NextResponse> {
+async function proxyToBayaan(
+  request: NextRequest,
+  params: { path: string[] },
+): Promise<NextResponse> {
   const path = params.path.join("/");
   const url = new URL(`/v1/${path}`, BAYAAN_API_URL);
   request.nextUrl.searchParams.forEach((value, key) => {
@@ -212,7 +218,10 @@ async function proxyToBayaan(request: NextRequest, params: { path: string[] }): 
 Note: The backend's `userAuth` middleware reads from the `Authorization` header. We need to update the proxy to swap the auth header for user routes. Here's the corrected version:
 
 ```typescript
-async function proxyToBayaan(request: NextRequest, params: { path: string[] }): Promise<NextResponse> {
+async function proxyToBayaan(
+  request: NextRequest,
+  params: { path: string[] },
+): Promise<NextResponse> {
   const path = params.path.join("/");
   const url = new URL(`/v1/${path}`, BAYAAN_API_URL);
   request.nextUrl.searchParams.forEach((value, key) => {
@@ -251,6 +260,7 @@ async function proxyToBayaan(request: NextRequest, params: { path: string[] }): 
 ```
 
 This way:
+
 - `/api/bayaan/reciters` → uses `BAYAAN_API_KEY` (API key auth, existing behavior)
 - `/api/bayaan/user/bookmarks` → uses Clerk JWT (user auth)
 
@@ -272,6 +282,7 @@ git commit -m "feat: forward Clerk JWT to Bayaan API for user routes"
 ### Task 4: Add User Button to Sidebar
 
 **Files:**
+
 - Modify: `src/components/layout/sidebar.tsx`
 
 - [ ] **Step 1: Add UserButton to sidebar**
@@ -279,6 +290,7 @@ git commit -m "feat: forward Clerk JWT to Bayaan API for user routes"
 Add the Clerk `UserButton` to the sidebar for account management. Modify `src/components/layout/sidebar.tsx`:
 
 Add import:
+
 ```typescript
 import { UserButton } from "@clerk/nextjs";
 ```
@@ -286,14 +298,14 @@ import { UserButton } from "@clerk/nextjs";
 Add the UserButton in the `mt-auto` section, before the Settings nav item:
 
 ```tsx
-<div className="mt-auto px-2 pb-4 space-y-2">
+<div className="mt-auto space-y-2 px-2 pb-4">
   <div className="flex items-center gap-3 px-3 py-2">
     <UserButton
       appearance={{
         elements: { avatarBox: "w-7 h-7" },
       }}
     />
-    <span className="hidden lg:inline text-sm text-muted-foreground">Account</span>
+    <span className="text-muted-foreground hidden text-sm lg:inline">Account</span>
   </div>
   <SidebarNavItem href="/settings" icon={SettingsIcon} label="Settings" />
 </div>

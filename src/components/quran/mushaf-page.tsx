@@ -32,7 +32,7 @@ export function MushafPage({
   }, [verses, pageNumber]);
 
   return (
-    <div className="flex flex-col items-center min-h-[600px] px-4 py-6">
+    <div className="flex min-h-[600px] flex-col items-center px-4 py-6">
       {lines.map(([lineNumber, words]) => (
         <VerseText
           key={`line-${lineNumber}`}
@@ -44,7 +44,7 @@ export function MushafPage({
           className="w-full max-w-[640px]"
         />
       ))}
-      <p className="text-xs text-muted-foreground mt-4">{pageNumber}</p>
+      <p className="text-muted-foreground mt-4 text-xs">{pageNumber}</p>
     </div>
   );
 }

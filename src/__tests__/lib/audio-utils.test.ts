@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  buildAudioUrl,
-  createTrack,
-  createQueueFromSurah,
-} from "@/lib/audio-utils";
+import { buildAudioUrl, createTrack, createQueueFromSurah } from "@/lib/audio-utils";
 import type { Reciter, Rewayat } from "@/types/reciter";
 
 const mockRewayat: Rewayat = {
@@ -11,8 +7,7 @@ const mockRewayat: Rewayat = {
   reciter_id: "r-1",
   name: "Hafs",
   style: "murattal",
-  server:
-    "https://cdn.thebayaan.com/quran/recitations/mishary/hafs/murattal/default",
+  server: "https://cdn.thebayaan.com/quran/recitations/mishary/hafs/murattal/default",
   source_type: "bayaan",
   surah_total: 114,
   surah_list: [1, 2, 3, 4, 5],
@@ -65,12 +60,7 @@ describe("createQueueFromSurah", () => {
       4: "An-Nisa",
       5: "Al-Maidah",
     };
-    const { tracks, startIndex } = createQueueFromSurah(
-      mockReciter,
-      mockRewayat,
-      3,
-      names,
-    );
+    const { tracks, startIndex } = createQueueFromSurah(mockReciter, mockRewayat, 3, names);
     expect(tracks).toHaveLength(5);
     expect(startIndex).toBe(0);
     expect(tracks[0]?.title).toBe("Aal-E-Imran");

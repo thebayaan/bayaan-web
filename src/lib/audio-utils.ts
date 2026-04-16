@@ -36,17 +36,9 @@ export function createQueueFromSurah(
   const startIdx = surahList.indexOf(startSurahId);
   if (startIdx === -1) return { tracks: [], startIndex: 0 };
 
-  const reordered = [
-    ...surahList.slice(startIdx),
-    ...surahList.slice(0, startIdx),
-  ];
+  const reordered = [...surahList.slice(startIdx), ...surahList.slice(0, startIdx)];
   const tracks = reordered.map((surahId) =>
-    createTrack(
-      reciter,
-      rewayat,
-      surahId,
-      surahNames[surahId] ?? `Surah ${surahId}`,
-    ),
+    createTrack(reciter, rewayat, surahId, surahNames[surahId] ?? `Surah ${surahId}`),
   );
   return { tracks, startIndex: 0 };
 }

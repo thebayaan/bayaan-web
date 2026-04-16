@@ -3,13 +3,9 @@ import { render, screen } from "@testing-library/react";
 import { CollectionHub } from "@/components/collection/collection-hub";
 
 vi.mock("next/link", () => ({
-  default: ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => <a href={href}>{children}</a>,
+  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
 }));
 
 describe("CollectionHub", () => {

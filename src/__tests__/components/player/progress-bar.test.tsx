@@ -4,9 +4,7 @@ import { ProgressBar } from "@/components/player/progress-bar";
 
 describe("ProgressBar", () => {
   it("displays formatted time values", () => {
-    render(
-      <ProgressBar positionMs={90000} durationMs={300000} onSeek={vi.fn()} />,
-    );
+    render(<ProgressBar positionMs={90000} durationMs={300000} onSeek={vi.fn()} />);
     expect(screen.getByText("1:30")).toBeInTheDocument();
     expect(screen.getByText("5:00")).toBeInTheDocument();
   });

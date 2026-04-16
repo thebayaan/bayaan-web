@@ -19,11 +19,9 @@ export function ReadingVerse({
   showTranslation,
 }: ReadingVerseProps) {
   return (
-    <div className="py-4 border-b border-[var(--text-alpha-06)]">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs text-muted-foreground font-medium">
-          {verse.verse_key}
-        </span>
+    <div className="border-b border-[var(--text-alpha-06)] py-4">
+      <div className="mb-2 flex items-center gap-2">
+        <span className="text-muted-foreground text-xs font-medium">{verse.verse_key}</span>
       </div>
       <div className="mb-3">
         <VerseText
@@ -35,11 +33,8 @@ export function ReadingVerse({
       </div>
       {showTranslation &&
         verse.translations?.map((translation) => (
-          <div
-            key={translation.id}
-            className="mt-3 text-sm text-muted-foreground leading-relaxed"
-          >
-            <p className="text-xs font-medium text-muted-foreground/60 mb-1">
+          <div key={translation.id} className="text-muted-foreground mt-3 text-sm leading-relaxed">
+            <p className="text-muted-foreground/60 mb-1 text-xs font-medium">
               {translation.resource_name}
             </p>
             <p

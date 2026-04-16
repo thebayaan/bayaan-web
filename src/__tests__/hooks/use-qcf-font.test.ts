@@ -35,10 +35,7 @@ describe("useQcfFont", () => {
     await act(async () => {
       await new Promise((r) => setTimeout(r, 10));
     });
-    expect(FontFace).toHaveBeenCalledWith(
-      "p1-v2",
-      expect.stringContaining("p1.woff2"),
-    );
+    expect(FontFace).toHaveBeenCalledWith("p1-v2", expect.stringContaining("p1.woff2"));
   });
 
   it("returns loaded status", async () => {

@@ -9,17 +9,11 @@ export const metadata: Metadata = {
   description: "Listen to and read the Holy Quran with beautiful recitations",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
       <html lang="en" dir="ltr" suppressHydrationWarning>
-        <body
-          className={`${manrope.variable} ${surahNames.variable} font-sans antialiased`}
-        >
+        <body className={`${manrope.variable} ${surahNames.variable} font-sans antialiased`}>
           <ThemeProvider>{children}</ThemeProvider>
         </body>
       </html>

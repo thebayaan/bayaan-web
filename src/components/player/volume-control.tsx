@@ -33,7 +33,7 @@ export function VolumeControl({
     <div className="flex items-center gap-2">
       <button
         onClick={handleMuteToggle}
-        className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+        className="text-muted-foreground hover:text-foreground p-1 transition-colors"
         aria-label={isMuted ? "Unmute" : "Mute"}
       >
         <svg

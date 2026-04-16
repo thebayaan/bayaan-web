@@ -45,80 +45,120 @@ src/
 ### Task 1: Collection Data Hooks
 
 **Files:**
+
 - Create: `src/hooks/use-bookmarks.ts`, `src/hooks/use-favorites.ts`, `src/hooks/use-playlists.ts`, `src/hooks/use-notes.ts`
 
 - [ ] **Step 1: Create all 4 hooks**
 
 Create `src/hooks/use-bookmarks.ts`:
+
 ```typescript
 import useSWR from "swr";
 import { fetchBayaan } from "@/lib/api";
 import type { VerseBookmark } from "@/types/quran";
 
-interface BookmarksResponse { data: VerseBookmark[]; }
+interface BookmarksResponse {
+  data: VerseBookmark[];
+}
 
 export function useBookmarks() {
   const { data, error, isLoading, mutate } = useSWR<BookmarksResponse>(
-    "user/bookmarks", fetchBayaan, { revalidateOnFocus: false }
+    "user/bookmarks",
+    fetchBayaan,
+    { revalidateOnFocus: false },
   );
   return { bookmarks: data?.data ?? [], isLoading, error, mutate };
 }
 ```
 
 Create `src/hooks/use-favorites.ts`:
+
 ```typescript
 import useSWR from "swr";
 import { fetchBayaan } from "@/lib/api";
 
-interface Favorite { id: string; reciter_id: string; rewayat_id: string; surah_id: number; created_at: string; }
-interface FavoritesResponse { data: Favorite[]; }
+interface Favorite {
+  id: string;
+  reciter_id: string;
+  rewayat_id: string;
+  surah_id: number;
+  created_at: string;
+}
+interface FavoritesResponse {
+  data: Favorite[];
+}
 
-interface FavoriteReciter { id: string; reciter_id: string; created_at: string; }
-interface FavoriteRecitersResponse { data: FavoriteReciter[]; }
+interface FavoriteReciter {
+  id: string;
+  reciter_id: string;
+  created_at: string;
+}
+interface FavoriteRecitersResponse {
+  data: FavoriteReciter[];
+}
 
 export function useFavorites() {
   const { data, error, isLoading, mutate } = useSWR<FavoritesResponse>(
-    "user/favorites", fetchBayaan, { revalidateOnFocus: false }
+    "user/favorites",
+    fetchBayaan,
+    { revalidateOnFocus: false },
   );
   return { favorites: data?.data ?? [], isLoading, error, mutate };
 }
 
 export function useFavoriteReciters() {
   const { data, error, isLoading, mutate } = useSWR<FavoriteRecitersResponse>(
-    "user/favorite-reciters", fetchBayaan, { revalidateOnFocus: false }
+    "user/favorite-reciters",
+    fetchBayaan,
+    { revalidateOnFocus: false },
   );
   return { favoriteReciters: data?.data ?? [], isLoading, error, mutate };
 }
 ```
 
 Create `src/hooks/use-playlists.ts`:
+
 ```typescript
 import useSWR from "swr";
 import { fetchBayaan } from "@/lib/api";
 
-interface Playlist { id: string; name: string; description?: string; is_public: boolean; created_at: string; updated_at: string; }
-interface PlaylistsResponse { data: Playlist[]; }
+interface Playlist {
+  id: string;
+  name: string;
+  description?: string;
+  is_public: boolean;
+  created_at: string;
+  updated_at: string;
+}
+interface PlaylistsResponse {
+  data: Playlist[];
+}
 
 export function usePlaylists() {
   const { data, error, isLoading, mutate } = useSWR<PlaylistsResponse>(
-    "user/playlists", fetchBayaan, { revalidateOnFocus: false }
+    "user/playlists",
+    fetchBayaan,
+    { revalidateOnFocus: false },
   );
   return { playlists: data?.data ?? [], isLoading, error, mutate };
 }
 ```
 
 Create `src/hooks/use-notes.ts`:
+
 ```typescript
 import useSWR from "swr";
 import { fetchBayaan } from "@/lib/api";
 import type { VerseNote } from "@/types/quran";
 
-interface NotesResponse { data: VerseNote[]; }
+interface NotesResponse {
+  data: VerseNote[];
+}
 
 export function useNotes() {
-  const { data, error, isLoading, mutate } = useSWR<NotesResponse>(
-    "user/notes", fetchBayaan, { revalidateOnFocus: false }
-  );
+  const { data, error, isLoading, mutate } = useSWR<NotesResponse>("user/notes", fetchBayaan, {
+    revalidateOnFocus: false,
+  });
   return { notes: data?.data ?? [], isLoading, error, mutate };
 }
 ```
@@ -141,6 +181,7 @@ git commit -m "feat: add collection data hooks for bookmarks, favorites, playlis
 ### Task 2: Collection Hub Page
 
 **Files:**
+
 - Create: `src/components/collection/collection-hub.tsx`
 - Modify: `src/app/(app)/collection/page.tsx`
 - Test: `src/__tests__/components/collection/collection-hub.test.tsx`
@@ -148,6 +189,7 @@ git commit -m "feat: add collection data hooks for bookmarks, favorites, playlis
 - [ ] **Step 1: Create CollectionHub component**
 
 Create `src/components/collection/collection-hub.tsx`:
+
 ```tsx
 "use client";
 
@@ -155,29 +197,44 @@ import Link from "next/link";
 import { HeartIcon, QuranIcon, PlayIcon } from "@/components/icons";
 
 const SECTIONS = [
-  { href: "/collection/playlists", label: "Playlists", description: "Your custom playlists", icon: PlayIcon },
-  { href: "/collection/favorites", label: "Favorites", description: "Favorited tracks", icon: HeartIcon },
-  { href: "/collection/bookmarks", label: "Bookmarks", description: "Saved verses", icon: QuranIcon },
+  {
+    href: "/collection/playlists",
+    label: "Playlists",
+    description: "Your custom playlists",
+    icon: PlayIcon,
+  },
+  {
+    href: "/collection/favorites",
+    label: "Favorites",
+    description: "Favorited tracks",
+    icon: HeartIcon,
+  },
+  {
+    href: "/collection/bookmarks",
+    label: "Bookmarks",
+    description: "Saved verses",
+    icon: QuranIcon,
+  },
   { href: "/collection/notes", label: "Notes", description: "Verse annotations", icon: QuranIcon },
 ] as const;
 
 export function CollectionHub() {
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Your Collection</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <h1 className="mb-6 text-3xl font-bold">Your Collection</h1>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {SECTIONS.map(({ href, label, description, icon: Icon }) => (
           <Link
             key={href}
             href={href}
-            className="flex items-center gap-4 p-4 rounded-xl bg-[var(--text-alpha-04)] hover:bg-[var(--text-alpha-06)] transition-colors"
+            className="flex items-center gap-4 rounded-xl bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
           >
-            <div className="w-12 h-12 rounded-lg bg-[var(--text-alpha-06)] flex items-center justify-center shrink-0">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[var(--text-alpha-06)]">
               <Icon size={24} />
             </div>
             <div>
               <p className="font-semibold">{label}</p>
-              <p className="text-sm text-muted-foreground">{description}</p>
+              <p className="text-muted-foreground text-sm">{description}</p>
             </div>
           </Link>
         ))}
@@ -190,13 +247,16 @@ export function CollectionHub() {
 - [ ] **Step 2: Write test**
 
 Create `src/__tests__/components/collection/collection-hub.test.tsx`:
+
 ```tsx
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { CollectionHub } from "@/components/collection/collection-hub";
 
 vi.mock("next/link", () => ({
-  default: ({ children, href }: { children: React.ReactNode; href: string }) => <a href={href}>{children}</a>,
+  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
 }));
 
 describe("CollectionHub", () => {
@@ -210,8 +270,14 @@ describe("CollectionHub", () => {
 
   it("links to correct paths", () => {
     render(<CollectionHub />);
-    expect(screen.getByText("Playlists").closest("a")).toHaveAttribute("href", "/collection/playlists");
-    expect(screen.getByText("Bookmarks").closest("a")).toHaveAttribute("href", "/collection/bookmarks");
+    expect(screen.getByText("Playlists").closest("a")).toHaveAttribute(
+      "href",
+      "/collection/playlists",
+    );
+    expect(screen.getByText("Bookmarks").closest("a")).toHaveAttribute(
+      "href",
+      "/collection/bookmarks",
+    );
   });
 });
 ```
@@ -219,9 +285,12 @@ describe("CollectionHub", () => {
 - [ ] **Step 3: Replace collection page**
 
 Replace `src/app/(app)/collection/page.tsx`:
+
 ```tsx
 import { CollectionHub } from "@/components/collection/collection-hub";
-export default function CollectionPage() { return <CollectionHub />; }
+export default function CollectionPage() {
+  return <CollectionHub />;
+}
 ```
 
 - [ ] **Step 4: Run tests**
@@ -242,6 +311,7 @@ git commit -m "feat: build collection hub page with section links"
 ### Task 3: Collection Sub-Pages (Playlists, Favorites, Bookmarks, Notes)
 
 **Files:**
+
 - Modify: `src/app/(app)/collection/playlists/page.tsx`
 - Modify: `src/app/(app)/collection/playlists/[id]/page.tsx`
 - Modify: `src/app/(app)/collection/favorites/page.tsx`
@@ -251,6 +321,7 @@ git commit -m "feat: build collection hub page with section links"
 - [ ] **Step 1: Build playlists page**
 
 Replace `src/app/(app)/collection/playlists/page.tsx`:
+
 ```tsx
 "use client";
 
@@ -263,30 +334,34 @@ export default function PlaylistsPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Playlists</h1>
+      <h1 className="mb-6 text-2xl font-bold">Playlists</h1>
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-16 bg-[var(--text-alpha-06)] rounded-lg animate-pulse" />
+            <div key={i} className="h-16 animate-pulse rounded-lg bg-[var(--text-alpha-06)]" />
           ))}
         </div>
       ) : playlists.length === 0 ? (
-        <div className="text-center py-12">
-          <PlayIcon size={48} className="mx-auto text-muted-foreground mb-4" />
+        <div className="py-12 text-center">
+          <PlayIcon size={48} className="text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">No playlists yet</p>
-          <p className="text-sm text-muted-foreground mt-1">Create a playlist to organize your favorite recitations</p>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Create a playlist to organize your favorite recitations
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {playlists.map((playlist) => (
             <Link
               key={playlist.id}
               href={`/collection/playlists/${playlist.id}`}
-              className="p-4 rounded-xl bg-[var(--text-alpha-04)] hover:bg-[var(--text-alpha-06)] transition-colors"
+              className="rounded-xl bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
             >
               <p className="font-semibold">{playlist.name}</p>
               {playlist.description && (
-                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{playlist.description}</p>
+                <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                  {playlist.description}
+                </p>
               )}
             </Link>
           ))}
@@ -300,6 +375,7 @@ export default function PlaylistsPage() {
 - [ ] **Step 2: Build playlist detail page**
 
 Replace `src/app/(app)/collection/playlists/[id]/page.tsx`:
+
 ```tsx
 "use client";
 
@@ -309,8 +385,10 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
   const { id } = use(params);
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Playlist</h1>
-      <p className="text-muted-foreground">Playlist {id} — tracks will load once authentication is connected.</p>
+      <h1 className="mb-4 text-2xl font-bold">Playlist</h1>
+      <p className="text-muted-foreground">
+        Playlist {id} — tracks will load once authentication is connected.
+      </p>
     </div>
   );
 }
@@ -319,6 +397,7 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
 - [ ] **Step 3: Build favorites page**
 
 Replace `src/app/(app)/collection/favorites/page.tsx`:
+
 ```tsx
 "use client";
 
@@ -330,25 +409,32 @@ export default function FavoritesPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Favorites</h1>
+      <h1 className="mb-6 text-2xl font-bold">Favorites</h1>
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-16 bg-[var(--text-alpha-06)] rounded-lg animate-pulse" />
+            <div key={i} className="h-16 animate-pulse rounded-lg bg-[var(--text-alpha-06)]" />
           ))}
         </div>
       ) : favorites.length === 0 ? (
-        <div className="text-center py-12">
-          <HeartIcon size={48} className="mx-auto text-muted-foreground mb-4" />
+        <div className="py-12 text-center">
+          <HeartIcon size={48} className="text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">No favorites yet</p>
-          <p className="text-sm text-muted-foreground mt-1">Heart a track while listening to add it here</p>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Heart a track while listening to add it here
+          </p>
         </div>
       ) : (
         <div className="space-y-2">
           {favorites.map((fav) => (
-            <div key={fav.id} className="flex items-center gap-3 p-3 rounded-lg bg-[var(--text-alpha-04)]">
+            <div
+              key={fav.id}
+              className="flex items-center gap-3 rounded-lg bg-[var(--text-alpha-04)] p-3"
+            >
               <p className="text-sm">Surah {fav.surah_id}</p>
-              <p className="text-xs text-muted-foreground">Reciter {fav.reciter_id.slice(0, 8)}...</p>
+              <p className="text-muted-foreground text-xs">
+                Reciter {fav.reciter_id.slice(0, 8)}...
+              </p>
             </div>
           ))}
         </div>
@@ -361,6 +447,7 @@ export default function FavoritesPage() {
 - [ ] **Step 4: Build bookmarks page**
 
 Replace `src/app/(app)/collection/bookmarks/page.tsx`:
+
 ```tsx
 "use client";
 
@@ -373,18 +460,20 @@ export default function BookmarksPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Bookmarks</h1>
+      <h1 className="mb-6 text-2xl font-bold">Bookmarks</h1>
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-16 bg-[var(--text-alpha-06)] rounded-lg animate-pulse" />
+            <div key={i} className="h-16 animate-pulse rounded-lg bg-[var(--text-alpha-06)]" />
           ))}
         </div>
       ) : bookmarks.length === 0 ? (
-        <div className="text-center py-12">
-          <QuranIcon size={48} className="mx-auto text-muted-foreground mb-4" />
+        <div className="py-12 text-center">
+          <QuranIcon size={48} className="text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">No bookmarks yet</p>
-          <p className="text-sm text-muted-foreground mt-1">Bookmark verses while reading the Quran</p>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Bookmark verses while reading the Quran
+          </p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -392,13 +481,17 @@ export default function BookmarksPage() {
             <Link
               key={bm.id}
               href={`/quran/${bm.surah_number}`}
-              className="flex items-center justify-between p-3 rounded-lg bg-[var(--text-alpha-04)] hover:bg-[var(--text-alpha-06)] transition-colors"
+              className="flex items-center justify-between rounded-lg bg-[var(--text-alpha-04)] p-3 transition-colors hover:bg-[var(--text-alpha-06)]"
             >
               <div>
                 <p className="text-sm font-medium">{bm.verse_key}</p>
-                {bm.note && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{bm.note}</p>}
+                {bm.note && (
+                  <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">{bm.note}</p>
+                )}
               </div>
-              <span className="text-xs text-muted-foreground">{new Date(bm.created_at).toLocaleDateString()}</span>
+              <span className="text-muted-foreground text-xs">
+                {new Date(bm.created_at).toLocaleDateString()}
+              </span>
             </Link>
           ))}
         </div>
@@ -411,6 +504,7 @@ export default function BookmarksPage() {
 - [ ] **Step 5: Build notes page**
 
 Replace `src/app/(app)/collection/notes/page.tsx`:
+
 ```tsx
 "use client";
 
@@ -422,17 +516,19 @@ export default function NotesPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Notes</h1>
+      <h1 className="mb-6 text-2xl font-bold">Notes</h1>
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-20 bg-[var(--text-alpha-06)] rounded-lg animate-pulse" />
+            <div key={i} className="h-20 animate-pulse rounded-lg bg-[var(--text-alpha-06)]" />
           ))}
         </div>
       ) : notes.length === 0 ? (
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <p className="text-muted-foreground">No notes yet</p>
-          <p className="text-sm text-muted-foreground mt-1">Add notes to verses while reading the Quran</p>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Add notes to verses while reading the Quran
+          </p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -440,13 +536,15 @@ export default function NotesPage() {
             <Link
               key={note.id}
               href={`/quran/${note.verse_key.split(":")[0]}`}
-              className="block p-4 rounded-lg bg-[var(--text-alpha-04)] hover:bg-[var(--text-alpha-06)] transition-colors"
+              className="block rounded-lg bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
             >
-              <div className="flex items-center justify-between mb-1">
+              <div className="mb-1 flex items-center justify-between">
                 <p className="text-sm font-medium">{note.verse_key}</p>
-                <span className="text-xs text-muted-foreground">{new Date(note.updated_at).toLocaleDateString()}</span>
+                <span className="text-muted-foreground text-xs">
+                  {new Date(note.updated_at).toLocaleDateString()}
+                </span>
               </div>
-              <p className="text-sm text-muted-foreground line-clamp-2">{note.content}</p>
+              <p className="text-muted-foreground line-clamp-2 text-sm">{note.content}</p>
             </Link>
           ))}
         </div>

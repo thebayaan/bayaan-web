@@ -20,9 +20,7 @@ export const useThemeStore = create<ThemeState>()(
 
 function getSystemTheme(): "light" | "dark" {
   if (typeof window === "undefined") return "dark";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 export function getResolvedTheme(mode: ThemeMode): "light" | "dark" {

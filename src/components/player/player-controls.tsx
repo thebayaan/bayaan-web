@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  PlayIcon,
-  PauseIcon,
-  NextIcon,
-  PreviousIcon,
-} from "@/components/icons";
+import { PlayIcon, PauseIcon, NextIcon, PreviousIcon } from "@/components/icons";
 import type { RepeatMode } from "@/types/audio";
 import { cn } from "@/lib/utils";
 
@@ -38,10 +33,8 @@ export function PlayerControls({
         <button
           onClick={onShuffleToggle}
           className={cn(
-            "p-1.5 rounded-full transition-colors",
-            shuffle
-              ? "text-foreground"
-              : "text-muted-foreground hover:text-foreground",
+            "rounded-full p-1.5 transition-colors",
+            shuffle ? "text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
           aria-label={shuffle ? "Disable shuffle" : "Enable shuffle"}
         >
@@ -60,7 +53,7 @@ export function PlayerControls({
 
       <button
         onClick={onPrevious}
-        className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+        className="text-muted-foreground hover:text-foreground p-1.5 transition-colors"
         aria-label="Previous track"
       >
         <PreviousIcon size={compact ? 16 : 20} />
@@ -69,8 +62,8 @@ export function PlayerControls({
       <button
         onClick={onPlayPause}
         className={cn(
-          "flex items-center justify-center rounded-full bg-foreground text-background transition-transform hover:scale-105",
-          compact ? "w-8 h-8" : "w-9 h-9",
+          "bg-foreground text-background flex items-center justify-center rounded-full transition-transform hover:scale-105",
+          compact ? "h-8 w-8" : "h-9 w-9",
         )}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
@@ -83,7 +76,7 @@ export function PlayerControls({
 
       <button
         onClick={onNext}
-        className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+        className="text-muted-foreground hover:text-foreground p-1.5 transition-colors"
         aria-label="Next track"
       >
         <NextIcon size={compact ? 16 : 20} />
@@ -93,7 +86,7 @@ export function PlayerControls({
         <button
           onClick={onRepeatChange}
           className={cn(
-            "relative p-1.5 rounded-full transition-colors",
+            "relative rounded-full p-1.5 transition-colors",
             repeatMode !== "none"
               ? "text-foreground"
               : "text-muted-foreground hover:text-foreground",

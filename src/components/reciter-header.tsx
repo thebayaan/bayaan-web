@@ -8,17 +8,17 @@ interface ReciterHeaderProps {
 export function ReciterHeader({ reciter }: ReciterHeaderProps) {
   return (
     <div className="flex items-end gap-6 p-6 pb-4">
-      <div className="w-48 h-48 rounded-xl overflow-hidden bg-[var(--text-alpha-06)] shrink-0 shadow-lg">
+      <div className="h-48 w-48 shrink-0 overflow-hidden rounded-xl bg-[var(--text-alpha-06)] shadow-lg">
         {reciter.image_url ? (
           <Image
             src={reciter.image_url}
             alt={reciter.name}
             width={192}
             height={192}
-            className="object-cover w-full h-full"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+          <div className="text-muted-foreground flex h-full w-full items-center justify-center">
             <svg
               width={64}
               height={64}
@@ -34,18 +34,15 @@ export function ReciterHeader({ reciter }: ReciterHeaderProps) {
         )}
       </div>
       <div>
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+        <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">
           Reciter
         </p>
-        <h1 className="text-4xl font-bold mb-2">{reciter.name}</h1>
+        <h1 className="mb-2 text-4xl font-bold">{reciter.name}</h1>
         {reciter.bio && (
-          <p className="text-sm text-muted-foreground max-w-lg line-clamp-2">
-            {reciter.bio}
-          </p>
+          <p className="text-muted-foreground line-clamp-2 max-w-lg text-sm">{reciter.bio}</p>
         )}
-        <p className="text-sm text-muted-foreground mt-1">
-          {reciter.rewayat.length} rewayat &middot;{" "}
-          {reciter.rewayat[0]?.surah_total ?? 0} surahs
+        <p className="text-muted-foreground mt-1 text-sm">
+          {reciter.rewayat.length} rewayat &middot; {reciter.rewayat[0]?.surah_total ?? 0} surahs
         </p>
       </div>
     </div>
