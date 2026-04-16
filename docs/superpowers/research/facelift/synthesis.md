@@ -5,6 +5,18 @@
 **Plan:** `../../plans/2026-04-16-facelift-analysis-and-paper-design.md`
 **Findings:** `./deezer/` (10), `./quran-com/` (10)
 
+## 0. Reconciliation with shipped state (added 2026-04-16)
+
+Since the research wave ran, main has advanced past the state the findings analyzed. Features already shipped — the facelift scope adjusts around them:
+
+- **Command palette** (`src/components/command-palette/command-palette.tsx`, 187 lines) — global `Cmd/Ctrl+K` palette exists. The earlier §5 rejection of a command palette is **reversed**. Facelift scope: extend the existing palette with verse-reference parsing (`2:255` → deep-link) and type-chip filters (Reciters / Surahs / Verses), not build a second one.
+- **Playlists CRUD** (`src/app/(app)/collection/playlists/[id]/page.tsx`) — create, rename, delete already ship. "Playlist detail is a stub" is no longer true. Facelift scope on playlist detail is a **visual/hierarchy refresh** (hero + Play/Shuffle + tracklist density), not feature-building. The add-to-playlist action from a reciter row also ships (PR #12).
+- **Deep-linkable verse URLs** (PR #5) — already ship. Synthesis search-row recommendation to deep-link `?verse=n` is already implemented; writing-plans should reference the existing behavior.
+- **Settings URL-addressable subpages** (`src/app/(app)/settings/{about,appearance,reading,reading-themes}/`) — IA already split. Facelift token refresh still applies; no IA work needed.
+- **Hisnul Muslim data + counter** (PR #6), **Media Session + Wake Lock** (PR #7), **SEO: OG / sitemap / robots** (PR #8), **shuffle actually shuffles** (PR #11) — don't touch in facelift.
+
+The per-domain moves table in §3 below has not been rewritten row-by-row — treat this section as the authoritative override where the two disagree.
+
 ## 1. Direction statement
 
 Bayaan's facelift is **hybrid-contemporary devotional**: Quran.com's reading discipline (per-page QCF glyph fonts, stacked-translation layout, `[data-theme]` token architecture, three modes) drives the reading domain; Deezer's listening ergonomics (left-hero reciter pages, cloud-synced queue with dual-insert semantics, pulse-on-heart-tap, below-art action row) drive the listening domain. Both domains share one token layer, one motion ladder, one empty-state primitive, and one shell. The product reads as a Quran app with a real audio player built in, not two products bolted together. Reverence wins any tie against flashiness.
@@ -200,7 +212,7 @@ Ideas the findings surfaced that we considered and rejected:
 - **Bespoke spring curves / `cubic-bezier` zoo / scale-on-press** — both sources converge on a tiny motion ladder. Reason: scale-on-press reads iOS-y, springs read flashy.
 - **Shimmer-gradient skeleton loaders** (Deezer 07) — opacity pulse is calmer and cheaper. Reason: reverent tone.
 - **Mascot illustrations on empty / error states** (Deezer 09) — off-brand for devotional. Reason: tone.
-- **Command palette (`ctrl+K`)** (Quran.com 03) — Bayaan sidebar + search pill covers 95% of the value; a palette would collide. Reason: redundant.
+- ~~**Command palette (`ctrl+K`)**~~ — **superseded**: one now ships (see §0). Non-goal reframed to "don't build a second palette; extend the existing one."
 - **Global top-bar on mobile / ribbon promo system** (Quran.com 02) — sidebar + mobile tab bar cover nav; no editorial ribbon pipeline. Reason: IA clutter.
 - **QC's `color:transparent; text-shadow` tajweed hack** (Quran.com 04) — breaks text selection, fights dark theme. Reason: correctness.
 - **QC's `vw/vh` viewport-unit font ramp** (Quran.com 04) — breaks on short windows. Reason: correctness.
