@@ -69,6 +69,30 @@ export const handlers = [
   http.delete(`${API}/bayaan/user/playlists/:id`, () =>
     HttpResponse.json({ data: { deleted: true } }),
   ),
+  http.post(`${API}/bayaan/user/playlists/:id/items`, async ({ params, request }) => {
+    const body = (await request.json()) as {
+      reciter_id: string;
+      rewayat_id: string;
+      surah_id: number;
+    };
+    return HttpResponse.json(
+      {
+        data: {
+          id: `item-created-${params.id}`,
+          playlist_id: String(params.id),
+          reciter_id: body.reciter_id,
+          rewayat_id: body.rewayat_id,
+          surah_id: body.surah_id,
+          position: 0,
+          created_at: new Date().toISOString(),
+        },
+      },
+      { status: 201 },
+    );
+  }),
+  http.delete(`${API}/bayaan/user/playlists/:id/items/:itemId`, () =>
+    HttpResponse.json({ data: { deleted: true } }),
+  ),
 
   http.get(`${API}/quran/verses/by_chapter/:chapter`, ({ params }) =>
     HttpResponse.json({
