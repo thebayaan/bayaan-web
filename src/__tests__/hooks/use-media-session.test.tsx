@@ -26,7 +26,7 @@ function installMediaSessionMock() {
 describe("useMediaSession", () => {
   beforeEach(() => {
     usePlayerStore.setState({
-      queue: { tracks: [], currentIndex: -1 },
+      queue: { tracks: [], currentIndex: -1, shuffleOrder: null, shufflePosition: 0 },
       playback: {
         isPlaying: false,
         currentTrackIndex: -1,

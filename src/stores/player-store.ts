@@ -7,6 +7,29 @@ import { audioCoordinator } from "@/services/audio/audio-coordinator";
 interface QueueState {
   tracks: Track[];
   currentIndex: number;
+  // Shuffle permutation. When non-null, skipToNext/Previous walk it
+  // instead of sequential order. shuffleOrder[shufflePosition] always
+  // equals currentIndex.
+  shuffleOrder: number[] | null;
+  shufflePosition: number;
+}
+
+/**
+ * Fisher-Yates shuffle that returns a fresh array. Pass an optional
+ * `pinFirst` index to ensure that value ends up at position 0 of the
+ * result — used so the currently playing track stays "up next = 0".
+ */
+export function shuffleIndices(length: number, pinFirst?: number): number[] {
+  const indices = Array.from({ length }, (_, i) => i);
+  if (pinFirst !== undefined && pinFirst >= 0 && pinFirst < length) {
+    [indices[0], indices[pinFirst]] = [indices[pinFirst]!, indices[0]!];
+  }
+  // Shuffle the tail (keep index 0 pinned).
+  for (let i = length - 1; i > 1; i--) {
+    const j = 1 + Math.floor(Math.random() * i);
+    [indices[i], indices[j]] = [indices[j]!, indices[i]!];
+  }
+  return indices;
 }
 
 interface PlayerStoreState {
@@ -59,14 +82,21 @@ const INITIAL_SETTINGS: PlayerSettings = {
 export const usePlayerStore = create<PlayerStoreState>()(
   persist(
     (set, get) => ({
-      queue: { tracks: [], currentIndex: -1 },
+      queue: { tracks: [], currentIndex: -1, shuffleOrder: null, shufflePosition: 0 },
       playback: { ...INITIAL_PLAYBACK },
       settings: { ...INITIAL_SETTINGS },
       isLoading: false,
 
       updateQueue: async (tracks, startIndex = 0) => {
+        const { shuffle } = get().settings;
+        const shuffleOrder = shuffle ? shuffleIndices(tracks.length, startIndex) : null;
         set({
-          queue: { tracks, currentIndex: startIndex },
+          queue: {
+            tracks,
+            currentIndex: startIndex,
+            shuffleOrder,
+            shufflePosition: 0,
+          },
           isLoading: true,
         });
         const track = tracks[startIndex];
@@ -104,7 +134,16 @@ export const usePlayerStore = create<PlayerStoreState>()(
             currentIndex = Math.max(0, tracks.length - 1);
           }
 
-          return { queue: { tracks, currentIndex } };
+          // Mutating the queue invalidates the shuffle permutation; rebuild
+          // lazily on the next toggleShuffle or updateQueue.
+          return {
+            queue: {
+              tracks,
+              currentIndex,
+              shuffleOrder: null,
+              shufflePosition: 0,
+            },
+          };
         });
       },
 
@@ -124,7 +163,14 @@ export const usePlayerStore = create<PlayerStoreState>()(
             currentIndex++;
           }
 
-          return { queue: { tracks, currentIndex } };
+          return {
+            queue: {
+              tracks,
+              currentIndex,
+              shuffleOrder: null,
+              shufflePosition: 0,
+            },
+          };
         });
       },
 
@@ -141,26 +187,53 @@ export const usePlayerStore = create<PlayerStoreState>()(
 
       skipToNext: async () => {
         const state = get();
-        const { tracks, currentIndex } = state.queue;
-        let nextIndex = currentIndex + 1;
+        const { tracks, currentIndex, shuffleOrder, shufflePosition } = state.queue;
+
+        let nextIndex = currentIndex;
+        let nextShufflePosition = shufflePosition;
+        let nextShuffleOrder: number[] | null = shuffleOrder;
 
         if (state.settings.repeatMode === "track") {
           nextIndex = currentIndex;
-        } else if (nextIndex >= tracks.length) {
-          if (state.settings.repeatMode === "queue") {
-            nextIndex = 0;
-          } else {
-            audioService.pause();
-            audioCoordinator.sourceDidStop("main");
-            set((s) => ({ playback: { ...s.playback, isPlaying: false } }));
-            return;
+        } else if (shuffleOrder) {
+          nextShufflePosition = shufflePosition + 1;
+          if (nextShufflePosition >= shuffleOrder.length) {
+            if (state.settings.repeatMode === "queue") {
+              // Re-shuffle pinning currentIndex so we don't immediately
+              // repeat the last-played track.
+              nextShuffleOrder = shuffleIndices(tracks.length, currentIndex);
+              nextShufflePosition = 1;
+            } else {
+              audioService.pause();
+              audioCoordinator.sourceDidStop("main");
+              set((s) => ({ playback: { ...s.playback, isPlaying: false } }));
+              return;
+            }
+          }
+          nextIndex = nextShuffleOrder![nextShufflePosition]!;
+        } else {
+          nextIndex = currentIndex + 1;
+          if (nextIndex >= tracks.length) {
+            if (state.settings.repeatMode === "queue") {
+              nextIndex = 0;
+            } else {
+              audioService.pause();
+              audioCoordinator.sourceDidStop("main");
+              set((s) => ({ playback: { ...s.playback, isPlaying: false } }));
+              return;
+            }
           }
         }
 
         const nextTrack = tracks[nextIndex];
         if (nextTrack) {
           set((s) => ({
-            queue: { ...s.queue, currentIndex: nextIndex },
+            queue: {
+              ...s.queue,
+              currentIndex: nextIndex,
+              shuffleOrder: nextShuffleOrder,
+              shufflePosition: nextShufflePosition,
+            },
             isLoading: true,
           }));
           audioService.load(nextTrack.url);
@@ -175,7 +248,7 @@ export const usePlayerStore = create<PlayerStoreState>()(
 
       skipToPrevious: async () => {
         const state = get();
-        const { tracks, currentIndex } = state.queue;
+        const { tracks, currentIndex, shuffleOrder, shufflePosition } = state.queue;
 
         // If more than 3 seconds in, restart current track
         if (state.playback.positionMs > 3000) {
@@ -184,21 +257,42 @@ export const usePlayerStore = create<PlayerStoreState>()(
           return;
         }
 
-        let prevIndex = currentIndex - 1;
-        if (prevIndex < 0) {
-          if (state.settings.repeatMode === "queue") {
-            prevIndex = tracks.length - 1;
-          } else {
-            audioService.seek(0);
-            set((s) => ({ playback: { ...s.playback, positionMs: 0 } }));
-            return;
+        let prevIndex = currentIndex;
+        let prevShufflePosition = shufflePosition;
+
+        if (shuffleOrder) {
+          prevShufflePosition = shufflePosition - 1;
+          if (prevShufflePosition < 0) {
+            if (state.settings.repeatMode === "queue") {
+              prevShufflePosition = shuffleOrder.length - 1;
+            } else {
+              audioService.seek(0);
+              set((s) => ({ playback: { ...s.playback, positionMs: 0 } }));
+              return;
+            }
+          }
+          prevIndex = shuffleOrder[prevShufflePosition]!;
+        } else {
+          prevIndex = currentIndex - 1;
+          if (prevIndex < 0) {
+            if (state.settings.repeatMode === "queue") {
+              prevIndex = tracks.length - 1;
+            } else {
+              audioService.seek(0);
+              set((s) => ({ playback: { ...s.playback, positionMs: 0 } }));
+              return;
+            }
           }
         }
 
         const prevTrack = tracks[prevIndex];
         if (prevTrack) {
           set((s) => ({
-            queue: { ...s.queue, currentIndex: prevIndex },
+            queue: {
+              ...s.queue,
+              currentIndex: prevIndex,
+              shufflePosition: prevShufflePosition,
+            },
             isLoading: true,
           }));
           audioService.load(prevTrack.url);
@@ -221,9 +315,20 @@ export const usePlayerStore = create<PlayerStoreState>()(
       },
 
       toggleShuffle: () => {
-        set((s) => ({
-          settings: { ...s.settings, shuffle: !s.settings.shuffle },
-        }));
+        set((s) => {
+          const nextShuffle = !s.settings.shuffle;
+          if (!nextShuffle) {
+            return {
+              settings: { ...s.settings, shuffle: false },
+              queue: { ...s.queue, shuffleOrder: null, shufflePosition: 0 },
+            };
+          }
+          const order = shuffleIndices(s.queue.tracks.length, s.queue.currentIndex);
+          return {
+            settings: { ...s.settings, shuffle: true },
+            queue: { ...s.queue, shuffleOrder: order, shufflePosition: 0 },
+          };
+        });
       },
 
       setSleepTimer: (minutes) => {
@@ -272,7 +377,12 @@ export const usePlayerStore = create<PlayerStoreState>()(
           (t) => t.url.includes("mp3quran.net") || t.url.includes("supabase.co"),
         );
         if (hasBadUrls) {
-          state.queue = { tracks: [], currentIndex: -1 };
+          state.queue = { tracks: [], currentIndex: -1, shuffleOrder: null, shufflePosition: 0 };
+        }
+        // Back-compat: older persisted state may not have shuffle fields.
+        if (state.queue.shuffleOrder === undefined) {
+          state.queue.shuffleOrder = null;
+          state.queue.shufflePosition = 0;
         }
       },
     },
