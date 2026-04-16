@@ -20,19 +20,17 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  // next.config.ts uses output: "standalone" (required by Railway),
-  // which means `next start` is a no-op. The standalone bundle must be
-  // run from .next/standalone/ for its internal path resolution to
-  // work. CI pre-builds and stages assets in earlier steps; locally
-  // we do the full build+stage first so `npm run test:e2e` still works.
+  // Production build is verified by a separate "Next build" job in CI.
+  // The E2E smoke only needs to prove routing + Clerk middleware work,
+  // so we run `next dev` here to avoid the output:"standalone" pain
+  // (the standalone bundle doesn't emit request logs and wouldn't
+  // respond to Playwright's HTTP probe in testing).
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: process.env.CI
-          ? "cd .next/standalone && node server.js"
-          : "npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && cd .next/standalone && node server.js",
-        url: BASE_URL,
-        timeout: 120_000,
+        command: "npm run dev",
+        url: `${BASE_URL}/sign-in`,
+        timeout: 180_000,
         reuseExistingServer: !process.env.CI,
         stdout: "pipe",
         stderr: "pipe",
