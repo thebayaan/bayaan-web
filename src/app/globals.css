@@ -40,6 +40,7 @@
   --color-surface-raised: var(--surface-raised);
   --color-surface-sunken: var(--surface-sunken);
   --color-brand-main: var(--brand-main);
+  --color-brand-main-foreground: var(--brand-main-foreground);
   --color-brand-strong: var(--brand-strong);
   --color-brand-weak: var(--brand-weak);
   --color-brand-light: var(--brand-light);
@@ -185,6 +186,7 @@
 
   /* Brand accent ladder — Deezer purple */
   --brand-main: #a238ff;
+  --brand-main-foreground: #ffffff;
   --brand-strong: #9333e8;
   --brand-weak: rgba(162, 56, 255, 0.2);
   --brand-light: rgba(162, 56, 255, 0.08);
@@ -221,6 +223,7 @@
 [data-theme="sepia"] {
   --surface-sunken: oklch(0.88 0.04 78);
   --brand-main: #72603f;
+  --brand-main-foreground: #fff7ea;
   --brand-strong: #5a4a30;
   --brand-weak: rgba(114, 96, 63, 0.2);
   --brand-light: rgba(114, 96, 63, 0.08);
