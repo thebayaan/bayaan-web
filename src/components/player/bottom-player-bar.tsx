@@ -12,10 +12,12 @@ import { audioService } from "@/services/audio/audio-service";
 import type { RepeatMode } from "@/types/audio";
 import { useAudioEvents } from "@/hooks/use-audio-events";
 import { useMediaSession } from "@/hooks/use-media-session";
+import { useWakeLock } from "@/hooks/use-wake-lock";
 
 export function BottomPlayerBar() {
   useAudioEvents();
   useMediaSession();
+  useWakeLock();
   const tracks = usePlayerStore((s) => s.queue.tracks);
   const currentIndex = usePlayerStore((s) => s.queue.currentIndex);
   const playback = usePlayerStore((s) => s.playback);
