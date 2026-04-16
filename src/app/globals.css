@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
   --font-sans: var(--font-manrope), system-ui, sans-serif;
@@ -36,6 +36,15 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-accent-main: var(--accent-main);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-weak: var(--accent-weak);
+  --color-accent-light: var(--accent-light);
+  --color-border-divider: var(--border-divider);
+  --color-overlay: var(--overlay);
 }
 
 :root {
@@ -72,7 +81,7 @@
   --sidebar-ring: oklch(0.15 0.03 220);
 }
 
-.dark {
+[data-theme="dark"] {
   /* Bayaan Dark Mode */
   --background: oklch(0.1 0.02 250);
   --foreground: oklch(1 0 0);
@@ -114,7 +123,7 @@
   --text-alpha-85: rgba(6, 21, 28, 0.85);
 }
 
-.dark {
+[data-theme="dark"] {
   --text-alpha-04: rgba(255, 255, 255, 0.04);
   --text-alpha-06: rgba(255, 255, 255, 0.06);
   --text-alpha-10: rgba(255, 255, 255, 0.1);
@@ -123,10 +132,103 @@
   --text-alpha-85: rgba(255, 255, 255, 0.85);
 }
 
+[data-theme="sepia"] {
+  /* Bayaan Sepia Mode — warm parchment, accent flips cool → warm brown */
+  --background: oklch(0.93 0.04 78);
+  --foreground: oklch(0.18 0.03 60);
+  --card: oklch(0.96 0.03 78);
+  --card-foreground: oklch(0.18 0.03 60);
+  --popover: oklch(0.96 0.03 78);
+  --popover-foreground: oklch(0.18 0.03 60);
+  --primary: oklch(0.18 0.03 60);
+  --primary-foreground: oklch(0.96 0.03 78);
+  --secondary: oklch(0.9 0.04 78);
+  --secondary-foreground: oklch(0.18 0.03 60);
+  --muted: oklch(0.9 0.04 78);
+  --muted-foreground: oklch(0.38 0.03 60);
+  --accent: oklch(0.9 0.04 78);
+  --accent-foreground: oklch(0.18 0.03 60);
+  --destructive: oklch(0.55 0.22 25);
+  --border: oklch(0.78 0.04 78);
+  --input: oklch(0.78 0.04 78);
+  --ring: oklch(0.18 0.03 60);
+
+  --sidebar: oklch(0.9 0.04 78);
+  --sidebar-foreground: oklch(0.18 0.03 60);
+  --sidebar-primary: oklch(0.18 0.03 60);
+  --sidebar-primary-foreground: oklch(0.96 0.03 78);
+  --sidebar-accent: oklch(0.88 0.04 78);
+  --sidebar-accent-foreground: oklch(0.18 0.03 60);
+  --sidebar-border: oklch(0.82 0.04 78);
+  --sidebar-ring: oklch(0.18 0.03 60);
+
+  --text-alpha-04: rgba(6, 21, 28, 0.04);
+  --text-alpha-06: rgba(6, 21, 28, 0.06);
+  --text-alpha-10: rgba(6, 21, 28, 0.1);
+  --text-alpha-35: rgba(6, 21, 28, 0.35);
+  --text-alpha-50: rgba(6, 21, 28, 0.5);
+  --text-alpha-85: rgba(6, 21, 28, 0.85);
+}
+
 @font-face {
   font-family: "UthmanicHafs";
   src: url("/fonts/UthmanicHafs1Ver18.woff2") format("woff2");
   font-display: swap;
+}
+
+/* Facelift semantic tokens — layered on top of shadcn aliases. */
+:root {
+  /* Surfaces */
+  --surface: var(--background);
+  --surface-raised: var(--card);
+  --surface-sunken: oklch(0.92 0.01 90);
+
+  /* Accent ladder — Deezer purple */
+  --accent-main: #a238ff;
+  --accent-strong: #9333e8;
+  --accent-weak: rgba(162, 56, 255, 0.2);
+  --accent-light: rgba(162, 56, 255, 0.08);
+
+  /* Border and divider */
+  --border-divider: oklch(0.92 0.01 90);
+
+  /* Overlay scrim */
+  --overlay: rgba(0, 0, 0, 0.6);
+
+  /* Motion */
+  --motion-fast: 160ms;
+  --motion-moderate: 200ms;
+  --motion-regular: 400ms;
+  --motion-slow: 600ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Elevation */
+  --elevation-0: none;
+  --elevation-s: 0 1px 20px rgba(31, 31, 31, 0.12);
+  --elevation-m: 0 6px 30px rgba(31, 31, 31, 0.16);
+  --elevation-l: 0 12px 48px rgba(31, 31, 31, 0.2);
+}
+
+[data-theme="dark"] {
+  --surface-sunken: oklch(0.14 0.02 250);
+  --border-divider: oklch(0.2 0.02 250);
+  --overlay: rgba(0, 0, 0, 0.8);
+  --elevation-s: 0 1px 20px rgba(0, 0, 0, 0.5);
+  --elevation-m: 0 6px 30px rgba(0, 0, 0, 0.5);
+  --elevation-l: 0 12px 48px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="sepia"] {
+  --surface-sunken: oklch(0.88 0.04 78);
+  --accent-main: #72603f;
+  --accent-strong: #5a4a30;
+  --accent-weak: rgba(114, 96, 63, 0.2);
+  --accent-light: rgba(114, 96, 63, 0.08);
+  --border-divider: oklch(0.85 0.04 78);
+  --overlay: rgba(0, 0, 0, 0.25);
+  --elevation-s: 0 1px 20px rgba(54, 42, 20, 0.12);
+  --elevation-m: 0 6px 30px rgba(54, 42, 20, 0.16);
+  --elevation-l: 0 12px 48px rgba(54, 42, 20, 0.2);
 }
 
 @layer base {
