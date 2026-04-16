@@ -35,10 +35,8 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       setLightTheme: (id) => set({ lightThemeId: id }),
       setDarkTheme: (id) => set({ darkThemeId: id }),
       setTranslationIds: (ids) => set({ translationIds: ids }),
-      toggleTransliteration: () =>
-        set((s) => ({ showTransliteration: !s.showTransliteration })),
-      toggleWordByWord: () =>
-        set((s) => ({ showWordByWord: !s.showWordByWord })),
+      toggleTransliteration: () => set((s) => ({ showTransliteration: !s.showTransliteration })),
+      toggleWordByWord: () => set((s) => ({ showWordByWord: !s.showWordByWord })),
       toggleTajweed: () => set((s) => ({ showTajweed: !s.showTajweed })),
       setMushafPage: (page) => set({ mushafPage: page }),
     }),

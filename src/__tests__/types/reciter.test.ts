@@ -22,8 +22,7 @@ describe("type contracts", () => {
       reciter_id: "abc-123",
       name: "Hafs A'n Assem",
       style: "murattal",
-      server:
-        "https://cdn.thebayaan.com/quran/recitations/mishary-alafasy/hafs/murattal/default",
+      server: "https://cdn.thebayaan.com/quran/recitations/mishary-alafasy/hafs/murattal/default",
       source_type: "bayaan",
       surah_total: 114,
       surah_list: [1, 2, 3],

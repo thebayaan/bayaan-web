@@ -14,10 +14,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
       function handleChange() {
         const systemTheme = mq.matches ? "dark" : "light";
-        document.documentElement.classList.toggle(
-          "dark",
-          systemTheme === "dark",
-        );
+        document.documentElement.classList.toggle("dark", systemTheme === "dark");
       }
       mq.addEventListener("change", handleChange);
       return () => mq.removeEventListener("change", handleChange);

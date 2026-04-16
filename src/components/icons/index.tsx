@@ -5,12 +5,7 @@ interface IconProps extends SVGProps<SVGSVGElement> {
   filled?: boolean;
 }
 
-export function HomeIcon({
-  size = 24,
-  color = "currentColor",
-  filled,
-  ...props
-}: IconProps) {
+export function HomeIcon({ size = 24, color = "currentColor", filled, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
       {filled ? (
@@ -48,12 +43,7 @@ export function HomeIcon({
   );
 }
 
-export function SearchIcon({
-  size = 24,
-  color = "currentColor",
-  filled,
-  ...props
-}: IconProps) {
+export function SearchIcon({ size = 24, color = "currentColor", filled, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
       <g fill={color}>
@@ -67,12 +57,7 @@ export function SearchIcon({
   );
 }
 
-export function CollectionIcon({
-  size = 24,
-  color = "currentColor",
-  filled,
-  ...props
-}: IconProps) {
+export function CollectionIcon({ size = 24, color = "currentColor", filled, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
       {filled ? (
@@ -105,19 +90,9 @@ export function CollectionIcon({
   );
 }
 
-export function PlayIcon({
-  size = 24,
-  color = "currentColor",
-  ...props
-}: IconProps) {
+export function PlayIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="60 35 85 95"
-      fill="none"
-      {...props}
-    >
+    <svg width={size} height={size} viewBox="60 35 85 95" fill="none" {...props}>
       <path
         d="M107.15 59.10Q127.37 70.78 141.57 80.96Q142.96 81.95 142.96 84.00Q142.96 86.06 141.57 87.05Q127.37 97.22 107.14 108.90Q86.91 120.58 71.00 127.79Q69.45 128.49 67.67 127.46Q65.89 126.44 65.73 124.74Q64.01 107.36 64.02 84.00Q64.02 60.64 65.73 43.25Q65.90 41.56 67.68 40.53Q69.45 39.51 71.01 40.21Q86.92 47.42 107.15 59.10Z"
         fill={color}
@@ -126,19 +101,9 @@ export function PlayIcon({
   );
 }
 
-export function PauseIcon({
-  size = 24,
-  color = "currentColor",
-  ...props
-}: IconProps) {
+export function PauseIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="45 65 75 85"
-      fill="none"
-      {...props}
-    >
+    <svg width={size} height={size} viewBox="45 65 75 85" fill="none" {...props}>
       <path
         d="M77.95 109.01Q77.91 145.29 77.87 148.51A0.47 0.47 0.0 0177.40 148.97Q65.96 149.08 52.57 148.91Q49.83 148.88 49.21 145.69Q45.94 128.98 45.96 108.98Q45.98 88.98 49.28 72.27Q49.91 69.09 52.65 69.06Q66.04 68.92 77.48 69.05A0.47 0.47 0.0 0177.94 69.51Q77.98 72.73 77.95 109.01Z"
         fill={color}
@@ -151,19 +116,9 @@ export function PauseIcon({
   );
 }
 
-export function NextIcon({
-  size = 24,
-  color = "currentColor",
-  ...props
-}: IconProps) {
+export function NextIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="220 80 55 55"
-      fill="none"
-      {...props}
-    >
+    <svg width={size} height={size} viewBox="220 80 55 55" fill="none" {...props}>
       <path
         d="M270.02 108.99Q269.97 119.56 269.99 132.05Q270.00 132.99 269.06 132.99L267.03 132.99Q266.06 132.99 266.06 132.02L266.06 112.27A0.32 0.32 0.0 00265.56 112.01Q262.59 114.07 260.45 115.39Q245.43 124.66 227.58 132.30C224.74 133.52 223.07 133.07 222.84 129.72Q222.02 118.13 222.02 109.00Q222.02 99.88 222.82 88.29C223.05 84.94 224.72 84.49 227.56 85.70Q245.42 93.33 260.45 102.59Q262.59 103.91 265.56 105.96A0.32 0.32 0.0 00266.06 105.70L266.04 85.95Q266.04 84.98 267.01 84.98L269.04 84.98Q269.98 84.98 269.98 85.92Q269.96 98.41 270.02 108.99Z"
         fill={color}
@@ -172,19 +127,9 @@ export function NextIcon({
   );
 }
 
-export function PreviousIcon({
-  size = 24,
-  color = "currentColor",
-  ...props
-}: IconProps) {
+export function PreviousIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="220 80 55 55"
-      fill="none"
-      {...props}
-    >
+    <svg width={size} height={size} viewBox="220 80 55 55" fill="none" {...props}>
       <g transform="translate(492, 0) scale(-1, 1)">
         <path
           d="M270.02 108.99Q269.97 119.56 269.99 132.05Q270.00 132.99 269.06 132.99L267.03 132.99Q266.06 132.99 266.06 132.02L266.06 112.27A0.32 0.32 0.0 00265.56 112.01Q262.59 114.07 260.45 115.39Q245.43 124.66 227.58 132.30C224.74 133.52 223.07 133.07 222.84 129.72Q222.02 118.13 222.02 109.00Q222.02 99.88 222.82 88.29C223.05 84.94 224.72 84.49 227.56 85.70Q245.42 93.33 260.45 102.59Q262.59 103.91 265.56 105.96A0.32 0.32 0.0 00266.06 105.70L266.04 85.95Q266.04 84.98 267.01 84.98L269.04 84.98Q269.98 84.98 269.98 85.92Q269.96 98.41 270.02 108.99Z"
@@ -195,12 +140,7 @@ export function PreviousIcon({
   );
 }
 
-export function HeartIcon({
-  size = 24,
-  color = "currentColor",
-  filled,
-  ...props
-}: IconProps) {
+export function HeartIcon({ size = 24, color = "currentColor", filled, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
       {filled ? (
@@ -220,12 +160,7 @@ export function HeartIcon({
   );
 }
 
-export function QuranIcon({
-  size = 24,
-  color = "currentColor",
-  filled,
-  ...props
-}: IconProps) {
+export function QuranIcon({ size = 24, color = "currentColor", filled, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
       {filled ? (
@@ -245,18 +180,10 @@ export function QuranIcon({
   );
 }
 
-export function SettingsIcon({
-  size = 24,
-  color = "currentColor",
-  ...props
-}: IconProps) {
+export function SettingsIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
-      <path
-        d="M12 15a3 3 0 100-6 3 3 0 000 6z"
-        stroke={color}
-        strokeWidth={1.5}
-      />
+      <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke={color} strokeWidth={1.5} />
       <path
         d="M19.622 10.395l-.104-.323a2.5 2.5 0 00-3.066-1.593l-.23.074c-.95.307-1.96-.312-2.127-1.3l-.04-.238a2.5 2.5 0 00-4.11 0l-.04.238c-.167.988-1.177 1.607-2.127 1.3l-.23-.074A2.5 2.5 0 004.482 10.072l.104.323c.312.967-.21 2.005-1.153 2.355l-.218.081a2.5 2.5 0 000 4.338l.218.081c.943.35 1.465 1.388 1.153 2.355l-.104.323a2.5 2.5 0 003.066 1.593l.23-.074c.95-.307 1.96.312 2.127 1.3l.04.238a2.5 2.5 0 004.11 0l.04-.238c.167-.988 1.177-1.607 2.127-1.3l.23.074a2.5 2.5 0 003.066-1.593l-.104-.323c-.312-.967.21-2.005 1.153-2.355l.218-.081a2.5 2.5 0 000-4.338l-.218-.081c-.943-.35-1.465-1.388-1.153-2.355z"
         stroke={color}
@@ -273,13 +200,7 @@ export function LogoIcon({
 }: IconProps & { isDarkMode?: boolean }) {
   const fill = isDarkMode ? "#FFFFFF" : "#101820";
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 500 500"
-      fill="none"
-      {...props}
-    >
+    <svg width={size} height={size} viewBox="0 0 500 500" fill="none" {...props}>
       <path
         d="M436.69 266.09L308.26 266.09L427.06 217.31L418.32 196.03L297.58 245.61L389.13 152.58L372.75 136.46L284.03 226.61L333.27 110.1L312.1 101.15L261.5 220.87L261.5 220.87L261.5 90.9L238.5 90.9L238.5 219.33L189.72 100.53L168.44 109.26L218.02 230.01L124.99 138.45L108.87 154.84L199.02 243.56L82.51 194.32L73.56 215.49L193.28 266.09L193.28 266.09L63.31 266.09L63.31 289.09L222.57 289.09L202.42 309.57L150.2 363.9L166.58 380.02L215.97 328.57L215.98 328.56L238.5 305.66L238.5 334.31L238.5 334.31L238.5 409.1L261.5 409.1L261.5 305.02L281.98 325.17L336.31 377.39L352.43 361.01L300.98 311.62L300.97 311.61L278.07 289.09L306.72 289.09L306.72 289.09L436.69 289.09L436.69 266.09"
         fill={fill}

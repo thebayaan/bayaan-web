@@ -1,206 +1,699 @@
 <h2>Bayaan Web — Architecture Overview</h2>
 <p class="subtitle">How the pieces fit together</p>
 
-<div class="mockup" style="margin-bottom: 32px;">
+<div class="mockup" style="margin-bottom: 32px">
   <div class="mockup-header">System Architecture</div>
-  <div class="mockup-body" style="padding: 24px; background: #0a0f1a;">
+  <div class="mockup-body" style="padding: 24px; background: #0a0f1a">
     <!-- Browser layer -->
-    <div style="text-align: center; margin-bottom: 8px; color: rgba(255,255,255,0.4); font-size: 11px; text-transform: uppercase; letter-spacing: 2px;">Browser</div>
-    <div style="border: 1px solid rgba(86,69,161,0.4); border-radius: 12px; padding: 16px; margin-bottom: 20px; background: rgba(86,69,161,0.06);">
-      <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
-        <div style="background: rgba(86,69,161,0.2); border: 1px solid rgba(86,69,161,0.3); border-radius: 8px; padding: 10px 16px; text-align: center; min-width: 100px;">
-          <div style="font-weight: 600; font-size: 13px;">Next.js App</div>
-          <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 4px;">App Router + RSC</div>
+    <div
+      style="
+        text-align: center;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      "
+    >
+      Browser
+    </div>
+    <div
+      style="
+        border: 1px solid rgba(86, 69, 161, 0.4);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+        background: rgba(86, 69, 161, 0.06);
+      "
+    >
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center">
+        <div
+          style="
+            background: rgba(86, 69, 161, 0.2);
+            border: 1px solid rgba(86, 69, 161, 0.3);
+            border-radius: 8px;
+            padding: 10px 16px;
+            text-align: center;
+            min-width: 100px;
+          "
+        >
+          <div style="font-weight: 600; font-size: 13px">Next.js App</div>
+          <div style="font-size: 10px; color: rgba(255, 255, 255, 0.5); margin-top: 4px">
+            App Router + RSC
+          </div>
         </div>
-        <div style="background: rgba(86,69,161,0.2); border: 1px solid rgba(86,69,161,0.3); border-radius: 8px; padding: 10px 16px; text-align: center; min-width: 100px;">
-          <div style="font-weight: 600; font-size: 13px;">Zustand</div>
-          <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 4px;">Player + UI State</div>
+        <div
+          style="
+            background: rgba(86, 69, 161, 0.2);
+            border: 1px solid rgba(86, 69, 161, 0.3);
+            border-radius: 8px;
+            padding: 10px 16px;
+            text-align: center;
+            min-width: 100px;
+          "
+        >
+          <div style="font-weight: 600; font-size: 13px">Zustand</div>
+          <div style="font-size: 10px; color: rgba(255, 255, 255, 0.5); margin-top: 4px">
+            Player + UI State
+          </div>
         </div>
-        <div style="background: rgba(86,69,161,0.2); border: 1px solid rgba(86,69,161,0.3); border-radius: 8px; padding: 10px 16px; text-align: center; min-width: 100px;">
-          <div style="font-weight: 600; font-size: 13px;">Web Audio</div>
-          <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 4px;">HTML5 Audio API</div>
+        <div
+          style="
+            background: rgba(86, 69, 161, 0.2);
+            border: 1px solid rgba(86, 69, 161, 0.3);
+            border-radius: 8px;
+            padding: 10px 16px;
+            text-align: center;
+            min-width: 100px;
+          "
+        >
+          <div style="font-weight: 600; font-size: 13px">Web Audio</div>
+          <div style="font-size: 10px; color: rgba(255, 255, 255, 0.5); margin-top: 4px">
+            HTML5 Audio API
+          </div>
         </div>
-        <div style="background: rgba(86,69,161,0.2); border: 1px solid rgba(86,69,161,0.3); border-radius: 8px; padding: 10px 16px; text-align: center; min-width: 100px;">
-          <div style="font-weight: 600; font-size: 13px;">Clerk</div>
-          <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 4px;">Auth + Sessions</div>
+        <div
+          style="
+            background: rgba(86, 69, 161, 0.2);
+            border: 1px solid rgba(86, 69, 161, 0.3);
+            border-radius: 8px;
+            padding: 10px 16px;
+            text-align: center;
+            min-width: 100px;
+          "
+        >
+          <div style="font-weight: 600; font-size: 13px">Clerk</div>
+          <div style="font-size: 10px; color: rgba(255, 255, 255, 0.5); margin-top: 4px">
+            Auth + Sessions
+          </div>
         </div>
-        <div style="background: rgba(86,69,161,0.2); border: 1px solid rgba(86,69,161,0.3); border-radius: 8px; padding: 10px 16px; text-align: center; min-width: 100px;">
-          <div style="font-weight: 600; font-size: 13px;">QCF Fonts</div>
-          <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 4px;">604 page fonts</div>
+        <div
+          style="
+            background: rgba(86, 69, 161, 0.2);
+            border: 1px solid rgba(86, 69, 161, 0.3);
+            border-radius: 8px;
+            padding: 10px 16px;
+            text-align: center;
+            min-width: 100px;
+          "
+        >
+          <div style="font-weight: 600; font-size: 13px">QCF Fonts</div>
+          <div style="font-size: 10px; color: rgba(255, 255, 255, 0.5); margin-top: 4px">
+            604 page fonts
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Arrows down -->
-    <div style="text-align: center; margin: 8px 0; color: rgba(255,255,255,0.3); font-size: 20px;">&#8595; &#8595; &#8595;</div>
+    <div
+      style="text-align: center; margin: 8px 0; color: rgba(255, 255, 255, 0.3); font-size: 20px"
+    >
+      &#8595; &#8595; &#8595;
+    </div>
 
     <!-- Next.js API layer -->
-    <div style="text-align: center; margin-bottom: 8px; color: rgba(255,255,255,0.4); font-size: 11px; text-transform: uppercase; letter-spacing: 2px;">Next.js API Routes (Proxy Layer)</div>
-    <div style="border: 1px solid rgba(0,98,58,0.4); border-radius: 12px; padding: 16px; margin-bottom: 20px; background: rgba(0,98,58,0.06);">
-      <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
-        <div style="background: rgba(0,98,58,0.2); border: 1px solid rgba(0,98,58,0.3); border-radius: 8px; padding: 10px 16px; text-align: center;">
-          <div style="font-weight: 600; font-size: 13px;">/api/quran/*</div>
-          <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 4px;">Proxy to qurancdn</div>
+    <div
+      style="
+        text-align: center;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      "
+    >
+      Next.js API Routes (Proxy Layer)
+    </div>
+    <div
+      style="
+        border: 1px solid rgba(0, 98, 58, 0.4);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+        background: rgba(0, 98, 58, 0.06);
+      "
+    >
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center">
+        <div
+          style="
+            background: rgba(0, 98, 58, 0.2);
+            border: 1px solid rgba(0, 98, 58, 0.3);
+            border-radius: 8px;
+            padding: 10px 16px;
+            text-align: center;
+          "
+        >
+          <div style="font-weight: 600; font-size: 13px">/api/quran/*</div>
+          <div style="font-size: 10px; color: rgba(255, 255, 255, 0.5); margin-top: 4px">
+            Proxy to qurancdn
+          </div>
         </div>
-        <div style="background: rgba(0,98,58,0.2); border: 1px solid rgba(0,98,58,0.3); border-radius: 8px; padding: 10px 16px; text-align: center;">
-          <div style="font-weight: 600; font-size: 13px;">/api/bayaan/*</div>
-          <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 4px;">Proxy to your backend</div>
+        <div
+          style="
+            background: rgba(0, 98, 58, 0.2);
+            border: 1px solid rgba(0, 98, 58, 0.3);
+            border-radius: 8px;
+            padding: 10px 16px;
+            text-align: center;
+          "
+        >
+          <div style="font-weight: 600; font-size: 13px">/api/bayaan/*</div>
+          <div style="font-size: 10px; color: rgba(255, 255, 255, 0.5); margin-top: 4px">
+            Proxy to your backend
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Arrows down -->
-    <div style="text-align: center; margin: 8px 0; color: rgba(255,255,255,0.3); font-size: 20px;">&#8595; &#8595;</div>
+    <div
+      style="text-align: center; margin: 8px 0; color: rgba(255, 255, 255, 0.3); font-size: 20px"
+    >
+      &#8595; &#8595;
+    </div>
 
     <!-- Backend services -->
-    <div style="text-align: center; margin-bottom: 8px; color: rgba(255,255,255,0.4); font-size: 11px; text-transform: uppercase; letter-spacing: 2px;">Backend Services</div>
-    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-      <div style="border: 1px solid rgba(255,165,0,0.4); border-radius: 12px; padding: 16px; background: rgba(255,165,0,0.06); flex: 1; min-width: 200px; max-width: 280px;">
-        <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px; color: #ffa500;">Bayaan API</div>
-        <div style="font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.6;">
-          Hono + Bun on Railway<br>
-          &#8226; Reciters &amp; rewayat<br>
-          &#8226; Audio URL resolution<br>
-          &#8226; User accounts (NEW)<br>
-          &#8226; Bookmarks, playlists (NEW)<br>
+    <div
+      style="
+        text-align: center;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      "
+    >
+      Backend Services
+    </div>
+    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap">
+      <div
+        style="
+          border: 1px solid rgba(255, 165, 0, 0.4);
+          border-radius: 12px;
+          padding: 16px;
+          background: rgba(255, 165, 0, 0.06);
+          flex: 1;
+          min-width: 200px;
+          max-width: 280px;
+        "
+      >
+        <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px; color: #ffa500">
+          Bayaan API
+        </div>
+        <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); line-height: 1.6">
+          Hono + Bun on Railway<br />
+          &#8226; Reciters &amp; rewayat<br />
+          &#8226; Audio URL resolution<br />
+          &#8226; User accounts (NEW)<br />
+          &#8226; Bookmarks, playlists (NEW)<br />
           &#8226; Listening history (NEW)
         </div>
       </div>
-      <div style="border: 1px solid rgba(59,130,246,0.4); border-radius: 12px; padding: 16px; background: rgba(59,130,246,0.06); flex: 1; min-width: 200px; max-width: 280px;">
-        <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px; color: #3b82f6;">QuranCDN API</div>
-        <div style="font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.6;">
-          api.qurancdn.com<br>
-          &#8226; Verses + word glyph codes<br>
-          &#8226; Translations<br>
-          &#8226; Word-by-word data<br>
+      <div
+        style="
+          border: 1px solid rgba(59, 130, 246, 0.4);
+          border-radius: 12px;
+          padding: 16px;
+          background: rgba(59, 130, 246, 0.06);
+          flex: 1;
+          min-width: 200px;
+          max-width: 280px;
+        "
+      >
+        <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px; color: #3b82f6">
+          QuranCDN API
+        </div>
+        <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); line-height: 1.6">
+          api.qurancdn.com<br />
+          &#8226; Verses + word glyph codes<br />
+          &#8226; Translations<br />
+          &#8226; Word-by-word data<br />
           &#8226; Audio timestamps
         </div>
       </div>
-      <div style="border: 1px solid rgba(239,68,68,0.4); border-radius: 12px; padding: 16px; background: rgba(239,68,68,0.06); flex: 1; min-width: 200px; max-width: 280px;">
-        <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px; color: #ef4444;">Audio CDNs</div>
-        <div style="font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.6;">
-          Direct streaming<br>
-          &#8226; mp3quran.net servers<br>
-          &#8226; cdn.thebayaan.com (R2)<br>
+      <div
+        style="
+          border: 1px solid rgba(239, 68, 68, 0.4);
+          border-radius: 12px;
+          padding: 16px;
+          background: rgba(239, 68, 68, 0.06);
+          flex: 1;
+          min-width: 200px;
+          max-width: 280px;
+        "
+      >
+        <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px; color: #ef4444">
+          Audio CDNs
+        </div>
+        <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6); line-height: 1.6">
+          Direct streaming<br />
+          &#8226; mp3quran.net servers<br />
+          &#8226; cdn.thebayaan.com (R2)<br />
           &#8226; qurancdn.com audio
         </div>
       </div>
     </div>
 
     <!-- Database -->
-    <div style="text-align: center; margin: 16px 0 8px; color: rgba(255,255,255,0.3); font-size: 20px;">&#8595;</div>
-    <div style="text-align: center;">
-      <div style="display: inline-block; border: 1px solid rgba(168,85,247,0.4); border-radius: 12px; padding: 12px 24px; background: rgba(168,85,247,0.06);">
-        <div style="font-weight: 700; font-size: 14px; color: #a855f7;">PostgreSQL (Railway)</div>
-        <div style="font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 4px;">Reciters + Rewayat + Users (NEW) + User Data (NEW)</div>
+    <div
+      style="
+        text-align: center;
+        margin: 16px 0 8px;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 20px;
+      "
+    >
+      &#8595;
+    </div>
+    <div style="text-align: center">
+      <div
+        style="
+          display: inline-block;
+          border: 1px solid rgba(168, 85, 247, 0.4);
+          border-radius: 12px;
+          padding: 12px 24px;
+          background: rgba(168, 85, 247, 0.06);
+        "
+      >
+        <div style="font-weight: 700; font-size: 14px; color: #a855f7">PostgreSQL (Railway)</div>
+        <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 4px">
+          Reciters + Rewayat + Users (NEW) + User Data (NEW)
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Page layout mockup -->
-<h2 style="margin-top: 40px;">Web App Layout</h2>
+<h2 style="margin-top: 40px">Web App Layout</h2>
 <p class="subtitle">Spotify-style navigation with Bayaan personality</p>
 
 <div class="mockup">
   <div class="mockup-header">Desktop Layout — Listening Mode</div>
-  <div class="mockup-body" style="padding: 0; background: #050b10; min-height: 400px; display: flex; flex-direction: column;">
+  <div
+    class="mockup-body"
+    style="
+      padding: 0;
+      background: #050b10;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+    "
+  >
     <!-- Main area -->
-    <div style="display: flex; flex: 1; min-height: 340px;">
+    <div style="display: flex; flex: 1; min-height: 340px">
       <!-- Sidebar -->
-      <div style="width: 220px; background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.06); padding: 16px; display: flex; flex-direction: column; gap: 4px;">
-        <div style="font-weight: 700; font-size: 16px; margin-bottom: 12px; color: rgba(255,255,255,0.9);">Bayaan</div>
-        <div style="padding: 8px 12px; border-radius: 8px; background: rgba(86,69,161,0.2); color: rgba(255,255,255,0.9); font-size: 13px;">&#127968; Home</div>
-        <div style="padding: 8px 12px; border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 13px;">&#128269; Search</div>
-        <div style="padding: 8px 12px; border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 13px;">&#128214; Read Quran</div>
-        <div style="padding: 8px 12px; border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 13px;">&#128218; Collection</div>
-        <div style="padding: 8px 12px; border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 13px;">&#128588; Adhkar</div>
-        <div style="height: 1px; background: rgba(255,255,255,0.06); margin: 12px 0;"></div>
-        <div style="color: rgba(255,255,255,0.3); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Playlists</div>
-        <div style="padding: 6px 12px; color: rgba(255,255,255,0.4); font-size: 12px;">Morning Routine</div>
-        <div style="padding: 6px 12px; color: rgba(255,255,255,0.4); font-size: 12px;">Favorites</div>
-        <div style="padding: 6px 12px; color: rgba(255,255,255,0.4); font-size: 12px;">+ Create Playlist</div>
+      <div
+        style="
+          width: 220px;
+          background: rgba(255, 255, 255, 0.03);
+          border-right: 1px solid rgba(255, 255, 255, 0.06);
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        "
+      >
+        <div
+          style="
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.9);
+          "
+        >
+          Bayaan
+        </div>
+        <div
+          style="
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(86, 69, 161, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+          "
+        >
+          &#127968; Home
+        </div>
+        <div
+          style="
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+          "
+        >
+          &#128269; Search
+        </div>
+        <div
+          style="
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+          "
+        >
+          &#128214; Read Quran
+        </div>
+        <div
+          style="
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+          "
+        >
+          &#128218; Collection
+        </div>
+        <div
+          style="
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+          "
+        >
+          &#128588; Adhkar
+        </div>
+        <div style="height: 1px; background: rgba(255, 255, 255, 0.06); margin: 12px 0"></div>
+        <div
+          style="
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+          "
+        >
+          Playlists
+        </div>
+        <div style="padding: 6px 12px; color: rgba(255, 255, 255, 0.4); font-size: 12px">
+          Morning Routine
+        </div>
+        <div style="padding: 6px 12px; color: rgba(255, 255, 255, 0.4); font-size: 12px">
+          Favorites
+        </div>
+        <div style="padding: 6px 12px; color: rgba(255, 255, 255, 0.4); font-size: 12px">
+          + Create Playlist
+        </div>
       </div>
       <!-- Main content -->
-      <div style="flex: 1; padding: 24px; overflow: hidden;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <div style="font-size: 22px; font-weight: 700; color: rgba(255,255,255,0.9);">Featured Reciters</div>
-          <div style="display: flex; gap: 8px;">
-            <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 14px;">&#8592;</div>
-            <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 14px;">&#8594;</div>
+      <div style="flex: 1; padding: 24px; overflow: hidden">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          "
+        >
+          <div style="font-size: 22px; font-weight: 700; color: rgba(255, 255, 255, 0.9)">
+            Featured Reciters
+          </div>
+          <div style="display: flex; gap: 8px">
+            <div
+              style="
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.06);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: rgba(255, 255, 255, 0.5);
+                font-size: 14px;
+              "
+            >
+              &#8592;
+            </div>
+            <div
+              style="
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.06);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: rgba(255, 255, 255, 0.5);
+                font-size: 14px;
+              "
+            >
+              &#8594;
+            </div>
           </div>
         </div>
         <!-- Reciter cards -->
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
-          <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; transition: all 0.2s;">
-            <div style="aspect-ratio: 1; background: linear-gradient(135deg, #1a3a2a, #0d1f17); border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;">
-              <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(0,98,58,0.3); display: flex; align-items: center; justify-content: center; color: #00623a; font-size: 20px;">&#9654;</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px">
+          <div
+            style="
+              background: rgba(255, 255, 255, 0.04);
+              border-radius: 12px;
+              padding: 12px;
+              transition: all 0.2s;
+            "
+          >
+            <div
+              style="
+                aspect-ratio: 1;
+                background: linear-gradient(135deg, #1a3a2a, #0d1f17);
+                border-radius: 8px;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <div
+                style="
+                  width: 48px;
+                  height: 48px;
+                  border-radius: 50%;
+                  background: rgba(0, 98, 58, 0.3);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: #00623a;
+                  font-size: 20px;
+                "
+              >
+                &#9654;
+              </div>
             </div>
-            <div style="font-weight: 600; font-size: 13px; color: rgba(255,255,255,0.9);">Mishary Alafasy</div>
-            <div style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px;">Murattal &bull; 114 Surahs</div>
+            <div style="font-weight: 600; font-size: 13px; color: rgba(255, 255, 255, 0.9)">
+              Mishary Alafasy
+            </div>
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 2px">
+              Murattal &bull; 114 Surahs
+            </div>
           </div>
-          <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px;">
-            <div style="aspect-ratio: 1; background: linear-gradient(135deg, #2a1a3a, #170d1f); border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;">
-              <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(86,69,161,0.3); display: flex; align-items: center; justify-content: center; color: #5645a1; font-size: 20px;">&#9654;</div>
+          <div style="background: rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 12px">
+            <div
+              style="
+                aspect-ratio: 1;
+                background: linear-gradient(135deg, #2a1a3a, #170d1f);
+                border-radius: 8px;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <div
+                style="
+                  width: 48px;
+                  height: 48px;
+                  border-radius: 50%;
+                  background: rgba(86, 69, 161, 0.3);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: #5645a1;
+                  font-size: 20px;
+                "
+              >
+                &#9654;
+              </div>
             </div>
-            <div style="font-weight: 600; font-size: 13px; color: rgba(255,255,255,0.9);">Abdul Basit</div>
-            <div style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px;">Mojawwad &bull; 114 Surahs</div>
+            <div style="font-weight: 600; font-size: 13px; color: rgba(255, 255, 255, 0.9)">
+              Abdul Basit
+            </div>
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 2px">
+              Mojawwad &bull; 114 Surahs
+            </div>
           </div>
-          <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px;">
-            <div style="aspect-ratio: 1; background: linear-gradient(135deg, #1a2a3a, #0d171f); border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;">
-              <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(59,130,246,0.3); display: flex; align-items: center; justify-content: center; color: #3b82f6; font-size: 20px;">&#9654;</div>
+          <div style="background: rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 12px">
+            <div
+              style="
+                aspect-ratio: 1;
+                background: linear-gradient(135deg, #1a2a3a, #0d171f);
+                border-radius: 8px;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <div
+                style="
+                  width: 48px;
+                  height: 48px;
+                  border-radius: 50%;
+                  background: rgba(59, 130, 246, 0.3);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: #3b82f6;
+                  font-size: 20px;
+                "
+              >
+                &#9654;
+              </div>
             </div>
-            <div style="font-weight: 600; font-size: 13px; color: rgba(255,255,255,0.9);">Al-Sudais</div>
-            <div style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px;">Murattal &bull; 114 Surahs</div>
+            <div style="font-weight: 600; font-size: 13px; color: rgba(255, 255, 255, 0.9)">
+              Al-Sudais
+            </div>
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 2px">
+              Murattal &bull; 114 Surahs
+            </div>
           </div>
-          <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px;">
-            <div style="aspect-ratio: 1; background: linear-gradient(135deg, #3a2a1a, #1f170d); border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;">
-              <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(255,165,0,0.3); display: flex; align-items: center; justify-content: center; color: #ffa500; font-size: 20px;">&#9654;</div>
+          <div style="background: rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 12px">
+            <div
+              style="
+                aspect-ratio: 1;
+                background: linear-gradient(135deg, #3a2a1a, #1f170d);
+                border-radius: 8px;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <div
+                style="
+                  width: 48px;
+                  height: 48px;
+                  border-radius: 50%;
+                  background: rgba(255, 165, 0, 0.3);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: #ffa500;
+                  font-size: 20px;
+                "
+              >
+                &#9654;
+              </div>
             </div>
-            <div style="font-weight: 600; font-size: 13px; color: rgba(255,255,255,0.9);">Al-Husary</div>
-            <div style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px;">Molim &bull; 114 Surahs</div>
+            <div style="font-weight: 600; font-size: 13px; color: rgba(255, 255, 255, 0.9)">
+              Al-Husary
+            </div>
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 2px">
+              Molim &bull; 114 Surahs
+            </div>
           </div>
         </div>
       </div>
     </div>
     <!-- Bottom player bar -->
-    <div style="height: 72px; background: rgba(255,255,255,0.04); border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; padding: 0 16px;">
+    <div
+      style="
+        height: 72px;
+        background: rgba(255, 255, 255, 0.04);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+      "
+    >
       <!-- Track info -->
-      <div style="display: flex; align-items: center; gap: 12px; width: 240px;">
-        <div style="width: 48px; height: 48px; border-radius: 8px; background: linear-gradient(135deg, #1a3a2a, #0d1f17); flex-shrink: 0;"></div>
+      <div style="display: flex; align-items: center; gap: 12px; width: 240px">
+        <div
+          style="
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1a3a2a, #0d1f17);
+            flex-shrink: 0;
+          "
+        ></div>
         <div>
-          <div style="font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9);">Al-Fatiha</div>
-          <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Mishary Alafasy</div>
+          <div style="font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.9)">
+            Al-Fatiha
+          </div>
+          <div style="font-size: 11px; color: rgba(255, 255, 255, 0.4)">Mishary Alafasy</div>
         </div>
-        <div style="color: rgba(255,255,255,0.3); font-size: 16px; cursor: pointer;">&#9825;</div>
+        <div style="color: rgba(255, 255, 255, 0.3); font-size: 16px; cursor: pointer">&#9825;</div>
       </div>
       <!-- Center controls -->
-      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;">
-        <div style="display: flex; align-items: center; gap: 20px;">
-          <span style="color: rgba(255,255,255,0.4); font-size: 14px;">&#8634;</span>
-          <span style="color: rgba(255,255,255,0.6); font-size: 16px;">&#9198;</span>
-          <div style="width: 36px; height: 36px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center;">
-            <span style="color: #050b10; font-size: 14px; margin-left: 2px;">&#9654;</span>
+      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px">
+        <div style="display: flex; align-items: center; gap: 20px">
+          <span style="color: rgba(255, 255, 255, 0.4); font-size: 14px">&#8634;</span>
+          <span style="color: rgba(255, 255, 255, 0.6); font-size: 16px">&#9198;</span>
+          <div
+            style="
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              background: white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <span style="color: #050b10; font-size: 14px; margin-left: 2px">&#9654;</span>
           </div>
-          <span style="color: rgba(255,255,255,0.6); font-size: 16px;">&#9197;</span>
-          <span style="color: rgba(255,255,255,0.4); font-size: 14px;">&#8646;</span>
+          <span style="color: rgba(255, 255, 255, 0.6); font-size: 16px">&#9197;</span>
+          <span style="color: rgba(255, 255, 255, 0.4); font-size: 14px">&#8646;</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px; width: 400px;">
-          <span style="font-size: 10px; color: rgba(255,255,255,0.4);">0:42</span>
-          <div style="flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-            <div style="width: 35%; height: 100%; background: rgba(255,255,255,0.6); border-radius: 2px;"></div>
+        <div style="display: flex; align-items: center; gap: 8px; width: 400px">
+          <span style="font-size: 10px; color: rgba(255, 255, 255, 0.4)">0:42</span>
+          <div
+            style="flex: 1; height: 3px; background: rgba(255, 255, 255, 0.1); border-radius: 2px"
+          >
+            <div
+              style="
+                width: 35%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.6);
+                border-radius: 2px;
+              "
+            ></div>
           </div>
-          <span style="font-size: 10px; color: rgba(255,255,255,0.4);">1:58</span>
+          <span style="font-size: 10px; color: rgba(255, 255, 255, 0.4)">1:58</span>
         </div>
       </div>
       <!-- Right controls -->
-      <div style="display: flex; align-items: center; gap: 16px; width: 200px; justify-content: flex-end;">
-        <span style="color: rgba(255,255,255,0.4); font-size: 13px;">&#128214;</span>
-        <span style="color: rgba(255,255,255,0.4); font-size: 13px;">&#9776;</span>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="color: rgba(255,255,255,0.4); font-size: 13px;">&#128264;</span>
-          <div style="width: 80px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-            <div style="width: 65%; height: 100%; background: rgba(255,255,255,0.4); border-radius: 2px;"></div>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          width: 200px;
+          justify-content: flex-end;
+        "
+      >
+        <span style="color: rgba(255, 255, 255, 0.4); font-size: 13px">&#128214;</span>
+        <span style="color: rgba(255, 255, 255, 0.4); font-size: 13px">&#9776;</span>
+        <div style="display: flex; align-items: center; gap: 6px">
+          <span style="color: rgba(255, 255, 255, 0.4); font-size: 13px">&#128264;</span>
+          <div
+            style="
+              width: 80px;
+              height: 3px;
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 2px;
+            "
+          >
+            <div
+              style="
+                width: 65%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.4);
+                border-radius: 2px;
+              "
+            ></div>
           </div>
         </div>
       </div>

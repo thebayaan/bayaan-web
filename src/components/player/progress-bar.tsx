@@ -17,12 +17,7 @@ interface ProgressBarProps {
   compact?: boolean;
 }
 
-export function ProgressBar({
-  positionMs,
-  durationMs,
-  onSeek,
-  compact,
-}: ProgressBarProps) {
+export function ProgressBar({ positionMs, durationMs, onSeek, compact }: ProgressBarProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragValue, setDragValue] = useState(0);
 
@@ -47,9 +42,9 @@ export function ProgressBar({
 
   if (compact) {
     return (
-      <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
+      <div className="bg-muted h-1 w-full overflow-hidden rounded-full">
         <div
-          className="h-full bg-foreground/60 transition-[width] duration-200"
+          className="bg-foreground/60 h-full transition-[width] duration-200"
           style={{ width: `${displayProgress}%` }}
         />
       </div>
@@ -57,8 +52,8 @@ export function ProgressBar({
   }
 
   return (
-    <div className="flex items-center gap-2 w-full">
-      <span className="text-[10px] text-muted-foreground w-10 text-right tabular-nums">
+    <div className="flex w-full items-center gap-2">
+      <span className="text-muted-foreground w-10 text-right text-[10px] tabular-nums">
         {formatTime(isDragging ? (dragValue / 100) * durationMs : positionMs)}
       </span>
       <Slider
@@ -69,7 +64,7 @@ export function ProgressBar({
         onValueCommitted={handleValueCommitted}
         className="flex-1"
       />
-      <span className="text-[10px] text-muted-foreground w-10 tabular-nums">
+      <span className="text-muted-foreground w-10 text-[10px] tabular-nums">
         {formatTime(durationMs)}
       </span>
     </div>

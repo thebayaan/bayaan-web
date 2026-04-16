@@ -15,6 +15,7 @@
 ### Task 1: Adhkar Data + Pages
 
 **Files:**
+
 - Create: `src/data/adhkar-data.ts`
 - Modify: `src/app/(app)/adhkar/page.tsx`, `src/app/(app)/adhkar/[superId]/page.tsx`, `src/app/(app)/adhkar/[superId]/[dhikrId]/page.tsx`
 
@@ -42,18 +43,85 @@ export interface Dhikr {
 }
 
 export const ADHKAR_CATEGORIES: AdhkarCategory[] = [
-  { id: "morning", name: "Morning Adhkar", name_arabic: "أذكار الصباح", description: "Remembrances for the morning", count: 12, color: "#f59e0b" },
-  { id: "evening", name: "Evening Adhkar", name_arabic: "أذكار المساء", description: "Remembrances for the evening", count: 12, color: "#6366f1" },
-  { id: "after-prayer", name: "After Prayer", name_arabic: "أذكار بعد الصلاة", description: "Remembrances after salah", count: 8, color: "#10b981" },
-  { id: "sleep", name: "Before Sleep", name_arabic: "أذكار النوم", description: "Remembrances before sleeping", count: 6, color: "#8b5cf6" },
-  { id: "wakeup", name: "Upon Waking", name_arabic: "أذكار الاستيقاظ", description: "Remembrances upon waking", count: 4, color: "#f97316" },
-  { id: "general", name: "General Adhkar", name_arabic: "أذكار عامة", description: "Everyday remembrances", count: 10, color: "#06b6d4" },
+  {
+    id: "morning",
+    name: "Morning Adhkar",
+    name_arabic: "أذكار الصباح",
+    description: "Remembrances for the morning",
+    count: 12,
+    color: "#f59e0b",
+  },
+  {
+    id: "evening",
+    name: "Evening Adhkar",
+    name_arabic: "أذكار المساء",
+    description: "Remembrances for the evening",
+    count: 12,
+    color: "#6366f1",
+  },
+  {
+    id: "after-prayer",
+    name: "After Prayer",
+    name_arabic: "أذكار بعد الصلاة",
+    description: "Remembrances after salah",
+    count: 8,
+    color: "#10b981",
+  },
+  {
+    id: "sleep",
+    name: "Before Sleep",
+    name_arabic: "أذكار النوم",
+    description: "Remembrances before sleeping",
+    count: 6,
+    color: "#8b5cf6",
+  },
+  {
+    id: "wakeup",
+    name: "Upon Waking",
+    name_arabic: "أذكار الاستيقاظ",
+    description: "Remembrances upon waking",
+    count: 4,
+    color: "#f97316",
+  },
+  {
+    id: "general",
+    name: "General Adhkar",
+    name_arabic: "أذكار عامة",
+    description: "Everyday remembrances",
+    count: 10,
+    color: "#06b6d4",
+  },
 ];
 
 export const SAMPLE_DHIKR: Dhikr[] = [
-  { id: "1", category_id: "morning", text_arabic: "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ", translation: "We have reached the morning and at this very time all sovereignty belongs to Allah. Praise is for Allah. None has the right to be worshipped except Allah alone, without any partner.", repetitions: 1, reference: "Muslim" },
-  { id: "2", category_id: "morning", text_arabic: "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ", translation: "O Allah, by You we enter the morning and by You we enter the evening, by You we live and by You we die, and to You is the resurrection.", repetitions: 1, reference: "Tirmidhi" },
-  { id: "3", category_id: "morning", text_arabic: "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ", translation: "Glory is to Allah and praise is to Him.", repetitions: 100, reference: "Muslim" },
+  {
+    id: "1",
+    category_id: "morning",
+    text_arabic:
+      "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
+    translation:
+      "We have reached the morning and at this very time all sovereignty belongs to Allah. Praise is for Allah. None has the right to be worshipped except Allah alone, without any partner.",
+    repetitions: 1,
+    reference: "Muslim",
+  },
+  {
+    id: "2",
+    category_id: "morning",
+    text_arabic:
+      "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ",
+    translation:
+      "O Allah, by You we enter the morning and by You we enter the evening, by You we live and by You we die, and to You is the resurrection.",
+    repetitions: 1,
+    reference: "Tirmidhi",
+  },
+  {
+    id: "3",
+    category_id: "morning",
+    text_arabic: "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+    translation: "Glory is to Allah and praise is to Him.",
+    repetitions: 100,
+    reference: "Muslim",
+  },
 ];
 
 export function getCategoryById(id: string): AdhkarCategory | undefined {
@@ -68,6 +136,7 @@ export function getDhikrByCategory(categoryId: string): Dhikr[] {
 - [ ] **Step 2: Build adhkar home page**
 
 Replace `src/app/(app)/adhkar/page.tsx`:
+
 ```tsx
 "use client";
 
@@ -77,18 +146,24 @@ import { ADHKAR_CATEGORIES } from "@/data/adhkar-data";
 export default function AdhkarPage() {
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Adhkar</h1>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <h1 className="mb-6 text-3xl font-bold">Adhkar</h1>
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {ADHKAR_CATEGORIES.map((cat) => (
           <Link
             key={cat.id}
             href={`/adhkar/${cat.id}`}
             className="relative overflow-hidden rounded-xl p-5 transition-transform hover:scale-[1.02]"
-            style={{ backgroundColor: cat.color + "20", borderColor: cat.color + "40", borderWidth: 1 }}
+            style={{
+              backgroundColor: cat.color + "20",
+              borderColor: cat.color + "40",
+              borderWidth: 1,
+            }}
           >
-            <p className="text-xl font-bold font-[UthmanicHafs]" dir="rtl">{cat.name_arabic}</p>
-            <p className="text-sm font-medium mt-1">{cat.name}</p>
-            <p className="text-xs text-muted-foreground mt-1">{cat.count} adhkar</p>
+            <p className="font-[UthmanicHafs] text-xl font-bold" dir="rtl">
+              {cat.name_arabic}
+            </p>
+            <p className="mt-1 text-sm font-medium">{cat.name}</p>
+            <p className="text-muted-foreground mt-1 text-xs">{cat.count} adhkar</p>
           </Link>
         ))}
       </div>
@@ -100,6 +175,7 @@ export default function AdhkarPage() {
 - [ ] **Step 3: Build category detail page**
 
 Replace `src/app/(app)/adhkar/[superId]/page.tsx`:
+
 ```tsx
 "use client";
 
@@ -113,30 +189,40 @@ export default function AdhkarCategoryPage({ params }: { params: Promise<{ super
   const dhikrList = getDhikrByCategory(superId);
 
   if (!category) {
-    return <div className="p-6"><h1 className="text-2xl font-bold">Category not found</h1></div>;
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-bold">Category not found</h1>
+      </div>
+    );
   }
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-1">{category.name}</h1>
-      <p className="text-lg font-[UthmanicHafs] mb-6" dir="rtl">{category.name_arabic}</p>
+      <h1 className="mb-1 text-2xl font-bold">{category.name}</h1>
+      <p className="mb-6 font-[UthmanicHafs] text-lg" dir="rtl">
+        {category.name_arabic}
+      </p>
       <div className="space-y-3">
         {dhikrList.map((dhikr, idx) => (
           <Link
             key={dhikr.id}
             href={`/adhkar/${superId}/${dhikr.id}`}
-            className="block p-4 rounded-xl bg-[var(--text-alpha-04)] hover:bg-[var(--text-alpha-06)] transition-colors"
+            className="block rounded-xl bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
           >
-            <p className="text-lg font-[UthmanicHafs] leading-relaxed" dir="rtl">{dhikr.text_arabic}</p>
-            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{dhikr.translation}</p>
-            <div className="flex items-center gap-2 mt-2">
-              <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--text-alpha-06)]">{dhikr.repetitions}x</span>
-              <span className="text-xs text-muted-foreground">{dhikr.reference}</span>
+            <p className="font-[UthmanicHafs] text-lg leading-relaxed" dir="rtl">
+              {dhikr.text_arabic}
+            </p>
+            <p className="text-muted-foreground mt-2 line-clamp-2 text-sm">{dhikr.translation}</p>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="rounded-full bg-[var(--text-alpha-06)] px-2 py-0.5 text-xs">
+                {dhikr.repetitions}x
+              </span>
+              <span className="text-muted-foreground text-xs">{dhikr.reference}</span>
             </div>
           </Link>
         ))}
         {dhikrList.length === 0 && (
-          <p className="text-muted-foreground text-center py-8">Full adhkar data coming soon</p>
+          <p className="text-muted-foreground py-8 text-center">Full adhkar data coming soon</p>
         )}
       </div>
     </div>
@@ -147,20 +233,29 @@ export default function AdhkarCategoryPage({ params }: { params: Promise<{ super
 - [ ] **Step 4: Build dhikr reader page with tasbeeh counter**
 
 Replace `src/app/(app)/adhkar/[superId]/[dhikrId]/page.tsx`:
+
 ```tsx
 "use client";
 
 import { use, useState } from "react";
 import { getDhikrByCategory } from "@/data/adhkar-data";
 
-export default function DhikrPage({ params }: { params: Promise<{ superId: string; dhikrId: string }> }) {
+export default function DhikrPage({
+  params,
+}: {
+  params: Promise<{ superId: string; dhikrId: string }>;
+}) {
   const { superId, dhikrId } = use(params);
   const dhikrList = getDhikrByCategory(superId);
   const dhikr = dhikrList.find((d) => d.id === dhikrId);
   const [count, setCount] = useState(0);
 
   if (!dhikr) {
-    return <div className="p-6"><h1 className="text-2xl font-bold">Dhikr not found</h1></div>;
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-bold">Dhikr not found</h1>
+      </div>
+    );
   }
 
   const target = dhikr.repetitions;
@@ -169,23 +264,33 @@ export default function DhikrPage({ params }: { params: Promise<{ superId: strin
   const offset = circumference - progress * circumference;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] p-6">
-      <p className="text-2xl font-[UthmanicHafs] leading-relaxed text-center mb-8 max-w-lg" dir="rtl">
+    <div className="flex min-h-[70vh] flex-col items-center justify-center p-6">
+      <p
+        className="mb-8 max-w-lg text-center font-[UthmanicHafs] text-2xl leading-relaxed"
+        dir="rtl"
+      >
         {dhikr.text_arabic}
       </p>
-      <p className="text-sm text-muted-foreground text-center max-w-md mb-8">
-        {dhikr.translation}
-      </p>
+      <p className="text-muted-foreground mb-8 max-w-md text-center text-sm">{dhikr.translation}</p>
 
       {/* Tasbeeh Counter */}
       <button
         onClick={() => setCount((c) => c + 1)}
-        className="relative w-40 h-40 rounded-full flex items-center justify-center transition-transform active:scale-95"
+        className="relative flex h-40 w-40 items-center justify-center rounded-full transition-transform active:scale-95"
       >
-        <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 128 128">
-          <circle cx="64" cy="64" r="60" fill="none" stroke="var(--text-alpha-06)" strokeWidth="4" />
+        <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 128 128">
           <circle
-            cx="64" cy="64" r="60"
+            cx="64"
+            cy="64"
+            r="60"
+            fill="none"
+            stroke="var(--text-alpha-06)"
+            strokeWidth="4"
+          />
+          <circle
+            cx="64"
+            cy="64"
+            r="60"
             fill="none"
             stroke="currentColor"
             strokeWidth="4"
@@ -197,20 +302,20 @@ export default function DhikrPage({ params }: { params: Promise<{ superId: strin
         </svg>
         <div className="text-center">
           <p className="text-3xl font-bold">{count}</p>
-          <p className="text-xs text-muted-foreground">/ {target}</p>
+          <p className="text-muted-foreground text-xs">/ {target}</p>
         </div>
       </button>
 
-      <div className="flex gap-4 mt-6">
+      <div className="mt-6 flex gap-4">
         <button
           onClick={() => setCount(0)}
-          className="px-4 py-2 text-sm rounded-lg bg-[var(--text-alpha-06)] hover:bg-[var(--text-alpha-10)] transition-colors"
+          className="rounded-lg bg-[var(--text-alpha-06)] px-4 py-2 text-sm transition-colors hover:bg-[var(--text-alpha-10)]"
         >
           Reset
         </button>
       </div>
 
-      <p className="text-xs text-muted-foreground mt-4">{dhikr.reference}</p>
+      <p className="text-muted-foreground mt-4 text-xs">{dhikr.reference}</p>
     </div>
   );
 }
@@ -234,6 +339,7 @@ git commit -m "feat: build adhkar pages with bento grid and tasbeeh counter"
 ### Task 2: Settings Page
 
 **Files:**
+
 - Modify: `src/app/(app)/settings/page.tsx`
 
 - [ ] **Step 1: Install shadcn Select and Switch**
@@ -245,6 +351,7 @@ npx shadcn@latest add select switch
 - [ ] **Step 2: Build settings page**
 
 Replace `src/app/(app)/settings/page.tsx`:
+
 ```tsx
 "use client";
 
@@ -261,21 +368,21 @@ export default function SettingsPage() {
   const readingSettings = useReadingSettingsStore();
 
   return (
-    <div className="p-6 max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">Settings</h1>
+    <div className="max-w-2xl p-6">
+      <h1 className="mb-6 text-2xl font-bold">Settings</h1>
 
       {/* Theme */}
       <section className="mb-8">
-        <h2 className="text-lg font-semibold mb-3">Appearance</h2>
+        <h2 className="mb-3 text-lg font-semibold">Appearance</h2>
         <div className="flex gap-2">
           {(["light", "dark", "system"] as ThemeMode[]).map((mode) => (
             <button
               key={mode}
               onClick={() => setThemeMode(mode)}
-              className={`px-4 py-2 rounded-lg text-sm capitalize transition-colors ${
+              className={`rounded-lg px-4 py-2 text-sm capitalize transition-colors ${
                 themeMode === mode
                   ? "bg-foreground text-background font-medium"
-                  : "bg-[var(--text-alpha-06)] text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground bg-[var(--text-alpha-06)]"
               }`}
             >
               {mode}
@@ -286,22 +393,28 @@ export default function SettingsPage() {
 
       {/* Reading Settings */}
       <section className="mb-8">
-        <h2 className="text-lg font-semibold mb-3">Reading</h2>
+        <h2 className="mb-3 text-lg font-semibold">Reading</h2>
         <div className="space-y-4">
           {/* Font Size */}
           <div className="flex items-center justify-between">
             <label className="text-sm">Arabic Font Size</label>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => readingSettings.setFontSize(Math.max(1.2, readingSettings.fontSize - 0.2))}
-                className="w-8 h-8 rounded-lg bg-[var(--text-alpha-06)] flex items-center justify-center text-sm"
+                onClick={() =>
+                  readingSettings.setFontSize(Math.max(1.2, readingSettings.fontSize - 0.2))
+                }
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--text-alpha-06)] text-sm"
               >
                 A-
               </button>
-              <span className="text-sm w-12 text-center">{readingSettings.fontSize.toFixed(1)}</span>
+              <span className="w-12 text-center text-sm">
+                {readingSettings.fontSize.toFixed(1)}
+              </span>
               <button
-                onClick={() => readingSettings.setFontSize(Math.min(3.0, readingSettings.fontSize + 0.2))}
-                className="w-8 h-8 rounded-lg bg-[var(--text-alpha-06)] flex items-center justify-center text-sm"
+                onClick={() =>
+                  readingSettings.setFontSize(Math.min(3.0, readingSettings.fontSize + 0.2))
+                }
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--text-alpha-06)] text-sm"
               >
                 A+
               </button>
@@ -329,39 +442,49 @@ export default function SettingsPage() {
 
       {/* Reading Theme */}
       <section className="mb-8">
-        <h2 className="text-lg font-semibold mb-3">Reading Theme</h2>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        <h2 className="mb-3 text-lg font-semibold">Reading Theme</h2>
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
           {LIGHT_READING_THEMES.map((theme) => (
             <button
               key={theme.id}
               onClick={() => readingSettings.setLightTheme(theme.id)}
-              className={`rounded-lg p-3 border transition-colors ${
+              className={`rounded-lg border p-3 transition-colors ${
                 readingSettings.lightThemeId === theme.id
                   ? "border-foreground"
                   : "border-transparent hover:border-[var(--text-alpha-10)]"
               }`}
               style={{ backgroundColor: theme.colors.background }}
             >
-              <div className="w-full h-4 rounded" style={{ backgroundColor: theme.colors.text, opacity: 0.2 }} />
-              <p className="text-[10px] mt-1" style={{ color: theme.colors.text }}>{theme.name}</p>
+              <div
+                className="h-4 w-full rounded"
+                style={{ backgroundColor: theme.colors.text, opacity: 0.2 }}
+              />
+              <p className="mt-1 text-[10px]" style={{ color: theme.colors.text }}>
+                {theme.name}
+              </p>
             </button>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground mt-2">Dark themes</p>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-2">
+        <p className="text-muted-foreground mt-2 text-xs">Dark themes</p>
+        <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-6">
           {DARK_READING_THEMES.map((theme) => (
             <button
               key={theme.id}
               onClick={() => readingSettings.setDarkTheme(theme.id)}
-              className={`rounded-lg p-3 border transition-colors ${
+              className={`rounded-lg border p-3 transition-colors ${
                 readingSettings.darkThemeId === theme.id
                   ? "border-foreground"
                   : "border-transparent hover:border-[var(--text-alpha-10)]"
               }`}
               style={{ backgroundColor: theme.colors.background }}
             >
-              <div className="w-full h-4 rounded" style={{ backgroundColor: theme.colors.text, opacity: 0.2 }} />
-              <p className="text-[10px] mt-1" style={{ color: theme.colors.text }}>{theme.name}</p>
+              <div
+                className="h-4 w-full rounded"
+                style={{ backgroundColor: theme.colors.text, opacity: 0.2 }}
+              />
+              <p className="mt-1 text-[10px]" style={{ color: theme.colors.text }}>
+                {theme.name}
+              </p>
             </button>
           ))}
         </div>
@@ -370,7 +493,15 @@ export default function SettingsPage() {
   );
 }
 
-function SettingToggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
+function SettingToggle({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}) {
   return (
     <div className="flex items-center justify-between">
       <label className="text-sm">{label}</label>
@@ -378,12 +509,12 @@ function SettingToggle({ label, checked, onChange }: { label: string; checked: b
         role="switch"
         aria-checked={checked}
         onClick={onChange}
-        className={`relative w-10 h-6 rounded-full transition-colors ${
+        className={`relative h-6 w-10 rounded-full transition-colors ${
           checked ? "bg-foreground" : "bg-[var(--text-alpha-10)]"
         }`}
       >
         <div
-          className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-background transition-transform ${
+          className={`bg-background absolute left-1 top-1 h-4 w-4 rounded-full transition-transform ${
             checked ? "translate-x-4" : ""
           }`}
         />

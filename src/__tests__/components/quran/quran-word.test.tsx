@@ -22,11 +22,7 @@ const mockWord: QcfWord = {
 describe("QuranWord", () => {
   it("renders fallback text when font not loaded", () => {
     const { container } = render(
-      <QuranWord
-        word={mockWord}
-        isFontLoaded={false}
-        fontFamily="UthmanicHafs"
-      />,
+      <QuranWord word={mockWord} isFontLoaded={false} fontFamily="UthmanicHafs" />,
     );
     expect(container.querySelector("span")?.textContent).toBe("بِسْمِ");
   });

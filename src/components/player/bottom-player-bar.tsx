@@ -35,10 +35,8 @@ export function BottomPlayerBar() {
 
   if (!currentTrack) {
     return (
-      <footer className="h-20 border-t border-border bg-background/80 backdrop-blur-2xl flex items-center justify-center px-4">
-        <p className="text-sm text-muted-foreground">
-          Select a reciter to start listening
-        </p>
+      <footer className="border-border bg-background/80 flex h-20 items-center justify-center border-t px-4 backdrop-blur-2xl">
+        <p className="text-muted-foreground text-sm">Select a reciter to start listening</p>
       </footer>
     );
   }
@@ -70,34 +68,32 @@ export function BottomPlayerBar() {
   };
 
   return (
-    <footer className="h-20 border-t border-border bg-background/80 backdrop-blur-2xl flex items-center px-4 gap-4">
+    <footer className="border-border bg-background/80 flex h-20 items-center gap-4 border-t px-4 backdrop-blur-2xl">
       {/* Track Info — Left */}
       <button
         onClick={() => setShowFullPlayer(true)}
-        className="flex items-center gap-3 w-[240px] min-w-0 text-left"
+        className="flex w-[240px] min-w-0 items-center gap-3 text-left"
         aria-label="Open full player"
       >
-        <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden shrink-0">
+        <div className="bg-muted h-12 w-12 shrink-0 overflow-hidden rounded-lg">
           {currentTrack.artwork && (
             <Image
               src={currentTrack.artwork}
               alt={currentTrack.title}
               width={48}
               height={48}
-              className="object-cover w-full h-full"
+              className="h-full w-full object-cover"
             />
           )}
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-medium truncate">{currentTrack.title}</p>
-          <p className="text-xs text-muted-foreground truncate">
-            {currentTrack.artist}
-          </p>
+          <p className="truncate text-sm font-medium">{currentTrack.title}</p>
+          <p className="text-muted-foreground truncate text-xs">{currentTrack.artist}</p>
         </div>
       </button>
 
       {/* Controls + Progress — Center */}
-      <div className="flex-1 flex flex-col items-center gap-1 max-w-[600px]">
+      <div className="flex max-w-[600px] flex-1 flex-col items-center gap-1">
         <PlayerControls
           isPlaying={playback.isPlaying}
           onPlayPause={handlePlayPause}
@@ -116,10 +112,10 @@ export function BottomPlayerBar() {
       </div>
 
       {/* Volume + Queue Toggle — Right */}
-      <div className="flex items-center justify-end gap-2 w-[200px]">
+      <div className="flex w-[200px] items-center justify-end gap-2">
         <button
           onClick={() => setShowQueue(!showQueue)}
-          className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-foreground p-2 transition-colors"
           aria-label="Toggle queue"
         >
           <svg

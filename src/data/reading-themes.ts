@@ -150,10 +150,7 @@ export const DARK_READING_THEMES: ReadingTheme[] = [
   },
 ];
 
-export const ALL_READING_THEMES = [
-  ...LIGHT_READING_THEMES,
-  ...DARK_READING_THEMES,
-];
+export const ALL_READING_THEMES = [...LIGHT_READING_THEMES, ...DARK_READING_THEMES];
 
 export function getReadingThemeById(id: string): ReadingTheme | undefined {
   return ALL_READING_THEMES.find((t) => t.id === id);

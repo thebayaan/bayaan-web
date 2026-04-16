@@ -15,9 +15,7 @@ export function ReadingView({ surahId }: { surahId: number }) {
   const translationIds = useReadingSettingsStore((s) => s.translationIds);
   const { verses, isLoading } = useVersesByChapter(surahId, 1, translationIds);
   const pageNumbers = useMemo(
-    () => [
-      ...new Set(verses.flatMap((v) => v.words.map((w) => w.page_number))),
-    ],
+    () => [...new Set(verses.flatMap((v) => v.words.map((w) => w.page_number)))],
     [verses],
   );
   const { isPageFontLoaded, getFontFamily } = useQcfFont(pageNumbers);
@@ -25,12 +23,12 @@ export function ReadingView({ surahId }: { surahId: number }) {
 
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-8 animate-pulse">
-        <div className="h-12 w-48 bg-[var(--text-alpha-06)] rounded mx-auto mb-8" />
+      <div className="mx-auto max-w-3xl animate-pulse px-6 py-8">
+        <div className="mx-auto mb-8 h-12 w-48 rounded bg-[var(--text-alpha-06)]" />
         {Array.from({ length: 7 }).map((_, i) => (
           <div key={i} className="mb-6 space-y-3">
-            <div className="h-8 bg-[var(--text-alpha-06)] rounded w-full" />
-            <div className="h-4 bg-[var(--text-alpha-04)] rounded w-3/4" />
+            <div className="h-8 w-full rounded bg-[var(--text-alpha-06)]" />
+            <div className="h-4 w-3/4 rounded bg-[var(--text-alpha-04)]" />
           </div>
         ))}
       </div>
@@ -40,7 +38,7 @@ export function ReadingView({ surahId }: { surahId: number }) {
   const primaryPage = verses[0]?.words[0]?.page_number ?? 1;
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-8">
+    <div className="mx-auto max-w-3xl px-6 py-8">
       {surah && (
         <SurahHeader
           surahNumber={surah.id}

@@ -69,28 +69,20 @@ export default function SearchPage() {
       score: r.score ?? 1,
     }));
 
-    return [...reciterResults, ...surahResults].sort(
-      (a, b) => a.score - b.score,
-    );
+    return [...reciterResults, ...surahResults].sort((a, b) => a.score - b.score);
   }, [query, reciterFuse, surahFuse]);
 
   const hasQuery = query.length >= 2;
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Search</h1>
-      <SearchInput
-        value={query}
-        onChange={setQuery}
-        className="max-w-lg mb-6"
-      />
+      <h1 className="mb-4 text-2xl font-bold">Search</h1>
+      <SearchInput value={query} onChange={setQuery} className="mb-6 max-w-lg" />
 
       {hasQuery ? (
         <div>
           {results.length === 0 ? (
-            <p className="text-muted-foreground">
-              No results for &ldquo;{query}&rdquo;
-            </p>
+            <p className="text-muted-foreground">No results for &ldquo;{query}&rdquo;</p>
           ) : (
             <div className="space-y-2">
               {results.map((result) => {
@@ -99,24 +91,21 @@ export default function SearchPage() {
                     <Link
                       key={`reciter-${result.reciter.id}`}
                       href={`/reciter/${result.reciter.slug}`}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--text-alpha-04)] transition-colors"
+                      className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
                     >
-                      <div className="w-10 h-10 rounded-lg bg-[var(--text-alpha-06)] overflow-hidden shrink-0">
+                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[var(--text-alpha-06)]">
                         {result.reciter.image_url && (
                           <img
                             src={result.reciter.image_url}
                             alt={result.reciter.name}
-                            className="w-full h-full object-cover"
+                            className="h-full w-full object-cover"
                           />
                         )}
                       </div>
                       <div>
-                        <p className="text-sm font-medium">
-                          {result.reciter.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground capitalize">
-                          Reciter &middot;{" "}
-                          {result.reciter.rewayat[0]?.style ?? ""}
+                        <p className="text-sm font-medium">{result.reciter.name}</p>
+                        <p className="text-muted-foreground text-xs capitalize">
+                          Reciter &middot; {result.reciter.rewayat[0]?.style ?? ""}
                         </p>
                       </div>
                     </Link>
@@ -127,16 +116,14 @@ export default function SearchPage() {
                     <Link
                       key={`surah-${result.surah.id}`}
                       href={`/quran/${result.surah.id}`}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--text-alpha-04)] transition-colors"
+                      className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
                     >
-                      <div className="w-10 h-10 rounded-lg bg-[var(--text-alpha-06)] flex items-center justify-center text-sm font-medium shrink-0">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--text-alpha-06)] text-sm font-medium">
                         {result.surah.id}
                       </div>
                       <div>
-                        <p className="text-sm font-medium">
-                          {result.surah.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm font-medium">{result.surah.name}</p>
+                        <p className="text-muted-foreground text-xs">
                           {result.surah.translated_name_english} &middot;{" "}
                           {result.surah.verses_count} verses
                         </p>
@@ -152,18 +139,18 @@ export default function SearchPage() {
       ) : (
         /* Explore view when search is empty */
         <div>
-          <h2 className="text-lg font-bold mb-4">Browse</h2>
+          <h2 className="mb-4 text-lg font-bold">Browse</h2>
           {isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="aspect-square bg-[var(--text-alpha-06)] rounded-lg animate-pulse"
+                  className="aspect-square animate-pulse rounded-lg bg-[var(--text-alpha-06)]"
                 />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {reciters.slice(0, 24).map((reciter) => (
                 <ReciterCard key={reciter.id} reciter={reciter} />
               ))}

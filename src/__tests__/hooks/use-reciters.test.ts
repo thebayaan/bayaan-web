@@ -9,8 +9,7 @@ vi.mock("@/lib/api", () => ({
         id: "r-1",
         name: "Mishary Alafasy",
         slug: "mishary-alafasy",
-        image_url:
-          "https://cdn.thebayaan.com/assets/reciter-images/mishary.jpg",
+        image_url: "https://cdn.thebayaan.com/assets/reciter-images/mishary.jpg",
         is_featured: true,
         rewayat: [
           {

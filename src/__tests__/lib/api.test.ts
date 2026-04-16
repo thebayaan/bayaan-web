@@ -27,9 +27,7 @@ describe("fetchBayaan", () => {
       status: 500,
     });
 
-    await expect(fetchBayaan("reciters")).rejects.toThrow(
-      "Bayaan API error: 500",
-    );
+    await expect(fetchBayaan("reciters")).rejects.toThrow("Bayaan API error: 500");
   });
 });
 
@@ -57,8 +55,6 @@ describe("fetchQuran", () => {
       status: 404,
     });
 
-    await expect(fetchQuran("verses/by_chapter/999")).rejects.toThrow(
-      "Quran API error: 404",
-    );
+    await expect(fetchQuran("verses/by_chapter/999")).rejects.toThrow("Quran API error: 404");
   });
 });

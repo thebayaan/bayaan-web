@@ -37,9 +37,7 @@ export function useMediaSession(): void {
     navigator.mediaSession.setActionHandler("play", () => play());
     navigator.mediaSession.setActionHandler("pause", () => pause());
     navigator.mediaSession.setActionHandler("nexttrack", () => skipToNext());
-    navigator.mediaSession.setActionHandler("previoustrack", () =>
-      skipToPrevious(),
-    );
+    navigator.mediaSession.setActionHandler("previoustrack", () => skipToPrevious());
 
     return () => {
       navigator.mediaSession.setActionHandler("play", null);

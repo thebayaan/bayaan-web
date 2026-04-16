@@ -13,6 +13,7 @@
 **Spec:** `docs/superpowers/specs/2026-04-13-bayaan-web-design.md`
 
 **Roadmap — All Plans:**
+
 1. **Foundation & Layout** ← this plan
 2. **Audio Player** — AudioService, playerStore, AudioCoordinator, player UI components
 3. **Listening Pages** — Home, reciter profiles, surah pages, search
@@ -118,6 +119,7 @@ bayaan-web/
 ### Task 1: Initialize Next.js 15 Project
 
 **Files:**
+
 - Remove: `src/App.tsx`, `src/main.tsx`, `src/vite-env.d.ts`, `vite.config.ts`, `index.html`
 - Create: `next.config.ts`, `tsconfig.json` (replace), `package.json` (replace), `postcss.config.mjs`, `src/app/layout.tsx`, `src/app/globals.css`, `src/app/(app)/page.tsx`
 
@@ -206,11 +208,7 @@ export const metadata: Metadata = {
   description: "Listen to and read the Holy Quran with beautiful recitations",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body>{children}</body>
@@ -224,7 +222,7 @@ Create `src/app/(app)/page.tsx`:
 ```tsx
 export default function HomePage() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex min-h-screen items-center justify-center">
       <h1 className="text-2xl font-bold">Bayaan</h1>
     </div>
   );
@@ -251,6 +249,7 @@ git commit -m "feat: initialize Next.js 15 project, replace Vite scaffold"
 ### Task 2: Set Up shadcn/ui with Bayaan Theme
 
 **Files:**
+
 - Create: `components.json`, `src/lib/utils.ts`, `src/app/globals.css` (replace)
 - Modify: `tailwind.config.ts`
 
@@ -261,6 +260,7 @@ npx shadcn@latest init -d
 ```
 
 When prompted, select:
+
 - Style: **New York**
 - Base color: **Neutral**
 - CSS variables: **Yes**
@@ -314,23 +314,23 @@ Replace `src/app/globals.css` with:
   --radius: 0.75rem;
 
   /* Bayaan Light Mode */
-  --background: oklch(0.96 0.01 90);       /* #f4f3ec */
-  --foreground: oklch(0.15 0.03 220);      /* #06151C */
-  --card: oklch(0.89 0.01 100);            /* #dcdeda */
+  --background: oklch(0.96 0.01 90); /* #f4f3ec */
+  --foreground: oklch(0.15 0.03 220); /* #06151C */
+  --card: oklch(0.89 0.01 100); /* #dcdeda */
   --card-foreground: oklch(0.15 0.03 220);
   --popover: oklch(0.96 0.01 90);
   --popover-foreground: oklch(0.15 0.03 220);
   --primary: oklch(0.15 0.03 220);
   --primary-foreground: oklch(0.96 0.01 90);
-  --secondary: oklch(0.95 0.00 0);         /* #f0f0f0 */
+  --secondary: oklch(0.95 0 0); /* #f0f0f0 */
   --secondary-foreground: oklch(0.15 0.03 220);
-  --muted: oklch(0.94 0.01 90);            /* #edebe3 */
-  --muted-foreground: oklch(0.40 0.02 220); /* text @ ~0.5 */
+  --muted: oklch(0.94 0.01 90); /* #edebe3 */
+  --muted-foreground: oklch(0.4 0.02 220); /* text @ ~0.5 */
   --accent: oklch(0.94 0.01 90);
   --accent-foreground: oklch(0.15 0.03 220);
-  --destructive: oklch(0.55 0.22 25);      /* #DC2626 */
-  --border: oklch(0.72 0.00 0);            /* #a4a4a4 */
-  --input: oklch(0.72 0.00 0);
+  --destructive: oklch(0.55 0.22 25); /* #DC2626 */
+  --border: oklch(0.72 0 0); /* #a4a4a4 */
+  --input: oklch(0.72 0 0);
   --ring: oklch(0.15 0.03 220);
 
   /* Sidebar */
@@ -340,58 +340,58 @@ Replace `src/app/globals.css` with:
   --sidebar-primary-foreground: oklch(0.96 0.01 90);
   --sidebar-accent: oklch(0.92 0.01 90);
   --sidebar-accent-foreground: oklch(0.15 0.03 220);
-  --sidebar-border: oklch(0.90 0.01 90);
+  --sidebar-border: oklch(0.9 0.01 90);
   --sidebar-ring: oklch(0.15 0.03 220);
 }
 
 .dark {
   /* Bayaan Dark Mode */
-  --background: oklch(0.10 0.02 250);      /* #050b10 */
-  --foreground: oklch(1.00 0.00 0);        /* #ffffff */
-  --card: oklch(0.10 0.02 250);
-  --card-foreground: oklch(1.00 0.00 0);
-  --popover: oklch(0.13 0.03 240);         /* #06151C */
-  --popover-foreground: oklch(1.00 0.00 0);
-  --primary: oklch(1.00 0.00 0);
-  --primary-foreground: oklch(0.10 0.02 250);
-  --secondary: oklch(0.16 0.01 300);       /* #1c1a1e */
-  --secondary-foreground: oklch(1.00 0.00 0);
+  --background: oklch(0.1 0.02 250); /* #050b10 */
+  --foreground: oklch(1 0 0); /* #ffffff */
+  --card: oklch(0.1 0.02 250);
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.13 0.03 240); /* #06151C */
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(1 0 0);
+  --primary-foreground: oklch(0.1 0.02 250);
+  --secondary: oklch(0.16 0.01 300); /* #1c1a1e */
+  --secondary-foreground: oklch(1 0 0);
   --muted: oklch(0.13 0.03 240);
-  --muted-foreground: oklch(0.73 0.00 0);  /* #B0B0B0 */
+  --muted-foreground: oklch(0.73 0 0); /* #B0B0B0 */
   --accent: oklch(0.16 0.01 300);
-  --accent-foreground: oklch(1.00 0.00 0);
-  --destructive: oklch(0.58 0.22 25);      /* #EF4444 */
-  --border: oklch(0.25 0.02 310);          /* #332f38 */
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.58 0.22 25); /* #EF4444 */
+  --border: oklch(0.25 0.02 310); /* #332f38 */
   --input: oklch(0.25 0.02 310);
-  --ring: oklch(1.00 0.00 0);
+  --ring: oklch(1 0 0);
 
   /* Sidebar */
   --sidebar: oklch(0.13 0.03 240);
-  --sidebar-foreground: oklch(1.00 0.00 0);
-  --sidebar-primary: oklch(1.00 0.00 0);
-  --sidebar-primary-foreground: oklch(0.10 0.02 250);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(1 0 0);
+  --sidebar-primary-foreground: oklch(0.1 0.02 250);
   --sidebar-accent: oklch(0.16 0.02 250);
-  --sidebar-accent-foreground: oklch(1.00 0.00 0);
+  --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(0.25 0.02 310);
-  --sidebar-ring: oklch(1.00 0.00 0);
+  --sidebar-ring: oklch(1 0 0);
 }
 
 /* Bayaan alpha utilities — replicates Color(text).alpha(N) pattern from mobile app */
 :root {
   --text-alpha-04: rgba(6, 21, 28, 0.04);
   --text-alpha-06: rgba(6, 21, 28, 0.06);
-  --text-alpha-10: rgba(6, 21, 28, 0.10);
+  --text-alpha-10: rgba(6, 21, 28, 0.1);
   --text-alpha-35: rgba(6, 21, 28, 0.35);
-  --text-alpha-50: rgba(6, 21, 28, 0.50);
+  --text-alpha-50: rgba(6, 21, 28, 0.5);
   --text-alpha-85: rgba(6, 21, 28, 0.85);
 }
 
 .dark {
   --text-alpha-04: rgba(255, 255, 255, 0.04);
   --text-alpha-06: rgba(255, 255, 255, 0.06);
-  --text-alpha-10: rgba(255, 255, 255, 0.10);
+  --text-alpha-10: rgba(255, 255, 255, 0.1);
   --text-alpha-35: rgba(255, 255, 255, 0.35);
-  --text-alpha-50: rgba(255, 255, 255, 0.50);
+  --text-alpha-50: rgba(255, 255, 255, 0.5);
   --text-alpha-85: rgba(255, 255, 255, 0.85);
 }
 
@@ -420,7 +420,7 @@ import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
       <h1 className="text-2xl font-bold">Bayaan</h1>
       <Button>Test Button</Button>
     </div>
@@ -442,6 +442,7 @@ git commit -m "feat: set up shadcn/ui with Bayaan theme tokens"
 ### Task 3: Set Up Manrope Font
 
 **Files:**
+
 - Create: `src/lib/fonts.ts`, font files in `public/fonts/`
 - Modify: `src/app/layout.tsx`
 
@@ -503,16 +504,10 @@ export const metadata: Metadata = {
   description: "Listen to and read the Holy Quran with beautiful recitations",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <body
-        className={`${manrope.variable} ${surahNames.variable} font-sans antialiased`}
-      >
+      <body className={`${manrope.variable} ${surahNames.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>
@@ -560,6 +555,7 @@ git commit -m "feat: add Manrope and surah names fonts"
 ### Task 4: Set Up Testing Infrastructure
 
 **Files:**
+
 - Create: `vitest.config.ts`, `vitest.setup.ts`, `src/__tests__/setup-smoke.test.ts`
 - Modify: `package.json`
 
@@ -659,6 +655,7 @@ git commit -m "feat: set up Vitest with React Testing Library"
 ### Task 5: Create Theme Store
 
 **Files:**
+
 - Create: `src/stores/theme-store.ts`
 - Modify: `src/app/layout.tsx`
 
@@ -683,15 +680,13 @@ export const useThemeStore = create<ThemeState>()(
       themeMode: "dark",
       setThemeMode: (mode) => set({ themeMode: mode }),
     }),
-    { name: "bayaan-theme" }
-  )
+    { name: "bayaan-theme" },
+  ),
 );
 
 function getSystemTheme(): "light" | "dark" {
   if (typeof window === "undefined") return "dark";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 export function getResolvedTheme(mode: ThemeMode): "light" | "dark" {
@@ -721,10 +716,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
       function handleChange() {
         const systemTheme = mq.matches ? "dark" : "light";
-        document.documentElement.classList.toggle(
-          "dark",
-          systemTheme === "dark"
-        );
+        document.documentElement.classList.toggle("dark", systemTheme === "dark");
       }
       mq.addEventListener("change", handleChange);
       return () => mq.removeEventListener("change", handleChange);
@@ -750,16 +742,10 @@ export const metadata: Metadata = {
   description: "Listen to and read the Holy Quran with beautiful recitations",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <body
-        className={`${manrope.variable} ${surahNames.variable} font-sans antialiased`}
-      >
+      <body className={`${manrope.variable} ${surahNames.variable} font-sans antialiased`}>
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
@@ -835,6 +821,7 @@ git commit -m "feat: add Zustand theme store with dark/light/system modes"
 ### Task 6: Port Core Custom Icons
 
 **Files:**
+
 - Create: `src/components/icons/index.tsx`
 
 - [ ] **Step 1: Create icon components file**
@@ -906,13 +893,26 @@ export function CollectionIcon({ size = 24, color = "currentColor", filled, ...p
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
       {filled ? (
         <g fill={color}>
-          <path fillRule="evenodd" clipRule="evenodd" d="M8.67239 7.54199H15.3276C18.7024 7.54199 20.3898 7.54199 21.3377 8.52882C22.2855 9.51565 22.0625 11.0403 21.6165 14.0895L21.1935 16.9811C20.8437 19.3723 20.6689 20.5679 19.7717 21.2839C18.8745 21.9999 17.5512 21.9999 14.9046 21.9999H9.09536C6.44881 21.9999 5.12553 21.9999 4.22834 21.2839C3.33115 20.5679 3.15626 19.3723 2.80648 16.9811L2.38351 14.0895C1.93748 11.0403 1.71447 9.51565 2.66232 8.52882C3.61017 7.54199 5.29758 7.54199 8.67239 7.54199ZM8 18.0001C8 17.5859 8.3731 17.2501 8.83333 17.2501H15.1667C15.6269 17.2501 16 17.5859 16 18.0001C16 18.4143 15.6269 18.7501 15.1667 18.7501H8.83333C8.3731 18.7501 8 18.4143 8 18.0001Z" />
-          <path opacity="0.4" d="M8.51005 2.00001H15.4901C15.7226 1.99995 15.9009 1.99991 16.0567 2.01515C17.1645 2.12352 18.0712 2.78958 18.4558 3.68678H5.54443C5.92895 2.78958 6.8357 2.12352 7.94352 2.01515C8.09933 1.99991 8.27757 1.99995 8.51005 2.00001Z" />
-          <path opacity="0.7" d="M6.31069 4.72266C4.92007 4.72266 3.7798 5.56241 3.39927 6.67645C3.39134 6.69967 3.38374 6.72302 3.37646 6.74647C3.77461 6.6259 4.18898 6.54713 4.60845 6.49336C5.68882 6.35485 7.05416 6.35492 8.64019 6.35501L8.75863 6.35501L15.5323 6.35501C17.1183 6.35492 18.4837 6.35485 19.564 6.49336C19.9835 6.54713 20.3979 6.6259 20.796 6.74647C20.7887 6.72302 20.7811 6.69967 20.7732 6.67645C20.3927 5.56241 19.2524 4.72266 17.8618 4.72266H6.31069Z" />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M8.67239 7.54199H15.3276C18.7024 7.54199 20.3898 7.54199 21.3377 8.52882C22.2855 9.51565 22.0625 11.0403 21.6165 14.0895L21.1935 16.9811C20.8437 19.3723 20.6689 20.5679 19.7717 21.2839C18.8745 21.9999 17.5512 21.9999 14.9046 21.9999H9.09536C6.44881 21.9999 5.12553 21.9999 4.22834 21.2839C3.33115 20.5679 3.15626 19.3723 2.80648 16.9811L2.38351 14.0895C1.93748 11.0403 1.71447 9.51565 2.66232 8.52882C3.61017 7.54199 5.29758 7.54199 8.67239 7.54199ZM8 18.0001C8 17.5859 8.3731 17.2501 8.83333 17.2501H15.1667C15.6269 17.2501 16 17.5859 16 18.0001C16 18.4143 15.6269 18.7501 15.1667 18.7501H8.83333C8.3731 18.7501 8 18.4143 8 18.0001Z"
+          />
+          <path
+            opacity="0.4"
+            d="M8.51005 2.00001H15.4901C15.7226 1.99995 15.9009 1.99991 16.0567 2.01515C17.1645 2.12352 18.0712 2.78958 18.4558 3.68678H5.54443C5.92895 2.78958 6.8357 2.12352 7.94352 2.01515C8.09933 1.99991 8.27757 1.99995 8.51005 2.00001Z"
+          />
+          <path
+            opacity="0.7"
+            d="M6.31069 4.72266C4.92007 4.72266 3.7798 5.56241 3.39927 6.67645C3.39134 6.69967 3.38374 6.72302 3.37646 6.74647C3.77461 6.6259 4.18898 6.54713 4.60845 6.49336C5.68882 6.35485 7.05416 6.35492 8.64019 6.35501L8.75863 6.35501L15.5323 6.35501C17.1183 6.35492 18.4837 6.35485 19.564 6.49336C19.9835 6.54713 20.3979 6.6259 20.796 6.74647C20.7887 6.72302 20.7811 6.69967 20.7732 6.67645C20.3927 5.56241 19.2524 4.72266 17.8618 4.72266H6.31069Z"
+          />
         </g>
       ) : (
         <g stroke={color} strokeWidth="1.5">
-          <path opacity="0.5" d="M19.5617 7C19.7904 5.69523 18.7863 4.5 17.4617 4.5H6.53788C5.21323 4.5 4.20922 5.69523 4.43784 7M17.4999 4.5C17.5283 4.24092 17.5425 4.11135 17.5427 4.00435C17.545 2.98072 16.7739 2.12064 15.7561 2.01142C15.6497 2 15.5194 2 15.2588 2H8.74099C8.48035 2 8.35002 2 8.24362 2.01142C7.22584 2.12064 6.45481 2.98072 6.45704 4.00434C6.45727 4.11135 6.47146 4.2409 6.49983 4.5" />
+          <path
+            opacity="0.5"
+            d="M19.5617 7C19.7904 5.69523 18.7863 4.5 17.4617 4.5H6.53788C5.21323 4.5 4.20922 5.69523 4.43784 7M17.4999 4.5C17.5283 4.24092 17.5425 4.11135 17.5427 4.00435C17.545 2.98072 16.7739 2.12064 15.7561 2.01142C15.6497 2 15.5194 2 15.2588 2H8.74099C8.48035 2 8.35002 2 8.24362 2.01142C7.22584 2.12064 6.45481 2.98072 6.45704 4.00434C6.45727 4.11135 6.47146 4.2409 6.49983 4.5"
+          />
           <path d="M15 18H9" strokeLinecap="round" />
           <path d="M2.38351 13.793C1.93748 10.6294 1.71447 9.04765 2.66232 8.02383C3.61017 7 5.29758 7 8.67239 7H15.3276C18.7024 7 20.3898 7 21.3377 8.02383C22.2855 9.04765 22.0625 10.6294 21.6165 13.793L21.1935 16.793C20.8437 19.2739 20.6689 20.5143 19.7717 21.2572C18.8745 22 17.5512 22 14.9046 22H9.09536C6.44881 22 5.12553 22 4.22834 21.2572C3.33115 20.5143 3.15626 19.2739 2.80648 16.793L2.38351 13.793Z" />
         </g>
@@ -935,8 +935,14 @@ export function PlayIcon({ size = 24, color = "currentColor", ...props }: IconPr
 export function PauseIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="45 65 75 85" fill="none" {...props}>
-      <path d="M77.95 109.01Q77.91 145.29 77.87 148.51A0.47 0.47 0.0 0177.40 148.97Q65.96 149.08 52.57 148.91Q49.83 148.88 49.21 145.69Q45.94 128.98 45.96 108.98Q45.98 88.98 49.28 72.27Q49.91 69.09 52.65 69.06Q66.04 68.92 77.48 69.05A0.47 0.47 0.0 0177.94 69.51Q77.98 72.73 77.95 109.01Z" fill={color} />
-      <path d="M118.00 108.98Q118.02 128.97 114.75 145.69Q114.12 148.87 111.38 148.90Q97.99 149.07 86.55 148.96A0.47 0.47 0.0 0186.09 148.51Q86.04 145.28 86.01 109.01Q85.97 72.73 86.01 69.51A0.47 0.47 0.0 0186.48 69.05Q97.92 68.92 111.31 69.06Q114.05 69.09 114.68 72.27Q117.98 88.98 118.00 108.98Z" fill={color} />
+      <path
+        d="M77.95 109.01Q77.91 145.29 77.87 148.51A0.47 0.47 0.0 0177.40 148.97Q65.96 149.08 52.57 148.91Q49.83 148.88 49.21 145.69Q45.94 128.98 45.96 108.98Q45.98 88.98 49.28 72.27Q49.91 69.09 52.65 69.06Q66.04 68.92 77.48 69.05A0.47 0.47 0.0 0177.94 69.51Q77.98 72.73 77.95 109.01Z"
+        fill={color}
+      />
+      <path
+        d="M118.00 108.98Q118.02 128.97 114.75 145.69Q114.12 148.87 111.38 148.90Q97.99 149.07 86.55 148.96A0.47 0.47 0.0 0186.09 148.51Q86.04 145.28 86.01 109.01Q85.97 72.73 86.01 69.51A0.47 0.47 0.0 0186.48 69.05Q97.92 68.92 111.31 69.06Q114.05 69.09 114.68 72.27Q117.98 88.98 118.00 108.98Z"
+        fill={color}
+      />
     </svg>
   );
 }
@@ -944,7 +950,10 @@ export function PauseIcon({ size = 24, color = "currentColor", ...props }: IconP
 export function NextIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="220 80 55 55" fill="none" {...props}>
-      <path d="M270.02 108.99Q269.97 119.56 269.99 132.05Q270.00 132.99 269.06 132.99L267.03 132.99Q266.06 132.99 266.06 132.02L266.06 112.27A0.32 0.32 0.0 00265.56 112.01Q262.59 114.07 260.45 115.39Q245.43 124.66 227.58 132.30C224.74 133.52 223.07 133.07 222.84 129.72Q222.02 118.13 222.02 109.00Q222.02 99.88 222.82 88.29C223.05 84.94 224.72 84.49 227.56 85.70Q245.42 93.33 260.45 102.59Q262.59 103.91 265.56 105.96A0.32 0.32 0.0 00266.06 105.70L266.04 85.95Q266.04 84.98 267.01 84.98L269.04 84.98Q269.98 84.98 269.98 85.92Q269.96 98.41 270.02 108.99Z" fill={color} />
+      <path
+        d="M270.02 108.99Q269.97 119.56 269.99 132.05Q270.00 132.99 269.06 132.99L267.03 132.99Q266.06 132.99 266.06 132.02L266.06 112.27A0.32 0.32 0.0 00265.56 112.01Q262.59 114.07 260.45 115.39Q245.43 124.66 227.58 132.30C224.74 133.52 223.07 133.07 222.84 129.72Q222.02 118.13 222.02 109.00Q222.02 99.88 222.82 88.29C223.05 84.94 224.72 84.49 227.56 85.70Q245.42 93.33 260.45 102.59Q262.59 103.91 265.56 105.96A0.32 0.32 0.0 00266.06 105.70L266.04 85.95Q266.04 84.98 267.01 84.98L269.04 84.98Q269.98 84.98 269.98 85.92Q269.96 98.41 270.02 108.99Z"
+        fill={color}
+      />
     </svg>
   );
 }
@@ -953,7 +962,10 @@ export function PreviousIcon({ size = 24, color = "currentColor", ...props }: Ic
   return (
     <svg width={size} height={size} viewBox="220 80 55 55" fill="none" {...props}>
       <g transform="translate(492, 0) scale(-1, 1)">
-        <path d="M270.02 108.99Q269.97 119.56 269.99 132.05Q270.00 132.99 269.06 132.99L267.03 132.99Q266.06 132.99 266.06 132.02L266.06 112.27A0.32 0.32 0.0 00265.56 112.01Q262.59 114.07 260.45 115.39Q245.43 124.66 227.58 132.30C224.74 133.52 223.07 133.07 222.84 129.72Q222.02 118.13 222.02 109.00Q222.02 99.88 222.82 88.29C223.05 84.94 224.72 84.49 227.56 85.70Q245.42 93.33 260.45 102.59Q262.59 103.91 265.56 105.96A0.32 0.32 0.0 00266.06 105.70L266.04 85.95Q266.04 84.98 267.01 84.98L269.04 84.98Q269.98 84.98 269.98 85.92Q269.96 98.41 270.02 108.99Z" fill={color} />
+        <path
+          d="M270.02 108.99Q269.97 119.56 269.99 132.05Q270.00 132.99 269.06 132.99L267.03 132.99Q266.06 132.99 266.06 132.02L266.06 112.27A0.32 0.32 0.0 00265.56 112.01Q262.59 114.07 260.45 115.39Q245.43 124.66 227.58 132.30C224.74 133.52 223.07 133.07 222.84 129.72Q222.02 118.13 222.02 109.00Q222.02 99.88 222.82 88.29C223.05 84.94 224.72 84.49 227.56 85.70Q245.42 93.33 260.45 102.59Q262.59 103.91 265.56 105.96A0.32 0.32 0.0 00266.06 105.70L266.04 85.95Q266.04 84.98 267.01 84.98L269.04 84.98Q269.98 84.98 269.98 85.92Q269.96 98.41 270.02 108.99Z"
+          fill={color}
+        />
       </g>
     </svg>
   );
@@ -963,9 +975,17 @@ export function HeartIcon({ size = 24, color = "currentColor", filled, ...props 
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
       {filled ? (
-        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill={color} />
+        <path
+          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+          fill={color}
+        />
       ) : (
-        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke={color} strokeWidth={1.5} fill="none" />
+        <path
+          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+          stroke={color}
+          strokeWidth={1.5}
+          fill="none"
+        />
       )}
     </svg>
   );
@@ -975,9 +995,17 @@ export function QuranIcon({ size = 24, color = "currentColor", filled, ...props 
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
       {filled ? (
-        <path d="M6.5 2A2.5 2.5 0 004 4.5v15A2.5 2.5 0 006.5 22h11a.5.5 0 00.5-.5V19h1.5a.5.5 0 00.5-.5v-16a.5.5 0 00-.5-.5H6.5zm0 18a.5.5 0 010-1H17v1H6.5zM12 6a.5.5 0 01.5.5v4.793l1.146-1.147a.5.5 0 01.708.708l-2 2a.5.5 0 01-.708 0l-2-2a.5.5 0 01.708-.708L11.5 11.293V6.5A.5.5 0 0112 6z" fill={color} />
+        <path
+          d="M6.5 2A2.5 2.5 0 004 4.5v15A2.5 2.5 0 006.5 22h11a.5.5 0 00.5-.5V19h1.5a.5.5 0 00.5-.5v-16a.5.5 0 00-.5-.5H6.5zm0 18a.5.5 0 010-1H17v1H6.5zM12 6a.5.5 0 01.5.5v4.793l1.146-1.147a.5.5 0 01.708.708l-2 2a.5.5 0 01-.708 0l-2-2a.5.5 0 01.708-.708L11.5 11.293V6.5A.5.5 0 0112 6z"
+          fill={color}
+        />
       ) : (
-        <path d="M6.5 2A2.5 2.5 0 004 4.5v15A2.5 2.5 0 006.5 22h11a.5.5 0 00.5-.5V19h1.5a.5.5 0 00.5-.5v-16a.5.5 0 00-.5-.5H6.5zm0 18a.5.5 0 010-1H17v1H6.5zm11-3H6.5A2.5 2.5 0 004 19.5V4.5A1.5 1.5 0 015.5 3H18v14z" stroke={color} strokeWidth={1.2} fill="none" />
+        <path
+          d="M6.5 2A2.5 2.5 0 004 4.5v15A2.5 2.5 0 006.5 22h11a.5.5 0 00.5-.5V19h1.5a.5.5 0 00.5-.5v-16a.5.5 0 00-.5-.5H6.5zm0 18a.5.5 0 010-1H17v1H6.5zm11-3H6.5A2.5 2.5 0 004 19.5V4.5A1.5 1.5 0 015.5 3H18v14z"
+          stroke={color}
+          strokeWidth={1.2}
+          fill="none"
+        />
       )}
     </svg>
   );
@@ -987,7 +1015,11 @@ export function SettingsIcon({ size = 24, color = "currentColor", ...props }: Ic
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
       <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke={color} strokeWidth={1.5} />
-      <path d="M19.622 10.395l-.104-.323a2.5 2.5 0 00-3.066-1.593l-.23.074c-.95.307-1.96-.312-2.127-1.3l-.04-.238a2.5 2.5 0 00-4.11 0l-.04.238c-.167.988-1.177 1.607-2.127 1.3l-.23-.074A2.5 2.5 0 004.482 10.072l.104.323c.312.967-.21 2.005-1.153 2.355l-.218.081a2.5 2.5 0 000 4.338l.218.081c.943.35 1.465 1.388 1.153 2.355l-.104.323a2.5 2.5 0 003.066 1.593l.23-.074c.95-.307 1.96.312 2.127 1.3l.04.238a2.5 2.5 0 004.11 0l.04-.238c.167-.988 1.177-1.607 2.127-1.3l.23.074a2.5 2.5 0 003.066-1.593l-.104-.323c-.312-.967.21-2.005 1.153-2.355l.218-.081a2.5 2.5 0 000-4.338l-.218-.081c-.943-.35-1.465-1.388-1.153-2.355z" stroke={color} strokeWidth={1.5} />
+      <path
+        d="M19.622 10.395l-.104-.323a2.5 2.5 0 00-3.066-1.593l-.23.074c-.95.307-1.96-.312-2.127-1.3l-.04-.238a2.5 2.5 0 00-4.11 0l-.04.238c-.167.988-1.177 1.607-2.127 1.3l-.23-.074A2.5 2.5 0 004.482 10.072l.104.323c.312.967-.21 2.005-1.153 2.355l-.218.081a2.5 2.5 0 000 4.338l.218.081c.943.35 1.465 1.388 1.153 2.355l-.104.323a2.5 2.5 0 003.066 1.593l.23-.074c.95-.307 1.96.312 2.127 1.3l.04.238a2.5 2.5 0 004.11 0l.04-.238c.167-.988 1.177-1.607 2.127-1.3l.23.074a2.5 2.5 0 003.066-1.593l-.104-.323c-.312-.967.21-2.005 1.153-2.355l.218-.081a2.5 2.5 0 000-4.338l-.218-.081c-.943-.35-1.465-1.388-1.153-2.355z"
+        stroke={color}
+        strokeWidth={1.5}
+      />
     </svg>
   );
 }
@@ -1014,14 +1046,7 @@ Create `src/__tests__/components/icons.test.tsx`:
 ```tsx
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import {
-  HomeIcon,
-  SearchIcon,
-  PlayIcon,
-  PauseIcon,
-  LogoIcon,
-  HeartIcon,
-} from "@/components/icons";
+import { HomeIcon, SearchIcon, PlayIcon, PauseIcon, LogoIcon, HeartIcon } from "@/components/icons";
 
 describe("icons", () => {
   it("renders HomeIcon with default size", () => {
@@ -1109,6 +1134,7 @@ git commit -m "feat: port core custom SVG icons from mobile app"
 ### Task 7: Build Layout Shell
 
 **Files:**
+
 - Create: `src/components/layout/sidebar.tsx`, `src/components/layout/sidebar-nav-item.tsx`, `src/components/layout/bottom-player-bar.tsx`, `src/components/layout/mobile-tab-bar.tsx`, `src/components/layout/app-shell.tsx`
 - Create: `src/app/(app)/layout.tsx`
 
@@ -1140,7 +1166,7 @@ export function SidebarNavItem({ href, icon: Icon, label }: SidebarNavItemProps)
         "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
         isActive
           ? "bg-[var(--text-alpha-10)] font-semibold"
-          : "text-muted-foreground hover:bg-[var(--text-alpha-06)]"
+          : "text-muted-foreground hover:bg-[var(--text-alpha-06)]",
       )}
     >
       <Icon size={20} filled={isActive} />
@@ -1173,10 +1199,10 @@ export function Sidebar() {
   const isDark = getResolvedTheme(themeMode) === "dark";
 
   return (
-    <aside className="hidden md:flex flex-col w-16 lg:w-60 border-r border-border bg-sidebar shrink-0">
+    <aside className="border-border bg-sidebar hidden w-16 shrink-0 flex-col border-r md:flex lg:w-60">
       <div className="flex items-center gap-2 px-4 py-5">
         <LogoIcon size={28} isDarkMode={isDark} />
-        <span className="hidden lg:inline text-lg font-bold">Bayaan</span>
+        <span className="hidden text-lg font-bold lg:inline">Bayaan</span>
       </div>
 
       <nav className="flex flex-col gap-1 px-2">
@@ -1202,8 +1228,8 @@ Create `src/components/layout/bottom-player-bar.tsx`:
 ```tsx
 export function BottomPlayerBar() {
   return (
-    <footer className="h-20 border-t border-border bg-background/80 backdrop-blur-2xl flex items-center px-4">
-      <p className="text-sm text-muted-foreground">Player — built in Plan 2</p>
+    <footer className="border-border bg-background/80 flex h-20 items-center border-t px-4 backdrop-blur-2xl">
+      <p className="text-muted-foreground text-sm">Player — built in Plan 2</p>
     </footer>
   );
 }
@@ -1233,7 +1259,7 @@ export function MobileTabBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/90 backdrop-blur-2xl">
+    <nav className="border-border bg-background/90 fixed bottom-0 left-0 right-0 z-50 border-t backdrop-blur-2xl md:hidden">
       <div className="flex items-center justify-around py-2">
         {TABS.map(({ href, icon: Icon, label }) => {
           const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
@@ -1243,7 +1269,7 @@ export function MobileTabBar() {
               href={href}
               className={cn(
                 "flex flex-col items-center gap-0.5 px-2 py-1 text-xs transition-colors",
-                isActive ? "text-foreground" : "text-muted-foreground"
+                isActive ? "text-foreground" : "text-muted-foreground",
               )}
             >
               <Icon size={20} filled={isActive} />
@@ -1268,12 +1294,10 @@ import { MobileTabBar } from "./mobile-tab-bar";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col h-dvh">
+    <div className="flex h-dvh flex-col">
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto pb-20 md:pb-0">{children}</main>
       </div>
       <div className="hidden md:block">
         <BottomPlayerBar />
@@ -1377,6 +1401,7 @@ Expected: All layout tests pass.
 - [ ] **Step 9: Verify layout renders visually**
 
 Run `npm run dev`. The home page should show:
+
 - Left sidebar with Bayaan logo and nav items (on desktop)
 - Bottom player bar placeholder (on desktop)
 - Bottom tab bar (resize browser to mobile width)
@@ -1394,6 +1419,7 @@ git commit -m "feat: build responsive Spotify-style layout shell"
 ### Task 8: Create API Proxy Routes
 
 **Files:**
+
 - Create: `src/app/api/bayaan/[...path]/route.ts`, `src/app/api/quran/[...path]/route.ts`, `src/lib/api.ts`
 
 - [ ] **Step 1: Create Bayaan API proxy**
@@ -1406,7 +1432,10 @@ import { NextRequest, NextResponse } from "next/server";
 const BAYAAN_API_URL = process.env.NEXT_PUBLIC_BAYAAN_API_URL ?? "https://api.thebayaan.com";
 const BAYAAN_API_KEY = process.env.BAYAAN_API_KEY ?? "";
 
-async function proxyToBayaan(request: NextRequest, params: { path: string[] }): Promise<NextResponse> {
+async function proxyToBayaan(
+  request: NextRequest,
+  params: { path: string[] },
+): Promise<NextResponse> {
   const path = params.path.join("/");
   const url = new URL(`/v1/${path}`, BAYAAN_API_URL);
   request.nextUrl.searchParams.forEach((value, key) => {
@@ -1433,19 +1462,31 @@ async function proxyToBayaan(request: NextRequest, params: { path: string[] }): 
   return NextResponse.json(data, { status: response.status });
 }
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> },
+) {
   return proxyToBayaan(request, await params);
 }
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> },
+) {
   return proxyToBayaan(request, await params);
 }
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> },
+) {
   return proxyToBayaan(request, await params);
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> },
+) {
   return proxyToBayaan(request, await params);
 }
 ```
@@ -1459,7 +1500,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 const QURAN_API_URL = "https://api.qurancdn.com/api/qdc";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> },
+) {
   const { path } = await params;
   const apiPath = path.join("/");
   const url = new URL(`/api/qdc/${apiPath}`, QURAN_API_URL);
@@ -1526,7 +1570,7 @@ describe("fetchBayaan", () => {
     const result = await fetchBayaan("reciters");
     expect(globalThis.fetch).toHaveBeenCalledWith(
       expect.stringContaining("/api/bayaan/reciters"),
-      undefined
+      undefined,
     );
     expect(result).toEqual(mockResponse);
   });
@@ -1590,6 +1634,7 @@ git commit -m "feat: add API proxy routes for Bayaan and QuranCDN"
 ### Task 9: Create Shared Data Types
 
 **Files:**
+
 - Create: `src/types/quran.ts`, `src/types/audio.ts`, `src/types/reciter.ts`
 - Create: `src/data/surah-glyph-map.ts`
 - Copy: `data/surahData.json` from mobile app
@@ -1753,29 +1798,120 @@ Create `src/data/surah-glyph-map.ts`:
 
 ```typescript
 export const surahGlyphMap: Record<number, string> = {
-  1: "\uE904", 2: "\uE905", 3: "\uE906", 4: "\uE907", 5: "\uE908",
-  6: "\uE90B", 7: "\uE90C", 8: "\uE90D", 9: "\uE90E", 10: "\uE90F",
-  11: "\uE910", 12: "\uE911", 13: "\uE912", 14: "\uE913", 15: "\uE914",
-  16: "\uE915", 17: "\uE916", 18: "\uE917", 19: "\uE918", 20: "\uE919",
-  21: "\uE91A", 22: "\uE91B", 23: "\uE91C", 24: "\uE91D", 25: "\uE91E",
-  26: "\uE91F", 27: "\uE920", 28: "\uE921", 29: "\uE922", 30: "\uE923",
-  31: "\uE924", 32: "\uE925", 33: "\uE926", 34: "\uE92E", 35: "\uE92F",
-  36: "\uE930", 37: "\uE931", 38: "\uE909", 39: "\uE90A", 40: "\uE927",
-  41: "\uE928", 42: "\uE929", 43: "\uE92A", 44: "\uE92B", 45: "\uE92C",
-  46: "\uE92D", 47: "\uE932", 48: "\uE902", 49: "\uE933", 50: "\uE934",
-  51: "\uE935", 52: "\uE936", 53: "\uE937", 54: "\uE938", 55: "\uE939",
-  56: "\uE93A", 57: "\uE93B", 58: "\uE93C", 59: "\uE900", 60: "\uE901",
-  61: "\uE941", 62: "\uE942", 63: "\uE943", 64: "\uE944", 65: "\uE945",
-  66: "\uE946", 67: "\uE947", 68: "\uE948", 69: "\uE949", 70: "\uE94A",
-  71: "\uE94B", 72: "\uE94C", 73: "\uE94D", 74: "\uE94E", 75: "\uE94F",
-  76: "\uE950", 77: "\uE951", 78: "\uE952", 79: "\uE93D", 80: "\uE93E",
-  81: "\uE93F", 82: "\uE940", 83: "\uE953", 84: "\uE954", 85: "\uE955",
-  86: "\uE956", 87: "\uE957", 88: "\uE958", 89: "\uE959", 90: "\uE95A",
-  91: "\uE95B", 92: "\uE95C", 93: "\uE95D", 94: "\uE95E", 95: "\uE95F",
-  96: "\uE960", 97: "\uE961", 98: "\uE962", 99: "\uE963", 100: "\uE964",
-  101: "\uE965", 102: "\uE966", 103: "\uE967", 104: "\uE968", 105: "\uE969",
-  106: "\uE96A", 107: "\uE96B", 108: "\uE96C", 109: "\uE96D", 110: "\uE96E",
-  111: "\uE96F", 112: "\uE970", 113: "\uE971", 114: "\uE972",
+  1: "\uE904",
+  2: "\uE905",
+  3: "\uE906",
+  4: "\uE907",
+  5: "\uE908",
+  6: "\uE90B",
+  7: "\uE90C",
+  8: "\uE90D",
+  9: "\uE90E",
+  10: "\uE90F",
+  11: "\uE910",
+  12: "\uE911",
+  13: "\uE912",
+  14: "\uE913",
+  15: "\uE914",
+  16: "\uE915",
+  17: "\uE916",
+  18: "\uE917",
+  19: "\uE918",
+  20: "\uE919",
+  21: "\uE91A",
+  22: "\uE91B",
+  23: "\uE91C",
+  24: "\uE91D",
+  25: "\uE91E",
+  26: "\uE91F",
+  27: "\uE920",
+  28: "\uE921",
+  29: "\uE922",
+  30: "\uE923",
+  31: "\uE924",
+  32: "\uE925",
+  33: "\uE926",
+  34: "\uE92E",
+  35: "\uE92F",
+  36: "\uE930",
+  37: "\uE931",
+  38: "\uE909",
+  39: "\uE90A",
+  40: "\uE927",
+  41: "\uE928",
+  42: "\uE929",
+  43: "\uE92A",
+  44: "\uE92B",
+  45: "\uE92C",
+  46: "\uE92D",
+  47: "\uE932",
+  48: "\uE902",
+  49: "\uE933",
+  50: "\uE934",
+  51: "\uE935",
+  52: "\uE936",
+  53: "\uE937",
+  54: "\uE938",
+  55: "\uE939",
+  56: "\uE93A",
+  57: "\uE93B",
+  58: "\uE93C",
+  59: "\uE900",
+  60: "\uE901",
+  61: "\uE941",
+  62: "\uE942",
+  63: "\uE943",
+  64: "\uE944",
+  65: "\uE945",
+  66: "\uE946",
+  67: "\uE947",
+  68: "\uE948",
+  69: "\uE949",
+  70: "\uE94A",
+  71: "\uE94B",
+  72: "\uE94C",
+  73: "\uE94D",
+  74: "\uE94E",
+  75: "\uE94F",
+  76: "\uE950",
+  77: "\uE951",
+  78: "\uE952",
+  79: "\uE93D",
+  80: "\uE93E",
+  81: "\uE93F",
+  82: "\uE940",
+  83: "\uE953",
+  84: "\uE954",
+  85: "\uE955",
+  86: "\uE956",
+  87: "\uE957",
+  88: "\uE958",
+  89: "\uE959",
+  90: "\uE95A",
+  91: "\uE95B",
+  92: "\uE95C",
+  93: "\uE95D",
+  94: "\uE95E",
+  95: "\uE95F",
+  96: "\uE960",
+  97: "\uE961",
+  98: "\uE962",
+  99: "\uE963",
+  100: "\uE964",
+  101: "\uE965",
+  102: "\uE966",
+  103: "\uE967",
+  104: "\uE968",
+  105: "\uE969",
+  106: "\uE96A",
+  107: "\uE96B",
+  108: "\uE96C",
+  109: "\uE96D",
+  110: "\uE96E",
+  111: "\uE96F",
+  112: "\uE970",
+  113: "\uE971",
+  114: "\uE972",
 };
 ```
 
@@ -1868,6 +2004,7 @@ git commit -m "feat: add shared types and data files ported from mobile app"
 ### Task 10: Create Placeholder Pages
 
 **Files:**
+
 - Create all remaining page files under `src/app/(app)/`
 
 - [ ] **Step 1: Create placeholder page component**
@@ -1875,114 +2012,202 @@ git commit -m "feat: add shared types and data files ported from mobile app"
 Each placeholder page follows this pattern. Create all files below:
 
 `src/app/(app)/search/page.tsx`:
+
 ```tsx
 export default function SearchPage() {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Search</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Search</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/reciter/[slug]/page.tsx`:
+
 ```tsx
 export default function ReciterPage({ params }: { params: Promise<{ slug: string }> }) {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Reciter Profile</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Reciter Profile</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/surah/[id]/page.tsx`:
+
 ```tsx
 export default function SurahPage({ params }: { params: Promise<{ id: string }> }) {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Surah</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Surah</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/quran/page.tsx`:
+
 ```tsx
 export default function QuranPage() {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Quran — Mushaf View</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Quran — Mushaf View</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/quran/[surah]/page.tsx`:
+
 ```tsx
 export default function QuranSurahPage({ params }: { params: Promise<{ surah: string }> }) {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Quran — Reading View</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Quran — Reading View</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/quran/[surah]/[ayah]/page.tsx`:
+
 ```tsx
-export default function QuranAyahPage({ params }: { params: Promise<{ surah: string; ayah: string }> }) {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Quran — Verse</h1></div>;
+export default function QuranAyahPage({
+  params,
+}: {
+  params: Promise<{ surah: string; ayah: string }>;
+}) {
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Quran — Verse</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/collection/page.tsx`:
+
 ```tsx
 export default function CollectionPage() {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Collection</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Collection</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/collection/playlists/page.tsx`:
+
 ```tsx
 export default function PlaylistsPage() {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Playlists</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Playlists</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/collection/playlists/[id]/page.tsx`:
+
 ```tsx
 export default function PlaylistDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Playlist</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Playlist</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/collection/favorites/page.tsx`:
+
 ```tsx
 export default function FavoritesPage() {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Favorites</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Favorites</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/collection/bookmarks/page.tsx`:
+
 ```tsx
 export default function BookmarksPage() {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Bookmarks</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Bookmarks</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/collection/notes/page.tsx`:
+
 ```tsx
 export default function NotesPage() {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Notes</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Notes</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/adhkar/page.tsx`:
+
 ```tsx
 export default function AdhkarPage() {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Adhkar</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Adhkar</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/adhkar/[superId]/page.tsx`:
+
 ```tsx
 export default function AdhkarCategoryPage({ params }: { params: Promise<{ superId: string }> }) {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Adhkar Category</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Adhkar Category</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/adhkar/[superId]/[dhikrId]/page.tsx`:
+
 ```tsx
-export default function DhikrPage({ params }: { params: Promise<{ superId: string; dhikrId: string }> }) {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Dhikr</h1></div>;
+export default function DhikrPage({
+  params,
+}: {
+  params: Promise<{ superId: string; dhikrId: string }>;
+}) {
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Dhikr</h1>
+    </div>
+  );
 }
 ```
 
 `src/app/(app)/settings/page.tsx`:
+
 ```tsx
 export default function SettingsPage() {
-  return <div className="p-6"><h1 className="text-2xl font-bold">Settings</h1></div>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Settings</h1>
+    </div>
+  );
 }
 ```
 
@@ -2020,6 +2245,7 @@ git commit -m "feat: add placeholder pages for all routes"
 ## Completion Criteria
 
 After completing all 10 tasks, the app should:
+
 1. Start with `npm run dev` without errors
 2. Show the Spotify-style layout: sidebar + content + player bar
 3. Dark mode by default with Bayaan's exact color palette

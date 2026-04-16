@@ -63,6 +63,7 @@ src/
 ### Task 1: QuranCDN API Types + Verse Data Hooks
 
 **Files:**
+
 - Create: `src/types/quran-api.ts`, `src/hooks/use-verses-by-page.ts`, `src/hooks/use-verses-by-chapter.ts`
 
 - [ ] **Step 1: Create QuranCDN API response types**
@@ -132,7 +133,8 @@ import useSWR from "swr";
 import { fetchQuran } from "@/lib/api";
 import type { VersesResponse } from "@/types/quran-api";
 
-const WORD_FIELDS = "verse_key,verse_id,page_number,location,text_uthmani,text_imlaei_simple,code_v2,qpc_uthmani_hafs,line_number";
+const WORD_FIELDS =
+  "verse_key,verse_id,page_number,location,text_uthmani,text_imlaei_simple,code_v2,qpc_uthmani_hafs,line_number";
 
 export function useVersesByPage(pageNumber: number) {
   const { data, error, isLoading } = useSWR<VersesResponse>(
@@ -140,7 +142,7 @@ export function useVersesByPage(pageNumber: number) {
       ? `verses/by_page/${pageNumber}?words=true&per_page=all&filter_page_words=true&word_fields=${WORD_FIELDS}&mushaf=1`
       : null,
     fetchQuran,
-    { revalidateOnFocus: false, dedupingInterval: 300000 }
+    { revalidateOnFocus: false, dedupingInterval: 300000 },
   );
   return { verses: data?.verses ?? [], isLoading, error };
 }
@@ -155,19 +157,27 @@ import useSWR from "swr";
 import { fetchQuran } from "@/lib/api";
 import type { VersesResponse } from "@/types/quran-api";
 
-const WORD_FIELDS = "verse_key,verse_id,page_number,location,text_uthmani,text_imlaei_simple,code_v2,qpc_uthmani_hafs";
+const WORD_FIELDS =
+  "verse_key,verse_id,page_number,location,text_uthmani,text_imlaei_simple,code_v2,qpc_uthmani_hafs";
 
-export function useVersesByChapter(chapterId: number, page: number = 1, translationIds: string = "131") {
+export function useVersesByChapter(
+  chapterId: number,
+  page: number = 1,
+  translationIds: string = "131",
+) {
   const params = new URLSearchParams({
-    words: "true", per_page: "50",
+    words: "true",
+    per_page: "50",
     fields: "text_uthmani,chapter_id,hizb_number",
-    translations: translationIds, word_fields: WORD_FIELDS,
-    mushaf: "1", page: page.toString(),
+    translations: translationIds,
+    word_fields: WORD_FIELDS,
+    mushaf: "1",
+    page: page.toString(),
   });
   const { data, error, isLoading } = useSWR<VersesResponse>(
     chapterId > 0 ? `verses/by_chapter/${chapterId}?${params.toString()}` : null,
     fetchQuran,
-    { revalidateOnFocus: false, dedupingInterval: 300000 }
+    { revalidateOnFocus: false, dedupingInterval: 300000 },
   );
   return { verses: data?.verses ?? [], pagination: data?.pagination ?? null, isLoading, error };
 }
@@ -206,6 +216,7 @@ git commit -m "feat: add QuranCDN API types, verse hooks, and HTML sanitizer"
 ### Task 2: QCF Font Loading Hook
 
 **Files:**
+
 - Create: `src/hooks/use-qcf-font.ts`
 - Test: `src/__tests__/hooks/use-qcf-font.test.ts`
 
@@ -218,34 +229,50 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 
 const mockFontsSet = new Set<unknown>();
-vi.stubGlobal("FontFace", vi.fn(function (family: string) {
-  return { family, load: vi.fn().mockResolvedValue(undefined), status: "loaded" };
-}));
+vi.stubGlobal(
+  "FontFace",
+  vi.fn(function (family: string) {
+    return { family, load: vi.fn().mockResolvedValue(undefined), status: "loaded" };
+  }),
+);
 Object.defineProperty(document, "fonts", {
-  value: { add: vi.fn((ff: unknown) => mockFontsSet.add(ff)), has: vi.fn(() => false), check: vi.fn(() => false) },
+  value: {
+    add: vi.fn((ff: unknown) => mockFontsSet.add(ff)),
+    has: vi.fn(() => false),
+    check: vi.fn(() => false),
+  },
   writable: true,
 });
 
 import { useQcfFont } from "@/hooks/use-qcf-font";
 
 describe("useQcfFont", () => {
-  beforeEach(() => { vi.clearAllMocks(); mockFontsSet.clear(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockFontsSet.clear();
+  });
 
   it("loads font for a page number", async () => {
     renderHook(() => useQcfFont([1]));
-    await act(async () => { await new Promise((r) => setTimeout(r, 10)); });
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 10));
+    });
     expect(FontFace).toHaveBeenCalledWith("p1-v2", expect.stringContaining("p1.woff2"));
   });
 
   it("returns loaded status", async () => {
     const { result } = renderHook(() => useQcfFont([1]));
-    await act(async () => { await new Promise((r) => setTimeout(r, 10)); });
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 10));
+    });
     expect(result.current.isPageFontLoaded(1)).toBe(true);
   });
 
   it("loads multiple pages", async () => {
     renderHook(() => useQcfFont([1, 2, 3]));
-    await act(async () => { await new Promise((r) => setTimeout(r, 10)); });
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 10));
+    });
     expect(FontFace).toHaveBeenCalledTimes(3);
   });
 });
@@ -276,21 +303,27 @@ export function useQcfFont(pageNumbers: number[]) {
       const fontUrl = `url('${QCF_FONT_CDN}/p${pageNum}.woff2') format('woff2')`;
       const fontFace = new FontFace(fontName, fontUrl);
       document.fonts.add(fontFace);
-      fontFace.load().then(() => {
-        loadedFonts.add(pageNum);
-        loadingRef.current.delete(pageNum);
-        setLoadedPages((prev) => new Set([...prev, pageNum]));
-      }).catch((err) => {
-        console.error(`Failed to load QCF font for page ${pageNum}:`, err);
-        loadingRef.current.delete(pageNum);
-      });
+      fontFace
+        .load()
+        .then(() => {
+          loadedFonts.add(pageNum);
+          loadingRef.current.delete(pageNum);
+          setLoadedPages((prev) => new Set([...prev, pageNum]));
+        })
+        .catch((err) => {
+          console.error(`Failed to load QCF font for page ${pageNum}:`, err);
+          loadingRef.current.delete(pageNum);
+        });
     });
   }, [pageNumbers]);
 
-  const isPageFontLoaded = useCallback((pageNum: number) => loadedPages.has(pageNum), [loadedPages]);
+  const isPageFontLoaded = useCallback(
+    (pageNum: number) => loadedPages.has(pageNum),
+    [loadedPages],
+  );
   const getFontFamily = useCallback(
-    (pageNum: number) => loadedPages.has(pageNum) ? `p${pageNum}-v2` : "UthmanicHafs",
-    [loadedPages]
+    (pageNum: number) => (loadedPages.has(pageNum) ? `p${pageNum}-v2` : "UthmanicHafs"),
+    [loadedPages],
   );
   return { isPageFontLoaded, getFontFamily, loadedPages };
 }
@@ -303,6 +336,7 @@ curl -o public/fonts/UthmanicHafs1Ver18.woff2 "https://static.qurancdn.com/fonts
 ```
 
 Add to `src/app/globals.css` (before `@layer base`):
+
 ```css
 @font-face {
   font-family: "UthmanicHafs";
@@ -329,6 +363,7 @@ git commit -m "feat: add QCF font loading hook with dynamic FontFace API"
 ### Task 3: QuranWord + VerseText Components
 
 **Files:**
+
 - Create: `src/components/quran/quran-word.tsx`, `src/components/quran/verse-text.tsx`
 - Test: `src/__tests__/components/quran/quran-word.test.tsx`, `src/__tests__/components/quran/verse-text.test.tsx`
 
@@ -343,20 +378,33 @@ import { QuranWord } from "@/components/quran/quran-word";
 import type { QcfWord } from "@/types/quran-api";
 
 const mockWord: QcfWord = {
-  id: 1, position: 1, audio_url: null, char_type_name: "word",
-  code_v2: "\ufc41", page_number: 1, line_number: 1,
-  text_uthmani: "بِسْمِ", text_imlaei_simple: "bism",
-  qpc_uthmani_hafs: "بِسْمِ", verse_key: "1:1", verse_id: 1, location: "1:1:1",
+  id: 1,
+  position: 1,
+  audio_url: null,
+  char_type_name: "word",
+  code_v2: "\ufc41",
+  page_number: 1,
+  line_number: 1,
+  text_uthmani: "بِسْمِ",
+  text_imlaei_simple: "bism",
+  qpc_uthmani_hafs: "بِسْمِ",
+  verse_key: "1:1",
+  verse_id: 1,
+  location: "1:1:1",
 };
 
 describe("QuranWord", () => {
   it("renders fallback text when font not loaded", () => {
-    const { container } = render(<QuranWord word={mockWord} isFontLoaded={false} fontFamily="UthmanicHafs" />);
+    const { container } = render(
+      <QuranWord word={mockWord} isFontLoaded={false} fontFamily="UthmanicHafs" />,
+    );
     expect(container.querySelector("span")?.textContent).toBe("بِسْمِ");
   });
 
   it("renders glyph code when font loaded", () => {
-    const { container } = render(<QuranWord word={mockWord} isFontLoaded={true} fontFamily="p1-v2" />);
+    const { container } = render(
+      <QuranWord word={mockWord} isFontLoaded={true} fontFamily="p1-v2" />,
+    );
     const span = container.querySelector("span");
     expect(span?.textContent).toBe("\ufc41");
     expect(span?.style.fontFamily).toBe("p1-v2");
@@ -383,7 +431,11 @@ export function QuranWord({ word, isFontLoaded, fontFamily, className }: QuranWo
   const text = isFontLoaded ? word.code_v2 : word.qpc_uthmani_hafs;
   return (
     <span
-      className={cn("inline-block cursor-pointer transition-colors hover:text-blue-400/80", !isFontLoaded && "font-[UthmanicHafs]", className)}
+      className={cn(
+        "inline-block cursor-pointer transition-colors hover:text-blue-400/80",
+        !isFontLoaded && "font-[UthmanicHafs]",
+        className,
+      )}
       style={isFontLoaded ? { fontFamily } : undefined}
       data-verse-key={word.verse_key}
       data-word-position={word.position}
@@ -405,21 +457,55 @@ import { VerseText } from "@/components/quran/verse-text";
 import type { QcfWord } from "@/types/quran-api";
 
 const mockWords: QcfWord[] = [
-  { id: 1, position: 1, audio_url: null, char_type_name: "word", code_v2: "\ufc41", page_number: 1, line_number: 1, text_uthmani: "بِسْمِ", text_imlaei_simple: "bism", qpc_uthmani_hafs: "بِسْمِ", verse_key: "1:1", verse_id: 1, location: "1:1:1" },
-  { id: 2, position: 2, audio_url: null, char_type_name: "word", code_v2: "\ufc42", page_number: 1, line_number: 1, text_uthmani: "ٱللَّهِ", text_imlaei_simple: "allah", qpc_uthmani_hafs: "ٱللَّهِ", verse_key: "1:1", verse_id: 1, location: "1:1:2" },
+  {
+    id: 1,
+    position: 1,
+    audio_url: null,
+    char_type_name: "word",
+    code_v2: "\ufc41",
+    page_number: 1,
+    line_number: 1,
+    text_uthmani: "بِسْمِ",
+    text_imlaei_simple: "bism",
+    qpc_uthmani_hafs: "بِسْمِ",
+    verse_key: "1:1",
+    verse_id: 1,
+    location: "1:1:1",
+  },
+  {
+    id: 2,
+    position: 2,
+    audio_url: null,
+    char_type_name: "word",
+    code_v2: "\ufc42",
+    page_number: 1,
+    line_number: 1,
+    text_uthmani: "ٱللَّهِ",
+    text_imlaei_simple: "allah",
+    qpc_uthmani_hafs: "ٱللَّهِ",
+    verse_key: "1:1",
+    verse_id: 1,
+    location: "1:1:2",
+  },
 ];
 
 describe("VerseText", () => {
   it("renders all words", () => {
-    const { container } = render(<VerseText words={mockWords} isFontLoaded={false} fontFamily="UthmanicHafs" />);
+    const { container } = render(
+      <VerseText words={mockWords} isFontLoaded={false} fontFamily="UthmanicHafs" />,
+    );
     expect(container.querySelectorAll("span")).toHaveLength(2);
   });
   it("applies RTL direction", () => {
-    const { container } = render(<VerseText words={mockWords} isFontLoaded={false} fontFamily="UthmanicHafs" />);
+    const { container } = render(
+      <VerseText words={mockWords} isFontLoaded={false} fontFamily="UthmanicHafs" />,
+    );
     expect(container.firstElementChild?.getAttribute("dir")).toBe("rtl");
   });
   it("applies space-between for mushaf mode", () => {
-    const { container } = render(<VerseText words={mockWords} isFontLoaded={false} fontFamily="UthmanicHafs" mushafMode />);
+    const { container } = render(
+      <VerseText words={mockWords} isFontLoaded={false} fontFamily="UthmanicHafs" mushafMode />,
+    );
     expect(container.firstElementChild?.className).toContain("justify-between");
   });
 });
@@ -441,11 +527,31 @@ interface VerseTextProps {
   className?: string;
 }
 
-export function VerseText({ words, isFontLoaded, fontFamily, mushafMode, fontSize = "1.8rem", className }: VerseTextProps) {
+export function VerseText({
+  words,
+  isFontLoaded,
+  fontFamily,
+  mushafMode,
+  fontSize = "1.8rem",
+  className,
+}: VerseTextProps) {
   return (
-    <div dir="rtl" className={cn("flex flex-wrap leading-loose", mushafMode ? "justify-between" : "justify-start gap-x-1", className)} style={{ fontSize }}>
+    <div
+      dir="rtl"
+      className={cn(
+        "flex flex-wrap leading-loose",
+        mushafMode ? "justify-between" : "justify-start gap-x-1",
+        className,
+      )}
+      style={{ fontSize }}
+    >
       {words.map((word) => (
-        <QuranWord key={`${word.verse_key}-${word.position}`} word={word} isFontLoaded={isFontLoaded} fontFamily={fontFamily} />
+        <QuranWord
+          key={`${word.verse_key}-${word.position}`}
+          word={word}
+          isFontLoaded={isFontLoaded}
+          fontFamily={fontFamily}
+        />
       ))}
     </div>
   );
@@ -470,6 +576,7 @@ git commit -m "feat: add QuranWord and VerseText components for Quran rendering"
 ### Task 4: Reading Settings Store + Themes
 
 **Files:**
+
 - Create: `src/stores/reading-settings-store.ts`, `src/data/reading-themes.ts`
 - Test: `src/__tests__/stores/reading-settings-store.test.ts`
 
@@ -481,21 +588,153 @@ Create `src/data/reading-themes.ts`:
 import type { ReadingTheme } from "@/types/quran";
 
 export const LIGHT_READING_THEMES: ReadingTheme[] = [
-  { id: "default", name: "Cream", mode: "light", colors: { background: "#f4f3ec", backgroundSecondary: "#edebe3", text: "#06151C", textSecondary: "#052c39", card: "#dcdeda" } },
-  { id: "parchment", name: "Parchment", mode: "light", colors: { background: "#f5e6c8", backgroundSecondary: "#eddcba", text: "#2c1810", textSecondary: "#5a3a28", card: "#e5d4b2" } },
-  { id: "white", name: "White", mode: "light", colors: { background: "#ffffff", backgroundSecondary: "#f5f5f5", text: "#1a1a1a", textSecondary: "#666666", card: "#eeeeee" } },
-  { id: "sage", name: "Sage", mode: "light", colors: { background: "#e8ebe4", backgroundSecondary: "#dfe3db", text: "#1c2b1e", textSecondary: "#4a5c4e", card: "#d5d9d0" } },
-  { id: "rose", name: "Rose", mode: "light", colors: { background: "#f5ece8", backgroundSecondary: "#ede2dd", text: "#241a18", textSecondary: "#6b4f47", card: "#e3d8d3" } },
-  { id: "cool", name: "Cool Gray", mode: "light", colors: { background: "#eef0f2", backgroundSecondary: "#e4e7ea", text: "#1a1d21", textSecondary: "#5a5f66", card: "#d9dce0" } },
+  {
+    id: "default",
+    name: "Cream",
+    mode: "light",
+    colors: {
+      background: "#f4f3ec",
+      backgroundSecondary: "#edebe3",
+      text: "#06151C",
+      textSecondary: "#052c39",
+      card: "#dcdeda",
+    },
+  },
+  {
+    id: "parchment",
+    name: "Parchment",
+    mode: "light",
+    colors: {
+      background: "#f5e6c8",
+      backgroundSecondary: "#eddcba",
+      text: "#2c1810",
+      textSecondary: "#5a3a28",
+      card: "#e5d4b2",
+    },
+  },
+  {
+    id: "white",
+    name: "White",
+    mode: "light",
+    colors: {
+      background: "#ffffff",
+      backgroundSecondary: "#f5f5f5",
+      text: "#1a1a1a",
+      textSecondary: "#666666",
+      card: "#eeeeee",
+    },
+  },
+  {
+    id: "sage",
+    name: "Sage",
+    mode: "light",
+    colors: {
+      background: "#e8ebe4",
+      backgroundSecondary: "#dfe3db",
+      text: "#1c2b1e",
+      textSecondary: "#4a5c4e",
+      card: "#d5d9d0",
+    },
+  },
+  {
+    id: "rose",
+    name: "Rose",
+    mode: "light",
+    colors: {
+      background: "#f5ece8",
+      backgroundSecondary: "#ede2dd",
+      text: "#241a18",
+      textSecondary: "#6b4f47",
+      card: "#e3d8d3",
+    },
+  },
+  {
+    id: "cool",
+    name: "Cool Gray",
+    mode: "light",
+    colors: {
+      background: "#eef0f2",
+      backgroundSecondary: "#e4e7ea",
+      text: "#1a1d21",
+      textSecondary: "#5a5f66",
+      card: "#d9dce0",
+    },
+  },
 ];
 
 export const DARK_READING_THEMES: ReadingTheme[] = [
-  { id: "dark-default", name: "Dark Navy", mode: "dark", colors: { background: "#050b10", backgroundSecondary: "#06151C", text: "#ffffff", textSecondary: "#B0B0B0", card: "#050b10" } },
-  { id: "dark-sepia", name: "Dark Sepia", mode: "dark", colors: { background: "#140f0a", backgroundSecondary: "#1c1610", text: "#d4c4a8", textSecondary: "#8a7a60", card: "#140f0a" } },
-  { id: "oled", name: "True Black", mode: "dark", colors: { background: "#000000", backgroundSecondary: "#0a0a0a", text: "#e8e8e8", textSecondary: "#808080", card: "#000000" } },
-  { id: "dark-sage", name: "Dark Sage", mode: "dark", colors: { background: "#141a16", backgroundSecondary: "#1a221c", text: "#c0ccc2", textSecondary: "#6e7e70", card: "#141a16" } },
-  { id: "charcoal", name: "Charcoal", mode: "dark", colors: { background: "#1a1a1a", backgroundSecondary: "#222222", text: "#e0e0e0", textSecondary: "#888888", card: "#1a1a1a" } },
-  { id: "indigo", name: "Indigo", mode: "dark", colors: { background: "#0e0c18", backgroundSecondary: "#141120", text: "#d8d4e8", textSecondary: "#7a74a0", card: "#0e0c18" } },
+  {
+    id: "dark-default",
+    name: "Dark Navy",
+    mode: "dark",
+    colors: {
+      background: "#050b10",
+      backgroundSecondary: "#06151C",
+      text: "#ffffff",
+      textSecondary: "#B0B0B0",
+      card: "#050b10",
+    },
+  },
+  {
+    id: "dark-sepia",
+    name: "Dark Sepia",
+    mode: "dark",
+    colors: {
+      background: "#140f0a",
+      backgroundSecondary: "#1c1610",
+      text: "#d4c4a8",
+      textSecondary: "#8a7a60",
+      card: "#140f0a",
+    },
+  },
+  {
+    id: "oled",
+    name: "True Black",
+    mode: "dark",
+    colors: {
+      background: "#000000",
+      backgroundSecondary: "#0a0a0a",
+      text: "#e8e8e8",
+      textSecondary: "#808080",
+      card: "#000000",
+    },
+  },
+  {
+    id: "dark-sage",
+    name: "Dark Sage",
+    mode: "dark",
+    colors: {
+      background: "#141a16",
+      backgroundSecondary: "#1a221c",
+      text: "#c0ccc2",
+      textSecondary: "#6e7e70",
+      card: "#141a16",
+    },
+  },
+  {
+    id: "charcoal",
+    name: "Charcoal",
+    mode: "dark",
+    colors: {
+      background: "#1a1a1a",
+      backgroundSecondary: "#222222",
+      text: "#e0e0e0",
+      textSecondary: "#888888",
+      card: "#1a1a1a",
+    },
+  },
+  {
+    id: "indigo",
+    name: "Indigo",
+    mode: "dark",
+    colors: {
+      background: "#0e0c18",
+      backgroundSecondary: "#141120",
+      text: "#d8d4e8",
+      textSecondary: "#7a74a0",
+      card: "#0e0c18",
+    },
+  },
 ];
 
 export const ALL_READING_THEMES = [...LIGHT_READING_THEMES, ...DARK_READING_THEMES];
@@ -514,11 +753,19 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 
 describe("reading-settings-store", () => {
-  beforeEach(() => { useReadingSettingsStore.setState(useReadingSettingsStore.getInitialState()); });
+  beforeEach(() => {
+    useReadingSettingsStore.setState(useReadingSettingsStore.getInitialState());
+  });
 
-  it("defaults to cream light theme", () => { expect(useReadingSettingsStore.getState().lightThemeId).toBe("default"); });
-  it("defaults to dark navy", () => { expect(useReadingSettingsStore.getState().darkThemeId).toBe("dark-default"); });
-  it("defaults to Saheeh International", () => { expect(useReadingSettingsStore.getState().translationIds).toContain("131"); });
+  it("defaults to cream light theme", () => {
+    expect(useReadingSettingsStore.getState().lightThemeId).toBe("default");
+  });
+  it("defaults to dark navy", () => {
+    expect(useReadingSettingsStore.getState().darkThemeId).toBe("dark-default");
+  });
+  it("defaults to Saheeh International", () => {
+    expect(useReadingSettingsStore.getState().translationIds).toContain("131");
+  });
   it("sets font size", () => {
     useReadingSettingsStore.getState().setFontSize(2.4);
     expect(useReadingSettingsStore.getState().fontSize).toBe(2.4);
@@ -568,9 +815,14 @@ interface ReadingSettingsState {
 export const useReadingSettingsStore = create<ReadingSettingsState>()(
   persist(
     (set) => ({
-      fontSize: 1.8, lightThemeId: "default", darkThemeId: "dark-default",
-      translationIds: "131", showTransliteration: false, showWordByWord: false,
-      showTajweed: false, mushafPage: 1,
+      fontSize: 1.8,
+      lightThemeId: "default",
+      darkThemeId: "dark-default",
+      translationIds: "131",
+      showTransliteration: false,
+      showWordByWord: false,
+      showTajweed: false,
+      mushafPage: 1,
       setFontSize: (size) => set({ fontSize: size }),
       setLightTheme: (id) => set({ lightThemeId: id }),
       setDarkTheme: (id) => set({ darkThemeId: id }),
@@ -580,8 +832,8 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       toggleTajweed: () => set((s) => ({ showTajweed: !s.showTajweed })),
       setMushafPage: (page) => set({ mushafPage: page }),
     }),
-    { name: "bayaan-reading-settings", storage: createJSONStorage(() => localStorage) }
-  )
+    { name: "bayaan-reading-settings", storage: createJSONStorage(() => localStorage) },
+  ),
 );
 ```
 
@@ -603,6 +855,7 @@ git commit -m "feat: add reading settings store with themes and preferences"
 ### Task 5: Mushaf View (Page-Accurate Display)
 
 **Files:**
+
 - Create: `src/components/quran/surah-header.tsx`, `src/components/quran/mushaf-page.tsx`, `src/components/quran/mushaf-view.tsx`
 - Modify: `src/app/(app)/quran/page.tsx`
 
@@ -613,17 +866,27 @@ Create `src/components/quran/surah-header.tsx`:
 ```tsx
 import { surahGlyphMap } from "@/data/surah-glyph-map";
 
-interface SurahHeaderProps { surahNumber: number; surahName: string; showBismillah: boolean; }
+interface SurahHeaderProps {
+  surahNumber: number;
+  surahName: string;
+  showBismillah: boolean;
+}
 
 export function SurahHeader({ surahNumber, surahName, showBismillah }: SurahHeaderProps) {
   const glyph = surahGlyphMap[surahNumber];
   return (
-    <div className="text-center py-4">
-      <div className="inline-flex items-center justify-center px-8 py-2 rounded-xl bg-[var(--text-alpha-04)] border border-[var(--text-alpha-06)]">
-        {glyph ? <span className="font-surah-names text-3xl">{glyph}</span> : <span className="text-lg font-semibold">{surahName}</span>}
+    <div className="py-4 text-center">
+      <div className="inline-flex items-center justify-center rounded-xl border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] px-8 py-2">
+        {glyph ? (
+          <span className="font-surah-names text-3xl">{glyph}</span>
+        ) : (
+          <span className="text-lg font-semibold">{surahName}</span>
+        )}
       </div>
       {showBismillah && surahNumber !== 9 && surahNumber !== 1 && (
-        <p className="text-2xl mt-4 font-[UthmanicHafs]" dir="rtl">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</p>
+        <p className="mt-4 font-[UthmanicHafs] text-2xl" dir="rtl">
+          بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
+        </p>
       )}
     </div>
   );
@@ -648,7 +911,13 @@ interface MushafPageProps {
   fontSize: string;
 }
 
-export function MushafPage({ verses, pageNumber, isFontLoaded, fontFamily, fontSize }: MushafPageProps) {
+export function MushafPage({
+  verses,
+  pageNumber,
+  isFontLoaded,
+  fontFamily,
+  fontSize,
+}: MushafPageProps) {
   const lines = useMemo(() => {
     const lineMap = new Map<number, QcfWord[]>();
     for (const verse of verses) {
@@ -663,11 +932,19 @@ export function MushafPage({ verses, pageNumber, isFontLoaded, fontFamily, fontS
   }, [verses, pageNumber]);
 
   return (
-    <div className="flex flex-col items-center min-h-[600px] px-4 py-6">
+    <div className="flex min-h-[600px] flex-col items-center px-4 py-6">
       {lines.map(([lineNumber, words]) => (
-        <VerseText key={`line-${lineNumber}`} words={words} isFontLoaded={isFontLoaded} fontFamily={fontFamily} mushafMode fontSize={fontSize} className="w-full max-w-[640px]" />
+        <VerseText
+          key={`line-${lineNumber}`}
+          words={words}
+          isFontLoaded={isFontLoaded}
+          fontFamily={fontFamily}
+          mushafMode
+          fontSize={fontSize}
+          className="w-full max-w-[640px]"
+        />
       ))}
-      <p className="text-xs text-muted-foreground mt-4">{pageNumber}</p>
+      <p className="text-muted-foreground mt-4 text-xs">{pageNumber}</p>
     </div>
   );
 }
@@ -693,42 +970,72 @@ export function MushafView() {
   const fontSize = useReadingSettingsStore((s) => s.fontSize);
   const [currentPage, setCurrentPage] = useState(mushafPage);
 
-  const pagesToLoad = [currentPage - 1, currentPage, currentPage + 1].filter((p) => p >= 1 && p <= TOTAL_PAGES);
+  const pagesToLoad = [currentPage - 1, currentPage, currentPage + 1].filter(
+    (p) => p >= 1 && p <= TOTAL_PAGES,
+  );
   const { verses, isLoading } = useVersesByPage(currentPage);
   const { isPageFontLoaded, getFontFamily } = useQcfFont(pagesToLoad);
 
-  const goToPage = useCallback((page: number) => {
-    const clamped = Math.max(1, Math.min(TOTAL_PAGES, page));
-    setCurrentPage(clamped);
-    setMushafPage(clamped);
-  }, [setMushafPage]);
+  const goToPage = useCallback(
+    (page: number) => {
+      const clamped = Math.max(1, Math.min(TOTAL_PAGES, page));
+      setCurrentPage(clamped);
+      setMushafPage(clamped);
+    },
+    [setMushafPage],
+  );
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border">
-        <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage >= TOTAL_PAGES} className="px-3 py-1.5 text-sm rounded-lg bg-[var(--text-alpha-06)] disabled:opacity-30 hover:bg-[var(--text-alpha-10)] transition-colors">
+    <div className="flex h-full flex-col">
+      <div className="border-border flex items-center justify-between border-b px-4 py-2">
+        <button
+          onClick={() => goToPage(currentPage + 1)}
+          disabled={currentPage >= TOTAL_PAGES}
+          className="rounded-lg bg-[var(--text-alpha-06)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--text-alpha-10)] disabled:opacity-30"
+        >
           &#8594; Previous
         </button>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Page</span>
-          <input type="number" min={1} max={TOTAL_PAGES} value={currentPage} onChange={(e) => goToPage(parseInt(e.target.value, 10) || 1)} className="w-16 text-center text-sm bg-[var(--text-alpha-04)] border border-[var(--text-alpha-06)] rounded px-2 py-1" />
-          <span className="text-sm text-muted-foreground">/ {TOTAL_PAGES}</span>
+          <span className="text-muted-foreground text-sm">Page</span>
+          <input
+            type="number"
+            min={1}
+            max={TOTAL_PAGES}
+            value={currentPage}
+            onChange={(e) => goToPage(parseInt(e.target.value, 10) || 1)}
+            className="w-16 rounded border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] px-2 py-1 text-center text-sm"
+          />
+          <span className="text-muted-foreground text-sm">/ {TOTAL_PAGES}</span>
         </div>
-        <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage <= 1} className="px-3 py-1.5 text-sm rounded-lg bg-[var(--text-alpha-06)] disabled:opacity-30 hover:bg-[var(--text-alpha-10)] transition-colors">
+        <button
+          onClick={() => goToPage(currentPage - 1)}
+          disabled={currentPage <= 1}
+          className="rounded-lg bg-[var(--text-alpha-06)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--text-alpha-10)] disabled:opacity-30"
+        >
           Next &#8592;
         </button>
       </div>
       <div className="flex-1 overflow-y-auto">
         {isLoading ? (
-          <div className="flex items-center justify-center min-h-[600px]">
-            <div className="animate-pulse space-y-4 w-full max-w-[640px] px-8">
+          <div className="flex min-h-[600px] items-center justify-center">
+            <div className="w-full max-w-[640px] animate-pulse space-y-4 px-8">
               {Array.from({ length: 15 }).map((_, i) => (
-                <div key={i} className="h-6 bg-[var(--text-alpha-06)] rounded" style={{ width: `${70 + Math.random() * 30}%` }} />
+                <div
+                  key={i}
+                  className="h-6 rounded bg-[var(--text-alpha-06)]"
+                  style={{ width: `${70 + Math.random() * 30}%` }}
+                />
               ))}
             </div>
           </div>
         ) : (
-          <MushafPage verses={verses} pageNumber={currentPage} isFontLoaded={isPageFontLoaded(currentPage)} fontFamily={getFontFamily(currentPage)} fontSize={`${fontSize}rem`} />
+          <MushafPage
+            verses={verses}
+            pageNumber={currentPage}
+            isFontLoaded={isPageFontLoaded(currentPage)}
+            fontFamily={getFontFamily(currentPage)}
+            fontSize={`${fontSize}rem`}
+          />
         )}
       </div>
     </div>
@@ -739,9 +1046,12 @@ export function MushafView() {
 - [ ] **Step 4: Replace quran page**
 
 Replace `src/app/(app)/quran/page.tsx`:
+
 ```tsx
 import { MushafView } from "@/components/quran/mushaf-view";
-export default function QuranPage() { return <MushafView />; }
+export default function QuranPage() {
+  return <MushafView />;
+}
 ```
 
 - [ ] **Step 5: Run tests and type check**
@@ -762,6 +1072,7 @@ git commit -m "feat: build Mushaf view with QCF font rendering and page navigati
 ### Task 6: Reading View (Verse-by-Verse with Translations)
 
 **Files:**
+
 - Create: `src/components/quran/reading-verse.tsx`, `src/components/quran/reading-view.tsx`
 - Modify: `src/app/(app)/quran/[surah]/page.tsx`
 
@@ -783,21 +1094,35 @@ interface ReadingVerseProps {
   showTranslation: boolean;
 }
 
-export function ReadingVerse({ verse, isFontLoaded, fontFamily, fontSize, showTranslation }: ReadingVerseProps) {
+export function ReadingVerse({
+  verse,
+  isFontLoaded,
+  fontFamily,
+  fontSize,
+  showTranslation,
+}: ReadingVerseProps) {
   return (
-    <div className="py-4 border-b border-[var(--text-alpha-06)]">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-xs text-muted-foreground font-medium">{verse.verse_key}</span>
+    <div className="border-b border-[var(--text-alpha-06)] py-4">
+      <div className="mb-2 flex items-center gap-2">
+        <span className="text-muted-foreground text-xs font-medium">{verse.verse_key}</span>
       </div>
       <div className="mb-3">
-        <VerseText words={verse.words} isFontLoaded={isFontLoaded} fontFamily={fontFamily} fontSize={fontSize} />
+        <VerseText
+          words={verse.words}
+          isFontLoaded={isFontLoaded}
+          fontFamily={fontFamily}
+          fontSize={fontSize}
+        />
       </div>
-      {showTranslation && verse.translations?.map((translation) => (
-        <div key={translation.id} className="mt-3 text-sm text-muted-foreground leading-relaxed">
-          <p className="text-xs font-medium text-muted-foreground/60 mb-1">{translation.resource_name}</p>
-          <p dangerouslySetInnerHTML={{ __html: sanitizeHtml(translation.text) }} />
-        </div>
-      ))}
+      {showTranslation &&
+        verse.translations?.map((translation) => (
+          <div key={translation.id} className="text-muted-foreground mt-3 text-sm leading-relaxed">
+            <p className="text-muted-foreground/60 mb-1 text-xs font-medium">
+              {translation.resource_name}
+            </p>
+            <p dangerouslySetInnerHTML={{ __html: sanitizeHtml(translation.text) }} />
+          </div>
+        ))}
     </div>
   );
 }
@@ -824,18 +1149,21 @@ export function ReadingView({ surahId }: { surahId: number }) {
   const fontSize = useReadingSettingsStore((s) => s.fontSize);
   const translationIds = useReadingSettingsStore((s) => s.translationIds);
   const { verses, isLoading } = useVersesByChapter(surahId, 1, translationIds);
-  const pageNumbers = useMemo(() => [...new Set(verses.flatMap((v) => v.words.map((w) => w.page_number)))], [verses]);
+  const pageNumbers = useMemo(
+    () => [...new Set(verses.flatMap((v) => v.words.map((w) => w.page_number)))],
+    [verses],
+  );
   const { isPageFontLoaded, getFontFamily } = useQcfFont(pageNumbers);
   const surah = surahs.find((s) => s.id === surahId);
 
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-8 animate-pulse">
-        <div className="h-12 w-48 bg-[var(--text-alpha-06)] rounded mx-auto mb-8" />
+      <div className="mx-auto max-w-3xl animate-pulse px-6 py-8">
+        <div className="mx-auto mb-8 h-12 w-48 rounded bg-[var(--text-alpha-06)]" />
         {Array.from({ length: 7 }).map((_, i) => (
           <div key={i} className="mb-6 space-y-3">
-            <div className="h-8 bg-[var(--text-alpha-06)] rounded w-full" />
-            <div className="h-4 bg-[var(--text-alpha-04)] rounded w-3/4" />
+            <div className="h-8 w-full rounded bg-[var(--text-alpha-06)]" />
+            <div className="h-4 w-3/4 rounded bg-[var(--text-alpha-04)]" />
           </div>
         ))}
       </div>
@@ -845,11 +1173,24 @@ export function ReadingView({ surahId }: { surahId: number }) {
   const primaryPage = verses[0]?.words[0]?.page_number ?? 1;
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-8">
-      {surah && <SurahHeader surahNumber={surah.id} surahName={surah.name} showBismillah={surah.bismillah_pre} />}
+    <div className="mx-auto max-w-3xl px-6 py-8">
+      {surah && (
+        <SurahHeader
+          surahNumber={surah.id}
+          surahName={surah.name}
+          showBismillah={surah.bismillah_pre}
+        />
+      )}
       <div className="mt-6">
         {verses.map((verse) => (
-          <ReadingVerse key={verse.verse_key} verse={verse} isFontLoaded={isPageFontLoaded(primaryPage)} fontFamily={getFontFamily(primaryPage)} fontSize={`${fontSize}rem`} showTranslation={true} />
+          <ReadingVerse
+            key={verse.verse_key}
+            verse={verse}
+            isFontLoaded={isPageFontLoaded(primaryPage)}
+            fontFamily={getFontFamily(primaryPage)}
+            fontSize={`${fontSize}rem`}
+            showTranslation={true}
+          />
         ))}
       </div>
     </div>
@@ -870,7 +1211,11 @@ export default function QuranSurahPage({ params }: { params: Promise<{ surah: st
   const { surah } = use(params);
   const surahId = parseInt(surah, 10);
   if (isNaN(surahId) || surahId < 1 || surahId > 114) {
-    return <div className="p-6"><h1 className="text-2xl font-bold">Invalid surah number</h1></div>;
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-bold">Invalid surah number</h1>
+      </div>
+    );
   }
   return <ReadingView surahId={surahId} />;
 }
@@ -894,6 +1239,7 @@ git commit -m "feat: build reading view with verse-by-verse translation display"
 ## Completion Criteria
 
 After completing all 6 tasks:
+
 1. `/quran` shows Mushaf view with page-accurate QCF font rendering
 2. QCF fonts load dynamically per-page from qurancdn, KFGQPC Uthmani Hafs fallback
 3. Mushaf page navigation works (prev/next, page input) — RTL (right=next)

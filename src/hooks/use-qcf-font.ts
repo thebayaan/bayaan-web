@@ -14,15 +14,11 @@ export function useQcfFont(pageNumbers: number[]): {
   getFontFamily: (pageNum: number) => string;
   loadedPages: Set<number>;
 } {
-  const [loadedPages, setLoadedPages] = useState<Set<number>>(
-    () => new Set(loadedFonts),
-  );
+  const [loadedPages, setLoadedPages] = useState<Set<number>>(() => new Set(loadedFonts));
   const loadingRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
-    const toLoad = pageNumbers.filter(
-      (p) => !loadedFonts.has(p) && !loadingRef.current.has(p),
-    );
+    const toLoad = pageNumbers.filter((p) => !loadedFonts.has(p) && !loadingRef.current.has(p));
     if (toLoad.length === 0) return;
 
     toLoad.forEach((pageNum) => {
@@ -52,8 +48,7 @@ export function useQcfFont(pageNumbers: number[]): {
   );
 
   const getFontFamily = useCallback(
-    (pageNum: number) =>
-      loadedPages.has(pageNum) ? `p${pageNum}-v2` : "UthmanicHafs",
+    (pageNum: number) => (loadedPages.has(pageNum) ? `p${pageNum}-v2` : "UthmanicHafs"),
     [loadedPages],
   );
 

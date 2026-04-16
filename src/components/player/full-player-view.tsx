@@ -56,21 +56,21 @@ export function FullPlayerView({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 bg-background border-border overflow-hidden">
+      <DialogContent className="bg-background border-border max-w-md overflow-hidden p-0">
         <DialogTitle className="sr-only">Now Playing</DialogTitle>
-        <div className="flex flex-col items-center p-8 gap-6">
+        <div className="flex flex-col items-center gap-6 p-8">
           {/* Artwork */}
-          <div className="w-64 h-64 rounded-2xl overflow-hidden bg-muted shadow-2xl">
+          <div className="bg-muted h-64 w-64 overflow-hidden rounded-2xl shadow-2xl">
             {currentTrack.artwork ? (
               <Image
                 src={currentTrack.artwork}
                 alt={currentTrack.title}
                 width={256}
                 height={256}
-                className="object-cover w-full h-full"
+                className="h-full w-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-muted-foreground flex h-full w-full items-center justify-center">
                 <svg
                   width={64}
                   height={64}
@@ -87,11 +87,9 @@ export function FullPlayerView({
           </div>
 
           {/* Track Info */}
-          <div className="text-center w-full">
-            <h2 className="text-xl font-bold truncate">{currentTrack.title}</h2>
-            <p className="text-muted-foreground truncate">
-              {currentTrack.artist}
-            </p>
+          <div className="w-full text-center">
+            <h2 className="truncate text-xl font-bold">{currentTrack.title}</h2>
+            <p className="text-muted-foreground truncate">{currentTrack.artist}</p>
           </div>
 
           {/* Progress */}
@@ -118,13 +116,13 @@ export function FullPlayerView({
           {/* Rate control */}
           <button
             onClick={cycleRate}
-            className="text-xs text-muted-foreground hover:text-foreground px-3 py-1 rounded-full bg-muted transition-colors"
+            className="text-muted-foreground hover:text-foreground bg-muted rounded-full px-3 py-1 text-xs transition-colors"
           >
             {settings.rate}x
           </button>
 
           {/* Queue position */}
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Track {currentIndex + 1} of {tracks.length}
           </p>
         </div>

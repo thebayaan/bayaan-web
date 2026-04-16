@@ -8,12 +8,7 @@ interface QuranWordProps {
   className?: string;
 }
 
-export function QuranWord({
-  word,
-  isFontLoaded,
-  fontFamily,
-  className,
-}: QuranWordProps) {
+export function QuranWord({ word, isFontLoaded, fontFamily, className }: QuranWordProps) {
   const text = isFontLoaded ? word.code_v2 : word.qpc_uthmani_hafs;
   return (
     <span

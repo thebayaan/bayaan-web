@@ -1,13 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import {
-  HomeIcon,
-  SearchIcon,
-  PlayIcon,
-  PauseIcon,
-  LogoIcon,
-  HeartIcon,
-} from "@/components/icons";
+import { HomeIcon, SearchIcon, PlayIcon, PauseIcon, LogoIcon, HeartIcon } from "@/components/icons";
 
 describe("icons", () => {
   it("renders HomeIcon with default size", () => {

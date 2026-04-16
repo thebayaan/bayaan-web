@@ -45,20 +45,20 @@ const SECTIONS: Section[] = [
 export function CollectionHub() {
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Your Collection</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <h1 className="mb-6 text-3xl font-bold">Your Collection</h1>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {SECTIONS.map(({ href, label, description, icon: Icon }) => (
           <Link
             key={href}
             href={href}
-            className="flex items-center gap-4 p-4 rounded-xl bg-[var(--text-alpha-04)] hover:bg-[var(--text-alpha-06)] transition-colors"
+            className="flex items-center gap-4 rounded-xl bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
           >
-            <div className="w-12 h-12 rounded-lg bg-[var(--text-alpha-06)] flex items-center justify-center shrink-0">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[var(--text-alpha-06)]">
               <Icon size={24} />
             </div>
             <div>
               <p className="font-semibold">{label}</p>
-              <p className="text-sm text-muted-foreground">{description}</p>
+              <p className="text-muted-foreground text-sm">{description}</p>
             </div>
           </Link>
         ))}

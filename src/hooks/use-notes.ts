@@ -7,10 +7,8 @@ interface NotesResponse {
 }
 
 export function useNotes() {
-  const { data, error, isLoading, mutate } = useSWR<NotesResponse>(
-    "user/notes",
-    fetchBayaan,
-    { revalidateOnFocus: false },
-  );
+  const { data, error, isLoading, mutate } = useSWR<NotesResponse>("user/notes", fetchBayaan, {
+    revalidateOnFocus: false,
+  });
   return { notes: data?.data ?? [], isLoading, error, mutate };
 }

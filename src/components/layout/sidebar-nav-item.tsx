@@ -14,11 +14,7 @@ interface SidebarNavItemProps {
   label: string;
 }
 
-export function SidebarNavItem({
-  href,
-  icon: Icon,
-  label,
-}: SidebarNavItemProps) {
+export function SidebarNavItem({ href, icon: Icon, label }: SidebarNavItemProps) {
   const pathname = usePathname();
   const isActive = pathname === href || pathname.startsWith(href + "/");
 

@@ -2,13 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  HomeIcon,
-  SearchIcon,
-  QuranIcon,
-  CollectionIcon,
-  SettingsIcon,
-} from "@/components/icons";
+import { HomeIcon, SearchIcon, QuranIcon, CollectionIcon, SettingsIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 const TABS = [
@@ -23,11 +17,10 @@ export function MobileTabBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/90 backdrop-blur-2xl">
+    <nav className="border-border bg-background/90 fixed right-0 bottom-0 left-0 z-50 border-t backdrop-blur-2xl md:hidden">
       <div className="flex items-center justify-around py-2">
         {TABS.map(({ href, icon: Icon, label }) => {
-          const isActive =
-            pathname === href || (href !== "/" && pathname.startsWith(href));
+          const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
           return (
             <Link
               key={href}
