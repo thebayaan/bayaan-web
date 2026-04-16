@@ -1,0 +1,171 @@
+{
+  "htmlAttrs": {
+    "lang": "en-GB",
+    "class": "no-js"
+  },
+  "bodyAttrs": {
+    "id": "unlogged-body",
+    "class": "unlogged-root-page dir-ltr cookie-modal-prevent-scroll",
+    "data-theme": "dark",
+    "data-themed": "true"
+  },
+  "bodyBg": "rgb(15, 13, 19)",
+  "bodyColor": "rgb(253, 252, 254)",
+  "bodyFontFamily": "Inter, Arial, sans-serif",
+  "htmlFontFamily": "Times",
+  "rootRules": [":root"],
+  "resolvedVars": {
+    "--gdpr-colors-primary": "#a238ff",
+    "--gdpr-colors-primary-hovered": "#7328b5",
+    "--gdpr-colors-background-accent-primary-hovered": "#b560ff",
+    "--gdpr-colors-background-accent-primary-disabled": "#e1dde4",
+    "--gdpr-colors-text-accent-default": "#fdfbff",
+    "--gdpr-colors-text-accent-disabled": "#6f6d71",
+    "--gdpr-colors-neutral-main": "#0f0d13",
+    "--gdpr-colors-neutral-secondary": "#1b191f",
+    "--gdpr-colors-chevron": "#000000",
+    "--gdpr-colors-background": "#ffffff",
+    "--gdpr-colors-divider-main": "#c2c0c4",
+    "--gdpr-colors-text-neutral-primary-default": "#0f0d13",
+    "--gdpr-colors-border-neutral-primary-default": "#c2c0c4",
+    "--gdpr-colors-background-accent-primary-pressed": "#7328b5",
+    "--gdpr-colors-background-neutral-tertiary-pressed": "#464549",
+    "--gdpr-colors-background-neutral-tertiary-hovered": "#eae8ec",
+    "--gdpr-colors-border-neutral-primary-hovered": "#b4b1b6",
+    "--gdpr-colors-text-neutral-primary-hovered": "#1b191f",
+    "--gdpr-colors-text-main": "#6f6d71",
+    "--gdpr-colors-heading-main": "#0f0d13",
+    "--gdpr-color-background-contrast": "#eae8ec",
+    "--gdpr-fonts-heading": "'Deezer Product', 'Helvetica', 'Arial', sans-serif",
+    "--gdpr-fonts-body": "'Inter', 'Arial', sans-serif",
+    "--gdpr-fontSizes-2xs": "0.625rem",
+    "--gdpr-fontSizes-xs": "0.75rem",
+    "--gdpr-fontSizes-s": "0.875rem",
+    "--gdpr-fontSizes-m": "1rem",
+    "--gdpr-fontSizes-l": "1.125rem",
+    "--gdpr-fontSizes-xl": "1.25rem",
+    "--gdpr-fontSizes-2xl": "1.5rem",
+    "--gdpr-fontSizes-3xl": "1.875rem",
+    "--gdpr-fontSizes-4xl": "2.25rem",
+    "--gdpr-fontSizes-5xl": "3rem",
+    "--gdpr-fontSizes-6xl": "3.75rem"
+  },
+  "allVars": {
+    "--gdpr-colors-primary": {
+      ":root": "#a238ff"
+    },
+    "--gdpr-colors-primary-hovered": {
+      ":root": "#7328b5"
+    },
+    "--gdpr-colors-background-accent-primary-hovered": {
+      ":root": "#b560ff"
+    },
+    "--gdpr-colors-background-accent-primary-disabled": {
+      ":root": "#e1dde4"
+    },
+    "--gdpr-colors-text-accent-default": {
+      ":root": "#fdfbff"
+    },
+    "--gdpr-colors-text-accent-disabled": {
+      ":root": "#6f6d71"
+    },
+    "--gdpr-colors-neutral-main": {
+      ":root": "#0f0d13"
+    },
+    "--gdpr-colors-neutral-secondary": {
+      ":root": "#1b191f"
+    },
+    "--gdpr-colors-chevron": {
+      ":root": "#000000"
+    },
+    "--gdpr-colors-background": {
+      ":root": "#ffffff"
+    },
+    "--gdpr-colors-divider-main": {
+      ":root": "#c2c0c4"
+    },
+    "--gdpr-colors-text-neutral-primary-default": {
+      ":root": "#0f0d13"
+    },
+    "--gdpr-colors-border-neutral-primary-default": {
+      ":root": "#c2c0c4"
+    },
+    "--gdpr-colors-background-accent-primary-pressed": {
+      ":root": "#7328b5"
+    },
+    "--gdpr-colors-background-neutral-tertiary-pressed": {
+      ":root": "#464549"
+    },
+    "--gdpr-colors-background-neutral-tertiary-hovered": {
+      ":root": "#eae8ec"
+    },
+    "--gdpr-colors-border-neutral-primary-hovered": {
+      ":root": "#b4b1b6"
+    },
+    "--gdpr-colors-text-neutral-primary-hovered": {
+      ":root": "#1b191f"
+    },
+    "--gdpr-colors-text-main": {
+      ":root": "#6f6d71"
+    },
+    "--gdpr-colors-heading-main": {
+      ":root": "#0f0d13"
+    },
+    "--gdpr-color-background-contrast": {
+      ":root": "#eae8ec"
+    },
+    "--gdpr-fonts-heading": {
+      ":root": "'Deezer Product', 'Helvetica', 'Arial', sans-serif"
+    },
+    "--gdpr-fonts-body": {
+      ":root": "'Inter', 'Arial', sans-serif"
+    },
+    "--gdpr-fontSizes-2xs": {
+      ":root": "0.625rem"
+    },
+    "--gdpr-fontSizes-xs": {
+      ":root": "0.75rem"
+    },
+    "--gdpr-fontSizes-s": {
+      ":root": "0.875rem"
+    },
+    "--gdpr-fontSizes-m": {
+      ":root": "1rem"
+    },
+    "--gdpr-fontSizes-l": {
+      ":root": "1.125rem"
+    },
+    "--gdpr-fontSizes-xl": {
+      ":root": "1.25rem"
+    },
+    "--gdpr-fontSizes-2xl": {
+      ":root": "1.5rem"
+    },
+    "--gdpr-fontSizes-3xl": {
+      ":root": "1.875rem"
+    },
+    "--gdpr-fontSizes-4xl": {
+      ":root": "2.25rem"
+    },
+    "--gdpr-fontSizes-5xl": {
+      ":root": "3rem"
+    },
+    "--gdpr-fontSizes-6xl": {
+      ":root": "3.75rem"
+    }
+  },
+  "arabicFont": null,
+  "arabicSelector": null,
+  "latinFont": "\"Deezer Brand\", Tahoma, sans-serif",
+  "latinSelector": "H1.mx-auto",
+  "fontLinks": [
+    "https://cdn-assets.dzcdn.net/common/fonts/deezer-brand/deezer-brand-bold.31cd34a97d9c1093dae0cd962ecbf6dbc3034163.woff2",
+    "https://cdn-assets.dzcdn.net/common/fonts/deezer-brand/deezer-brand-extrabold.d9e833eeea6de8cf9ca90a48edf5ab1e4db5db42.woff2",
+    "https://cdn-assets.dzcdn.net/common/fonts/inter/inter-semibold.621d67ce7463019c98c7473ab8677841ff24b1fd.woff2",
+    "https://cdn-assets.dzcdn.net/common/fonts/inter/inter-medium.3f7a742daef8d40e07155f98f56b44fe7a191d94.woff2",
+    "https://cdn-assets.dzcdn.net/common/fonts/inter/inter-regular.e226d8e173551f5742af606dc1d0b184fe38ef38.woff2",
+    "https://cdn-assets.dzcdn.net/common/fonts/inter/inter-bold.041da318cff68d04380ea1e5d16390c5de1fa47d.woff2",
+    "https://surveys-static-prd.survicate-cdn.com/fonts/fonts.css"
+  ],
+  "url": "https://www.deezer.com/en/"
+}
