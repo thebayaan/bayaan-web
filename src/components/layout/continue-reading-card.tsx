@@ -22,6 +22,26 @@ export function ContinueReadingCard() {
         <span className="text-foreground text-sm font-semibold">{entry.surahName}</span>
         <span className="text-muted-foreground text-xs">v. {entry.verseId}</span>
       </div>
+      {(() => {
+        const totalPages = 604;
+        const percent = Math.max(0, Math.min(100, Math.round((entry.page / totalPages) * 100)));
+        return (
+          <div className="hidden flex-col gap-1 lg:flex">
+            <div className="text-muted-foreground text-[11px] font-medium">
+              {percent}% · page {entry.page} of {totalPages}
+            </div>
+            <div
+              className="h-[3px] w-full overflow-hidden rounded-full bg-[var(--brand-weak)]"
+              role="progressbar"
+              aria-valuenow={percent}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <div className="bg-brand-main h-full rounded-full" style={{ width: `${percent}%` }} />
+            </div>
+          </div>
+        );
+      })()}
     </Link>
   );
 }
