@@ -24,20 +24,6 @@ describe("theme-store", () => {
     useThemeStore.getState().setThemeMode("sepia");
     expect(useThemeStore.getState().themeMode).toBe("sepia");
   });
-
-  it("resolves sepia to sepia (not collapsed to light/dark)", () => {
-    expect(getResolvedTheme("sepia")).toBe("sepia");
-  });
-
-  it("resolves light and dark unchanged", () => {
-    expect(getResolvedTheme("light")).toBe("light");
-    expect(getResolvedTheme("dark")).toBe("dark");
-  });
-
-  it("resolves system to either light or dark (never sepia)", () => {
-    const resolved = getResolvedTheme("system");
-    expect(["light", "dark"]).toContain(resolved);
-  });
 });
 
 describe("getResolvedTheme", () => {
@@ -47,6 +33,10 @@ describe("getResolvedTheme", () => {
 
   it("resolves dark mode", () => {
     expect(getResolvedTheme("dark")).toBe("dark");
+  });
+
+  it("resolves sepia mode", () => {
+    expect(getResolvedTheme("sepia")).toBe("sepia");
   });
 
   it("resolves system mode to dark or light", () => {
