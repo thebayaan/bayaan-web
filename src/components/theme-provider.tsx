@@ -7,14 +7,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const themeMode = useThemeStore((s) => s.themeMode);
 
   useEffect(() => {
-    const resolved = getResolvedTheme(themeMode);
-    document.documentElement.classList.toggle("dark", resolved === "dark");
+    const root = document.documentElement;
+    root.setAttribute("data-theme", getResolvedTheme(themeMode));
+    root.classList.remove("dark");
 
     if (themeMode === "system") {
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
       function handleChange() {
-        const systemTheme = mq.matches ? "dark" : "light";
-        document.documentElement.classList.toggle("dark", systemTheme === "dark");
+        root.setAttribute("data-theme", mq.matches ? "dark" : "light");
       }
       mq.addEventListener("change", handleChange);
       return () => mq.removeEventListener("change", handleChange);
