@@ -1,9 +1,12 @@
-"use client";
-
+import type { ReactElement, ReactNode } from "react";
 import { AppShell } from "@/components/layout/app-shell";
-import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { KeyboardShortcuts } from "@/components/layout/keyboard-shortcuts";
 
-export default function AppLayout({ children }: { children: React.ReactNode }): React.ReactElement {
-  useKeyboardShortcuts();
-  return <AppShell>{children}</AppShell>;
+export default function AppLayout({ children }: { children: ReactNode }): ReactElement {
+  return (
+    <AppShell>
+      <KeyboardShortcuts />
+      {children}
+    </AppShell>
+  );
 }
