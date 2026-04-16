@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useVersesByChapter } from "@/hooks/use-verses-by-chapter";
 import { useQcfFont } from "@/hooks/use-qcf-font";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
@@ -10,7 +10,12 @@ import type { Surah } from "@/types/quran";
 
 const surahs = surahData as unknown as Surah[];
 
-export function ReadingView({ surahId }: { surahId: number }) {
+interface ReadingViewProps {
+  surahId: number;
+  targetAyah?: number;
+}
+
+export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
   const fontSize = useReadingSettingsStore((s) => s.fontSize);
   const translationIds = useReadingSettingsStore((s) => s.translationIds);
   const { verses, isLoading } = useVersesByChapter(surahId, 1, translationIds);
@@ -20,6 +25,13 @@ export function ReadingView({ surahId }: { surahId: number }) {
   );
   const { isPageFontLoaded, getFontFamily } = useQcfFont(pageNumbers);
   const surah = surahs.find((s) => s.id === surahId);
+  const targetRef = useRef<HTMLDivElement | null>(null);
+  const targetKey = targetAyah ? `${surahId}:${targetAyah}` : null;
+
+  useEffect(() => {
+    if (!targetKey || isLoading || !targetRef.current) return;
+    targetRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [targetKey, isLoading]);
 
   if (isLoading) {
     return (
@@ -47,16 +59,21 @@ export function ReadingView({ surahId }: { surahId: number }) {
         />
       )}
       <div className="mt-6">
-        {verses.map((verse) => (
-          <ReadingVerse
-            key={verse.verse_key}
-            verse={verse}
-            isFontLoaded={isPageFontLoaded(primaryPage)}
-            fontFamily={getFontFamily(primaryPage)}
-            fontSize={`${fontSize}rem`}
-            showTranslation={true}
-          />
-        ))}
+        {verses.map((verse) => {
+          const isTarget = targetKey !== null && verse.verse_key === targetKey;
+          return (
+            <ReadingVerse
+              key={verse.verse_key}
+              ref={isTarget ? targetRef : undefined}
+              verse={verse}
+              isFontLoaded={isPageFontLoaded(primaryPage)}
+              fontFamily={getFontFamily(primaryPage)}
+              fontSize={`${fontSize}rem`}
+              showTranslation={true}
+              isTarget={isTarget}
+            />
+          );
+        })}
       </div>
     </div>
   );
