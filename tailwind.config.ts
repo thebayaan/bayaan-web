@@ -18,6 +18,9 @@ const config: Config = {
       transitionTimingFunction: {
         standard: "cubic-bezier(0.4, 0, 0.2, 1)",
       },
+      animation: {
+        "skeleton-pulse": "skeleton-pulse 1.5s ease-in-out infinite",
+      },
     },
   },
   plugins: [],
