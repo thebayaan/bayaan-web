@@ -2,11 +2,20 @@
 
 import { useEffect } from "react";
 import { usePlayerStore } from "@/stores/player-store";
+import { useCommandPaletteStore } from "@/stores/command-palette-store";
 import { audioService } from "@/services/audio/audio-service";
 
 export function useKeyboardShortcuts(): void {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent): void {
+      // Cmd/Ctrl+K opens the command palette from anywhere, including
+      // inputs — it's the universal escape hatch.
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        useCommandPaletteStore.getState().toggle();
+        return;
+      }
+
       if (
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement ||
