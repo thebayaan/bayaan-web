@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { useThemeStore, type ThemeMode } from "@/stores/theme-store";
+import { useCommandPaletteStore } from "@/stores/command-palette-store";
 import { SearchIcon } from "@/components/icons";
 
 const THEME_ORDER: ThemeMode[] = ["light", "dark", "sepia", "system"];
@@ -10,6 +11,7 @@ const THEME_ORDER: ThemeMode[] = ["light", "dark", "sepia", "system"];
 export function TopBar() {
   const themeMode = useThemeStore((s) => s.themeMode);
   const setThemeMode = useThemeStore((s) => s.setThemeMode);
+  const openPalette = useCommandPaletteStore((s) => s.setOpen);
 
   function cycleTheme() {
     const next = THEME_ORDER[(THEME_ORDER.indexOf(themeMode) + 1) % THEME_ORDER.length];
@@ -19,8 +21,9 @@ export function TopBar() {
 
   return (
     <header className="border-border-divider bg-surface/90 sticky top-0 z-30 hidden items-center gap-4 border-b px-6 py-3 backdrop-blur-md md:flex">
-      <Link
-        href="/search"
+      <button
+        type="button"
+        onClick={() => openPalette(true)}
         className="border-border bg-surface-sunken hover:bg-surface-raised duration-fast ease-standard flex max-w-xl flex-1 items-center gap-3 rounded-full border px-4 py-2 text-sm transition-colors"
       >
         <SearchIcon size={16} />
@@ -30,7 +33,7 @@ export function TopBar() {
         <span className="border-border text-muted-foreground hidden rounded border px-1.5 py-0.5 text-[11px] font-semibold md:inline">
           ⌘K
         </span>
-      </Link>
+      </button>
       <div className="flex-1" />
       <button
         type="button"
@@ -40,12 +43,47 @@ export function TopBar() {
       >
         <ThemeGlyph mode={themeMode} />
       </button>
+      <UserChip />
+    </header>
+  );
+}
+
+function UserChip() {
+  const { user, isSignedIn } = useUser();
+  if (!isSignedIn || !user) {
+    return (
+      <Link
+        href="/sign-in"
+        className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong duration-fast ease-standard rounded-full px-4 py-1.5 text-sm font-semibold transition-colors"
+      >
+        Sign in
+      </Link>
+    );
+  }
+  const displayName =
+    user.firstName ?? user.username ?? user.primaryEmailAddress?.emailAddress ?? "Account";
+  return (
+    <div className="border-border bg-surface-raised flex items-center gap-2 rounded-full border py-1 pr-3 pl-1">
       <UserButton
         appearance={{
-          elements: { avatarBox: "w-8 h-8" },
+          elements: { avatarBox: "w-7 h-7" },
         }}
       />
-    </header>
+      <span className="text-foreground hidden text-sm font-semibold md:inline">{displayName}</span>
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="text-muted-foreground"
+      >
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </div>
   );
 }
 
