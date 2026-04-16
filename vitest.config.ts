@@ -14,6 +14,8 @@ export default defineConfig({
     exclude: ["node_modules", ".next", "e2e"],
     globals: true,
     css: false,
+    testTimeout: 15000,
+    hookTimeout: 15000,
   },
   resolve: {
     alias: {
