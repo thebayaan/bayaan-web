@@ -1,4 +1,5 @@
 "use client";
+import { forwardRef } from "react";
 import type { QcfVerse } from "@/types/quran-api";
 import { VerseText } from "./verse-text";
 import { sanitizeHtml } from "@/lib/sanitize";
@@ -9,17 +10,22 @@ interface ReadingVerseProps {
   fontFamily: string;
   fontSize: string;
   showTranslation: boolean;
+  isTarget?: boolean;
 }
 
-export function ReadingVerse({
-  verse,
-  isFontLoaded,
-  fontFamily,
-  fontSize,
-  showTranslation,
-}: ReadingVerseProps) {
+export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(function ReadingVerse(
+  { verse, isFontLoaded, fontFamily, fontSize, showTranslation, isTarget = false },
+  ref,
+) {
   return (
-    <div className="border-b border-[var(--text-alpha-06)] py-4">
+    <div
+      ref={ref}
+      id={verse.verse_key}
+      aria-current={isTarget ? "true" : undefined}
+      className={`border-b border-[var(--text-alpha-06)] py-4 transition-colors ${
+        isTarget ? "-mx-2 rounded-lg bg-[var(--text-alpha-06)] px-2" : ""
+      }`}
+    >
       <div className="mb-2 flex items-center gap-2">
         <span className="text-muted-foreground text-xs font-medium">{verse.verse_key}</span>
       </div>
@@ -46,4 +52,4 @@ export function ReadingVerse({
         ))}
     </div>
   );
-}
+});
