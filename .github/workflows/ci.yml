@@ -107,6 +107,14 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Build Next standalone bundle
+        run: npm run build
+
+      - name: Stage standalone assets
+        run: |
+          cp -r public .next/standalone/
+          cp -r .next/static .next/standalone/.next/
+
       - name: Run E2E
         run: npm run test:e2e
 

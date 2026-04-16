@@ -21,15 +21,20 @@ export default defineConfig({
     },
   ],
   // next.config.ts uses output: "standalone" for Railway, which makes
-  // `next start` a no-op. Build, stage the assets the standalone bundle
-  // doesn't copy (public/, .next/static), then run the bundled server.
+  // `next start` a no-op. CI pre-builds and stages assets in a separate
+  // step; the webServer only boots the standalone server. Locally, the
+  // command does the full build+stage+start so `npm run test:e2e` works
+  // with no extra setup.
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command:
-          "npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
+        command: process.env.CI
+          ? "node .next/standalone/server.js"
+          : "npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
         url: BASE_URL,
-        timeout: 180_000,
+        timeout: 120_000,
         reuseExistingServer: !process.env.CI,
+        stdout: "pipe",
+        stderr: "pipe",
       },
 });
