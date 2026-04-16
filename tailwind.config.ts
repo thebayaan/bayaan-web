@@ -20,6 +20,7 @@ const config: Config = {
       },
       animation: {
         "skeleton-pulse": "skeleton-pulse 1.5s ease-in-out infinite",
+        "heart-pulse": "heart-pulse 400ms ease-out",
       },
     },
   },
