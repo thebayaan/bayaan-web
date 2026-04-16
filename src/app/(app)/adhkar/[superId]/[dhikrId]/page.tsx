@@ -1,7 +1,10 @@
 "use client";
 
-import { use, useState } from "react";
-import { getDhikrByCategory } from "@/data/adhkar-data";
+import { use } from "react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getDhikrById } from "@/data/adhkar-data";
+import { TasbeehCounter } from "@/components/adhkar/tasbeeh-counter";
 
 export default function DhikrPage({
   params,
@@ -9,76 +12,42 @@ export default function DhikrPage({
   params: Promise<{ superId: string; dhikrId: string }>;
 }) {
   const { superId, dhikrId } = use(params);
-  const dhikrList = getDhikrByCategory(superId);
-  const dhikr = dhikrList.find((d) => d.id === dhikrId);
-  const [count, setCount] = useState(0);
-
-  if (!dhikr) {
-    return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold">Dhikr not found</h1>
-      </div>
-    );
-  }
-
-  const target = dhikr.repetitions;
-  const progress = Math.min(count / target, 1);
-  const circumference = 2 * Math.PI * 60;
-  const offset = circumference - progress * circumference;
+  const dhikr = getDhikrById(dhikrId);
+  if (!dhikr || dhikr.categoryId !== superId) notFound();
 
   return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center p-6">
-      <p
-        className="mb-8 max-w-lg text-center font-[UthmanicHafs] text-2xl leading-relaxed"
-        dir="rtl"
+    <div className="flex min-h-[70vh] flex-col items-center p-6">
+      <Link
+        href={`/adhkar/${superId}`}
+        className="text-muted-foreground hover:text-foreground self-start text-sm transition-colors"
       >
-        {dhikr.text_arabic}
-      </p>
-      <p className="text-muted-foreground mb-8 max-w-md text-center text-sm">{dhikr.translation}</p>
-
-      {/* Tasbeeh Counter */}
-      <button
-        onClick={() => setCount((c) => c + 1)}
-        className="relative flex h-40 w-40 items-center justify-center rounded-full transition-transform active:scale-95"
-      >
-        <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 128 128">
-          <circle
-            cx="64"
-            cy="64"
-            r="60"
-            fill="none"
-            stroke="var(--text-alpha-06)"
-            strokeWidth="4"
-          />
-          <circle
-            cx="64"
-            cy="64"
-            r="60"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="4"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            className="transition-[stroke-dashoffset] duration-300"
-          />
-        </svg>
-        <div className="text-center">
-          <p className="text-3xl font-bold">{count}</p>
-          <p className="text-muted-foreground text-xs">/ {target}</p>
-        </div>
-      </button>
-
-      <div className="mt-6 flex gap-4">
-        <button
-          onClick={() => setCount(0)}
-          className="rounded-lg bg-[var(--text-alpha-06)] px-4 py-2 text-sm transition-colors hover:bg-[var(--text-alpha-10)]"
+        &larr; Back
+      </Link>
+      <div className="flex w-full max-w-2xl flex-1 flex-col items-center justify-center">
+        <p
+          className="mb-6 text-center font-[UthmanicHafs] text-2xl leading-relaxed"
+          dir="rtl"
+          lang="ar"
         >
-          Reset
-        </button>
-      </div>
+          {dhikr.arabic}
+        </p>
+        {dhikr.transliteration ? (
+          <p className="text-muted-foreground mb-4 max-w-xl text-center text-xs italic">
+            {dhikr.transliteration}
+          </p>
+        ) : null}
+        <p className="text-muted-foreground mb-8 max-w-xl text-center text-sm">
+          {dhikr.translation}
+        </p>
 
-      <p className="text-muted-foreground mt-4 text-xs">{dhikr.reference}</p>
+        <TasbeehCounter dhikrId={dhikr.id} target={dhikr.repeatCount} />
+
+        {dhikr.instruction ? (
+          <p className="text-muted-foreground mt-6 max-w-md text-center text-xs">
+            {dhikr.instruction}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }
