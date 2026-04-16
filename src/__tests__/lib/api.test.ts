@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fetchBayaan, fetchQuran } from "@/lib/api";
+import { fetchBayaan, fetchQuran, ApiError } from "@/lib/api";
 
 describe("fetchBayaan", () => {
   beforeEach(() => {
@@ -21,13 +21,53 @@ describe("fetchBayaan", () => {
     expect(result).toEqual(mockResponse);
   });
 
-  it("throws on non-ok response", async () => {
+  it("throws an ApiError with friendly status message when body is empty", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 500,
+      json: () => Promise.reject(new Error("not json")),
     });
 
-    await expect(fetchBayaan("reciters")).rejects.toThrow("Bayaan API error: 500");
+    await expect(fetchBayaan("reciters")).rejects.toMatchObject({
+      name: "ApiError",
+      status: 500,
+      code: null,
+      message: expect.stringMatching(/server hit an error/i),
+    });
+  });
+
+  it("uses the backend's structured code + message when present", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 503,
+      json: () =>
+        Promise.resolve({
+          error: { code: "USER_SYNC_FAILED", message: "Backend's own copy" },
+        }),
+    });
+
+    await expect(fetchBayaan("user/playlists")).rejects.toMatchObject({
+      status: 503,
+      code: "USER_SYNC_FAILED",
+      message: expect.stringMatching(/sync your account from Clerk/i),
+    });
+  });
+
+  it("falls back to backend message when code isn't in the friendly map", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 422,
+      json: () =>
+        Promise.resolve({
+          error: { code: "VALIDATION", message: "Name must be at least 1 character" },
+        }),
+    });
+
+    await expect(fetchBayaan("user/playlists")).rejects.toMatchObject({
+      status: 422,
+      code: "VALIDATION",
+      message: "Name must be at least 1 character",
+    });
   });
 });
 
@@ -49,12 +89,17 @@ describe("fetchQuran", () => {
     );
   });
 
-  it("throws on non-ok response", async () => {
+  it("throws an ApiError on non-ok response", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 404,
+      json: () => Promise.reject(new Error("not json")),
     });
 
-    await expect(fetchQuran("verses/by_chapter/999")).rejects.toThrow("Quran API error: 404");
+    const err = await fetchQuran("verses/by_chapter/999").catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(ApiError);
+    if (!(err instanceof ApiError)) throw new Error("expected ApiError");
+    expect(err.status).toBe(404);
+    expect(err.message).toMatch(/couldn't find/i);
   });
 });
