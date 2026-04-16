@@ -143,6 +143,9 @@ export function BottomPlayerBar() {
       </div>
       <FullPlayerView open={showFullPlayer} onOpenChange={setShowFullPlayer} />
       <QueuePanel open={showQueue} onOpenChange={setShowQueue} />
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {playback.isPlaying ? "Playing" : "Paused"}: {currentTrack.title} by {currentTrack.artist}
+      </div>
     </footer>
   );
 }

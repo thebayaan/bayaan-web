@@ -69,4 +69,12 @@ describe("BottomPlayerBar", () => {
     render(<BottomPlayerBar />);
     expect(screen.getByRole("button", { name: "Play" })).toBeInTheDocument();
   });
+
+  it("exposes playback state via aria-live region for screen readers", () => {
+    render(<BottomPlayerBar />);
+    const liveRegion = screen.getByRole("status");
+    expect(liveRegion).toHaveAttribute("aria-live", "polite");
+    expect(liveRegion).toHaveAttribute("aria-atomic", "true");
+    expect(liveRegion).toHaveTextContent(/paused.*al-fatiha.*mishary alafasy/i);
+  });
 });
