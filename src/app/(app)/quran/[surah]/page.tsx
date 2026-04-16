@@ -1,16 +1,34 @@
-"use client";
-import { use } from "react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import surahData from "@/data/surah-data.json";
+import type { Surah } from "@/types/quran";
 import { ReadingView } from "@/components/quran/reading-view";
 
-export default function QuranSurahPage({ params }: { params: Promise<{ surah: string }> }) {
-  const { surah } = use(params);
-  const surahId = parseInt(surah, 10);
-  if (isNaN(surahId) || surahId < 1 || surahId > 114) {
-    return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold">Invalid surah number</h1>
-      </div>
-    );
-  }
-  return <ReadingView surahId={surahId} />;
+const surahs = surahData as unknown as Surah[];
+
+function resolveSurah(surah: string): Surah | null {
+  const id = Number(surah);
+  if (!Number.isInteger(id) || id < 1 || id > 114) return null;
+  return surahs.find((s) => s.id === id) ?? null;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ surah: string }>;
+}): Promise<Metadata> {
+  const { surah } = await params;
+  const match = resolveSurah(surah);
+  if (!match) return { title: "Surah not found" };
+  return {
+    title: `Surah ${match.name} (${match.id})`,
+    description: `Read Surah ${match.name} — ${match.translated_name_english}. ${match.verses_count} verses, revealed in ${match.revelation_place}.`,
+  };
+}
+
+export default async function QuranSurahPage({ params }: { params: Promise<{ surah: string }> }) {
+  const { surah } = await params;
+  const match = resolveSurah(surah);
+  if (!match) notFound();
+  return <ReadingView surahId={match.id} />;
 }

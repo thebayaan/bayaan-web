@@ -1,6 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCategoryById, getDhikrByCategory } from "@/data/adhkar-data";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ superId: string }>;
+}): Promise<Metadata> {
+  const { superId } = await params;
+  const category = getCategoryById(superId);
+  if (!category) return { title: "Adhkar category not found" };
+  return {
+    title: category.title,
+    description: `${category.dhikrCount} ${category.dhikrCount === 1 ? "dhikr" : "adhkar"} from Hisnul Muslim.`,
+  };
+}
 
 export default async function AdhkarCategoryPage({
   params,
