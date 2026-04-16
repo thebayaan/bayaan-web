@@ -24,10 +24,10 @@ Three surface tiers replace the flat `background`/`card` shadcn overloads:
 | `--surface-sunken`                          | input wells, code blocks        | step-down from surface            | step-down from surface      | `#f0e2cc` family                  |
 | `--text-primary`                            | body                            | current `--foreground` light      | current `--foreground` dark | near-black warm                   |
 | `--text-secondary`                          | meta, captions                  | muted                             | muted                       | warm grey, `>=`5:1 contrast       |
-| `--accent-main`                             | primary CTA, active-state, link | **Islamic-green TBD — see §6 Q1** | same                        | **warm-brown flip** (sepia only)  |
-| `--accent-strong`                           | pressed/hover                   | accent shade darker               | same                        | warm brown darker                 |
-| `--accent-weak`                             | selection, hover-bg             | accent @ 20% alpha                | same                        | warm brown @ 20%                  |
-| `--accent-light`                            | ambient, rails                  | accent @ 8% alpha                 | same                        | warm brown @ 8%                   |
+| `--accent-main`                             | primary CTA, active-state, link | `#a238ff` (Deezer purple)         | `#a238ff`                   | `#72603f` (warm brown flip)       |
+| `--accent-strong`                           | pressed/hover                   | `#9333e8`                         | `#9333e8`                   | `#5a4a30`                         |
+| `--accent-weak`                             | selection, hover-bg             | `#c17aff`                         | `#c17aff`                   | `#72603f` @ 20% alpha             |
+| `--accent-light`                            | ambient, rails                  | `#d09aff`                         | `#d09aff`                   | `#72603f` @ 8% alpha              |
 | `--border`                                  | hairline                        | near-surface                      | near-surface                | warm beige `#dbccb3`              |
 | `--border-divider`                          | section separators              | near-background                   | near-background             | warm pale                         |
 | `--success` / `--warning` / `--destructive` | intents                         | green / amber / red               | green / amber / red         | same                              |
@@ -37,14 +37,14 @@ Keep the existing `--text-alpha-04…85` ladder (`globals.css:108-124`) — it's
 
 ### Typography
 
-Four font roles, all via `next/font/local`:
+Keep the current font stack — no new Latin or Arabic prose families added in this pass:
 
-| Role          | Family (proposed)                                                               | Fallback               | Where                                       |
-| ------------- | ------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------- |
-| Latin body    | **Manrope** (already loaded)                                                    | system sans            | UI chrome, translation, general prose       |
-| Latin display | **Fraunces** (text-grade serif, not Playfair Display)                           | serif                  | hero H1s, surah names, "Start Reading" card |
-| Arabic prose  | **Kitab**                                                                       | UthmanicHafs → Manrope | Arabic translations, surah headings, adhkar |
-| Arabic mushaf | **UthmanicHafs + per-page `p{1..604}-v2`** (already wired in `use-qcf-font.ts`) | UthmanicHafs only      | reading-view, mushaf-view, verse-text       |
+| Role          | Family                                                                          | Fallback          | Where                                                   |
+| ------------- | ------------------------------------------------------------------------------- | ----------------- | ------------------------------------------------------- |
+| Latin body    | **Manrope** (already loaded)                                                    | system sans       | UI chrome, translation, general prose, hero H1s         |
+| Arabic mushaf | **UthmanicHafs + per-page `p{1..604}-v2`** (already wired in `use-qcf-font.ts`) | UthmanicHafs only | reading-view, mushaf-view, verse-text, adhkar, headings |
+
+Trade-off acknowledged: Arabic translations and adhkar prose will continue falling back to Manrope (Latin) until a dedicated Arabic text face (e.g., Kitab) is added in a follow-up. This is a conscious deferral, not an oversight.
 
 Type scale (unitless multipliers on `1rem = 16px`):
 
@@ -113,7 +113,7 @@ Table: each row = one surface in the Paper scope (spec §7). Cites the driving f
 | **Shell: Bottom player bar (desktop)**          | `components/player/bottom-player-bar.tsx` — 3-section layout.                                                                                                                    | Keep layout. Add cloud-sync affordance (sync icon). Promote the **rate chip** (`full-player-view.tsx:117-122`) next to volume for one-tap access. Animate show/hide via `transition: transform var(--motion-regular)` translating from `translateY(100%)`, not `display:none`. Crossfade row-number → equalizer glyph on `--motion-fast` opacity.                                                                                                                 | Deezer 04, Deezer 07, Quran.com 07     |
 | **Shell: Top-right user area**                  | Clerk `<UserButton>` already in sidebar footer.                                                                                                                                  | Add a **sticky top-bar pill** at `lg:` containing search + Clerk `<UserButton>` right-aligned; sidebar keeps identity footer. On mobile, Clerk avatar moves into the mobile tab bar's "profile" slot.                                                                                                                                                                                                                                                             | Deezer 02                              |
 | **Reading: Surah index (`/quran`)**             | Renders `<MushafView />` directly — **no index surface exists**. `SurahListItem` is reciter-scoped.                                                                              | **New surface.** 3-column grid (`lg`), 2-col (`md`), 1-col (`<md`). Card = `{chapter#}`                                                                                                                                                                                                                                                                                                                                                                           | bold transliteration + English meaning | Arabic glyph + `{verses_count} ayahs`. Tabs: `Surah                                                                                                                                                                                                                                                         | Juz                     | Revelation Order`. Client-side search input above grid (filter over 114 rows in `surah-data.json`). Don't reuse `SurahListItem`. | Quran.com 01, Quran.com 03 |
-| **Reading: Mushaf page view**                   | `components/quran/mushaf-view.tsx` — line-based layout, `justify-between`. No transition between pages. `<input type="number">` for page jump (pops numeric keyboard over page). | Keep layout. Wrap page swap in crossfade at `--motion-slow`. Replace numeric input with `inputMode="numeric"` inside a bottom-sheet page-jump OR a swipable page strip. Add `env(safe-area-inset-bottom)` on mobile.                                                                                                                                                                                                                                              | Deezer 07, Quran.com 10                |
+| **Reading: Mushaf page view**                   | `components/quran/mushaf-view.tsx` — line-based layout, `justify-between`. No transition between pages. `<input type="number">` for page jump (pops numeric keyboard over page). | Keep layout. Wrap page swap in CSS opacity crossfade at `--motion-fast` (160ms, `--ease-standard`) — matches Quran.com's spread-fade without the framer-motion dep. Replace numeric input with `inputMode="numeric"` inside a bottom-sheet page-jump OR a swipable page strip. Add `env(safe-area-inset-bottom)` on mobile.                                                                                                                                                                                                                                              | Deezer 07, Quran.com 10                |
 | **Reading: Reading view — verse + translation** | `reading-view.tsx` + `reading-verse.tsx`. Translation uses `text-sm leading-relaxed`. `gap-x-1` on word flex. `leading-loose` on Arabic.                                         | Arabic line-height → `1.7`. Word gap via `word-spacing:4px; margin-inline-end:-5px` on `<span>`, remove parent `gap-x-1` flex gap (prevents QCF ligature stretching). Translation → `line-height:1.5; letter-spacing:0` at base size.                                                                                                                                                                                                                             | Quran.com 04                           |
 | **Reading: Ayah focus / detail**                | Per-verse actions inline (`reading-verse.tsx`) but reader chrome has no surah picker, view-mode toggle, or settings binding.                                                     | **Build the sticky reader sub-header**: left = surah dropdown, right = view-mode toggle (ReadingView ↔ MushafView) + settings gear. Gear opens a drawer that **finally binds `reading-settings-store`** (fontSize, translationIds, showTajweed, showWordByWord, showTransliteration — store built, UI missing). Split ayah action row: `🔖` = one-tap bookmark toggle (outline/fill), `✎` = open note sheet (separate).                                           | Quran.com 02, Quran.com 06             |
 | **Reading: Word interaction**                   | `quran-word.tsx:14-26` — hover swaps color to `blue-400/80`. No popover.                                                                                                         | Lazy-mount Radix popover on first hover showing word-by-word translation + transliteration + audio-play trigger. Color swap stays on hover. Wrap final glyph with `aria-label="verse {n}"` for a11y.                                                                                                                                                                                                                                                              | Quran.com 04                           |
@@ -152,7 +152,7 @@ Table: each row = one surface in the Paper scope (spec §7). Cites the driving f
 - `src/app/globals.css` — add three surface tiers, `[data-theme]` selectors, motion tokens, elevation tokens, full hex-sibling palette alongside OKLCH
 - `src/components/theme-provider.tsx` — write `data-theme` attribute on `<html>` alongside `.dark` class (maintain class for Tailwind `dark:` variant compatibility)
 - `tailwind.config.ts` — extend theme with duration/easing tokens matching CSS vars
-- `src/app/layout.tsx` — preload Kitab + Fraunces via `next/font/local`
+- `src/app/layout.tsx` — no font changes in this pass (Manrope + UthmanicHafs + per-page QCF already loaded)
 - `src/components/quran/verse-text.tsx` — Arabic line-height → 1.7, drop `gap-x-1` in favor of `word-spacing`
 - `src/components/quran/quran-word.tsx` — add lazy-mount `<WordPopover>`; keep hover color swap
 - `src/components/quran/reading-verse.tsx` — translation line-height → 1.5, letter-spacing 0, base size
@@ -201,15 +201,17 @@ Ideas the findings surfaced that we considered and rejected:
 - **QC's `vw/vh` viewport-unit font ramp** (Quran.com 04) — breaks on short windows. Reason: correctness.
 - **Deezer's cookie wall / anti-bot hostility** (Deezer 09) — Bayaan guest reading is a first-class use case. Reason: tone.
 
-## 6. Open questions for Paper phase
+## 6. Decisions (locked 2026-04-16)
 
-Yes/no questions the user should answer before Paper generation:
+Answers to the pre-Paper open questions, captured for downstream plans:
 
-1. **Accent color direction.** Should the light/dark accent be a specific Islamic green (proposal: a calibrated #2E7D5B or similar mid-saturation green, with warm brown `#72603f`-family as the sepia flip)? **[yes / no — if no, name a different hue]**
-2. **Display serif choice.** Adopt **Fraunces** (text-grade serif, variable, free) for display/headings, rather than Playfair Display? **[yes / no]**
-3. **Sepia as a third mode.** Ship sepia in the initial release (alongside light and dark), or defer to a follow-up? **[yes — ship / no — defer]**
-4. **Mushaf page crossfade.** Animate page-to-page in `mushaf-view.tsx` with a `--motion-slow` opacity crossfade, or keep instant swap? **[crossfade / instant]**
-5. **Word popover on hover.** Ship `<WordPopover>` (translation + transliteration + audio-word-play) in the first facelift pass, or defer? **[ship / defer]**
-6. **Tajweed coloring.** Ship tajweed (code_v4 font + per-theme palette) in the initial pass, or defer? **[ship / defer]**
-7. **Cloud-synced queue.** Graduate `player-store` from Zustand local persistence to server-authoritative cross-device sync in this facelift pass, or defer to a backend-focused follow-up? **[ship / defer]**
-8. **Delete `framer-motion`.** Confirm removing the dependency and using only Tailwind transitions + Radix primitives for motion? **[yes / no]**
+1. **Accent color.** Deezer's purple ladder `#a238ff / #9333e8 / #c17aff / #d09aff` for light + dark. Sepia flips to warm brown `#72603f` family (accent main `#72603f`, strong `#5a4a30`, weak/light as alpha). Devotional identity is carried by typography, layout, and reverence — not by the accent hue.
+2. **Display serif.** Deferred. Keep Manrope as the sole Latin face in this pass; no Fraunces, no Playfair. Hero H1s and surah names use Manrope at display size + weight.
+3. **Sepia as a third mode.** Ship in initial release, alongside light and dark.
+4. **Mushaf page crossfade.** Ship — CSS opacity crossfade at `--motion-fast` (160ms, `--ease-standard`), matching Quran.com's spread fade. No framer-motion needed.
+5. **Word popover on hover.** Ship `<WordPopover>` — Radix popover lazy-mounted on first hover, shows word translation + transliteration + audio-play trigger.
+6. **Tajweed coloring.** Ship — Quran.com's exact 8-rule hex map (verbatim from Quran.com brief 04) across light/dark/sepia modes. Uses per-letter `<span class="tajweed-{rule}">`, not QC's `color:transparent; text-shadow` hack.
+7. **Cloud-synced queue.** Deferred. Keep Zustand local persistence for this pass; server-authoritative sync is a backend-focused follow-up.
+8. **Delete `framer-motion`.** Confirmed. Remove the dep; motion runs on Tailwind `transition-*` + Radix primitives + CSS `@keyframes` only.
+
+Deferrals (Q2 and Q7) are conscious scope-cuts, not oversights — they move to the follow-up backlog.
