@@ -12,7 +12,7 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   return (
-    <aside className="border-border bg-sidebar hidden w-16 shrink-0 flex-col border-r md:flex lg:w-60">
+    <aside className="border-border bg-sidebar flex w-14 shrink-0 flex-col border-r sm:w-16 lg:w-60">
       <nav className="flex flex-col gap-1 px-2 pt-4">
         {NAV_ITEMS.map((item) => (
           <SidebarNavItem key={item.href} {...item} />
