@@ -2,7 +2,8 @@
 import { forwardRef } from "react";
 import type { QcfVerse } from "@/types/quran-api";
 import { VerseText } from "./verse-text";
-import { BookmarkToggle } from "./bookmark-toggle";
+import { VerseActions } from "./verse-actions";
+import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
 import { sanitizeHtml } from "@/lib/sanitize";
 
 interface ReadingVerseProps {
@@ -18,6 +19,10 @@ export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(functi
   { verse, isFontLoaded, fontFamily, fontSize, showTranslation, isTarget = false },
   ref,
 ) {
+  const { getHighlight } = useHighlights();
+  const highlight = getHighlight(verse.verse_key);
+  const highlightColor = highlight ? HIGHLIGHT_SWATCH[highlight.color] : null;
+
   return (
     <div
       ref={ref}
@@ -26,13 +31,18 @@ export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(functi
       className={`border-b border-[var(--text-alpha-06)] py-4 transition-colors ${
         isTarget ? "-mx-2 rounded-lg bg-[var(--text-alpha-06)] px-2" : ""
       }`}
+      style={
+        highlightColor
+          ? {
+              boxShadow: `inset 3px 0 0 ${highlightColor}`,
+              paddingLeft: "0.75rem",
+            }
+          : undefined
+      }
     >
       <div className="mb-2 flex items-center justify-between gap-2">
         <span className="text-muted-foreground text-xs font-medium">{verse.verse_key}</span>
-        <BookmarkToggle
-          verseKey={verse.verse_key}
-          className="text-muted-foreground hover:text-foreground rounded-full p-1 transition-colors hover:bg-[var(--text-alpha-06)]"
-        />
+        <VerseActions verse={verse} />
       </div>
       <div className="mb-3">
         <VerseText
