@@ -9,6 +9,8 @@ interface VerseTextProps {
   mushafMode?: boolean;
   fontSize?: string;
   className?: string;
+  /** Pass through to each QuranWord — click-to-select in mushaf view. */
+  selectable?: boolean;
 }
 
 export function VerseText({
@@ -18,6 +20,7 @@ export function VerseText({
   mushafMode,
   fontSize = "1.8rem",
   className,
+  selectable,
 }: VerseTextProps) {
   return (
     <div
@@ -35,6 +38,7 @@ export function VerseText({
           word={word}
           isFontLoaded={isFontLoaded}
           fontFamily={fontFamily}
+          selectable={selectable}
         />
       ))}
     </div>
