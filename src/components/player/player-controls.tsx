@@ -41,12 +41,15 @@ export function PlayerControls({
         <button
           onClick={onShuffleToggle}
           className={cn(
-            "rounded-full p-1.5 transition-colors",
+            "relative rounded-full p-1.5 transition-colors",
             shuffle ? "text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
           aria-label={shuffle ? "Disable shuffle" : "Enable shuffle"}
         >
           <ShuffleIcon size={18} color="currentColor" />
+          {shuffle ? (
+            <span className="bg-foreground absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full" />
+          ) : null}
         </button>
       )}
 
@@ -85,7 +88,7 @@ export function PlayerControls({
         <button
           onClick={onRepeatChange}
           className={cn(
-            "rounded-full p-1.5 transition-colors",
+            "relative rounded-full p-1.5 transition-colors",
             repeatMode !== "none"
               ? "text-foreground"
               : "text-muted-foreground hover:text-foreground",
@@ -97,6 +100,9 @@ export function PlayerControls({
           ) : (
             <RepeatIcon size={18} color="currentColor" />
           )}
+          {repeatMode !== "none" ? (
+            <span className="bg-foreground absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full" />
+          ) : null}
         </button>
       )}
     </div>

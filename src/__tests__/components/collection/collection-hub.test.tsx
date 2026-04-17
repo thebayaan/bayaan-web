@@ -9,10 +9,11 @@ vi.mock("next/link", () => ({
 }));
 
 describe("CollectionHub", () => {
-  it("renders all 4 collection sections", () => {
+  it("renders all 5 collection sections", () => {
     render(<CollectionHub />);
     expect(screen.getByText("Playlists")).toBeInTheDocument();
-    expect(screen.getByText("Favorites")).toBeInTheDocument();
+    expect(screen.getByText("Reciters")).toBeInTheDocument();
+    expect(screen.getByText("Loved")).toBeInTheDocument();
     expect(screen.getByText("Bookmarks")).toBeInTheDocument();
     expect(screen.getByText("Notes")).toBeInTheDocument();
   });
@@ -34,11 +35,10 @@ describe("CollectionHub", () => {
     expect(screen.getByText("Your Collection")).toBeInTheDocument();
   });
 
-  it("renders section descriptions", () => {
+  it("shows empty text when counts are zero", () => {
     render(<CollectionHub />);
-    expect(screen.getByText("Your custom playlists")).toBeInTheDocument();
-    expect(screen.getByText("Favorited tracks")).toBeInTheDocument();
-    expect(screen.getByText("Saved verses")).toBeInTheDocument();
-    expect(screen.getByText("Verse annotations")).toBeInTheDocument();
+    expect(screen.getByText("Create your first playlist")).toBeInTheDocument();
+    expect(screen.getByText("No bookmarks yet")).toBeInTheDocument();
+    expect(screen.getByText("No notes yet")).toBeInTheDocument();
   });
 });

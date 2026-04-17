@@ -18,30 +18,29 @@ function Slider({
 
   return (
     <SliderPrimitive.Root
-      className={cn("group/slider data-horizontal:w-full data-vertical:h-full", className)}
+      className={cn("group/slider w-full", className)}
       data-slot="slider"
       defaultValue={defaultValue}
       value={value}
       min={min}
       max={max}
-      thumbAlignment="edge"
       {...props}
     >
-      <SliderPrimitive.Control className="relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-vertical:h-full data-vertical:min-h-40 data-vertical:w-auto data-vertical:flex-col">
+      <SliderPrimitive.Control className="relative flex h-5 w-full touch-none items-center select-none">
         <SliderPrimitive.Track
           data-slot="slider-track"
-          className="relative grow overflow-hidden rounded-full bg-[var(--text-alpha-10)] select-none data-horizontal:h-1.5 data-horizontal:w-full data-vertical:h-full data-vertical:w-1.5"
+          className="relative h-1 w-full grow overflow-hidden rounded-full bg-[var(--text-alpha-10)]"
         >
           <SliderPrimitive.Indicator
             data-slot="slider-range"
-            className="bg-foreground select-none data-horizontal:h-full data-vertical:w-full"
+            className="bg-foreground absolute top-0 left-0 h-full"
           />
         </SliderPrimitive.Track>
         {Array.from({ length: _values.length }, (_, index) => (
           <SliderPrimitive.Thumb
             data-slot="slider-thumb"
             key={index}
-            className="bg-foreground border-foreground ring-foreground/20 relative block size-3 shrink-0 rounded-full border-2 opacity-0 shadow-sm transition-[color,box-shadow,opacity] select-none group-hover/slider:opacity-100 after:absolute after:-inset-2 hover:ring-4 focus-visible:opacity-100 focus-visible:ring-4 focus-visible:outline-hidden active:opacity-100 active:ring-4 disabled:pointer-events-none disabled:opacity-50"
+            className="bg-foreground ring-foreground/20 relative block size-3 shrink-0 rounded-full opacity-0 shadow-sm transition-[color,box-shadow,opacity] select-none group-hover/slider:opacity-100 after:absolute after:-inset-2 hover:ring-4 focus-visible:opacity-100 focus-visible:ring-4 focus-visible:outline-hidden active:opacity-100 active:ring-4 disabled:pointer-events-none disabled:opacity-50"
           />
         ))}
       </SliderPrimitive.Control>

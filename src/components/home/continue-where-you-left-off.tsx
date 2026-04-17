@@ -101,11 +101,8 @@ function ContinueReadingCard() {
   return (
     <Link
       href="/quran"
-      className="group border-border bg-surface-raised hover:bg-accent duration-fast ease-standard relative flex items-center gap-4 overflow-hidden rounded-xl border p-4 transition-colors"
+      className="group relative flex items-center gap-4 overflow-hidden rounded-md border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
     >
-      <div className="text-muted-foreground bg-background flex h-16 w-16 shrink-0 items-center justify-center rounded-lg">
-        <QuranIcon size={28} />
-      </div>
       <div className="min-w-0 flex-1">
         <p className="text-muted-foreground text-[11px] font-medium tracking-wider uppercase">
           Continue reading

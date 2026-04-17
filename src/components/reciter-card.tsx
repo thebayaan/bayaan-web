@@ -6,11 +6,9 @@ import { cn } from "@/lib/utils";
 interface ReciterCardProps {
   reciter: Reciter;
   className?: string;
-  /** Compact (120px) for horizontal-scroll sections (default). Full for grids. */
-  variant?: "compact" | "full";
 }
 
-export function ReciterCard({ reciter, className, variant = "compact" }: ReciterCardProps) {
+export function ReciterCard({ reciter, className }: ReciterCardProps) {
   const rewayatCount = reciter.rewayat.length;
   const rewayatLabel =
     rewayatCount === 0
@@ -19,36 +17,28 @@ export function ReciterCard({ reciter, className, variant = "compact" }: Reciter
         ? (reciter.rewayat[0]?.name ?? "")
         : `${rewayatCount} rewayat`;
 
-  const isCompact = variant === "compact";
-
   return (
     <Link
       href={`/reciter/${reciter.slug}`}
       className={cn(
-        "group block shrink-0 rounded-lg transition-colors hover:bg-[var(--text-alpha-04)]",
-        isCompact ? "w-[120px]" : "w-full",
+        "group block w-full rounded-md p-1.5 transition-colors hover:bg-[var(--text-alpha-04)]",
         className,
       )}
     >
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-lg bg-[var(--text-alpha-06)]",
-          isCompact ? "h-[120px] w-[120px]" : "mb-2 aspect-square",
-        )}
-      >
+      <div className="relative aspect-square overflow-hidden rounded-md bg-[var(--text-alpha-06)]">
         {reciter.image_url ? (
           <Image
             src={reciter.image_url}
             alt={reciter.name}
             fill
             className="object-cover transition-transform group-hover:scale-105"
-            sizes={isCompact ? "120px" : "(max-width: 768px) 33vw, 160px"}
+            sizes="(max-width: 640px) 30vw, (max-width: 1024px) 18vw, 14vw"
           />
         ) : (
           <div className="text-muted-foreground flex h-full w-full items-center justify-center">
             <svg
-              width={isCompact ? 24 : 32}
-              height={isCompact ? 24 : 32}
+              width={28}
+              height={28}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -60,18 +50,9 @@ export function ReciterCard({ reciter, className, variant = "compact" }: Reciter
           </div>
         )}
       </div>
-      <p className={cn("truncate font-semibold", isCompact ? "mt-1.5 text-[11px]" : "text-[13px]")}>
-        {reciter.name}
-      </p>
+      <p className="mt-1.5 truncate text-[13px] font-semibold">{reciter.name}</p>
       {rewayatLabel ? (
-        <p
-          className={cn(
-            "text-muted-foreground truncate font-medium",
-            isCompact ? "text-[10px]" : "mt-0.5 text-[11px]",
-          )}
-        >
-          {rewayatLabel}
-        </p>
+        <p className="text-muted-foreground mt-0.5 truncate text-[11px]">{rewayatLabel}</p>
       ) : null}
     </Link>
   );

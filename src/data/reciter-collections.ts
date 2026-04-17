@@ -1,4 +1,5 @@
 import type { Reciter } from "@/types/reciter";
+import { normalize } from "@/lib/normalize";
 
 /**
  * Hardcoded reciter name lists ported from the mobile app's
@@ -35,7 +36,7 @@ const TAJWEED: string[] = [
   "Abdulbasit Abdulsamad",
   "Mahmoud Ali Albanna",
   "Mustafa Ismail",
-  "Abdulrasheen Soufi",
+  "Abdulrasheed Soufi",
 ];
 
 const MEMORIZATION: string[] = [
@@ -64,10 +65,6 @@ const BEGINNER_FRIENDLY: string[] = [
   "Noreen Mohammad Siddiq",
   "Ahmad Al-Ajmy",
 ];
-
-function normalize(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]/g, "");
-}
 
 function matchByName(names: string[], reciters: Reciter[]): Reciter[] {
   const normalizedMap = new Map<string, Reciter>();
