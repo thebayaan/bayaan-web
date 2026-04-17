@@ -10,7 +10,7 @@ import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
-type CommandKind = "surah" | "reciter" | "adhkar";
+type CommandKind = "surah" | "reciter" | "adhkar" | "verse";
 
 interface Command {
   kind: CommandKind;
@@ -19,6 +19,27 @@ interface Command {
   subtitle?: string;
   href: string;
   keywords: string;
+}
+
+const VERSE_REFERENCE = /^(\d{1,3})\s*:\s*(\d{1,3})$/;
+
+function parseVerseReference(query: string): Command | null {
+  const match = query.match(VERSE_REFERENCE);
+  if (!match) return null;
+  const surahId = Number(match[1]);
+  const ayahId = Number(match[2]);
+  if (surahId < 1 || surahId > 114) return null;
+  const surah = surahs.find((s) => s.id === surahId);
+  if (!surah) return null;
+  if (ayahId < 1 || ayahId > surah.verses_count) return null;
+  return {
+    kind: "verse",
+    id: `verse:${surahId}:${ayahId}`,
+    title: `Surah ${surah.name} · Verse ${ayahId}`,
+    subtitle: `${surah.translated_name_english} · ${surahId}:${ayahId}`,
+    href: `/quran/${surahId}/${ayahId}`,
+    keywords: `${surahId}:${ayahId} ${surah.name}`,
+  };
 }
 
 const surahs = surahData as unknown as Surah[];
@@ -45,6 +66,7 @@ const KIND_LABEL: Record<CommandKind, string> = {
   surah: "Surah",
   reciter: "Reciter",
   adhkar: "Adhkar",
+  verse: "Verse",
 };
 
 export function CommandPalette() {
@@ -81,10 +103,12 @@ export function CommandPalette() {
   const results = useMemo(() => {
     const trimmed = query.trim();
     if (!trimmed) return commands.slice(0, 20);
-    return fuse
+    const fuseResults = fuse
       .search(trimmed)
       .slice(0, 30)
       .map((r) => r.item);
+    const verseCommand = parseVerseReference(trimmed);
+    return verseCommand ? [verseCommand, ...fuseResults] : fuseResults;
   }, [query, fuse, commands]);
 
   useEffect(() => {

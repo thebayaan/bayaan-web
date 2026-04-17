@@ -65,4 +65,28 @@ describe("CommandPalette", () => {
     const selected = screen.getAllByRole("option").find((el) => el.ariaSelected === "true");
     expect(selected).toBeTruthy();
   });
+
+  it("routes to /quran/<surah>/<ayah> when the query is a verse reference", async () => {
+    const user = userEvent.setup();
+    render(<CommandPalette />);
+    useCommandPaletteStore.getState().setOpen(true);
+    const input = await screen.findByRole("combobox");
+    await user.type(input, "2:255");
+    await user.keyboard("{Enter}");
+    await waitFor(() => {
+      expect(pushSpy).toHaveBeenCalledWith("/quran/2/255");
+    });
+  });
+
+  it("does not inject a verse result for out-of-range references", async () => {
+    const user = userEvent.setup();
+    render(<CommandPalette />);
+    useCommandPaletteStore.getState().setOpen(true);
+    const input = await screen.findByRole("combobox");
+    // Al-Fatihah has 7 verses; 50 is out of range
+    await user.type(input, "1:50");
+    const items = screen.queryAllByRole("option");
+    const verseItems = items.filter((el) => el.textContent?.includes("Verse"));
+    expect(verseItems).toHaveLength(0);
+  });
 });
