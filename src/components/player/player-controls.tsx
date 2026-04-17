@@ -62,15 +62,15 @@ export function PlayerControls({
       <button
         onClick={onPlayPause}
         className={cn(
-          "bg-foreground text-background flex items-center justify-center rounded-full transition-transform hover:scale-105",
+          "text-foreground flex items-center justify-center transition-transform hover:scale-110",
           compact ? "h-8 w-8" : "h-9 w-9",
         )}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
-          <PauseIcon size={compact ? 14 : 16} color="currentColor" />
+          <PauseIcon size={compact ? 22 : 26} color="currentColor" />
         ) : (
-          <PlayIcon size={compact ? 14 : 16} color="currentColor" />
+          <PlayIcon size={compact ? 22 : 26} color="currentColor" />
         )}
       </button>
 
