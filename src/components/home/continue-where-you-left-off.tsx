@@ -6,18 +6,12 @@ import Image from "next/image";
 import { usePlayerStore } from "@/stores/player-store";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import { PlayIcon, QuranIcon } from "@/components/icons";
+import { formatTime } from "@/lib/format-time";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 
 const surahs = surahData as unknown as Surah[];
 const surahById = new Map<number, Surah>(surahs.map((s) => [s.id, s]));
-
-function formatTime(ms: number): string {
-  const total = Math.max(0, Math.floor(ms / 1000));
-  const minutes = Math.floor(total / 60);
-  const seconds = total % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
 
 /**
  * Gate a component on client mount so it reads persisted zustand state
@@ -87,11 +81,8 @@ function ContinueReadingCard() {
     return (
       <Link
         href={`/quran/${lastSurah.id}`}
-        className="group border-border bg-surface-raised hover:bg-accent duration-fast ease-standard relative flex items-center gap-4 overflow-hidden rounded-xl border p-4 transition-colors"
+        className="group relative flex items-center gap-4 overflow-hidden rounded-md border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
       >
-        <div className="text-muted-foreground bg-background flex h-16 w-16 shrink-0 items-center justify-center rounded-lg">
-          <QuranIcon size={28} />
-        </div>
         <div className="min-w-0 flex-1">
           <p className="text-muted-foreground text-[11px] font-medium tracking-wider uppercase">
             Continue reading

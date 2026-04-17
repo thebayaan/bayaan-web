@@ -2,13 +2,7 @@
 
 import { Slider } from "@/components/ui/slider";
 import { useCallback, useState } from "react";
-
-function formatTime(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
+import { formatTime } from "@/lib/format-time";
 
 interface ProgressBarProps {
   positionMs: number;
@@ -53,7 +47,7 @@ export function ProgressBar({ positionMs, durationMs, onSeek, compact }: Progres
 
   return (
     <div className="flex w-full items-center gap-2">
-      <span className="text-muted-foreground w-10 text-right text-[10px] tabular-nums">
+      <span className="text-muted-foreground w-14 text-right text-[10px] tabular-nums">
         {formatTime(isDragging ? (dragValue / 100) * durationMs : positionMs)}
       </span>
       <Slider
@@ -64,7 +58,7 @@ export function ProgressBar({ positionMs, durationMs, onSeek, compact }: Progres
         onValueCommitted={handleValueCommitted}
         className="flex-1"
       />
-      <span className="text-muted-foreground w-10 text-[10px] tabular-nums">
+      <span className="text-muted-foreground w-14 text-[10px] tabular-nums">
         {formatTime(durationMs)}
       </span>
     </div>
