@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useHighlights, HIGHLIGHT_COLORS, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
+import { useAuthGate } from "@/hooks/use-auth-gate";
 
 export function HighlightPicker({ verseKey, className }: { verseKey: string; className?: string }) {
   const { getHighlight, setHighlight, removeHighlight } = useHighlights();
+  const gate = useAuthGate();
   const current = getHighlight(verseKey);
   const [open, setOpen] = useState(false);
 
@@ -20,7 +22,7 @@ export function HighlightPicker({ verseKey, className }: { verseKey: string; cla
   return (
     <div className="relative inline-block">
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={gate(() => setOpen((v) => !v))}
         aria-label={current ? `Change highlight on ${verseKey}` : `Highlight ${verseKey}`}
         aria-haspopup="menu"
         aria-expanded={open}

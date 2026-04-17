@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 
 describe("middleware public carve-outs", () => {
-  it("treats /quran, /reciter, /adhkar, sitemap, and robots as public", async () => {
+  it("treats reading surfaces (/quran, /surah, /adhkar, /settings) as public and gates /reciter", async () => {
     const capturedPatterns: string[][] = [];
     vi.resetModules();
     vi.doMock("@clerk/nextjs/server", () => ({
@@ -11,19 +11,21 @@ describe("middleware public carve-outs", () => {
         return () => false;
       },
     }));
-    await import("@/../middleware");
+    await import("@/../proxy");
     expect(capturedPatterns[0]).toEqual(
       expect.arrayContaining([
         "/sign-in(.*)",
         "/sign-up(.*)",
         "/api/quran(.*)",
         "/quran(.*)",
-        "/reciter(.*)",
+        "/surah(.*)",
         "/adhkar(.*)",
+        "/settings(.*)",
         "/sitemap.xml",
         "/robots.txt",
       ]),
     );
+    expect(capturedPatterns[0]).not.toContain("/reciter(.*)");
     vi.doUnmock("@clerk/nextjs/server");
     vi.resetModules();
   });
@@ -45,9 +47,9 @@ describe("robots", () => {
     const { default: robots } = await import("@/app/robots");
     const rules = robots();
     const rule = Array.isArray(rules.rules) ? rules.rules[0] : rules.rules;
-    expect(rule?.allow).toEqual(expect.arrayContaining(["/quran", "/adhkar", "/reciter"]));
+    expect(rule?.allow).toEqual(expect.arrayContaining(["/quran", "/adhkar"]));
     expect(rule?.disallow).toEqual(
-      expect.arrayContaining(["/api/", "/collection", "/settings", "/search"]),
+      expect.arrayContaining(["/api/", "/collection", "/settings", "/search", "/reciter"]),
     );
     expect(rules.sitemap).toMatch(/sitemap\.xml$/);
   });

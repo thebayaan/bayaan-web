@@ -7,8 +7,16 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/quran", "/adhkar", "/reciter", "/"],
-        disallow: ["/api/", "/sign-in", "/sign-up", "/collection", "/settings", "/search"],
+        allow: ["/quran", "/adhkar", "/"],
+        disallow: [
+          "/api/",
+          "/sign-in",
+          "/sign-up",
+          "/collection",
+          "/settings",
+          "/search",
+          "/reciter",
+        ],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
