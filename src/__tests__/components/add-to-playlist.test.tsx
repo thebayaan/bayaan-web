@@ -95,7 +95,7 @@ describe("AddToPlaylistButton", () => {
     });
     await user.click(screen.getByRole("button", { name: /add al-fatiha/i }));
     await user.click(await screen.findByRole("button", { name: /favorites/i }));
-    expect(await screen.findByRole("alert")).toHaveTextContent(/Bayaan API error/i);
+    expect(await screen.findByRole("alert")).toHaveTextContent(/server hit an error/i);
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 });

@@ -3,7 +3,7 @@
 import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { usePlaylist } from "@/hooks/use-playlist";
+import { usePlaylist, removePlaylistItem } from "@/hooks/use-playlist";
 import {
   RenamePlaylistDialog,
   DeletePlaylistDialog,
@@ -23,6 +23,16 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
   const { playlist, items, isLoading, error } = usePlaylist(id);
   const [renaming, setRenaming] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [removingItemId, setRemovingItemId] = useState<string | null>(null);
+
+  async function handleRemoveItem(itemId: string): Promise<void> {
+    setRemovingItemId(itemId);
+    try {
+      await removePlaylistItem(id, itemId);
+    } finally {
+      setRemovingItemId(null);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -92,7 +102,7 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
       ) : (
         <ul className="mt-6 divide-y divide-[var(--text-alpha-06)]">
           {items.map((item) => (
-            <li key={item.id} className="flex items-center gap-3 py-3">
+            <li key={item.id} className="group flex items-center gap-3 py-3">
               <span className="text-muted-foreground w-6 text-right text-sm tabular-nums">
                 {item.position + 1}
               </span>
@@ -102,6 +112,22 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                 </p>
                 <p className="text-muted-foreground truncate text-xs">Surah {item.surah_id}</p>
               </div>
+              <button
+                onClick={() => void handleRemoveItem(item.id)}
+                disabled={removingItemId === item.id}
+                aria-label={`Remove ${surahNameMap[item.surah_id] ?? `Surah ${item.surah_id}`} from playlist`}
+                className="text-muted-foreground hover:text-destructive rounded-full p-2 opacity-0 transition-colors group-hover:opacity-100 hover:bg-[var(--text-alpha-06)] focus:opacity-100 disabled:opacity-50"
+              >
+                <svg
+                  width={14}
+                  height={14}
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+              </button>
             </li>
           ))}
         </ul>

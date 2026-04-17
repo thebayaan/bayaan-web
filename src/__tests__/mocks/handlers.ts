@@ -20,7 +20,80 @@ export const handlers = [
   http.get(`${API}/bayaan/user/favorites`, () => HttpResponse.json({ data: [] })),
   http.get(`${API}/bayaan/user/favorite-reciters`, () => HttpResponse.json({ data: [] })),
   http.get(`${API}/bayaan/user/bookmarks`, () => HttpResponse.json({ data: [] })),
+  http.post(`${API}/bayaan/user/bookmarks`, async ({ request }) => {
+    const body = (await request.json()) as {
+      verse_key: string;
+      surah_number: number;
+      ayah_number: number;
+      note?: string;
+    };
+    return HttpResponse.json(
+      {
+        data: {
+          id: `bookmark-${body.verse_key}`,
+          user_id: "mock-user",
+          ...body,
+          created_at: new Date().toISOString(),
+        },
+      },
+      { status: 201 },
+    );
+  }),
+  http.delete(`${API}/bayaan/user/bookmarks/:verseKey`, () =>
+    HttpResponse.json({ data: { deleted: true } }),
+  ),
+
+  http.get(`${API}/bayaan/user/highlights`, () => HttpResponse.json({ data: [] })),
+  http.post(`${API}/bayaan/user/highlights`, async ({ request }) => {
+    const body = (await request.json()) as { verse_key: string; color: string };
+    return HttpResponse.json(
+      {
+        data: {
+          id: `h-${body.verse_key}`,
+          user_id: "mock-user",
+          ...body,
+          created_at: new Date().toISOString(),
+        },
+      },
+      { status: 201 },
+    );
+  }),
+  http.delete(`${API}/bayaan/user/highlights/:verseKey`, () =>
+    HttpResponse.json({ data: { deleted: true } }),
+  ),
+
   http.get(`${API}/bayaan/user/notes`, () => HttpResponse.json({ data: [] })),
+  http.post(`${API}/bayaan/user/notes`, async ({ request }) => {
+    const body = (await request.json()) as { verse_key: string; content: string };
+    return HttpResponse.json(
+      {
+        data: {
+          id: `n-${body.verse_key}`,
+          user_id: "mock-user",
+          ...body,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      },
+      { status: 201 },
+    );
+  }),
+  http.put(`${API}/bayaan/user/notes/:verseKey`, async ({ params, request }) => {
+    const body = (await request.json()) as { content: string };
+    return HttpResponse.json({
+      data: {
+        id: `n-${params.verseKey}`,
+        user_id: "mock-user",
+        verse_key: String(params.verseKey),
+        content: body.content,
+        created_at: "2025-01-01T00:00:00Z",
+        updated_at: new Date().toISOString(),
+      },
+    });
+  }),
+  http.delete(`${API}/bayaan/user/notes/:verseKey`, () =>
+    HttpResponse.json({ data: { deleted: true } }),
+  ),
   http.get(`${API}/bayaan/user/playlists`, () => HttpResponse.json({ data: [] })),
   http.get(`${API}/bayaan/user/playlists/:id`, ({ params }) =>
     HttpResponse.json({

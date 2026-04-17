@@ -2,6 +2,7 @@
 
 import { useReciters } from "@/hooks/use-reciters";
 import { ReciterCard } from "@/components/reciter-card";
+import { ContinueWhereYouLeftOff } from "@/components/home/continue-where-you-left-off";
 import type { Reciter } from "@/types/reciter";
 
 function ReciterSection({ title, reciters }: { title: string; reciters: Reciter[] }) {
@@ -45,6 +46,8 @@ export default function HomePage() {
 
   return (
     <div className="p-6">
+      <ContinueWhereYouLeftOff />
+
       <ReciterSection title="Featured Reciters" reciters={featured} />
       <ReciterSection title="All Reciters" reciters={reciters.slice(0, 18)} />
       <ReciterSection title="Murattal" reciters={murattal.slice(0, 12)} />

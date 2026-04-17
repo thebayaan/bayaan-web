@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 export type ReaderViewMode = "reading" | "mushaf";
 
-interface ReadingSettingsState {
+export interface ReadingSettingsState {
   fontSize: number;
   lightThemeId: string;
   darkThemeId: string;
@@ -13,6 +13,13 @@ interface ReadingSettingsState {
   showTajweed: boolean;
   mushafPage: number;
   viewMode: ReaderViewMode;
+  /**
+   * Last surah the user opened in the reading view, plus the ISO
+   * timestamp of when. Powers the "Continue reading" card on /home.
+   * Null until the user has opened at least one surah.
+   */
+  lastReadSurahId: number | null;
+  lastReadSurahAt: string | null;
   setFontSize: (size: number) => void;
   setLightTheme: (id: string) => void;
   setDarkTheme: (id: string) => void;
@@ -22,6 +29,7 @@ interface ReadingSettingsState {
   toggleTajweed: () => void;
   setMushafPage: (page: number) => void;
   setViewMode: (mode: ReaderViewMode) => void;
+  markSurahRead: (surahId: number) => void;
 }
 
 export const useReadingSettingsStore = create<ReadingSettingsState>()(
@@ -36,6 +44,8 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       showTajweed: false,
       mushafPage: 1,
       viewMode: "reading",
+      lastReadSurahId: null,
+      lastReadSurahAt: null,
       setFontSize: (size) => set({ fontSize: size }),
       setLightTheme: (id) => set({ lightThemeId: id }),
       setDarkTheme: (id) => set({ darkThemeId: id }),
@@ -45,6 +55,8 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       toggleTajweed: () => set((s) => ({ showTajweed: !s.showTajweed })),
       setMushafPage: (page) => set({ mushafPage: page }),
       setViewMode: (mode) => set({ viewMode: mode }),
+      markSurahRead: (surahId) =>
+        set({ lastReadSurahId: surahId, lastReadSurahAt: new Date().toISOString() }),
     }),
     {
       name: "bayaan-reading-settings",

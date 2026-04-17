@@ -1,9 +1,11 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useVersesByPage } from "@/hooks/use-verses-by-page";
 import { useQcfFont } from "@/hooks/use-qcf-font";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
+import { useVerseSelectionStore } from "@/stores/verse-selection-store";
 import { MushafPage } from "./mushaf-page";
+import { MushafActionBar } from "./mushaf-action-bar";
 
 const TOTAL_PAGES = 604;
 
@@ -19,14 +21,23 @@ export function MushafView() {
   const { verses, isLoading } = useVersesByPage(currentPage);
   const { isPageFontLoaded, getFontFamily } = useQcfFont(pagesToLoad);
 
+  const clearSelection = useVerseSelectionStore((s) => s.clear);
+
   const goToPage = useCallback(
     (page: number) => {
       const clamped = Math.max(1, Math.min(TOTAL_PAGES, page));
       setCurrentPage(clamped);
       setMushafPage(clamped);
+      clearSelection();
     },
-    [setMushafPage],
+    [setMushafPage, clearSelection],
   );
+
+  useEffect(() => {
+    // Clear the selected verse whenever this view unmounts so a stale
+    // selection from one page doesn't linger into the reading view.
+    return () => clearSelection();
+  }, [clearSelection]);
 
   return (
     <div className="flex h-full flex-col">
@@ -83,6 +94,7 @@ export function MushafView() {
           />
         )}
       </div>
+      <MushafActionBar verses={verses} />
     </div>
   );
 }
