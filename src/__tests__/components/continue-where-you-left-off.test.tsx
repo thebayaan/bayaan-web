@@ -44,7 +44,11 @@ import { ContinueWhereYouLeftOff } from "@/components/home/continue-where-you-le
 describe("ContinueWhereYouLeftOff", () => {
   beforeEach(() => {
     usePlayerStore.setState(usePlayerStore.getInitialState());
-    useReadingSettingsStore.setState({ mushafPage: 1 });
+    useReadingSettingsStore.setState({
+      mushafPage: 1,
+      lastReadSurahId: null,
+      lastReadSurahAt: null,
+    });
     vi.mocked(audioService.play).mockClear();
   });
 
@@ -98,7 +102,7 @@ describe("ContinueWhereYouLeftOff", () => {
     });
   });
 
-  it("shows the reading card when mushafPage > 1", async () => {
+  it("shows the mushaf-page card when only mushafPage > 1", async () => {
     useReadingSettingsStore.setState({ mushafPage: 42 });
     render(<ContinueWhereYouLeftOff />);
     await waitFor(() => {
@@ -107,6 +111,23 @@ describe("ContinueWhereYouLeftOff", () => {
     expect(screen.getByRole("link", { name: /continue reading/i })).toHaveAttribute(
       "href",
       "/quran",
+    );
+  });
+
+  it("prefers the last-read surah card with deep link to that surah", async () => {
+    useReadingSettingsStore.setState({
+      mushafPage: 42,
+      lastReadSurahId: 2,
+      lastReadSurahAt: "2026-04-16T00:00:00Z",
+    });
+    render(<ContinueWhereYouLeftOff />);
+    await waitFor(() => {
+      expect(screen.getByText(/Surah Al-Baqarah/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/mushaf page 42/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /continue reading/i })).toHaveAttribute(
+      "href",
+      "/quran/2",
     );
   });
 });

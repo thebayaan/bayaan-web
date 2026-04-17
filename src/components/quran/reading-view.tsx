@@ -2,11 +2,20 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useVersesByChapter } from "@/hooks/use-verses-by-chapter";
 import { useQcfFont } from "@/hooks/use-qcf-font";
-import { useReadingSettingsStore } from "@/stores/reading-settings-store";
+import {
+  useReadingSettingsStore,
+  type ReadingSettingsState,
+} from "@/stores/reading-settings-store";
 import { ReadingVerse } from "./reading-verse";
 import { SurahHeader } from "./surah-header";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
+
+function markRead(surahId: number): void {
+  // Pull the setter fresh so the effect doesn't depend on an unstable
+  // reference and re-fire on every store update.
+  (useReadingSettingsStore.getState() as ReadingSettingsState).markSurahRead(surahId);
+}
 
 const surahs = surahData as unknown as Surah[];
 
@@ -16,6 +25,10 @@ interface ReadingViewProps {
 }
 
 export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
+  useEffect(() => {
+    if (surahId >= 1 && surahId <= 114) markRead(surahId);
+  }, [surahId]);
+
   const fontSize = useReadingSettingsStore((s) => s.fontSize);
   const translationIds = useReadingSettingsStore((s) => s.translationIds);
   const { verses, isLoading } = useVersesByChapter(surahId, 1, translationIds);
