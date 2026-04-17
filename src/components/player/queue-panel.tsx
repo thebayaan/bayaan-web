@@ -1,6 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import {
+  DndContext,
+  PointerSensor,
+  KeyboardSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { usePlayerStore } from "@/stores/player-store";
 import type { Track } from "@/types/audio";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -16,7 +32,25 @@ export function QueuePanel({ open, onOpenChange }: QueuePanelProps): React.React
   const clearQueue = usePlayerStore((s) => s.clearQueue);
   const removeFromQueue = usePlayerStore((s) => s.removeFromQueue);
   const skipToIndex = usePlayerStore((s) => s.skipToIndex);
+  const moveInQueue = usePlayerStore((s) => s.moveInQueue);
   const [historyExpanded, setHistoryExpanded] = useState(false);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  function handleDragEnd(event: DragEndEvent): void {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const fromAbsolute = Number(active.id);
+    const toAbsolute = Number(over.id);
+    if (Number.isNaN(fromAbsolute) || Number.isNaN(toAbsolute)) return;
+    // Never move onto the active row — it owns currentIndex.
+    const active_idx = Math.max(0, currentIndex);
+    if (fromAbsolute === active_idx || toAbsolute === active_idx) return;
+    moveInQueue(fromAbsolute, toAbsolute);
+  }
 
   // currentIndex of -1 means no active track; treat slice bounds safely.
   const safeCurrentIndex = currentIndex < 0 ? 0 : currentIndex;
@@ -121,20 +155,34 @@ export function QueuePanel({ open, onOpenChange }: QueuePanelProps): React.React
             ) : null}
 
             {upcoming.length > 0 ? (
-              <ul className="py-2">
-                {upcoming.map((track, offset) => {
-                  const absoluteIndex = safeCurrentIndex + offset;
-                  return (
-                    <QueueRow
-                      key={`up-${track.id}-${absoluteIndex}`}
-                      track={track}
-                      isActive={offset === 0 && currentIndex >= 0}
-                      onJump={() => handleJump(absoluteIndex)}
-                      onRemove={() => handleRemove(absoluteIndex)}
-                    />
-                  );
-                })}
-              </ul>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={upcoming.map((_, offset) => String(safeCurrentIndex + offset))}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <ul className="py-2">
+                    {upcoming.map((track, offset) => {
+                      const absoluteIndex = safeCurrentIndex + offset;
+                      const isActive = offset === 0 && currentIndex >= 0;
+                      return (
+                        <SortableQueueRow
+                          key={`up-${track.id}-${absoluteIndex}`}
+                          id={String(absoluteIndex)}
+                          track={track}
+                          isActive={isActive}
+                          draggable={!isActive}
+                          onJump={() => handleJump(absoluteIndex)}
+                          onRemove={() => handleRemove(absoluteIndex)}
+                        />
+                      );
+                    })}
+                  </ul>
+                </SortableContext>
+              </DndContext>
             ) : null}
 
             {tracks.length === 0 ? (
@@ -160,12 +208,84 @@ interface QueueRowProps {
 function QueueRow({ track, isActive, onJump, onRemove }: QueueRowProps): React.ReactElement {
   return (
     <li className="group/qrow relative">
+      <QueueRowBody track={track} isActive={isActive} onJump={onJump} onRemove={onRemove} />
+    </li>
+  );
+}
+
+interface SortableQueueRowProps extends QueueRowProps {
+  id: string;
+  draggable: boolean;
+}
+
+function SortableQueueRow({
+  id,
+  track,
+  isActive,
+  draggable,
+  onJump,
+  onRemove,
+}: SortableQueueRowProps): React.ReactElement {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id,
+    disabled: !draggable,
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  } as React.CSSProperties;
+  return (
+    <li ref={setNodeRef} style={style} className="group/qrow relative">
+      <QueueRowBody
+        track={track}
+        isActive={isActive}
+        onJump={onJump}
+        onRemove={onRemove}
+        dragHandle={
+          draggable ? (
+            <span
+              {...attributes}
+              {...listeners}
+              aria-label="Drag to reorder"
+              className="text-muted-foreground hover:text-foreground absolute top-1/2 left-1 flex h-7 w-5 -translate-y-1/2 cursor-grab items-center justify-center rounded-md opacity-0 transition-opacity group-hover/qrow:opacity-100 active:cursor-grabbing"
+            >
+              <svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor" aria-hidden>
+                <circle cx="2" cy="2" r="1.25" />
+                <circle cx="8" cy="2" r="1.25" />
+                <circle cx="2" cy="7" r="1.25" />
+                <circle cx="8" cy="7" r="1.25" />
+                <circle cx="2" cy="12" r="1.25" />
+                <circle cx="8" cy="12" r="1.25" />
+              </svg>
+            </span>
+          ) : null
+        }
+      />
+    </li>
+  );
+}
+
+interface QueueRowBodyProps extends QueueRowProps {
+  dragHandle?: React.ReactNode;
+}
+
+function QueueRowBody({
+  track,
+  isActive,
+  onJump,
+  onRemove,
+  dragHandle,
+}: QueueRowBodyProps): React.ReactElement {
+  return (
+    <>
+      {dragHandle}
       <button
         type="button"
         onClick={onJump}
-        className={`hover:bg-surface-sunken duration-fast ease-standard flex w-full items-center gap-3 px-5 py-3 pr-12 text-left transition-colors ${
-          isActive ? "bg-brand-light" : ""
-        }`}
+        className={`hover:bg-surface-sunken duration-fast ease-standard flex w-full items-center gap-3 py-3 pr-12 text-left transition-colors ${
+          dragHandle ? "pl-8" : "pl-5"
+        } ${isActive ? "bg-brand-light" : ""}`}
       >
         <div className="bg-surface-sunken h-10 w-10 shrink-0 overflow-hidden rounded-md">
           {track.artwork ? (
@@ -204,6 +324,6 @@ function QueueRow({ track, isActive, onJump, onRemove }: QueueRowProps): React.R
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
-    </li>
+    </>
   );
 }
