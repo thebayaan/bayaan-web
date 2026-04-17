@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { Surah } from "@/types/quran";
+import { surahGlyphMap } from "@/data/surah-glyph-map";
 
 interface Props {
   surah: Surah;
@@ -32,8 +33,8 @@ export function SurahIndexCard({ surah, isResume }: Props) {
           {surah.translated_name_english} · {surah.verses_count} ayahs
         </div>
       </div>
-      <div className="font-surah-names text-foreground shrink-0 text-[22px]">
-        {surah.name_arabic}
+      <div className="font-surah-names text-foreground shrink-0 text-[28px] leading-none">
+        {surahGlyphMap[surah.id] ?? surah.name_arabic}
       </div>
     </Link>
   );

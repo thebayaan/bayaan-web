@@ -16,10 +16,11 @@ describe("SurahListItem", () => {
     translated_name_english: "The Opening",
   };
 
-  it("renders the surah name and Arabic name", () => {
+  it("renders the surah name and the SurahNames glyph", () => {
     render(<SurahListItem surah={mockSurah} onPlay={vi.fn()} />);
     expect(screen.getByText("Al-Faatiha")).toBeInTheDocument();
-    expect(screen.getByText("الفاتحة")).toBeInTheDocument();
+    // Surah 1 maps to U+E904 in the SurahNames font
+    expect(screen.getByText("\uE904")).toBeInTheDocument();
   });
 
   it("shows ayah count and english meaning", () => {

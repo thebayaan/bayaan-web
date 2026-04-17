@@ -10,6 +10,12 @@ import { createQueueFromSurah } from "@/lib/audio-utils";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 
+function handleShare(): void {
+  if (typeof navigator !== "undefined" && navigator.clipboard) {
+    void navigator.clipboard.writeText(window.location.href);
+  }
+}
+
 const surahs = surahData as unknown as Surah[];
 const surahNameMap = Object.fromEntries(surahs.map((s) => [s.id, s.name])) as Record<
   number,
@@ -20,8 +26,11 @@ export default function ReciterPage({ params }: { params: Promise<{ slug: string
   const { slug } = use(params);
   const { reciter, isLoading } = useReciter(slug);
   const [selectedRewayatIdx, setSelectedRewayatIdx] = useState(0);
+  const [isFavorited, setIsFavorited] = useState(false);
 
   const updateQueue = usePlayerStore((s) => s.updateQueue);
+  const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
+  const isShuffle = usePlayerStore((s) => s.settings.shuffle);
   const currentTrack = usePlayerStore((s) => {
     const tracks = s.queue.tracks;
     const idx = s.queue.currentIndex;
@@ -94,7 +103,13 @@ export default function ReciterPage({ params }: { params: Promise<{ slug: string
         </button>
         <button
           type="button"
-          className="border-border hover:bg-surface-raised duration-fast ease-standard flex items-center gap-2 rounded-full border px-6 py-3.5 text-sm font-semibold transition-colors"
+          onClick={() => {
+            if (!isShuffle) toggleShuffle();
+            handlePlayAll();
+          }}
+          className={`border-border hover:bg-surface-raised duration-fast ease-standard flex items-center gap-2 rounded-full border px-6 py-3.5 text-sm font-semibold transition-colors ${
+            isShuffle ? "text-brand-main border-[var(--brand-weak)]" : ""
+          }`}
         >
           <svg
             width="16"
@@ -116,15 +131,22 @@ export default function ReciterPage({ params }: { params: Promise<{ slug: string
         </button>
         <button
           type="button"
-          aria-label="Favorite reciter"
-          className="border-border text-brand-main hover:bg-brand-light duration-fast ease-standard flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
+          aria-label={isFavorited ? "Unfavorite reciter" : "Favorite reciter"}
+          aria-pressed={isFavorited}
+          onClick={() => setIsFavorited((v) => !v)}
+          className={`border-border hover:bg-brand-light duration-fast ease-standard flex h-12 w-12 items-center justify-center rounded-full border transition-colors ${
+            isFavorited
+              ? "text-brand-main bg-brand-light border-[var(--brand-weak)]"
+              : "text-muted-foreground"
+          }`}
         >
-          <HeartIcon size={18} color="currentColor" />
+          <HeartIcon size={18} color="currentColor" filled={isFavorited} />
         </button>
         <button
           type="button"
           aria-label="Share reciter"
-          className="border-border hover:bg-surface-raised duration-fast ease-standard flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
+          onClick={handleShare}
+          className="border-border hover:bg-surface-raised duration-fast ease-standard text-muted-foreground flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
         >
           <svg
             width="18"
@@ -146,7 +168,8 @@ export default function ReciterPage({ params }: { params: Promise<{ slug: string
         <button
           type="button"
           aria-label="More"
-          className="border-border hover:bg-surface-raised duration-fast ease-standard flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
+          onClick={() => alert("More actions coming soon")}
+          className="border-border hover:bg-surface-raised duration-fast ease-standard text-muted-foreground flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
         >
           <svg
             width="18"
@@ -165,36 +188,29 @@ export default function ReciterPage({ params }: { params: Promise<{ slug: string
         </button>
       </div>
 
-      {reciter.rewayat.length > 1 && (
-        <div className="border-border-divider flex items-center gap-8 border-b px-10">
-          <span className="text-muted-foreground text-[11px] font-bold tracking-[0.08em] uppercase">
-            Recitation
-          </span>
-          <div className="flex items-center gap-7">
-            {reciter.rewayat.map((rw, idx) => {
-              const active = idx === selectedRewayatIdx;
-              return (
-                <button
-                  key={rw.id}
-                  type="button"
-                  onClick={() => setSelectedRewayatIdx(idx)}
-                  className={`-mb-px border-b-2 py-3.5 text-sm transition-colors ${
-                    active
-                      ? "text-foreground border-foreground font-semibold"
-                      : "text-muted-foreground hover:text-foreground border-transparent font-medium"
-                  }`}
-                >
-                  {rw.name}
-                </button>
-              );
-            })}
-          </div>
-          <div className="flex-1" />
-          <span className="text-muted-foreground py-3.5 text-xs font-medium">
-            {filteredSurahs.length} surahs · sorted by chapter
-          </span>
-        </div>
-      )}
+      <div className="border-border-divider flex items-center gap-7 border-b px-10">
+        {reciter.rewayat.map((rw, idx) => {
+          const active = idx === selectedRewayatIdx;
+          return (
+            <button
+              key={rw.id}
+              type="button"
+              onClick={() => setSelectedRewayatIdx(idx)}
+              className={`-mb-px border-b-2 py-3.5 text-sm transition-colors ${
+                active
+                  ? "text-foreground border-foreground font-semibold"
+                  : "text-muted-foreground hover:text-foreground border-transparent font-medium"
+              }`}
+            >
+              {rw.name}
+            </button>
+          );
+        })}
+        <div className="flex-1" />
+        <span className="text-muted-foreground py-3.5 text-xs font-medium">
+          {filteredSurahs.length} surahs · sorted by chapter
+        </span>
+      </div>
 
       <div className="px-4 pt-4 pb-24">
         {filteredSurahs.map((surah) => {

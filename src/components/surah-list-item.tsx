@@ -1,6 +1,7 @@
 "use client";
 
 import type { Surah } from "@/types/quran";
+import { surahGlyphMap } from "@/data/surah-glyph-map";
 
 interface Props {
   surah: Surah;
@@ -41,8 +42,8 @@ export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack, durati
           {surah.translated_name_english} · {surah.verses_count} ayahs
         </div>
       </div>
-      <div className="font-surah-names text-foreground w-40 shrink-0 text-right text-[22px]">
-        {surah.name_arabic}
+      <div className="font-surah-names text-foreground w-40 shrink-0 text-right text-[28px] leading-none">
+        {surahGlyphMap[surah.id] ?? surah.name_arabic}
       </div>
       <div className="text-muted-foreground w-[72px] shrink-0 text-right text-[13px] font-medium tabular-nums">
         {durationLabel ?? ""}

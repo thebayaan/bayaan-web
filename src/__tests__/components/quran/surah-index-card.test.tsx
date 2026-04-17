@@ -27,9 +27,10 @@ describe("SurahIndexCard", () => {
     expect(screen.getByText(/The Cow/)).toBeInTheDocument();
   });
 
-  it("renders the Arabic name", () => {
+  it("renders the SurahNames glyph", () => {
     render(<SurahIndexCard surah={surah} />);
-    expect(screen.getByText("البقرة")).toBeInTheDocument();
+    // Surah 2 maps to U+E905 in the SurahNames font
+    expect(screen.getByText("\uE905")).toBeInTheDocument();
   });
 
   it("links to the surah reader", () => {

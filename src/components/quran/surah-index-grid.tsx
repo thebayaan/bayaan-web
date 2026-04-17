@@ -37,11 +37,7 @@ export function SurahIndexGrid() {
 
   return (
     <div className="px-10 pb-20">
-      <header className="flex flex-col gap-4 pt-16 pb-8">
-        <div className="text-brand-main flex items-center gap-2 text-xs font-bold tracking-[0.08em] uppercase">
-          <span className="bg-brand-main h-px w-4" aria-hidden />
-          <span>The Book</span>
-        </div>
+      <header className="flex flex-col gap-3 pt-12 pb-8">
         <h1 className="text-[56px] leading-none font-extrabold tracking-[-0.025em]">
           Read the Quran
         </h1>
