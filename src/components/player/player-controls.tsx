@@ -1,6 +1,14 @@
 "use client";
 
-import { PlayIcon, PauseIcon, NextIcon, PreviousIcon } from "@/components/icons";
+import {
+  PlayIcon,
+  PauseIcon,
+  NextIcon,
+  PreviousIcon,
+  ShuffleIcon,
+  RepeatIcon,
+  RepeatOneIcon,
+} from "@/components/icons";
 import type { RepeatMode } from "@/types/audio";
 import { cn } from "@/lib/utils";
 
@@ -33,21 +41,15 @@ export function PlayerControls({
         <button
           onClick={onShuffleToggle}
           className={cn(
-            "rounded-full p-1.5 transition-colors",
+            "relative rounded-full p-1.5 transition-colors",
             shuffle ? "text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
           aria-label={shuffle ? "Disable shuffle" : "Enable shuffle"}
         >
-          <svg
-            width={16}
-            height={16}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
-          </svg>
+          <ShuffleIcon size={18} color="currentColor" />
+          {shuffle ? (
+            <span className="bg-foreground absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full" />
+          ) : null}
         </button>
       )}
 
@@ -62,15 +64,15 @@ export function PlayerControls({
       <button
         onClick={onPlayPause}
         className={cn(
-          "bg-foreground text-background flex items-center justify-center rounded-full transition-transform hover:scale-105",
+          "text-foreground flex items-center justify-center transition-transform hover:scale-110",
           compact ? "h-8 w-8" : "h-9 w-9",
         )}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
-          <PauseIcon size={compact ? 14 : 16} color="currentColor" />
+          <PauseIcon size={compact ? 22 : 26} color="currentColor" />
         ) : (
-          <PlayIcon size={compact ? 14 : 16} color="currentColor" />
+          <PlayIcon size={compact ? 22 : 26} color="currentColor" />
         )}
       </button>
 
@@ -93,24 +95,14 @@ export function PlayerControls({
           )}
           aria-label={`Repeat: ${repeatMode}`}
         >
-          <svg
-            width={16}
-            height={16}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path d="M17 1l4 4-4 4" />
-            <path d="M3 11V9a4 4 0 014-4h14" />
-            <path d="M7 23l-4-4 4-4" />
-            <path d="M21 13v2a4 4 0 01-4 4H3" />
-          </svg>
-          {repeatMode === "track" && (
-            <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold">
-              1
-            </span>
+          {repeatMode === "track" ? (
+            <RepeatOneIcon size={18} color="currentColor" />
+          ) : (
+            <RepeatIcon size={18} color="currentColor" />
           )}
+          {repeatMode !== "none" ? (
+            <span className="bg-foreground absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full" />
+          ) : null}
         </button>
       )}
     </div>

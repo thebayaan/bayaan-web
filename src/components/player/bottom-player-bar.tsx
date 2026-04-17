@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { usePlayerStore } from "@/stores/player-store";
+import { useReciters } from "@/hooks/use-reciters";
 import { PlayerControls } from "./player-controls";
 import { ProgressBar } from "./progress-bar";
 import { VolumeControl } from "./volume-control";
@@ -32,6 +34,12 @@ export function BottomPlayerBar() {
   const setRate = usePlayerStore((s) => s.setRate);
 
   const currentTrack = tracks[currentIndex];
+  const { reciters } = useReciters();
+  const currentReciter = currentTrack
+    ? reciters.find((r) => r.id === currentTrack.reciterId)
+    : undefined;
+  const reciterSlug = currentReciter?.slug;
+  const rewayahName = currentReciter?.rewayat.find((rw) => rw.id === currentTrack?.rewayatId)?.name;
   const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] as const;
 
   const cycleRate = (): void => {
@@ -85,13 +93,15 @@ export function BottomPlayerBar() {
       data-player-hidden={false}
       className="border-border bg-background/80 duration-regular ease-standard flex h-20 items-center gap-4 border-t px-4 backdrop-blur-2xl transition-transform data-[player-hidden=true]:translate-y-full"
     >
-      {/* Track Info — Left */}
-      <button
-        onClick={() => setShowFullPlayer(true)}
-        className="flex w-[240px] min-w-0 items-center gap-3 text-left"
-        aria-label="Open full player"
-      >
-        <div className="bg-muted h-12 w-12 shrink-0 overflow-hidden rounded-lg">
+      {/* Track Info — Left. Title + artwork open the full player; the
+          artist link jumps to the reciter page so it still works even
+          when the rest of the row is acting as a big button. */}
+      <div className="flex w-[240px] min-w-0 items-center gap-3">
+        <button
+          onClick={() => setShowFullPlayer(true)}
+          className="bg-muted h-12 w-12 shrink-0 overflow-hidden rounded-lg"
+          aria-label="Open full player"
+        >
           {currentTrack.artwork && (
             <Image
               src={currentTrack.artwork}
@@ -101,12 +111,33 @@ export function BottomPlayerBar() {
               className="h-full w-full object-cover"
             />
           )}
-        </div>
+        </button>
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">{currentTrack.title}</p>
-          <p className="text-muted-foreground truncate text-xs">{currentTrack.artist}</p>
+          <button
+            onClick={() => setShowFullPlayer(true)}
+            className="block w-full min-w-0 truncate text-left text-sm font-medium hover:underline"
+          >
+            {currentTrack.title}
+          </button>
+          <div className="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs">
+            {reciterSlug ? (
+              <Link href={`/reciter/${reciterSlug}`} className="min-w-0 truncate hover:underline">
+                {currentTrack.artist}
+              </Link>
+            ) : (
+              <span className="min-w-0 truncate">{currentTrack.artist}</span>
+            )}
+            {rewayahName ? (
+              <>
+                <span aria-hidden className="shrink-0 opacity-50">
+                  ·
+                </span>
+                <span className="shrink-0 capitalize">{rewayahName}</span>
+              </>
+            ) : null}
+          </div>
         </div>
-      </button>
+      </div>
 
       {/* Controls + Progress — Center */}
       <div className="flex max-w-[600px] flex-1 flex-col items-center gap-1">
