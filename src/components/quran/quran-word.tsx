@@ -39,11 +39,13 @@ export function QuranWord({
     });
   }, [toggle, word.verse_key]);
 
+  const hasPopover = Boolean(word.translation?.text || word.transliteration?.text);
+
   return (
     <span
       ref={ref}
       className={cn(
-        "inline-block cursor-pointer transition-colors hover:text-blue-400/80",
+        "group/word relative inline-block cursor-pointer transition-colors hover:text-[var(--brand-main)]",
         !isFontLoaded && "font-[UthmanicHafs]",
         isSelected && "rounded bg-[var(--text-alpha-10)]",
         className,
@@ -74,6 +76,32 @@ export function QuranWord({
       }
     >
       {text}
+      {hasPopover ? <WordPopover word={word} /> : null}
+    </span>
+  );
+}
+
+function WordPopover({ word }: { word: QcfWord }) {
+  return (
+    <span
+      role="tooltip"
+      className={cn(
+        "pointer-events-none absolute -top-2 left-1/2 z-50 flex -translate-x-1/2 -translate-y-full flex-col items-center gap-1 rounded-xl bg-[var(--foreground)] px-3 py-2 text-center opacity-0 shadow-[var(--elevation-m)] transition-opacity duration-[160ms]",
+        "group-hover/word:opacity-100",
+        "whitespace-nowrap",
+      )}
+      style={{ fontFamily: "var(--font-manrope), system-ui, sans-serif" }}
+    >
+      {word.transliteration?.text ? (
+        <span className="text-[13px] leading-tight font-semibold text-[var(--background)]">
+          {word.transliteration.text}
+        </span>
+      ) : null}
+      {word.translation?.text ? (
+        <span className="text-[11px] leading-tight text-[var(--background)]/70">
+          {word.translation.text}
+        </span>
+      ) : null}
     </span>
   );
 }

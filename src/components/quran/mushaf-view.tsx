@@ -85,13 +85,15 @@ export function MushafView() {
             </div>
           </div>
         ) : (
-          <MushafPage
-            verses={verses}
-            pageNumber={currentPage}
-            isFontLoaded={isPageFontLoaded(currentPage)}
-            fontFamily={getFontFamily(currentPage)}
-            fontSize={`${fontSize}rem`}
-          />
+          <div key={currentPage} className="animate-page-fade-in">
+            <MushafPage
+              verses={verses}
+              pageNumber={currentPage}
+              isFontLoaded={isPageFontLoaded(currentPage)}
+              fontFamily={getFontFamily(currentPage)}
+              fontSize={`${fontSize}rem`}
+            />
+          </div>
         )}
       </div>
       <MushafActionBar verses={verses} />

@@ -44,7 +44,7 @@ function ContinueListeningCard() {
   if (!track) return null;
 
   return (
-    <div className="group relative flex items-center gap-4 overflow-hidden rounded-xl border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]">
+    <div className="group border-border bg-surface-raised hover:bg-accent duration-fast ease-standard relative flex items-center gap-4 overflow-hidden rounded-xl border p-4 transition-colors">
       <div className="bg-muted h-16 w-16 shrink-0 overflow-hidden rounded-lg">
         {track.artwork ? (
           <Image
@@ -67,7 +67,7 @@ function ContinueListeningCard() {
       </div>
       <button
         onClick={() => void play()}
-        className="bg-foreground text-background flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-transform hover:scale-105"
+        className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong duration-fast ease-standard flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors"
       >
         <PlayIcon size={14} color="currentColor" />
         Resume
@@ -87,7 +87,7 @@ function ContinueReadingCard() {
     return (
       <Link
         href={`/quran/${lastSurah.id}`}
-        className="group relative flex items-center gap-4 overflow-hidden rounded-xl border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
+        className="group border-border bg-surface-raised hover:bg-accent duration-fast ease-standard relative flex items-center gap-4 overflow-hidden rounded-xl border p-4 transition-colors"
       >
         <div className="text-muted-foreground bg-background flex h-16 w-16 shrink-0 items-center justify-center rounded-lg">
           <QuranIcon size={28} />
@@ -110,7 +110,7 @@ function ContinueReadingCard() {
   return (
     <Link
       href="/quran"
-      className="group relative flex items-center gap-4 overflow-hidden rounded-xl border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
+      className="group border-border bg-surface-raised hover:bg-accent duration-fast ease-standard relative flex items-center gap-4 overflow-hidden rounded-xl border p-4 transition-colors"
     >
       <div className="text-muted-foreground bg-background flex h-16 w-16 shrink-0 items-center justify-center rounded-lg">
         <QuranIcon size={28} />

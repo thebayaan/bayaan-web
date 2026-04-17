@@ -29,8 +29,16 @@ export function BottomPlayerBar() {
   const seekTo = usePlayerStore((s) => s.seekTo);
   const setRepeatMode = usePlayerStore((s) => s.setRepeatMode);
   const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
+  const setRate = usePlayerStore((s) => s.setRate);
 
   const currentTrack = tracks[currentIndex];
+  const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] as const;
+
+  const cycleRate = (): void => {
+    const idx = PLAYBACK_RATES.indexOf(settings.rate as (typeof PLAYBACK_RATES)[number]);
+    const next = PLAYBACK_RATES[(idx + 1) % PLAYBACK_RATES.length]!;
+    setRate(next);
+  };
 
   const [showFullPlayer, setShowFullPlayer] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
@@ -141,6 +149,14 @@ export function BottomPlayerBar() {
             <line x1="3" y1="12" x2="3.01" y2="12" />
             <line x1="3" y1="18" x2="3.01" y2="18" />
           </svg>
+        </button>
+        <button
+          type="button"
+          onClick={cycleRate}
+          aria-label={`Playback rate ${settings.rate}x`}
+          className="hover:bg-surface-raised duration-fast ease-standard min-w-[44px] rounded-md px-2 py-1 text-xs font-semibold tabular-nums transition-colors"
+        >
+          {settings.rate}x
         </button>
         <VolumeControl
           volume={playback.volume}

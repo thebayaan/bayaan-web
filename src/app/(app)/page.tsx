@@ -8,9 +8,9 @@ import type { Reciter } from "@/types/reciter";
 function ReciterSection({ title, reciters }: { title: string; reciters: Reciter[] }) {
   if (reciters.length === 0) return null;
   return (
-    <section className="mb-8">
-      <h2 className="mb-4 text-xl font-bold">{title}</h2>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+    <section className="mb-10">
+      <h2 className="text-foreground mb-4 text-[22px] font-bold tracking-tight">{title}</h2>
+      <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
         {reciters.map((reciter) => (
           <ReciterCard key={reciter.id} reciter={reciter} />
         ))}
@@ -29,13 +29,13 @@ export default function HomePage() {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-8">
-          <div className="h-8 w-48 rounded bg-[var(--text-alpha-06)]" />
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="space-y-3">
-                <div className="aspect-square rounded-lg bg-[var(--text-alpha-06)]" />
-                <div className="h-4 w-3/4 rounded bg-[var(--text-alpha-06)]" />
-                <div className="h-3 w-1/2 rounded bg-[var(--text-alpha-04)]" />
+          <div className="bg-surface-sunken h-8 w-48 rounded" />
+          <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div key={i} className="space-y-2">
+                <div className="bg-surface-sunken aspect-square rounded-lg" />
+                <div className="bg-surface-sunken h-3 w-3/4 rounded" />
+                <div className="bg-surface-raised h-2.5 w-1/2 rounded" />
               </div>
             ))}
           </div>

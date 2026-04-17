@@ -3,7 +3,6 @@
 import { HomeIcon, QuranIcon, CollectionIcon, SettingsIcon } from "@/components/icons";
 import { SidebarNavItem } from "./sidebar-nav-item";
 import { ContinueReadingCard } from "./continue-reading-card";
-import { UserButton } from "@clerk/nextjs";
 
 const NAV_ITEMS = [
   { href: "/", icon: HomeIcon, label: "Home" },
@@ -25,14 +24,6 @@ export function Sidebar() {
           <ContinueReadingCard />
         </div>
         <SidebarNavItem href="/settings" icon={SettingsIcon} label="Settings" />
-        <div className="flex items-center gap-3 px-3 py-2">
-          <UserButton
-            appearance={{
-              elements: { avatarBox: "w-7 h-7" },
-            }}
-          />
-          <span className="text-muted-foreground hidden text-sm lg:inline">Account</span>
-        </div>
       </div>
     </aside>
   );

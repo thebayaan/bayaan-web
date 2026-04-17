@@ -26,8 +26,8 @@ export function MobileTabBar() {
               key={href}
               href={href}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-2 py-1 text-xs transition-colors",
-                isActive ? "text-foreground" : "text-muted-foreground",
+                "duration-fast ease-standard flex flex-col items-center gap-0.5 px-2 py-1 text-xs transition-colors",
+                isActive ? "text-brand-main" : "text-muted-foreground",
               )}
             >
               <Icon size={20} filled={isActive} />
