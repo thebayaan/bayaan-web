@@ -48,9 +48,25 @@ describe("ReciterCard", () => {
     expect(img).toBeInTheDocument();
   });
 
-  it("shows rewayat style badge", () => {
+  it("shows the rewayat name when there is exactly one", () => {
     render(<ReciterCard reciter={mockReciter} />);
-    expect(screen.getByText(/murattal/i)).toBeInTheDocument();
+    expect(screen.getByText("Hafs A'n Assem")).toBeInTheDocument();
+  });
+
+  it("shows a rewayat count when there are multiple", () => {
+    const multi = {
+      ...mockReciter,
+      rewayat: [
+        ...mockReciter.rewayat,
+        {
+          ...mockReciter.rewayat[0]!,
+          id: "rw-2",
+          name: "Warsh",
+        },
+      ],
+    };
+    render(<ReciterCard reciter={multi} />);
+    expect(screen.getByText("2 rewayat")).toBeInTheDocument();
   });
 
   it("links to reciter profile", () => {

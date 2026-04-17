@@ -45,8 +45,6 @@ export default function HomePage() {
 
   return (
     <div className="p-6">
-      <h1 className="mb-6 text-3xl font-bold">Good evening</h1>
-
       <ReciterSection title="Featured Reciters" reciters={featured} />
       <ReciterSection title="All Reciters" reciters={reciters.slice(0, 18)} />
       <ReciterSection title="Murattal" reciters={murattal.slice(0, 12)} />

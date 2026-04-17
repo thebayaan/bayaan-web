@@ -9,32 +9,36 @@ interface ReciterCardProps {
 }
 
 export function ReciterCard({ reciter, className }: ReciterCardProps) {
-  const primaryRewayat = reciter.rewayat[0];
-  const surahCount = primaryRewayat?.surah_total ?? 0;
-  const style = primaryRewayat?.style ?? "murattal";
+  const rewayatCount = reciter.rewayat.length;
+  const rewayatLabel =
+    rewayatCount === 0
+      ? ""
+      : rewayatCount === 1
+        ? (reciter.rewayat[0]?.name ?? "")
+        : `${rewayatCount} rewayat`;
 
   return (
     <Link
       href={`/reciter/${reciter.slug}`}
       className={cn(
-        "group block rounded-xl bg-[var(--text-alpha-04)] p-3 transition-colors hover:bg-[var(--text-alpha-06)]",
+        "group block rounded-lg transition-colors hover:bg-[var(--text-alpha-04)]",
         className,
       )}
     >
-      <div className="relative mb-3 aspect-square overflow-hidden rounded-lg bg-[var(--text-alpha-06)]">
+      <div className="relative mb-2 aspect-square overflow-hidden rounded-lg bg-[var(--text-alpha-06)]">
         {reciter.image_url ? (
           <Image
             src={reciter.image_url}
             alt={reciter.name}
             fill
             className="object-cover transition-transform group-hover:scale-105"
-            sizes="(max-width: 768px) 50vw, 200px"
+            sizes="(max-width: 768px) 33vw, 160px"
           />
         ) : (
           <div className="text-muted-foreground flex h-full w-full items-center justify-center">
             <svg
-              width={48}
-              height={48}
+              width={32}
+              height={32}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -46,10 +50,12 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
           </div>
         )}
       </div>
-      <p className="truncate text-sm font-semibold">{reciter.name}</p>
-      <p className="text-muted-foreground mt-0.5 text-xs capitalize">
-        {style} &middot; {surahCount} Surahs
-      </p>
+      <p className="truncate text-[13px] leading-tight font-semibold">{reciter.name}</p>
+      {rewayatLabel ? (
+        <p className="text-muted-foreground mt-0.5 truncate text-[11px] font-medium">
+          {rewayatLabel}
+        </p>
+      ) : null}
     </Link>
   );
 }
