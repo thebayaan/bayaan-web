@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type ThemeMode = "light" | "dark" | "system";
+export type ThemeMode = "light" | "dark" | "sepia" | "system";
+export type ResolvedTheme = "light" | "dark" | "sepia";
 
 interface ThemeState {
   themeMode: ThemeMode;
@@ -23,7 +24,7 @@ function getSystemTheme(): "light" | "dark" {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-export function getResolvedTheme(mode: ThemeMode): "light" | "dark" {
+export function getResolvedTheme(mode: ThemeMode): ResolvedTheme {
   if (mode === "system") return getSystemTheme();
   return mode;
 }

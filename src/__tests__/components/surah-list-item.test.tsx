@@ -16,30 +16,29 @@ describe("SurahListItem", () => {
     translated_name_english: "The Opening",
   };
 
-  it("renders surah number, name, and translation", () => {
+  it("renders the surah name and the SurahNames glyph", () => {
     render(<SurahListItem surah={mockSurah} onPlay={vi.fn()} />);
-    expect(screen.getByText("1")).toBeInTheDocument();
     expect(screen.getByText("Al-Faatiha")).toBeInTheDocument();
-    expect(screen.getByText("The Opening")).toBeInTheDocument();
+    // Surah 1 maps to U+E904 in the SurahNames font
+    expect(screen.getByText("\uE904")).toBeInTheDocument();
   });
 
-  it("shows verse count", () => {
+  it("shows ayah count and english meaning", () => {
     render(<SurahListItem surah={mockSurah} onPlay={vi.fn()} />);
-    expect(screen.getByText(/7 verses/i)).toBeInTheDocument();
+    expect(screen.getByText(/The Opening/)).toBeInTheDocument();
+    expect(screen.getByText(/7 ayahs/i)).toBeInTheDocument();
   });
 
-  it("calls onPlay when play button clicked", async () => {
+  it("calls onPlay with the surah id when the row is clicked", async () => {
     const user = userEvent.setup();
     const onPlay = vi.fn();
     render(<SurahListItem surah={mockSurah} onPlay={onPlay} />);
-    await user.click(screen.getByRole("button", { name: /play/i }));
+    await user.click(screen.getByRole("button"));
     expect(onPlay).toHaveBeenCalledWith(1);
   });
 
-  it("shows currently playing indicator", () => {
-    render(<SurahListItem surah={mockSurah} onPlay={vi.fn()} isPlaying />);
-    // When playing, the item should have visual distinction
-    const item = screen.getByText("Al-Faatiha").closest("div");
-    expect(item?.className).toContain("text-foreground");
+  it("renders the equalizer glyph when this row is the currently-playing track", () => {
+    render(<SurahListItem surah={mockSurah} onPlay={vi.fn()} isPlaying isCurrentTrack />);
+    expect(screen.getByLabelText("Currently playing")).toBeInTheDocument();
   });
 });

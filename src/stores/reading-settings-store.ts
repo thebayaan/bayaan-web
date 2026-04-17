@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+export type ReaderViewMode = "reading" | "mushaf";
+
 export interface ReadingSettingsState {
   fontSize: number;
   lightThemeId: string;
@@ -10,6 +12,7 @@ export interface ReadingSettingsState {
   showWordByWord: boolean;
   showTajweed: boolean;
   mushafPage: number;
+  viewMode: ReaderViewMode;
   /**
    * Last surah the user opened in the reading view, plus the ISO
    * timestamp of when. Powers the "Continue reading" card on /home.
@@ -25,6 +28,7 @@ export interface ReadingSettingsState {
   toggleWordByWord: () => void;
   toggleTajweed: () => void;
   setMushafPage: (page: number) => void;
+  setViewMode: (mode: ReaderViewMode) => void;
   markSurahRead: (surahId: number) => void;
 }
 
@@ -39,6 +43,7 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       showWordByWord: false,
       showTajweed: false,
       mushafPage: 1,
+      viewMode: "reading",
       lastReadSurahId: null,
       lastReadSurahAt: null,
       setFontSize: (size) => set({ fontSize: size }),
@@ -49,6 +54,7 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       toggleWordByWord: () => set((s) => ({ showWordByWord: !s.showWordByWord })),
       toggleTajweed: () => set((s) => ({ showTajweed: !s.showTajweed })),
       setMushafPage: (page) => set({ mushafPage: page }),
+      setViewMode: (mode) => set({ viewMode: mode }),
       markSurahRead: (surahId) =>
         set({ lastReadSurahId: surahId, lastReadSurahAt: new Date().toISOString() }),
     }),

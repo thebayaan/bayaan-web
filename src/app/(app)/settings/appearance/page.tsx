@@ -1,11 +1,9 @@
 "use client";
 
-import { useThemeStore } from "@/stores/theme-store";
+import { useThemeStore, type ThemeMode } from "@/stores/theme-store";
 import { SettingsShell } from "@/components/settings/settings-shell";
 
-type ThemeMode = "light" | "dark" | "system";
-
-const MODES: ThemeMode[] = ["light", "dark", "system"];
+const MODES: ThemeMode[] = ["light", "dark", "sepia", "system"];
 
 export default function AppearanceSettingsPage() {
   const themeMode = useThemeStore((s) => s.themeMode);

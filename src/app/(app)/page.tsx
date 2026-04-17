@@ -46,8 +46,6 @@ export default function HomePage() {
 
   return (
     <div className="p-6">
-      <h1 className="mb-6 text-3xl font-bold">Good evening</h1>
-
       <ContinueWhereYouLeftOff />
 
       <ReciterSection title="Featured Reciters" reciters={featured} />

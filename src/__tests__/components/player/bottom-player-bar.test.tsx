@@ -61,8 +61,9 @@ import { BottomPlayerBar } from "@/components/player/bottom-player-bar";
 describe("BottomPlayerBar", () => {
   it("renders track info when a track is loaded", () => {
     render(<BottomPlayerBar />);
-    expect(screen.getByText("Al-Fatiha")).toBeInTheDocument();
-    expect(screen.getByText("Mishary Alafasy")).toBeInTheDocument();
+    // Title and artist appear in both the bottom bar and the (always-mounted, hidden) full player view.
+    expect(screen.getAllByText("Al-Fatiha").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Mishary Alafasy").length).toBeGreaterThan(0);
   });
 
   it("renders play/pause button", () => {

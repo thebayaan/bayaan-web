@@ -1,5 +1,5 @@
-import { MushafView } from "@/components/quran/mushaf-view";
+import { SurahIndexGrid } from "@/components/quran/surah-index-grid";
 
 export default function QuranPage() {
-  return <MushafView />;
+  return <SurahIndexGrid />;
 }

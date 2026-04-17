@@ -37,7 +37,10 @@ export function BottomPlayerBar() {
 
   if (!currentTrack) {
     return (
-      <footer className="border-border bg-background/80 flex h-20 items-center justify-center border-t px-4 backdrop-blur-2xl">
+      <footer
+        data-player-hidden={false}
+        className="border-border bg-background/80 duration-regular ease-standard flex h-20 items-center justify-center border-t px-4 backdrop-blur-2xl transition-transform data-[player-hidden=true]:translate-y-full"
+      >
         <p className="text-muted-foreground text-sm">Select a reciter to start listening</p>
       </footer>
     );
@@ -70,7 +73,10 @@ export function BottomPlayerBar() {
   };
 
   return (
-    <footer className="border-border bg-background/80 flex h-20 items-center gap-4 border-t px-4 backdrop-blur-2xl">
+    <footer
+      data-player-hidden={false}
+      className="border-border bg-background/80 duration-regular ease-standard flex h-20 items-center gap-4 border-t px-4 backdrop-blur-2xl transition-transform data-[player-hidden=true]:translate-y-full"
+    >
       {/* Track Info — Left */}
       <button
         onClick={() => setShowFullPlayer(true)}

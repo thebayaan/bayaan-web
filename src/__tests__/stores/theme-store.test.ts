@@ -19,6 +19,11 @@ describe("theme-store", () => {
     useThemeStore.getState().setThemeMode("system");
     expect(useThemeStore.getState().themeMode).toBe("system");
   });
+
+  it("accepts sepia as a theme mode", () => {
+    useThemeStore.getState().setThemeMode("sepia");
+    expect(useThemeStore.getState().themeMode).toBe("sepia");
+  });
 });
 
 describe("getResolvedTheme", () => {
@@ -28,6 +33,10 @@ describe("getResolvedTheme", () => {
 
   it("resolves dark mode", () => {
     expect(getResolvedTheme("dark")).toBe("dark");
+  });
+
+  it("resolves sepia mode", () => {
+    expect(getResolvedTheme("sepia")).toBe("sepia");
   });
 
   it("resolves system mode to dark or light", () => {
