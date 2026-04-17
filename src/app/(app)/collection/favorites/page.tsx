@@ -12,7 +12,7 @@ export default function FavoritesPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-16 animate-pulse rounded-lg bg-[var(--text-alpha-06)]" />
+            <div key={i} className="bg-surface-sunken h-16 animate-pulse rounded-lg" />
           ))}
         </div>
       ) : favorites.length === 0 ? (
@@ -26,10 +26,7 @@ export default function FavoritesPage() {
       ) : (
         <div className="space-y-2">
           {favorites.map((fav) => (
-            <div
-              key={fav.id}
-              className="flex items-center gap-3 rounded-lg bg-[var(--text-alpha-04)] p-3"
-            >
+            <div key={fav.id} className="bg-surface-raised flex items-center gap-3 rounded-lg p-3">
               <p className="text-sm">Surah {fav.surah_id}</p>
               <p className="text-muted-foreground text-xs">
                 Reciter {fav.reciter_id.slice(0, 8)}...

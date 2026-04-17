@@ -12,7 +12,7 @@ export default function NotesPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-20 animate-pulse rounded-lg bg-[var(--text-alpha-06)]" />
+            <div key={i} className="bg-surface-sunken h-20 animate-pulse rounded-lg" />
           ))}
         </div>
       ) : notes.length === 0 ? (
@@ -28,7 +28,7 @@ export default function NotesPage() {
             <Link
               key={note.id}
               href={`/quran/${note.verse_key.split(":")[0]}`}
-              className="block rounded-lg bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
+              className="bg-surface-raised hover:bg-accent block rounded-lg p-4 transition-colors"
             >
               <div className="mb-1 flex items-center justify-between">
                 <p className="text-sm font-medium">{note.verse_key}</p>

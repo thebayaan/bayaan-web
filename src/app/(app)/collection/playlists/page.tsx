@@ -26,7 +26,7 @@ export default function PlaylistsPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-16 animate-pulse rounded-lg bg-[var(--text-alpha-06)]" />
+            <div key={i} className="bg-surface-sunken h-16 animate-pulse rounded-lg" />
           ))}
         </div>
       ) : playlists.length === 0 ? (
@@ -45,7 +45,7 @@ export default function PlaylistsPage() {
           {playlists.map((playlist) => (
             <li
               key={playlist.id}
-              className="group relative rounded-xl bg-[var(--text-alpha-04)] transition-colors hover:bg-[var(--text-alpha-06)]"
+              className="group bg-surface-raised hover:bg-accent relative rounded-xl transition-colors"
             >
               <Link href={`/collection/playlists/${playlist.id}`} className="block p-4 pr-12">
                 <p className="truncate font-semibold">{playlist.name}</p>

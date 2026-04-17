@@ -18,7 +18,7 @@ export default function BookmarksPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-16 animate-pulse rounded-lg bg-[var(--text-alpha-06)]" />
+            <div key={i} className="bg-surface-sunken h-16 animate-pulse rounded-lg" />
           ))}
         </div>
       ) : bookmarks.length === 0 ? (
@@ -36,7 +36,7 @@ export default function BookmarksPage() {
             return (
               <li
                 key={bm.id}
-                className="group relative flex items-center justify-between rounded-lg bg-[var(--text-alpha-04)] pr-2 transition-colors hover:bg-[var(--text-alpha-06)]"
+                className="group bg-surface-raised hover:bg-accent relative flex items-center justify-between rounded-lg pr-2 transition-colors"
               >
                 <Link
                   href={`/quran/${bm.surah_number}/${bm.ayah_number}`}

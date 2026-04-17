@@ -37,10 +37,10 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
   if (isLoading) {
     return (
       <div className="p-6">
-        <div className="h-8 w-56 animate-pulse rounded bg-[var(--text-alpha-06)]" />
+        <div className="bg-surface-sunken h-8 w-56 animate-pulse rounded" />
         <div className="mt-6 space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-12 animate-pulse rounded-lg bg-[var(--text-alpha-06)]" />
+            <div key={i} className="bg-surface-sunken h-12 animate-pulse rounded-lg" />
           ))}
         </div>
       </div>
@@ -82,13 +82,13 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
         <div className="flex gap-2">
           <button
             onClick={() => setRenaming(true)}
-            className="rounded-lg bg-[var(--text-alpha-06)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--text-alpha-10)]"
+            className="bg-surface-sunken hover:bg-accent rounded-lg px-3 py-1.5 text-sm transition-colors"
           >
             Rename
           </button>
           <button
             onClick={() => setDeleting(true)}
-            className="text-destructive rounded-lg bg-[var(--text-alpha-06)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--text-alpha-10)]"
+            className="text-destructive bg-surface-sunken hover:bg-accent rounded-lg px-3 py-1.5 text-sm transition-colors"
           >
             Delete
           </button>
@@ -96,11 +96,11 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
       </div>
 
       {items.length === 0 ? (
-        <div className="text-muted-foreground mt-10 rounded-xl bg-[var(--text-alpha-04)] p-8 text-center text-sm">
+        <div className="text-muted-foreground bg-surface-raised mt-10 rounded-xl p-8 text-center text-sm">
           No tracks yet. Add tracks to this playlist from a reciter page.
         </div>
       ) : (
-        <ul className="mt-6 divide-y divide-[var(--text-alpha-06)]">
+        <ul className="divide-border-divider mt-6 divide-y">
           {items.map((item) => (
             <li key={item.id} className="group flex items-center gap-3 py-3">
               <span className="text-muted-foreground w-6 text-right text-sm tabular-nums">
@@ -116,7 +116,7 @@ export default function PlaylistDetailPage({ params }: { params: Promise<{ id: s
                 onClick={() => void handleRemoveItem(item.id)}
                 disabled={removingItemId === item.id}
                 aria-label={`Remove ${surahNameMap[item.surah_id] ?? `Surah ${item.surah_id}`} from playlist`}
-                className="text-muted-foreground hover:text-destructive rounded-full p-2 opacity-0 transition-colors group-hover:opacity-100 hover:bg-[var(--text-alpha-06)] focus:opacity-100 disabled:opacity-50"
+                className="text-muted-foreground hover:text-destructive hover:bg-accent rounded-full p-2 opacity-0 transition-colors group-hover:opacity-100 focus:opacity-100 disabled:opacity-50"
               >
                 <svg
                   width={14}
