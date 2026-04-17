@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
-import { ReadingView } from "@/components/quran/reading-view";
+import { ReaderContent } from "@/components/quran/reader-content";
 import { ReadingSubHeader } from "@/components/quran/reading-sub-header";
 import { ReadingProgressTracker } from "@/components/quran/reading-progress-tracker";
 
@@ -36,7 +36,7 @@ export default async function QuranSurahPage({ params }: { params: Promise<{ sur
     <>
       <ReadingSubHeader surah={match} />
       <ReadingProgressTracker surah={match} />
-      <ReadingView surahId={match.id} />
+      <ReaderContent surahId={match.id} />
     </>
   );
 }

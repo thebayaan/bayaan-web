@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { Surah } from "@/types/quran";
 import { ReadingSettingsSheet } from "./reading-settings-sheet";
+import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 
 interface Props {
   surah: Surah;
@@ -13,6 +14,8 @@ interface Props {
 
 export function ReadingSubHeader({ surah, page, juz }: Props): React.JSX.Element {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const viewMode = useReadingSettingsStore((s) => s.viewMode);
+  const setViewMode = useReadingSettingsStore((s) => s.setViewMode);
 
   return (
     <>
@@ -59,6 +62,53 @@ export function ReadingSubHeader({ surah, page, juz }: Props): React.JSX.Element
 
         <div className="flex-1" />
 
+        <div className="border-border bg-surface-sunken inline-flex items-center rounded-full border p-1">
+          <ViewModeButton
+            active={viewMode === "reading"}
+            onClick={() => setViewMode("reading")}
+            label="List"
+            icon={
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="8" y1="6" x2="21" y2="6" />
+                <line x1="8" y1="12" x2="21" y2="12" />
+                <line x1="8" y1="18" x2="21" y2="18" />
+                <line x1="3" y1="6" x2="3.01" y2="6" />
+                <line x1="3" y1="12" x2="3.01" y2="12" />
+                <line x1="3" y1="18" x2="3.01" y2="18" />
+              </svg>
+            }
+          />
+          <ViewModeButton
+            active={viewMode === "mushaf"}
+            onClick={() => setViewMode("mushaf")}
+            label="Mushaf"
+            icon={
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              </svg>
+            }
+          />
+        </div>
+
         <button
           type="button"
           onClick={() => setSettingsOpen(true)}
@@ -83,5 +133,30 @@ export function ReadingSubHeader({ surah, page, juz }: Props): React.JSX.Element
 
       <ReadingSettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} />
     </>
+  );
+}
+
+function ViewModeButton({
+  active,
+  onClick,
+  label,
+  icon,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`duration-fast ease-standard flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold transition-colors ${
+        active ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
   );
 }
