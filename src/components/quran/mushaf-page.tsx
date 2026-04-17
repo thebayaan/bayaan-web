@@ -40,6 +40,7 @@ export function MushafPage({
           isFontLoaded={isFontLoaded}
           fontFamily={fontFamily}
           mushafMode
+          selectable
           fontSize={fontSize}
           className="w-full max-w-[640px]"
         />
