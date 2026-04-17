@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import { SurahIndexCard } from "./surah-index-card";
-import { useContinueReading } from "@/hooks/use-continue-reading";
+import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 
 const surahs = surahData as unknown as Surah[];
 
@@ -13,7 +13,7 @@ type Tab = "surah" | "juz" | "revelation";
 export function SurahIndexGrid() {
   const [tab, setTab] = useState<Tab>("surah");
   const [filter, setFilter] = useState("");
-  const continueReading = useContinueReading();
+  const lastReadSurahId = useReadingSettingsStore((s) => s.lastReadSurahId);
 
   const sorted = useMemo(() => {
     const list = [...surahs];
@@ -71,7 +71,7 @@ export function SurahIndexGrid() {
 
       <div className="grid grid-cols-1 gap-3 pt-7 md:grid-cols-2 lg:grid-cols-3">
         {filtered.map((s) => (
-          <SurahIndexCard key={s.id} surah={s} isResume={continueReading?.surahId === s.id} />
+          <SurahIndexCard key={s.id} surah={s} isResume={lastReadSurahId === s.id} />
         ))}
       </div>
     </div>

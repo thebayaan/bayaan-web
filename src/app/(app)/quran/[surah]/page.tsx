@@ -4,7 +4,6 @@ import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import { ReaderContent } from "@/components/quran/reader-content";
 import { ReadingSubHeader } from "@/components/quran/reading-sub-header";
-import { ReadingProgressTracker } from "@/components/quran/reading-progress-tracker";
 
 const surahs = surahData as unknown as Surah[];
 
@@ -35,7 +34,6 @@ export default async function QuranSurahPage({ params }: { params: Promise<{ sur
   return (
     <>
       <ReadingSubHeader surah={match} />
-      <ReadingProgressTracker surah={match} />
       <ReaderContent surahId={match.id} />
     </>
   );

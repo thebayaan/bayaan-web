@@ -4,7 +4,6 @@ import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import { ReadingView } from "@/components/quran/reading-view";
 import { ReadingSubHeader } from "@/components/quran/reading-sub-header";
-import { ReadingProgressTracker } from "@/components/quran/reading-progress-tracker";
 
 const surahs = surahData as unknown as Surah[];
 
@@ -45,7 +44,6 @@ export default async function QuranAyahPage({
   return (
     <>
       <ReadingSubHeader surah={match} />
-      <ReadingProgressTracker surah={match} verseId={resolved.ayahId} />
       <ReadingView surahId={resolved.surahId} targetAyah={resolved.ayahId} />
     </>
   );
