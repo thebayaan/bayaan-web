@@ -3,6 +3,7 @@
 import { use, useMemo } from "react";
 import { useReciters } from "@/hooks/use-reciters";
 import { usePlayerStore } from "@/stores/player-store";
+import { useAuthGate } from "@/hooks/use-auth-gate";
 import { createTrack } from "@/lib/audio-utils";
 import { PlayIcon } from "@/components/icons";
 import surahData from "@/data/surah-data.json";
@@ -17,6 +18,7 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
   const surah = surahs.find((s) => s.id === surahId);
   const { reciters, isLoading } = useReciters();
   const updateQueue = usePlayerStore((s) => s.updateQueue);
+  const gate = useAuthGate();
 
   const availableReciters = useMemo(
     () => reciters.filter((r) => r.rewayat.some((rw) => rw.surah_list.includes(surahId))),
@@ -91,7 +93,7 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
                   </div>
                 </Link>
                 <button
-                  onClick={() => handlePlayReciter(reciter.id)}
+                  onClick={gate(() => handlePlayReciter(reciter.id))}
                   className="text-muted-foreground hover:text-foreground rounded-full p-2 opacity-0 transition-colors group-hover:opacity-100 hover:bg-[var(--text-alpha-06)] focus:opacity-100"
                   aria-label={`Play ${reciter.name}`}
                 >
