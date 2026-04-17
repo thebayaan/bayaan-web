@@ -1,4 +1,5 @@
 "use client";
+import { useCallback, useRef } from "react";
 import type { QcfWord } from "@/types/quran-api";
 import { cn } from "@/lib/utils";
 import { useVerseSelectionStore } from "@/stores/verse-selection-store";
@@ -9,11 +10,6 @@ interface QuranWordProps {
   isFontLoaded: boolean;
   fontFamily: string;
   className?: string;
-  /**
-   * When true, clicking the word selects its verse (enables the mushaf
-   * floating action bar). Leave false in contexts like the reading view
-   * where per-verse controls live elsewhere.
-   */
   selectable?: boolean;
 }
 
@@ -30,9 +26,22 @@ export function QuranWord({
   const isSelected = selectable && selectedVerseKey === word.verse_key;
   const { getHighlight } = useHighlights();
   const highlight = selectable ? getHighlight(word.verse_key) : undefined;
+  const ref = useRef<HTMLSpanElement | null>(null);
+
+  const handleSelect = useCallback(() => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    toggle(word.verse_key, {
+      top: rect.top + window.scrollY,
+      left: rect.left + window.scrollX,
+      width: rect.width,
+      height: rect.height,
+    });
+  }, [toggle, word.verse_key]);
 
   return (
     <span
+      ref={ref}
       className={cn(
         "inline-block cursor-pointer transition-colors hover:text-blue-400/80",
         !isFontLoaded && "font-[UthmanicHafs]",
@@ -50,14 +59,7 @@ export function QuranWord({
       }}
       data-verse-key={word.verse_key}
       data-word-position={word.position}
-      onClick={
-        selectable
-          ? (e) => {
-              e.stopPropagation();
-              toggle(word.verse_key);
-            }
-          : undefined
-      }
+      onClick={selectable ? handleSelect : undefined}
       role={selectable ? "button" : undefined}
       tabIndex={selectable ? 0 : undefined}
       onKeyDown={
@@ -65,7 +67,7 @@ export function QuranWord({
           ? (e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
-                toggle(word.verse_key);
+                handleSelect();
               }
             }
           : undefined

@@ -17,10 +17,17 @@ function buildArabicText(verse: QcfVerse): string {
 const COMMON =
   "text-foreground rounded-full p-2 transition-colors hover:bg-[var(--text-alpha-10)] relative";
 
+const TOOLBAR_GAP = 8;
+
 export function MushafActionBar({ verses }: { verses: QcfVerse[] }) {
   const selectedVerseKey = useVerseSelectionStore((s) => s.selectedVerseKey);
+  const anchorRect = useVerseSelectionStore((s) => s.anchorRect);
   const clear = useVerseSelectionStore((s) => s.clear);
   const [copied, setCopied] = useState(false);
+  // Position above the clicked word using CSS transform for centering.
+  // anchorRect is in document coordinates (includes scrollY).
+  const anchorCenterX = anchorRect ? anchorRect.left + anchorRect.width / 2 : 0;
+  const anchorTopY = anchorRect ? anchorRect.top - TOOLBAR_GAP - 44 : 0;
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent): void {
@@ -44,7 +51,7 @@ export function MushafActionBar({ verses }: { verses: QcfVerse[] }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
     } catch {
-      // Ignore clipboard failures (non-HTTPS iframe, permissions).
+      // Ignore clipboard failures.
     }
   }
 
@@ -72,7 +79,12 @@ export function MushafActionBar({ verses }: { verses: QcfVerse[] }) {
     <div
       role="toolbar"
       aria-label={`Actions for verse ${verse.verse_key}`}
-      className="bg-background border-border pointer-events-auto fixed bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 rounded-full border px-2 py-1.5 shadow-xl"
+      className="bg-background border-border pointer-events-auto absolute z-30 flex items-center gap-1 rounded-full border px-2 py-1.5 shadow-xl"
+      style={
+        anchorRect
+          ? { top: anchorTopY, left: anchorCenterX, transform: "translateX(-50%)" }
+          : { position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)" }
+      }
     >
       <span className="text-muted-foreground px-2 text-xs font-medium tabular-nums">
         {verse.verse_key}
