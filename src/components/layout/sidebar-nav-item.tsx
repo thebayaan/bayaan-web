@@ -22,10 +22,10 @@ export function SidebarNavItem({ href, icon: Icon, label }: SidebarNavItemProps)
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+        "duration-fast ease-standard flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
         isActive
-          ? "bg-[var(--text-alpha-10)] font-semibold"
-          : "text-muted-foreground hover:bg-[var(--text-alpha-06)]",
+          ? "bg-brand-light text-brand-main font-semibold"
+          : "text-muted-foreground hover:bg-accent hover:text-foreground",
       )}
     >
       <Icon size={20} filled={isActive} />
