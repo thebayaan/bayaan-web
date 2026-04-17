@@ -51,35 +51,35 @@
 :root {
   --radius: 0.75rem;
 
-  /* Bayaan Light Mode */
+  /* Bayaan Light Mode — warm near-neutrals matching Paper */
   --background: #ffffff;
-  --foreground: oklch(0.15 0.03 220);
-  --card: #ffffff;
-  --card-foreground: oklch(0.15 0.03 220);
+  --foreground: #171717;
+  --card: #f8f7f5;
+  --card-foreground: #171717;
   --popover: #ffffff;
-  --popover-foreground: oklch(0.15 0.03 220);
-  --primary: oklch(0.15 0.03 220);
-  --primary-foreground: oklch(0.96 0.01 90);
-  --secondary: oklch(0.95 0 0);
-  --secondary-foreground: oklch(0.15 0.03 220);
-  --muted: oklch(0.94 0.01 90);
-  --muted-foreground: oklch(0.4 0.02 220);
-  --accent: oklch(0.94 0.01 90);
-  --accent-foreground: oklch(0.15 0.03 220);
+  --popover-foreground: #171717;
+  --primary: #171717;
+  --primary-foreground: #ffffff;
+  --secondary: #f8f7f5;
+  --secondary-foreground: #171717;
+  --muted: #f5f4f2;
+  --muted-foreground: #6f6d71;
+  --accent: #f5f4f2;
+  --accent-foreground: #171717;
   --destructive: oklch(0.55 0.22 25);
   --border: #e8e6e3;
   --input: #e8e6e3;
-  --ring: oklch(0.15 0.03 220);
+  --ring: #171717;
 
-  /* Sidebar */
-  --sidebar: oklch(0.94 0.01 90);
-  --sidebar-foreground: oklch(0.15 0.03 220);
-  --sidebar-primary: oklch(0.15 0.03 220);
-  --sidebar-primary-foreground: oklch(0.96 0.01 90);
-  --sidebar-accent: oklch(0.92 0.01 90);
-  --sidebar-accent-foreground: oklch(0.15 0.03 220);
-  --sidebar-border: oklch(0.9 0.01 90);
-  --sidebar-ring: oklch(0.15 0.03 220);
+  /* Sidebar — warmer than main background to establish depth */
+  --sidebar: #fafaf8;
+  --sidebar-foreground: #171717;
+  --sidebar-primary: #171717;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1efed;
+  --sidebar-accent-foreground: #171717;
+  --sidebar-border: #f1efed;
+  --sidebar-ring: #171717;
 }
 
 [data-theme="dark"] {
@@ -116,12 +116,12 @@
 
 /* Bayaan alpha utilities — replicates Color(text).alpha(N) pattern from mobile app */
 :root {
-  --text-alpha-04: rgba(6, 21, 28, 0.04);
-  --text-alpha-06: rgba(6, 21, 28, 0.06);
-  --text-alpha-10: rgba(6, 21, 28, 0.1);
-  --text-alpha-35: rgba(6, 21, 28, 0.35);
-  --text-alpha-50: rgba(6, 21, 28, 0.5);
-  --text-alpha-85: rgba(6, 21, 28, 0.85);
+  --text-alpha-04: rgba(23, 23, 23, 0.04);
+  --text-alpha-06: rgba(23, 23, 23, 0.06);
+  --text-alpha-10: rgba(23, 23, 23, 0.1);
+  --text-alpha-35: rgba(23, 23, 23, 0.35);
+  --text-alpha-50: rgba(23, 23, 23, 0.5);
+  --text-alpha-85: rgba(23, 23, 23, 0.85);
 }
 
 [data-theme="dark"] {
@@ -182,7 +182,7 @@
   /* Surfaces */
   --surface: var(--background);
   --surface-raised: var(--card);
-  --surface-sunken: oklch(0.92 0.01 90);
+  --surface-sunken: #eeedea;
 
   /* Brand accent ladder — Deezer purple */
   --brand-main: #a238ff;
@@ -192,7 +192,7 @@
   --brand-light: rgba(162, 56, 255, 0.08);
 
   /* Border and divider */
-  --border-divider: oklch(0.92 0.01 90);
+  --border-divider: #f1efed;
 
   /* Overlay scrim */
   --overlay: rgba(0, 0, 0, 0.6);
