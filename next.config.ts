@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
-import path from "path";
 
 const nextConfig: NextConfig = {
-  // Standalone output for Railway deployment (smaller image, includes all deps)
-  output: "standalone",
   images: {
     remotePatterns: [
       {
@@ -12,9 +9,6 @@ const nextConfig: NextConfig = {
         pathname: "/assets/**",
       },
     ],
-  },
-  turbopack: {
-    root: path.resolve(__dirname),
   },
 };
 
