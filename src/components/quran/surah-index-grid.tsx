@@ -36,12 +36,12 @@ export function SurahIndexGrid() {
   }, [sorted, filter]);
 
   return (
-    <div className="px-10 pb-20">
-      <header className="flex flex-col gap-3 pt-12 pb-8">
-        <h1 className="text-[56px] leading-none font-extrabold tracking-[-0.025em]">
+    <div className="px-4 pb-20 sm:px-10">
+      <header className="flex flex-col gap-3 pt-8 pb-6 sm:pt-12 sm:pb-8">
+        <h1 className="text-[36px] leading-tight font-extrabold tracking-[-0.025em] sm:text-[56px] sm:leading-none">
           Read the Quran
         </h1>
-        <p className="text-muted-foreground max-w-2xl text-[17px] leading-relaxed">
+        <p className="text-muted-foreground max-w-2xl text-[15px] leading-relaxed sm:text-[17px]">
           114 surahs. 6,236 verses. Browse by chapter, Juz, or revelation order — or jump straight
           into your last place.
         </p>

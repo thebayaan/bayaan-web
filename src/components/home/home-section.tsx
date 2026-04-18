@@ -38,7 +38,7 @@ export function HomeSection({ title, seeAllHref, children }: HomeSectionProps) {
   const hasNext = page < totalPages - 1;
 
   return (
-    <section className="mb-8 px-6">
+    <section className="mb-4 px-4 sm:mb-6 sm:px-6">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h2 className="text-base font-bold">{title}</h2>

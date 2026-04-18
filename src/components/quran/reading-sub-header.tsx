@@ -19,7 +19,7 @@ export function ReadingSubHeader({ surah, page, juz }: Props): React.JSX.Element
 
   return (
     <>
-      <div className="border-border-divider bg-surface/95 sticky top-0 z-20 flex flex-wrap items-center gap-4 border-b px-10 py-3 backdrop-blur-md">
+      <div className="border-border-divider bg-surface/95 sticky top-0 z-20 flex flex-wrap items-center gap-3 border-b px-4 py-3 backdrop-blur-md sm:gap-4 sm:px-10">
         <Link
           href="/quran"
           className="border-border bg-surface hover:bg-surface-raised duration-fast ease-standard flex items-center gap-2.5 rounded-xl border px-3 py-2 transition-colors"

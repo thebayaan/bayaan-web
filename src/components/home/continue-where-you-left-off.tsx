@@ -38,8 +38,8 @@ function ContinueListeningCard() {
   if (!track) return null;
 
   return (
-    <div className="group border-border bg-surface-raised hover:bg-accent duration-fast ease-standard relative flex items-center gap-4 overflow-hidden rounded-xl border p-4 transition-colors">
-      <div className="bg-muted h-16 w-16 shrink-0 overflow-hidden rounded-lg">
+    <div className="group border-border bg-surface-raised hover:bg-accent duration-fast ease-standard relative flex items-center gap-3 overflow-hidden rounded-xl border p-3 transition-colors sm:gap-4 sm:p-4">
+      <div className="bg-muted h-12 w-12 shrink-0 overflow-hidden rounded-lg sm:h-16 sm:w-16">
         {track.artwork ? (
           <Image
             src={track.artwork}
@@ -61,10 +61,11 @@ function ContinueListeningCard() {
       </div>
       <button
         onClick={() => void play()}
-        className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong duration-fast ease-standard flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors"
+        aria-label="Resume"
+        className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong duration-fast ease-standard flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors sm:h-auto sm:w-auto sm:gap-2 sm:px-4 sm:py-2"
       >
         <PlayIcon size={14} color="currentColor" />
-        Resume
+        <span className="hidden sm:inline">Resume</span>
       </button>
     </div>
   );
@@ -125,7 +126,7 @@ export function ContinueWhereYouLeftOff() {
   if (!hasListening && !hasReading) return null;
 
   return (
-    <section className="mb-8 grid gap-3 sm:grid-cols-2">
+    <section className="mb-4 grid gap-3 px-4 sm:mb-6 sm:grid-cols-2 sm:px-6">
       {hasListening ? <ContinueListeningCard /> : null}
       {hasReading ? <ContinueReadingCard /> : null}
     </section>

@@ -95,7 +95,7 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
     <div>
       <ReciterHeader reciter={reciter} totalSurahs={totalSurahs} />
 
-      <div className="flex flex-wrap items-center gap-3 px-10 pb-8">
+      <div className="flex flex-wrap items-center gap-3 px-4 pb-6 sm:px-10 sm:pb-8">
         <button
           onClick={handlePlayAll}
           type="button"
@@ -191,7 +191,7 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
         </button>
       </div>
 
-      <div className="border-border-divider flex items-center gap-7 border-b px-10">
+      <div className="border-border-divider flex items-center gap-5 overflow-x-auto border-b px-4 sm:gap-7 sm:px-10">
         {reciter.rewayat.map((rw, idx) => {
           const active = idx === selectedRewayatIdx;
           return (
