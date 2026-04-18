@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ogReciterUrl } from "@/lib/og-urls";
+import { fetchReciterServerSide } from "@/lib/reciter-server";
 import { ReciterPageClient } from "./reciter-page-client";
 
 export async function generateMetadata({
@@ -8,15 +9,26 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const title = `Reciter — ${slug}`;
+  const reciter = await fetchReciterServerSide(slug);
+  const name = reciter?.name ?? slug;
+  // Layout template already appends " — Bayaan" so the bare name is enough.
+  const title = name;
+  const description = reciter?.bio?.trim()
+    ? reciter.bio
+    : `Listen to ${name}'s recitations of the Holy Qur'an on Bayaan.`;
+  const ogUrl = ogReciterUrl(slug);
   return {
     title,
-    description: `Recitations of the Holy Qur'an.`,
+    description,
     openGraph: {
-      images: [{ url: ogReciterUrl(slug), width: 1200, height: 630 }],
+      title,
+      description,
+      images: [{ url: ogUrl, width: 1200, height: 1200, alt: name }],
     },
     twitter: {
-      images: [ogReciterUrl(slug)],
+      title,
+      description,
+      images: [ogUrl],
     },
   };
 }

@@ -23,7 +23,7 @@ export async function generateMetadata({
     title: `Mushaf — Page ${n}`,
     description: `Read page ${n} of the Holy Qur'an in the traditional mushaf layout.`,
     openGraph: {
-      images: [{ url: ogMushafUrl(n), width: 1200, height: 630 }],
+      images: [{ url: ogMushafUrl(n), width: 1200, height: 1200 }],
     },
     twitter: {
       images: [ogMushafUrl(n)],
