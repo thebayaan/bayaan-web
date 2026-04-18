@@ -11,7 +11,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const reciter = await fetchReciterServerSide(slug);
   const name = reciter?.name ?? slug;
-  // Layout template already appends " — Bayaan" so the bare name is enough.
+  // Layout template appends " | Bayaan" — keep this title bare.
   const title = name;
   const description = reciter?.bio?.trim()
     ? reciter.bio

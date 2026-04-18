@@ -23,8 +23,8 @@ export async function generateMetadata({
   const match = resolveSurah(surah);
   if (!match) return { title: "Surah not found" };
   return {
-    title: `Surah ${match.name} (${match.id})`,
-    description: `Read Surah ${match.name} — ${match.translated_name_english}. ${match.verses_count} verses, revealed in ${match.revelation_place}.`,
+    title: `${match.name} - surah`,
+    description: `Read Surah ${match.name} (${match.translated_name_english}). ${match.verses_count} verses, revealed in ${match.revelation_place}.`,
     openGraph: {
       images: [{ url: ogSurahUrl(match.id), width: 1200, height: 1200 }],
     },

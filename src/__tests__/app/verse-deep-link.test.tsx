@@ -50,6 +50,6 @@ describe("/quran/[surah]/[ayah]", () => {
     const metadata = await generateMetadata({
       params: Promise.resolve({ surah: "999", ayah: "1" }),
     });
-    expect(metadata.title).toBe("Verse not found — Bayaan");
+    expect(metadata.title).toBe("Verse not found");
   });
 });

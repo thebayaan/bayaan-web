@@ -25,10 +25,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { surah, ayah } = await params;
   const resolved = resolveSurahAyah(surah, ayah);
-  if (!resolved) return { title: "Verse not found — Bayaan" };
+  if (!resolved) return { title: "Verse not found" };
   const match = surahs.find((s) => s.id === resolved.surahId)!;
   return {
-    title: `Surah ${match.name} ${resolved.surahId}:${resolved.ayahId} — Bayaan`,
+    title: `Verse ${resolved.surahId}:${resolved.ayahId} - ${match.name}`,
     description: `Verse ${resolved.surahId}:${resolved.ayahId} from Surah ${match.name} (${match.translated_name_english}).`,
     openGraph: {
       images: [{ url: ogVerseUrl(resolved.surahId, resolved.ayahId), width: 1200, height: 1200 }],

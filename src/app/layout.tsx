@@ -10,21 +10,21 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://open.thebayaan.com
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Bayaan — Qur'an Listening & Reading",
-    template: "%s — Bayaan",
+    default: "Bayaan - Listen to the Qur'an",
+    template: "%s | Bayaan",
   },
   description: "Listen to and read the Holy Qur'an with beautiful recitations.",
   openGraph: {
     type: "website",
     siteName: "Bayaan",
     url: SITE_URL,
-    title: "Bayaan — Qur'an Listening & Reading",
+    title: "Bayaan - Listen to the Qur'an",
     description: "Listen to and read the Holy Qur'an with beautiful recitations.",
     images: [{ url: ogRootUrl(), width: 1200, height: 1200, alt: "Bayaan" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bayaan — Qur'an Listening & Reading",
+    title: "Bayaan - Listen to the Qur'an",
     description: "Listen to and read the Holy Qur'an with beautiful recitations.",
     images: [ogRootUrl()],
   },
