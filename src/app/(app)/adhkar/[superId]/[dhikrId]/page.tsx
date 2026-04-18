@@ -1,53 +1,36 @@
-"use client";
-
-import { use } from "react";
-import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDhikrById } from "@/data/adhkar-data";
-import { TasbeehCounter } from "@/components/adhkar/tasbeeh-counter";
+import { ogDhikrUrl } from "@/lib/og-urls";
+import { DhikrPageClient } from "./dhikr-page-client";
 
-export default function DhikrPage({
+export async function generateMetadata({
   params,
 }: {
   params: Promise<{ superId: string; dhikrId: string }>;
-}) {
-  const { superId, dhikrId } = use(params);
+}): Promise<Metadata> {
+  const { superId, dhikrId } = await params;
+  const dhikr = getDhikrById(dhikrId);
+  if (!dhikr || dhikr.categoryId !== superId) return { title: "Dhikr not found" };
+  return {
+    title: `Dhikr — ${dhikr.categoryId}`,
+    description: dhikr.translation,
+    openGraph: {
+      images: [{ url: ogDhikrUrl(superId, dhikrId), width: 1200, height: 630 }],
+    },
+    twitter: {
+      images: [ogDhikrUrl(superId, dhikrId)],
+    },
+  };
+}
+
+export default async function DhikrPage({
+  params,
+}: {
+  params: Promise<{ superId: string; dhikrId: string }>;
+}): Promise<React.ReactElement> {
+  const { superId, dhikrId } = await params;
   const dhikr = getDhikrById(dhikrId);
   if (!dhikr || dhikr.categoryId !== superId) notFound();
-
-  return (
-    <div className="flex min-h-[70vh] flex-col items-center p-6">
-      <Link
-        href={`/adhkar/${superId}`}
-        className="text-muted-foreground hover:text-foreground self-start text-sm transition-colors"
-      >
-        &larr; Back
-      </Link>
-      <div className="flex w-full max-w-2xl flex-1 flex-col items-center justify-center">
-        <p
-          className="mb-6 text-center font-[UthmanicHafs] text-2xl leading-relaxed"
-          dir="rtl"
-          lang="ar"
-        >
-          {dhikr.arabic}
-        </p>
-        {dhikr.transliteration ? (
-          <p className="text-muted-foreground mb-4 max-w-xl text-center text-xs italic">
-            {dhikr.transliteration}
-          </p>
-        ) : null}
-        <p className="text-muted-foreground mb-8 max-w-xl text-center text-sm">
-          {dhikr.translation}
-        </p>
-
-        <TasbeehCounter dhikrId={dhikr.id} target={dhikr.repeatCount} />
-
-        {dhikr.instruction ? (
-          <p className="text-muted-foreground mt-6 max-w-md text-center text-xs">
-            {dhikr.instruction}
-          </p>
-        ) : null}
-      </div>
-    </div>
-  );
+  return <DhikrPageClient superId={superId} dhikrId={dhikrId} />;
 }

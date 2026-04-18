@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCategoryById, getDhikrByCategory } from "@/data/adhkar-data";
+import { ogAdhkarUrl } from "@/lib/og-urls";
 
 export async function generateMetadata({
   params,
@@ -14,6 +15,12 @@ export async function generateMetadata({
   return {
     title: category.title,
     description: `${category.dhikrCount} ${category.dhikrCount === 1 ? "dhikr" : "adhkar"} from Hisnul Muslim.`,
+    openGraph: {
+      images: [{ url: ogAdhkarUrl(superId), width: 1200, height: 630 }],
+    },
+    twitter: {
+      images: [ogAdhkarUrl(superId)],
+    },
   };
 }
 
