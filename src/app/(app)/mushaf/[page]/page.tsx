@@ -20,7 +20,7 @@ export async function generateMetadata({
   const n = resolvePage(page);
   if (!n) return { title: "Mushaf page not found" };
   return {
-    title: `Mushaf — Page ${n}`,
+    title: `Page ${n} - Qur'an mushaf`,
     description: `Read page ${n} of the Holy Qur'an in the traditional mushaf layout.`,
     openGraph: {
       images: [{ url: ogMushafUrl(n), width: 1200, height: 1200 }],

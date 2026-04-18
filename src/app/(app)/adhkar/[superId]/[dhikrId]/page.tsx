@@ -12,8 +12,12 @@ export async function generateMetadata({
   const { superId, dhikrId } = await params;
   const dhikr = getDhikrById(dhikrId);
   if (!dhikr || dhikr.categoryId !== superId) return { title: "Dhikr not found" };
+  const category = dhikr.categoryId
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
   return {
-    title: `Dhikr — ${dhikr.categoryId}`,
+    title: `Dhikr - ${category}`,
     description: dhikr.translation,
     openGraph: {
       images: [{ url: ogDhikrUrl(superId, dhikrId), width: 1200, height: 800 }],

@@ -46,8 +46,8 @@ export async function generateMetadata({
   const reciterName = reciter?.name ?? slug;
   const rewayahParam = pickFirst(rewayah);
   const ogUrl = ogRecitationUrl(slug, n, rewayahParam);
-  // Layout template already appends " — Bayaan" — keep this title bare.
-  const title = `${surahName} — ${reciterName}`;
+  // Layout template appends " | Bayaan". Spotify-style: "X - recitation by Y".
+  const title = `${surahName} - recitation by ${reciterName}`;
   const description = `Listen to Surah ${surahName} recited by ${reciterName} on Bayaan.`;
 
   return {
@@ -56,7 +56,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: [{ url: ogUrl, width: 1200, height: 1200, alt: `${surahName} — ${reciterName}` }],
+      images: [{ url: ogUrl, width: 1200, height: 1200, alt: `${surahName} - ${reciterName}` }],
     },
     twitter: {
       title,
