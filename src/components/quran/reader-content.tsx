@@ -6,12 +6,13 @@ import { MushafView } from "./mushaf-view";
 
 interface Props {
   surahId: number;
+  targetAyah?: number;
 }
 
-export function ReaderContent({ surahId }: Props) {
+export function ReaderContent({ surahId, targetAyah }: Props) {
   const viewMode = useReadingSettingsStore((s) => s.viewMode);
   if (viewMode === "mushaf") {
     return <MushafView />;
   }
-  return <ReadingView surahId={surahId} />;
+  return <ReadingView surahId={surahId} targetAyah={targetAyah} />;
 }

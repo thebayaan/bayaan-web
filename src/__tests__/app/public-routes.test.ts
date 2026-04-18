@@ -19,10 +19,12 @@ describe("middleware public carve-outs", () => {
         "/api/quran(.*)",
         "/quran(.*)",
         "/surah(.*)",
+        "/mushaf(.*)",
         "/adhkar(.*)",
         "/settings(.*)",
         "/sitemap.xml",
         "/robots.txt",
+        "/\\.well-known(.*)",
       ]),
     );
     expect(capturedPatterns[0]).not.toContain("/reciter(.*)");

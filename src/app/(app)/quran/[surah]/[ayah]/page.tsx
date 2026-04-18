@@ -4,6 +4,7 @@ import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import { ReadingView } from "@/components/quran/reading-view";
 import { ReadingSubHeader } from "@/components/quran/reading-sub-header";
+import { ogVerseUrl } from "@/lib/og-urls";
 
 const surahs = surahData as unknown as Surah[];
 
@@ -29,6 +30,12 @@ export async function generateMetadata({
   return {
     title: `Surah ${match.name} ${resolved.surahId}:${resolved.ayahId} — Bayaan`,
     description: `Verse ${resolved.surahId}:${resolved.ayahId} from Surah ${match.name} (${match.translated_name_english}).`,
+    openGraph: {
+      images: [{ url: ogVerseUrl(resolved.surahId, resolved.ayahId), width: 1200, height: 1200 }],
+    },
+    twitter: {
+      images: [ogVerseUrl(resolved.surahId, resolved.ayahId)],
+    },
   };
 }
 
