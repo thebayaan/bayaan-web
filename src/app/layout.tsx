@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: "Bayaan — Qur'an Listening & Reading",
     description: "Listen to and read the Holy Qur'an with beautiful recitations.",
-    images: [{ url: ogRootUrl(), width: 1200, height: 630, alt: "Bayaan" }],
+    images: [{ url: ogRootUrl(), width: 1200, height: 1200, alt: "Bayaan" }],
   },
   twitter: {
     card: "summary_large_image",

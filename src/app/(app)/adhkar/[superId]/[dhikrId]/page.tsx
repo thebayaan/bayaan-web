@@ -16,7 +16,7 @@ export async function generateMetadata({
     title: `Dhikr — ${dhikr.categoryId}`,
     description: dhikr.translation,
     openGraph: {
-      images: [{ url: ogDhikrUrl(superId, dhikrId), width: 1200, height: 630 }],
+      images: [{ url: ogDhikrUrl(superId, dhikrId), width: 1200, height: 800 }],
     },
     twitter: {
       images: [ogDhikrUrl(superId, dhikrId)],

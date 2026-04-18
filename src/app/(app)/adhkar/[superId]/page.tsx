@@ -16,7 +16,7 @@ export async function generateMetadata({
     title: category.title,
     description: `${category.dhikrCount} ${category.dhikrCount === 1 ? "dhikr" : "adhkar"} from Hisnul Muslim.`,
     openGraph: {
-      images: [{ url: ogAdhkarUrl(superId), width: 1200, height: 630 }],
+      images: [{ url: ogAdhkarUrl(superId), width: 1200, height: 800 }],
     },
     twitter: {
       images: [ogAdhkarUrl(superId)],

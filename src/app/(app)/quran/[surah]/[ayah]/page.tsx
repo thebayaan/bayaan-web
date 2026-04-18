@@ -31,7 +31,7 @@ export async function generateMetadata({
     title: `Surah ${match.name} ${resolved.surahId}:${resolved.ayahId} — Bayaan`,
     description: `Verse ${resolved.surahId}:${resolved.ayahId} from Surah ${match.name} (${match.translated_name_english}).`,
     openGraph: {
-      images: [{ url: ogVerseUrl(resolved.surahId, resolved.ayahId), width: 1200, height: 630 }],
+      images: [{ url: ogVerseUrl(resolved.surahId, resolved.ayahId), width: 1200, height: 1200 }],
     },
     twitter: {
       images: [ogVerseUrl(resolved.surahId, resolved.ayahId)],
