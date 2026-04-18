@@ -50,3 +50,6 @@ next-env.d.ts
 
 # superpowers workflow artifacts (plans, research, screenshots) — preserved in ~/bayaan-facelift-artifacts/
 docs/superpowers/
+
+# Git worktrees
+.worktrees/
