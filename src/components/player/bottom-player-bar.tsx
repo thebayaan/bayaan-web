@@ -91,15 +91,15 @@ export function BottomPlayerBar() {
   return (
     <footer
       data-player-hidden={false}
-      className="border-border bg-background/80 duration-regular ease-standard flex h-20 items-center gap-4 border-t px-4 backdrop-blur-2xl transition-transform data-[player-hidden=true]:translate-y-full"
+      className="border-border bg-background/80 duration-regular ease-standard flex h-20 min-w-0 items-center gap-2 border-t px-2 backdrop-blur-2xl transition-transform data-[player-hidden=true]:translate-y-full sm:gap-4 sm:px-4"
     >
       {/* Track Info — Left. Title + artwork open the full player; the
           artist link jumps to the reciter page so it still works even
           when the rest of the row is acting as a big button. */}
-      <div className="flex w-[240px] min-w-0 items-center gap-3">
+      <div className="flex min-w-0 shrink items-center gap-2 sm:w-[240px] sm:gap-3">
         <button
           onClick={() => setShowFullPlayer(true)}
-          className="bg-muted h-12 w-12 shrink-0 overflow-hidden rounded-lg"
+          className="bg-muted hidden h-12 w-12 shrink-0 overflow-hidden rounded-lg sm:block"
           aria-label="Open full player"
         >
           {currentTrack.artwork && (
@@ -129,10 +129,10 @@ export function BottomPlayerBar() {
             )}
             {rewayahName ? (
               <>
-                <span aria-hidden className="shrink-0 opacity-50">
+                <span aria-hidden className="hidden shrink-0 opacity-50 sm:inline">
                   ·
                 </span>
-                <span className="shrink-0 capitalize">{rewayahName}</span>
+                <span className="hidden shrink-0 capitalize sm:inline">{rewayahName}</span>
               </>
             ) : null}
           </div>
@@ -140,7 +140,7 @@ export function BottomPlayerBar() {
       </div>
 
       {/* Controls + Progress — Center */}
-      <div className="flex max-w-[600px] flex-1 flex-col items-center gap-1">
+      <div className="flex max-w-[600px] min-w-0 flex-1 flex-col items-center gap-1">
         <PlayerControls
           isPlaying={playback.isPlaying}
           onPlayPause={handlePlayPause}
@@ -159,7 +159,7 @@ export function BottomPlayerBar() {
       </div>
 
       {/* Volume + Queue Toggle — Right */}
-      <div className="flex w-[200px] items-center justify-end gap-2">
+      <div className="hidden items-center justify-end gap-2 sm:flex sm:w-[200px]">
         <button
           onClick={() => setShowQueue(!showQueue)}
           className="text-muted-foreground hover:text-foreground p-2 transition-colors"

@@ -59,10 +59,8 @@ export default function HomePage() {
   }
 
   return (
-    <div className="py-6">
-      <div className="px-6">
-        <ContinueWhereYouLeftOff />
-      </div>
+    <div className="py-4 sm:py-6">
+      <ContinueWhereYouLeftOff />
 
       {/* 1. Your Favorites */}
       {favorites.length > 0 ? (
