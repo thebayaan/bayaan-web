@@ -4,7 +4,7 @@ import type { Surah } from "@/types/quran";
 import { getCategories } from "@/data/adhkar-data";
 
 const surahs = surahData as unknown as Surah[];
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://app.thebayaan.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://open.thebayaan.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

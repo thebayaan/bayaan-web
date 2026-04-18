@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ogRootUrl } from "@/lib/og-urls";
 import "./globals.css";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://app.thebayaan.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://open.thebayaan.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
