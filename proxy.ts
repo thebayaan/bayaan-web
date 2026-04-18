@@ -11,11 +11,13 @@ const isPublicRoute = createRouteMatcher([
   "/api/quran(.*)",
   "/quran(.*)",
   "/surah(.*)",
+  "/mushaf(.*)",
   "/adhkar(.*)",
   "/settings(.*)",
   "/sitemap.xml",
   "/robots.txt",
   "/opengraph-image(.*)",
+  "/\\.well-known(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
