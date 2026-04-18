@@ -36,7 +36,7 @@ describe("sitemap", () => {
     const { default: sitemap } = await import("@/app/sitemap");
     const routes = sitemap();
     const urls = routes.map((r) => r.url);
-    expect(urls).toContain(`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://app.thebayaan.com"}/`);
+    expect(urls).toContain(`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://open.thebayaan.com"}/`);
     expect(urls.filter((u) => /\/quran\/\d+$/.test(u))).toHaveLength(114);
     expect(urls.filter((u) => /\/adhkar\/[^/]+$/.test(u)).length).toBeGreaterThan(100);
   });
