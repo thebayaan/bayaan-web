@@ -2,21 +2,60 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCategoryById, getDhikrByCategory } from "@/data/adhkar-data";
+import { ALL_ADHKAR_SUPER, resolveAdhkarSuperSlug } from "@/data/adhkar-super-categories";
+import { adhkarOgBackground, type OgTheme } from "@/lib/og";
+
+type SearchParams = { theme?: string | string[] };
+
+function pickFirst(v: string | string[] | undefined): string | undefined {
+  return Array.isArray(v) ? v[0] : v;
+}
+
+// Accepts either a slug ("morning-adhkar") or a numeric Hisnul Muslim
+// category id ("27"). Returns the resolved super category when the
+// input is a slug, otherwise the raw adhkar category when it's a number.
+function resolveAdhkar(superId: string) {
+  const slug = resolveAdhkarSuperSlug(superId);
+  const superCategory = slug ? ALL_ADHKAR_SUPER.find((s) => s.id === slug) : null;
+  if (superCategory) {
+    const firstCategoryId = superCategory.categoryIds[0];
+    const category = firstCategoryId ? getCategoryById(firstCategoryId) : undefined;
+    return { superCategory, category, slug: superCategory.id };
+  }
+  const category = getCategoryById(superId);
+  return category ? { superCategory: null, category, slug: null } : null;
+}
+
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ superId: string }>;
+  searchParams: Promise<SearchParams>;
 }): Promise<Metadata> {
   const { superId } = await params;
-  const category = getCategoryById(superId);
-  if (!category) return { title: "Adhkar category not found" };
-  const title = category.title;
-  const description = `${category.dhikrCount} ${category.dhikrCount === 1 ? "dhikr" : "adhkar"} from Hisnul Muslim.`;
+  const { theme } = await searchParams;
+  const resolved = resolveAdhkar(superId);
+  if (!resolved) return { title: "Adhkar category not found" };
+
+  const t: OgTheme = pickFirst(theme) === "light" ? "light" : "dark";
+  const { superCategory, category, slug } = resolved;
+  const title = superCategory?.title ?? category?.title ?? "Adhkar";
+  const description = category
+    ? `${category.dhikrCount} ${category.dhikrCount === 1 ? "dhikr" : "adhkar"} from Hisnul Muslim.`
+    : "Hisnul Muslim";
+
+  // Point og:image straight at the CDN hero — no Next render, no
+  // text overlay. Preview cards use og:title + og:description for
+  // the label already.
+  const imageUrl = slug ? adhkarOgBackground(slug, t) : undefined;
+  const images = imageUrl ? [{ url: imageUrl, width: 900, height: 600, alt: title }] : undefined;
+
   return {
     title,
     description,
-    openGraph: { title, description },
-    twitter: { title, description },
+    openGraph: { title, description, images },
+    twitter: { title, description, images: imageUrl ? [imageUrl] : undefined },
   };
 }
 
@@ -26,10 +65,20 @@ export default async function AdhkarCategoryPage({
   params: Promise<{ superId: string }>;
 }) {
   const { superId } = await params;
-  const category = getCategoryById(superId);
-  if (!category) notFound();
+  const resolved = resolveAdhkar(superId);
+  if (!resolved) notFound();
 
-  const dhikrList = getDhikrByCategory(superId);
+  const { superCategory, category, slug } = resolved;
+  // When the URL is a slug, expand to every child category's dhikr
+  // list. When numeric, just fetch that one category's list.
+  const dhikrList = superCategory
+    ? superCategory.categoryIds.flatMap((id) => getDhikrByCategory(id))
+    : category
+      ? getDhikrByCategory(category.id)
+      : [];
+
+  const title = superCategory?.title ?? category?.title ?? "Adhkar";
+  const dhikrUrlPrefix = slug ?? category?.id;
 
   return (
     <div className="p-6">
@@ -39,12 +88,12 @@ export default async function AdhkarCategoryPage({
       >
         &larr; Adhkar
       </Link>
-      <h1 className="mb-6 text-2xl font-bold">{category.title}</h1>
+      <h1 className="mb-6 text-2xl font-bold">{title}</h1>
       <div className="space-y-3">
         {dhikrList.map((dhikr) => (
           <Link
             key={dhikr.id}
-            href={`/adhkar/${superId}/${dhikr.id}`}
+            href={`/adhkar/${dhikrUrlPrefix}/${dhikr.id}`}
             className="block rounded-xl bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
           >
             <p className="font-[UthmanicHafs] text-lg leading-relaxed" dir="rtl" lang="ar">

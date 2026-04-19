@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDhikrById } from "@/data/adhkar-data";
+import { ALL_ADHKAR_SUPER, resolveAdhkarSuperSlug } from "@/data/adhkar-super-categories";
 import { TasbeehCounter } from "@/components/adhkar/tasbeeh-counter";
 
 interface DhikrPageClientProps {
@@ -12,7 +13,16 @@ interface DhikrPageClientProps {
 
 export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
   const dhikr = getDhikrById(dhikrId);
-  if (!dhikr || dhikr.categoryId !== superId) notFound();
+  if (!dhikr) notFound();
+
+  // superId is either the slug ("morning-adhkar") or the numeric
+  // category id ("27"). Accept the match under either form.
+  const superSlug = resolveAdhkarSuperSlug(superId);
+  const superCategory = superSlug ? ALL_ADHKAR_SUPER.find((s) => s.id === superSlug) : null;
+  const matches = superCategory
+    ? superCategory.categoryIds.includes(dhikr.categoryId)
+    : dhikr.categoryId === superId;
+  if (!matches) notFound();
 
   return (
     <div className="flex min-h-[70vh] flex-col items-center p-6">
