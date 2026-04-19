@@ -24,7 +24,7 @@ describe("middleware public carve-outs", () => {
         "/settings(.*)",
         "/sitemap.xml",
         "/robots.txt",
-        "/\\.well-known(.*)",
+        "/.well-known(.*)",
       ]),
     );
     expect(capturedPatterns[0]).not.toContain("/reciter(.*)");
