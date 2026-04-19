@@ -1,100 +1,22 @@
-import { ImageResponse } from "next/og";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-import type { ReactElement } from "react";
+// Helpers that compose the Cloudflare CDN URLs for our pre-rendered OG
+// hero images. We point `og:image` straight at these so the preview
+// card is just the artwork — the title/description shown next to it
+// come from the `og:title` / `og:description` meta tags.
 
-export const ogSize = { width: 1200, height: 630 } as const;
-export const ogContentType = "image/png";
+export type OgTheme = "dark" | "light";
 
-export const OG_COLORS = {
-  background: "#050b10",
-  text: "#e8e8e8",
-  muted: "#B0B0B0",
-  accent: "#2dd4bf",
-} as const;
+const CDN = "https://cdn.thebayaan.com";
 
-async function loadManropeTTF(weight: "Regular" | "Bold"): Promise<ArrayBuffer> {
-  const file = await readFile(path.join(process.cwd(), "public/fonts", `Manrope-${weight}.ttf`));
-  return file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength) as ArrayBuffer;
+// Surah OG images: the dark variant has no suffix, the light variant
+// uses `-light`. Published for all 114 surahs.
+export function surahOgBackground(surahId: number, theme: OgTheme): string {
+  return theme === "light"
+    ? `${CDN}/assets/og-images/surah/${surahId}-light.png`
+    : `${CDN}/assets/og-images/surah/${surahId}.png`;
 }
 
-export async function loadOgFonts() {
-  const [regular, bold] = await Promise.all([loadManropeTTF("Regular"), loadManropeTTF("Bold")]);
-  return [
-    { name: "Manrope", data: regular, weight: 400 as const, style: "normal" as const },
-    { name: "Manrope", data: bold, weight: 700 as const, style: "normal" as const },
-  ];
-}
-
-interface OgCardOptions {
-  eyebrow: string;
-  title: string;
-  subtitle?: string;
-}
-
-export async function renderOgCard({
-  eyebrow,
-  title,
-  subtitle,
-}: OgCardOptions): Promise<ImageResponse> {
-  const fonts = await loadOgFonts();
-
-  const card: ReactElement = (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        background: OG_COLORS.background,
-        color: OG_COLORS.text,
-        fontFamily: "Manrope",
-        padding: 72,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          fontSize: 28,
-          fontWeight: 700,
-          color: OG_COLORS.accent,
-          letterSpacing: 2,
-          textTransform: "uppercase",
-        }}
-      >
-        {eyebrow}
-      </div>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-        <div
-          style={{
-            fontSize: 92,
-            fontWeight: 700,
-            lineHeight: 1.05,
-            letterSpacing: -2,
-          }}
-        >
-          {title}
-        </div>
-        {subtitle ? (
-          <div style={{ fontSize: 34, color: OG_COLORS.muted, lineHeight: 1.3 }}>{subtitle}</div>
-        ) : null}
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          fontSize: 30,
-          fontWeight: 700,
-          color: OG_COLORS.text,
-          letterSpacing: -1,
-        }}
-      >
-        Bayaan
-      </div>
-    </div>
-  );
-
-  return new ImageResponse(card, { ...ogSize, fonts });
+// Adhkar super-category OG images. Both `-dark` and `-light` exist,
+// keyed by the super-category slug (e.g. `morning-adhkar`).
+export function adhkarOgBackground(superSlug: string, theme: OgTheme): string {
+  return `${CDN}/assets/images/adhkar/${superSlug}-${theme}.png`;
 }

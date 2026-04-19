@@ -42,6 +42,7 @@ describe("/quran/[surah]/[ayah]", () => {
   it("generateMetadata returns a specific title for valid verses", async () => {
     const metadata = await generateMetadata({
       params: Promise.resolve({ surah: "2", ayah: "255" }),
+      searchParams: Promise.resolve({}),
     });
     expect(metadata.title).toContain("2:255");
   });
@@ -49,6 +50,7 @@ describe("/quran/[surah]/[ayah]", () => {
   it("generateMetadata returns a not-found title for invalid verses", async () => {
     const metadata = await generateMetadata({
       params: Promise.resolve({ surah: "999", ayah: "1" }),
+      searchParams: Promise.resolve({}),
     });
     expect(metadata.title).toBe("Verse not found");
   });

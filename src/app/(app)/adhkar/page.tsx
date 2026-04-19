@@ -29,7 +29,7 @@ export default function AdhkarPage() {
         {ALL_ADHKAR_SUPER.map((cat) => (
           <Link
             key={cat.id}
-            href={`/adhkar/${cat.categoryIds[0]}`}
+            href={`/adhkar/${cat.id}`}
             className="block transition-transform hover:scale-[1.02]"
           >
             <div className="relative aspect-[3/2] overflow-hidden rounded-md">

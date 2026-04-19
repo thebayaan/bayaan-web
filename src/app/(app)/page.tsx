@@ -85,7 +85,7 @@ export default function HomePage() {
         {[...MAIN_ADHKAR, ...OTHER_ADHKAR.slice(0, 5)].map((cat) => (
           <Link
             key={cat.id}
-            href={`/adhkar/${cat.categoryIds[0]}`}
+            href={`/adhkar/${cat.id}`}
             className="block w-full transition-transform hover:scale-[1.02]"
           >
             <div className="relative aspect-[3/2] overflow-hidden rounded-md">

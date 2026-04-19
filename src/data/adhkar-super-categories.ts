@@ -219,3 +219,18 @@ export const OTHER_ADHKAR: AdhkarSuperCategory[] = [
 ];
 
 export const ALL_ADHKAR_SUPER: AdhkarSuperCategory[] = [...MAIN_ADHKAR, ...OTHER_ADHKAR];
+
+/**
+ * Resolve an adhkar URL segment to the super-category slug used for CDN
+ * image lookups. The `/adhkar/{superId}/...` route accepts either form:
+ *   - the slug itself (e.g. `morning-adhkar`) — used by featured cards
+ *   - a numeric Hisnul Muslim category id (e.g. `27`) — linked from the
+ *     home page via `categoryIds[0]`
+ * Returns the slug, or null when the input doesn't match any super.
+ */
+export function resolveAdhkarSuperSlug(superId: string): string | null {
+  const direct = ALL_ADHKAR_SUPER.find((sc) => sc.id === superId);
+  if (direct) return direct.id;
+  const byCategoryId = ALL_ADHKAR_SUPER.find((sc) => sc.categoryIds.includes(superId));
+  return byCategoryId?.id ?? null;
+}
