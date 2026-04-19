@@ -19,12 +19,12 @@ export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack, durati
     <button
       type="button"
       onClick={() => onPlay(surah.id)}
-      className={`hover:bg-surface-raised duration-fast ease-standard group/row flex w-full items-center gap-5 rounded-xl px-5 py-3 text-left transition-colors ${
+      className={`hover:bg-surface-raised duration-fast ease-standard group/row flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors sm:gap-5 sm:px-5 ${
         isCurrentTrack ? "bg-brand-light" : ""
       }`}
     >
       <div
-        className={`w-9 shrink-0 text-center text-sm font-semibold tabular-nums ${
+        className={`w-7 shrink-0 text-center text-sm font-semibold tabular-nums sm:w-9 ${
           isCurrentTrack ? "text-brand-main" : "text-muted-foreground"
         }`}
       >
@@ -42,13 +42,13 @@ export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack, durati
           {surah.translated_name_english} · {surah.verses_count} ayahs
         </div>
       </div>
-      <div className="font-surah-names text-foreground w-40 shrink-0 text-right text-[28px] leading-none">
+      <div className="font-surah-names text-foreground w-20 shrink-0 truncate text-right text-[22px] leading-none sm:w-40 sm:text-[28px]">
         {surahGlyphMap[surah.id] ?? surah.name_arabic}
       </div>
-      <div className="text-muted-foreground w-[72px] shrink-0 text-right text-[13px] font-medium tabular-nums">
+      <div className="text-muted-foreground hidden w-[72px] shrink-0 text-right text-[13px] font-medium tabular-nums sm:block">
         {durationLabel ?? ""}
       </div>
-      <div className="flex w-16 shrink-0 items-center justify-end gap-1">
+      <div className="hidden w-16 shrink-0 items-center justify-end gap-1 sm:flex">
         <span
           className="text-muted-foreground opacity-0 transition-opacity group-hover/row:opacity-100"
           aria-hidden

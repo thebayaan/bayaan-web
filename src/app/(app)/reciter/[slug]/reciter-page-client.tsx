@@ -83,11 +83,15 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
     void updateQueue(tracks);
   }
 
-  function handlePlayAll(): void {
+  function handlePlayAll(startFromRandom = false): void {
     if (!reciter || !selectedRewayat) return;
-    const firstSurah = selectedRewayat.surah_list[0];
+    const list = selectedRewayat.surah_list;
+    const firstSurah = list[0];
     if (firstSurah === undefined) return;
-    const { tracks } = createQueueFromSurah(reciter, selectedRewayat, firstSurah, surahNameMap);
+    const startSurah = startFromRandom
+      ? (list[Math.floor(Math.random() * list.length)] ?? firstSurah)
+      : firstSurah;
+    const { tracks } = createQueueFromSurah(reciter, selectedRewayat, startSurah, surahNameMap);
     void updateQueue(tracks);
   }
 
@@ -97,7 +101,7 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
 
       <div className="flex flex-wrap items-center gap-3 px-4 pb-6 sm:px-10 sm:pb-8">
         <button
-          onClick={handlePlayAll}
+          onClick={() => handlePlayAll()}
           type="button"
           className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong duration-fast ease-standard flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold shadow-[var(--elevation-s)] transition-colors"
         >
@@ -108,7 +112,7 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
           type="button"
           onClick={() => {
             if (!isShuffle) toggleShuffle();
-            handlePlayAll();
+            handlePlayAll(true);
           }}
           className={`border-border hover:bg-surface-raised duration-fast ease-standard flex items-center gap-2 rounded-full border px-6 py-3.5 text-sm font-semibold transition-colors ${
             isShuffle ? "text-brand-main border-[var(--brand-weak)]" : ""
