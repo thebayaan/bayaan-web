@@ -4,8 +4,6 @@ import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import { ReaderContent } from "@/components/quran/reader-content";
 import { ReadingSubHeader } from "@/components/quran/reading-sub-header";
-import { ogSurahUrl } from "@/lib/og-urls";
-
 const surahs = surahData as unknown as Surah[];
 
 function resolveSurah(surah: string): Surah | null {
@@ -25,12 +23,6 @@ export async function generateMetadata({
   return {
     title: `${match.name} - surah`,
     description: `Read Surah ${match.name} (${match.translated_name_english}). ${match.verses_count} verses, revealed in ${match.revelation_place}.`,
-    openGraph: {
-      images: [{ url: ogSurahUrl(match.id), width: 1200, height: 1200 }],
-    },
-    twitter: {
-      images: [ogSurahUrl(match.id)],
-    },
   };
 }
 

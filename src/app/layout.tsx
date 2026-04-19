@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { manrope, surahNames } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ogRootUrl } from "@/lib/og-urls";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://app.thebayaan.com";
@@ -20,13 +19,11 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: "Bayaan - Listen to the Qur'an",
     description: "Listen to and read the Holy Qur'an with beautiful recitations.",
-    images: [{ url: ogRootUrl(), width: 1200, height: 1200, alt: "Bayaan" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Bayaan - Listen to the Qur'an",
     description: "Listen to and read the Holy Qur'an with beautiful recitations.",
-    images: [ogRootUrl()],
   },
   other: {
     "apple-itunes-app": "app-id=6648769980, app-argument=https://app.thebayaan.com",
