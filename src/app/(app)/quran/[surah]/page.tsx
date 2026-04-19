@@ -20,9 +20,13 @@ export async function generateMetadata({
   const { surah } = await params;
   const match = resolveSurah(surah);
   if (!match) return { title: "Surah not found" };
+  const title = `Surah ${match.name}`;
+  const description = `Read Surah ${match.name} (${match.translated_name_english}). ${match.verses_count} verses, revealed in ${match.revelation_place}.`;
   return {
-    title: `${match.name} - surah`,
-    description: `Read Surah ${match.name} (${match.translated_name_english}). ${match.verses_count} verses, revealed in ${match.revelation_place}.`,
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { title, description },
   };
 }
 

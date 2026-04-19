@@ -25,9 +25,13 @@ export async function generateMetadata({
   const resolved = resolveSurahAyah(surah, ayah);
   if (!resolved) return { title: "Verse not found" };
   const match = surahs.find((s) => s.id === resolved.surahId)!;
+  const title = `Verse ${resolved.surahId}:${resolved.ayahId} — ${match.name}`;
+  const description = `Verse ${resolved.surahId}:${resolved.ayahId} from Surah ${match.name} (${match.translated_name_english}).`;
   return {
-    title: `Verse ${resolved.surahId}:${resolved.ayahId} - ${match.name}`,
-    description: `Verse ${resolved.surahId}:${resolved.ayahId} from Surah ${match.name} (${match.translated_name_english}).`,
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { title, description },
   };
 }
 

@@ -16,13 +16,19 @@ export async function generateMetadata({
     .split("-")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
+  const title = `Dhikr — ${category}`;
+  const description = dhikr.translation;
   return {
-    title: `Dhikr - ${category}`,
-    description: dhikr.translation,
+    title,
+    description,
     openGraph: {
+      title,
+      description,
       images: [{ url: ogDhikrUrl(superId, dhikrId), width: 1200, height: 800 }],
     },
     twitter: {
+      title,
+      description,
       images: [ogDhikrUrl(superId, dhikrId)],
     },
   };

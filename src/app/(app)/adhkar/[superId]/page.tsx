@@ -10,9 +10,13 @@ export async function generateMetadata({
   const { superId } = await params;
   const category = getCategoryById(superId);
   if (!category) return { title: "Adhkar category not found" };
+  const title = category.title;
+  const description = `${category.dhikrCount} ${category.dhikrCount === 1 ? "dhikr" : "adhkar"} from Hisnul Muslim.`;
   return {
-    title: category.title,
-    description: `${category.dhikrCount} ${category.dhikrCount === 1 ? "dhikr" : "adhkar"} from Hisnul Muslim.`,
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { title, description },
   };
 }
 
