@@ -1,7 +1,13 @@
 {
-  "name": "i-want-to-build-ujbb",
+  "name": "bayaan-web",
   "version": "0.1.0",
   "private": true,
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thebayaan/bayaan-web.git"
+  },
+  "homepage": "https://app.thebayaan.com",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
