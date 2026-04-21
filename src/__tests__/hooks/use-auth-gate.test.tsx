@@ -5,8 +5,11 @@ import { useAuthGate } from "@/hooks/use-auth-gate";
 const useAuthMock = vi.hoisted(() => vi.fn());
 const usePathnameMock = vi.hoisted(() => vi.fn());
 
-vi.mock("@clerk/nextjs", () => ({
+// The hook now imports useAuth from the thin wrapper in @/lib/auth,
+// which returns the Clerk hook or a guest fallback based on env.
+vi.mock("@/lib/auth", () => ({
   useAuth: useAuthMock,
+  CLERK_ENABLED: true,
 }));
 
 vi.mock("next/navigation", () => ({

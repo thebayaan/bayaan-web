@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { UserButton } from "@clerk/nextjs";
+import { useUser, CLERK_ENABLED } from "@/lib/auth";
 import { useThemeStore, type ThemeMode, getResolvedTheme } from "@/stores/theme-store";
 import { useCommandPaletteStore } from "@/stores/command-palette-store";
 import { LogoIcon, SearchIcon } from "@/components/icons";
@@ -59,6 +60,11 @@ export function TopBar() {
 
 function UserChip() {
   const { user, isSignedIn } = useUser();
+
+  // When Clerk isn't configured for this deployment, suppress the
+  // sign-in CTA entirely — the route would 404 anyway.
+  if (!CLERK_ENABLED) return null;
+
   if (!isSignedIn || !user) {
     return (
       <Link
