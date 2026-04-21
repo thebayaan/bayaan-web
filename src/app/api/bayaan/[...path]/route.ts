@@ -7,12 +7,20 @@ const BAYAAN_API_URL =
   process.env.NEXT_PUBLIC_BAYAAN_API_URL ??
   "https://api.thebayaan.com";
 const BAYAAN_API_KEY = process.env.BAYAAN_API_KEY ?? "";
+const CLERK_ENABLED = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 async function proxyToBayaan(
   request: NextRequest,
   params: { path: string[] },
 ): Promise<NextResponse> {
   const path = params.path.join("/");
+
+  // User-specific routes require a signed-in user. On deployments without
+  // Clerk configured there's no way to authenticate these, so return 401.
+  if (path.startsWith("user/") && !CLERK_ENABLED) {
+    return NextResponse.json({ error: "Auth not configured on this deployment" }, { status: 401 });
+  }
+
   const url = new URL(`/v1/${path}`, BAYAAN_API_URL);
   request.nextUrl.searchParams.forEach((value, key) => {
     url.searchParams.set(key, value);

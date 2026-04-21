@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "@/lib/auth";
 import { usePathname } from "next/navigation";
 import { useCallback } from "react";
 

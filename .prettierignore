@@ -13,3 +13,6 @@ test-results
 .superpowers
 .claude
 .DS_Store
+
+# Design / brand artifact — exported from external tool, not hand-maintained
+public/bayaan-brand-playground.html
