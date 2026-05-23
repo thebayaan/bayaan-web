@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { Surah } from "@/types/quran";
 import { ReadingSettingsSheet } from "./reading-settings-sheet";
+import { ReaderPlayChip } from "./reader-play-chip";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 
 interface Props {
@@ -61,6 +62,8 @@ export function ReadingSubHeader({ surah, page, juz }: Props): React.JSX.Element
         )}
 
         <div className="flex-1" />
+
+        <ReaderPlayChip surahId={surah.id} surahName={surah.name} />
 
         <div className="border-border bg-surface-sunken inline-flex items-center rounded-full border p-1">
           <ViewModeButton
