@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useFavorites } from "@/hooks/use-favorites";
 import { HeartIcon } from "@/components/icons";
 
@@ -19,9 +20,15 @@ export default function FavoritesPage() {
         <div className="py-12 text-center">
           <HeartIcon size={48} className="text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">No favorites yet</p>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Heart a track while listening to add it here
+          <p className="text-muted-foreground mt-1 mb-6 text-sm">
+            Heart a track while listening to add it here.
           </p>
+          <Link
+            href="/quran"
+            className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors"
+          >
+            Browse surahs
+          </Link>
         </div>
       ) : (
         <div className="space-y-2">

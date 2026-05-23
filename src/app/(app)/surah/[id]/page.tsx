@@ -53,6 +53,26 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
           {surah.translated_name_english} &middot; {surah.verses_count} verses &middot;{" "}
           {surah.revelation_place}
         </p>
+        <Link
+          href={`/quran/${surah.id}`}
+          className="border-border hover:bg-surface-raised duration-fast ease-standard mt-4 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors"
+        >
+          <svg
+            width={16}
+            height={16}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+          </svg>
+          Read this surah
+        </Link>
       </div>
 
       <h2 className="mb-3 text-lg font-bold">Available Reciters ({availableReciters.length})</h2>
