@@ -8,9 +8,14 @@ import { ReciterCard } from "@/components/reciter-card";
 import { HeartIcon } from "@/components/icons";
 
 export default function FavoriteRecitersPage() {
-  const { favoriteReciters, isLoading: isLoadingFavorites } = useFavoriteReciters();
-  const { reciters, isLoading: isLoadingReciters } = useReciters();
+  const {
+    favoriteReciters,
+    isLoading: isLoadingFavorites,
+    error: favoritesError,
+  } = useFavoriteReciters();
+  const { reciters, isLoading: isLoadingReciters, error: recitersError } = useReciters();
   const isLoading = isLoadingFavorites || isLoadingReciters;
+  const error = favoritesError ?? recitersError;
 
   const favoritedReciters = useMemo(() => {
     if (favoriteReciters.length === 0 || reciters.length === 0) return [];
@@ -28,6 +33,13 @@ export default function FavoriteRecitersPage() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="bg-surface-sunken aspect-square animate-pulse rounded-md" />
           ))}
+        </div>
+      ) : error ? (
+        <div role="alert" className="py-12 text-center">
+          <p className="text-foreground font-medium">We couldn&apos;t load your favorites.</p>
+          <p className="text-muted-foreground mt-1 text-sm">
+            {error instanceof Error ? error.message : "Try refreshing in a moment."}
+          </p>
         </div>
       ) : favoritedReciters.length === 0 ? (
         <div className="py-12 text-center">

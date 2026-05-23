@@ -157,7 +157,7 @@ export function CollectionHub() {
     {
       href: "/collection/favorite-reciters",
       label: "Reciters",
-      emptyText: "No favorites yet",
+      emptyText: "No favorite reciters yet",
       color: "#3B82F6",
       count: favoriteReciters.length,
       icon: <ProfileIcon />,
