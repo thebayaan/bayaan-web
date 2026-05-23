@@ -102,6 +102,26 @@ describe("ReciterMoreMenu", () => {
     expect(screen.getByRole("menuitem", { name: /add all to queue/i })).toBeDisabled();
   });
 
+  it("ArrowDown moves focus to the next menuitem; ArrowUp wraps to the last", async () => {
+    const user = userEvent.setup();
+    render(
+      <ReciterMoreMenu reciter={mockReciter} rewayat={mockRewayat} surahNameMap={surahNameMap} />,
+    );
+    await user.click(screen.getByRole("button", { name: /more actions/i }));
+
+    // Menu opens with focus on the first menuitem (Add all to queue).
+    const items = await screen.findAllByRole("menuitem");
+    expect(items[0]).toHaveFocus();
+    await user.keyboard("{ArrowDown}");
+    expect(items[1]).toHaveFocus();
+    await user.keyboard("{ArrowDown}");
+    // Wraps back to the first item.
+    expect(items[0]).toHaveFocus();
+    await user.keyboard("{ArrowUp}");
+    // Wraps to the last item.
+    expect(items[items.length - 1]).toHaveFocus();
+  });
+
   it("Escape closes the menu and restores focus to the trigger", async () => {
     const user = userEvent.setup();
     render(

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePlayerStore } from "@/stores/player-store";
 import { reciterShareUrl } from "@/lib/share-urls";
 import { createQueueFromSurah } from "@/lib/audio-utils";
+import { useMenuKeyboardNav } from "@/hooks/use-menu-keyboard-nav";
 import type { Reciter, Rewayat } from "@/types/reciter";
 
 interface ReciterMoreMenuProps {
@@ -24,6 +25,8 @@ export function ReciterMoreMenu({
   const [open, setOpen] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const handleMenuKey = useMenuKeyboardNav();
   const addToQueue = usePlayerStore((s) => s.addToQueue);
 
   // Hide the toast after a short window so it doesn't linger.
@@ -44,6 +47,14 @@ export function ReciterMoreMenu({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  // ARIA Authoring Practices: opening a menu moves focus to the first item
+  // so ArrowUp/ArrowDown navigation has a starting point.
+  useEffect(() => {
+    if (!open) return;
+    const first = menuRef.current?.querySelector<HTMLElement>('[role^="menuitem"]:not([disabled])');
+    first?.focus();
   }, [open]);
 
   async function handleCopyLink(): Promise<void> {
@@ -101,8 +112,10 @@ export function ReciterMoreMenu({
         <>
           <div aria-hidden="true" className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div
+            ref={menuRef}
             role="menu"
             aria-label={`More actions for ${reciter.name}`}
+            onKeyDown={handleMenuKey}
             className="border-border bg-background absolute right-0 z-20 mt-2 w-56 rounded-lg border p-1 shadow-xl"
           >
             <button
