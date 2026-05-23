@@ -25,9 +25,15 @@ export default function BookmarksPage() {
         <div className="py-12 text-center">
           <QuranIcon size={48} className="text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground">No bookmarks yet</p>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="text-muted-foreground mt-1 mb-6 text-sm">
             Tap the bookmark icon next to any verse while reading.
           </p>
+          <Link
+            href="/quran"
+            className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors"
+          >
+            Open the Quran
+          </Link>
         </div>
       ) : (
         <ul className="space-y-2">

@@ -18,9 +18,15 @@ export default function NotesPage() {
       ) : notes.length === 0 ? (
         <div className="py-12 text-center">
           <p className="text-muted-foreground">No notes yet</p>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Add notes to verses while reading the Quran
+          <p className="text-muted-foreground mt-1 mb-6 text-sm">
+            Add notes to verses while reading the Quran.
           </p>
+          <Link
+            href="/quran"
+            className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors"
+          >
+            Open the Quran
+          </Link>
         </div>
       ) : (
         <div className="space-y-2">
