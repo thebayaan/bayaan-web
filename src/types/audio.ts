@@ -27,5 +27,10 @@ export interface PlayerSettings {
   repeatMode: RepeatMode;
   shuffle: boolean;
   rate: number;
+  /** User-selected duration (in minutes), or null when the timer is off. */
   sleepTimerMinutes: number | null;
+  /** Unix ms timestamp the timer expires at, or null when off. Computed from
+   * sleepTimerMinutes at the moment the user sets it; the timer hook compares
+   * Date.now() against this value to know when to pause. */
+  sleepTimerEndsAt: number | null;
 }
