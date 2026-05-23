@@ -74,4 +74,9 @@ describe("ReciterCard", () => {
     const link = screen.getByRole("link");
     expect(link).toHaveAttribute("href", "/reciter/mishary-alafasy");
   });
+
+  it("renders a play overlay button labeled with the reciter's name", () => {
+    render(<ReciterCard reciter={mockReciter} />);
+    expect(screen.getByRole("button", { name: /play mishary alafasy/i })).toBeInTheDocument();
+  });
 });
