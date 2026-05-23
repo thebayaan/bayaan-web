@@ -79,6 +79,7 @@ const INITIAL_SETTINGS: PlayerSettings = {
   shuffle: false,
   rate: 1,
   sleepTimerMinutes: null,
+  sleepTimerEndsAt: null,
 };
 
 export const usePlayerStore = create<PlayerStoreState>()(
@@ -371,8 +372,9 @@ export const usePlayerStore = create<PlayerStoreState>()(
       },
 
       setSleepTimer: (minutes) => {
+        const endsAt = minutes === null ? null : Date.now() + minutes * 60_000;
         set((s) => ({
-          settings: { ...s.settings, sleepTimerMinutes: minutes },
+          settings: { ...s.settings, sleepTimerMinutes: minutes, sleepTimerEndsAt: endsAt },
         }));
       },
 
@@ -407,6 +409,7 @@ export const usePlayerStore = create<PlayerStoreState>()(
         settings: {
           ...state.settings,
           sleepTimerMinutes: null,
+          sleepTimerEndsAt: null,
         },
       }),
       onRehydrateStorage: () => (state) => {
