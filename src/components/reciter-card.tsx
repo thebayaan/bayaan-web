@@ -112,11 +112,12 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
           "bg-brand-main text-brand-main-foreground absolute right-2.5 flex h-10 w-10 items-center justify-center rounded-full shadow-xl transition-all duration-200",
           // Anchor the button at the bottom edge of the artwork
           "top-[calc(100%-3.25rem-3rem)] sm:top-[calc(100%-3.25rem-3.5rem)]",
-          // Hover-only on devices that can hover; always visible when this
-          // reciter is currently playing.
+          // Hover-only on fine-pointer devices; always visible on touch
+          // devices (group-hover:* never fires without a hover-capable
+          // pointer) and when this reciter is currently playing.
           isThisReciterPlaying
             ? "translate-y-0 opacity-100"
-            : "translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100",
+            : "translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 focus-visible:translate-y-0 focus-visible:opacity-100 pointer-coarse:translate-y-0 pointer-coarse:opacity-90",
           "hover:bg-brand-strong hover:scale-105",
         )}
       >

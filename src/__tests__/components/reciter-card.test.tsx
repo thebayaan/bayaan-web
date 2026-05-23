@@ -1,6 +1,12 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { ReciterCard } from "@/components/reciter-card";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { usePlayerStore } from "@/stores/player-store";
+
+vi.mock("@/lib/auth", () => ({
+  useAuth: () => ({ isSignedIn: true, isLoaded: true }),
+  CLERK_ENABLED: true,
+}));
 
 vi.mock("next/image", () => ({
   default: ({ alt, ...props }: { alt: string; [key: string]: unknown }) => (
@@ -14,7 +20,24 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+import { ReciterCard } from "@/components/reciter-card";
+
 describe("ReciterCard", () => {
+  beforeEach(() => {
+    usePlayerStore.setState({
+      queue: { tracks: [], currentIndex: -1, shuffleOrder: null, shufflePosition: 0 },
+      playback: {
+        isPlaying: false,
+        currentTrackIndex: -1,
+        positionMs: 0,
+        durationMs: 0,
+        rate: 1,
+        volume: 1,
+        isMuted: false,
+      },
+    });
+  });
+
   const mockReciter = {
     id: "r-1",
     name: "Mishary Alafasy",
@@ -30,7 +53,7 @@ describe("ReciterCard", () => {
         server: "https://cdn.thebayaan.com/test",
         source_type: "bayaan",
         surah_total: 114,
-        surah_list: [],
+        surah_list: [1, 2, 3],
         mp3quran_read_id: null,
         qdc_reciter_id: null,
       },
@@ -78,5 +101,51 @@ describe("ReciterCard", () => {
   it("renders a play overlay button labeled with the reciter's name", () => {
     render(<ReciterCard reciter={mockReciter} />);
     expect(screen.getByRole("button", { name: /play mishary alafasy/i })).toBeInTheDocument();
+  });
+
+  it("clicking the play overlay loads a queue starting with surah 1", async () => {
+    const user = userEvent.setup();
+    render(<ReciterCard reciter={mockReciter} />);
+    await user.click(screen.getByRole("button", { name: /play mishary alafasy/i }));
+    await waitFor(() => {
+      expect(usePlayerStore.getState().queue.tracks.length).toBeGreaterThan(0);
+    });
+    expect(usePlayerStore.getState().queue.tracks[0]?.reciterId).toBe("r-1");
+    expect(usePlayerStore.getState().queue.tracks[0]?.surahId).toBe(1);
+  });
+
+  it("when this reciter is the active track, the button toggles to Pause", () => {
+    usePlayerStore.setState({
+      queue: {
+        tracks: [
+          {
+            id: "t1",
+            url: "u",
+            title: "Al-Fatihah",
+            artist: "Mishary Alafasy",
+            artwork: "",
+            duration: 60,
+            reciterId: "r-1",
+            reciterName: "Mishary Alafasy",
+            surahId: 1,
+            rewayatId: "rw-1",
+          },
+        ],
+        currentIndex: 0,
+        shuffleOrder: null,
+        shufflePosition: 0,
+      },
+      playback: {
+        isPlaying: true,
+        currentTrackIndex: 0,
+        positionMs: 0,
+        durationMs: 60_000,
+        rate: 1,
+        volume: 1,
+        isMuted: false,
+      },
+    });
+    render(<ReciterCard reciter={mockReciter} />);
+    expect(screen.getByRole("button", { name: /pause mishary alafasy/i })).toBeInTheDocument();
   });
 });
