@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePlayerStore } from "@/stores/player-store";
+import { useMenuKeyboardNav } from "@/hooks/use-menu-keyboard-nav";
 
 const PRESET_MINUTES = [15, 30, 45, 60] as const;
 
@@ -22,6 +23,8 @@ export function SleepTimerMenu({ remainingMs, className }: SleepTimerMenuProps) 
   const setSleepTimer = usePlayerStore((s) => s.setSleepTimer);
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const handleMenuKey = useMenuKeyboardNav();
 
   useEffect(() => {
     if (!open) return undefined;
@@ -33,6 +36,18 @@ export function SleepTimerMenu({ remainingMs, className }: SleepTimerMenuProps) 
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  // ARIA APG: opening a menu focuses the active (checked) option, or the
+  // first item, so ArrowUp/ArrowDown have a starting point.
+  useEffect(() => {
+    if (!open) return;
+    const items = menuRef.current?.querySelectorAll<HTMLElement>(
+      '[role^="menuitem"]:not([disabled])',
+    );
+    if (!items || items.length === 0) return;
+    const checked = Array.from(items).find((el) => el.getAttribute("aria-checked") === "true");
+    (checked ?? items[0])?.focus();
   }, [open]);
 
   const isActive = minutes !== null;
@@ -73,8 +88,10 @@ export function SleepTimerMenu({ remainingMs, className }: SleepTimerMenuProps) 
         <>
           <div aria-hidden="true" className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div
+            ref={menuRef}
             role="menu"
             aria-label="Sleep timer"
+            onKeyDown={handleMenuKey}
             className="border-border bg-background absolute right-0 bottom-full z-20 mb-2 w-40 rounded-lg border p-1 shadow-xl"
           >
             <button
