@@ -19,6 +19,22 @@ export const handlers = [
 
   http.get(`${API}/bayaan/user/favorites`, () => HttpResponse.json({ data: [] })),
   http.get(`${API}/bayaan/user/favorite-reciters`, () => HttpResponse.json({ data: [] })),
+  http.post(`${API}/bayaan/user/favorite-reciters`, async ({ request }) => {
+    const body = (await request.json()) as { reciter_id: string };
+    return HttpResponse.json(
+      {
+        data: {
+          id: `fav-${body.reciter_id}`,
+          reciter_id: body.reciter_id,
+          created_at: new Date().toISOString(),
+        },
+      },
+      { status: 201 },
+    );
+  }),
+  http.delete(`${API}/bayaan/user/favorite-reciters/:reciterId`, () =>
+    HttpResponse.json({ data: { deleted: true } }),
+  ),
   http.get(`${API}/bayaan/user/bookmarks`, () => HttpResponse.json({ data: [] })),
   http.post(`${API}/bayaan/user/bookmarks`, async ({ request }) => {
     const body = (await request.json()) as {

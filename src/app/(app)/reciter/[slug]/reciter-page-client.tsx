@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { useReciter } from "@/hooks/use-reciter";
+import { useFavoriteReciters } from "@/hooks/use-favorites";
+import { useAuthGate } from "@/hooks/use-auth-gate";
 import { usePlayerStore } from "@/stores/player-store";
 import { ReciterHeader } from "@/components/reciter-header";
 import { SurahListItem } from "@/components/surah-list-item";
@@ -29,7 +31,9 @@ interface ReciterPageClientProps {
 export function ReciterPageClient({ slug }: ReciterPageClientProps) {
   const { reciter, isLoading } = useReciter(slug);
   const [selectedRewayatIdx, setSelectedRewayatIdx] = useState(0);
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { isFavoriteReciter, toggleFavoriteReciter } = useFavoriteReciters();
+  const gate = useAuthGate();
+  const isFavorited = reciter ? isFavoriteReciter(reciter.id) : false;
 
   const updateQueue = usePlayerStore((s) => s.updateQueue);
   const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
@@ -140,7 +144,9 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
           type="button"
           aria-label={isFavorited ? "Unfavorite reciter" : "Favorite reciter"}
           aria-pressed={isFavorited}
-          onClick={() => setIsFavorited((v) => !v)}
+          onClick={gate(() => {
+            void toggleFavoriteReciter(reciter.id);
+          })}
           className={`border-border hover:bg-brand-light duration-fast ease-standard flex h-12 w-12 items-center justify-center rounded-full border transition-colors ${
             isFavorited
               ? "text-brand-main bg-brand-light border-[var(--brand-weak)]"
