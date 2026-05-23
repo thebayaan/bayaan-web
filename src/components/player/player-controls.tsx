@@ -14,6 +14,10 @@ import { cn } from "@/lib/utils";
 
 interface PlayerControlsProps {
   isPlaying: boolean;
+  /** True while the current track is loading (after updateQueue / skipToIndex
+   * but before audioService.play has resolved). Drives a spinner on the
+   * play/pause button and disables it to prevent re-triggers. */
+  isLoading?: boolean;
   onPlayPause: () => void;
   onNext: () => void;
   onPrevious: () => void;
@@ -26,6 +30,7 @@ interface PlayerControlsProps {
 
 export function PlayerControls({
   isPlaying,
+  isLoading = false,
   onPlayPause,
   onNext,
   onPrevious,
@@ -63,13 +68,17 @@ export function PlayerControls({
 
       <button
         onClick={onPlayPause}
+        disabled={isLoading}
+        aria-busy={isLoading}
         className={cn(
-          "text-foreground flex items-center justify-center transition-transform hover:scale-110",
+          "text-foreground flex items-center justify-center transition-transform hover:scale-110 disabled:cursor-wait disabled:hover:scale-100",
           compact ? "h-8 w-8" : "h-9 w-9",
         )}
-        aria-label={isPlaying ? "Pause" : "Play"}
+        aria-label={isLoading ? "Loading…" : isPlaying ? "Pause" : "Play"}
       >
-        {isPlaying ? (
+        {isLoading ? (
+          <Spinner size={compact ? 20 : 24} />
+        ) : isPlaying ? (
           <PauseIcon size={compact ? 22 : 26} color="currentColor" />
         ) : (
           <PlayIcon size={compact ? 22 : 26} color="currentColor" />
@@ -106,5 +115,21 @@ export function PlayerControls({
         </button>
       )}
     </div>
+  );
+}
+
+function Spinner({ size }: { size: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      className="animate-spin"
+    >
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.25" strokeWidth="3" />
+      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
   );
 }

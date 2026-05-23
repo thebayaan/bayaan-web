@@ -20,6 +20,7 @@ export function FullPlayerView({
   const currentIndex = usePlayerStore((s) => s.queue.currentIndex);
   const playback = usePlayerStore((s) => s.playback);
   const settings = usePlayerStore((s) => s.settings);
+  const isLoading = usePlayerStore((s) => s.isLoading);
   const play = usePlayerStore((s) => s.play);
   const pause = usePlayerStore((s) => s.pause);
   const skipToNext = usePlayerStore((s) => s.skipToNext);
@@ -139,6 +140,7 @@ export function FullPlayerView({
         {/* Controls */}
         <PlayerControls
           isPlaying={playback.isPlaying}
+          isLoading={isLoading}
           onPlayPause={handlePlayPause}
           onNext={() => void skipToNext()}
           onPrevious={() => void skipToPrevious()}

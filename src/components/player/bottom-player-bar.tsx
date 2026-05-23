@@ -31,6 +31,7 @@ export function BottomPlayerBar() {
   const currentIndex = usePlayerStore((s) => s.queue.currentIndex);
   const playback = usePlayerStore((s) => s.playback);
   const settings = usePlayerStore((s) => s.settings);
+  const isLoading = usePlayerStore((s) => s.isLoading);
   const play = usePlayerStore((s) => s.play);
   const pause = usePlayerStore((s) => s.pause);
   const skipToNext = usePlayerStore((s) => s.skipToNext);
@@ -164,6 +165,7 @@ export function BottomPlayerBar() {
       <div className="flex max-w-[600px] min-w-0 flex-1 flex-col items-center gap-1">
         <PlayerControls
           isPlaying={playback.isPlaying}
+          isLoading={isLoading}
           onPlayPause={handlePlayPause}
           onNext={skipToNext}
           onPrevious={skipToPrevious}
