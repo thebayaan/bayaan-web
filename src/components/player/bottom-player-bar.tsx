@@ -17,12 +17,14 @@ import { useMediaSession } from "@/hooks/use-media-session";
 import { useWakeLock } from "@/hooks/use-wake-lock";
 import { useSleepTimer } from "@/hooks/use-sleep-timer";
 import { SleepTimerMenu } from "./sleep-timer-menu";
+import { useRecentlyPlayedTracker } from "@/hooks/use-recently-played-tracker";
 
 export function BottomPlayerBar() {
   useAudioEvents();
   useMediaSession();
   useWakeLock();
   const { remainingMs: sleepTimerRemainingMs } = useSleepTimer();
+  useRecentlyPlayedTracker();
   const tracks = usePlayerStore((s) => s.queue.tracks);
   const currentIndex = usePlayerStore((s) => s.queue.currentIndex);
   const playback = usePlayerStore((s) => s.playback);

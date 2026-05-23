@@ -8,6 +8,7 @@ import { usePlaylists } from "@/hooks/use-playlists";
 import { ReciterCard } from "@/components/reciter-card";
 import { ContinueWhereYouLeftOff } from "@/components/home/continue-where-you-left-off";
 import { HomeSection } from "@/components/home/home-section";
+import { RecentlyPlayedSection } from "@/components/home/recently-played-section";
 import {
   getFeaturedReciters,
   getExclusives,
@@ -61,6 +62,8 @@ export default function HomePage() {
   return (
     <div className="py-4 sm:py-6">
       <ContinueWhereYouLeftOff />
+
+      <RecentlyPlayedSection />
 
       {/* 1. Your Favorites */}
       {favorites.length > 0 ? (
