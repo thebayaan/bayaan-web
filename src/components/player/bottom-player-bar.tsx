@@ -18,6 +18,7 @@ import { useWakeLock } from "@/hooks/use-wake-lock";
 import { useSleepTimer } from "@/hooks/use-sleep-timer";
 import { SleepTimerMenu } from "./sleep-timer-menu";
 import { useRecentlyPlayedTracker } from "@/hooks/use-recently-played-tracker";
+import { HeartToggle } from "./heart-toggle";
 
 export function BottomPlayerBar() {
   useAudioEvents();
@@ -142,6 +143,15 @@ export function BottomPlayerBar() {
             ) : null}
           </div>
         </div>
+        <HeartToggle
+          target={{
+            reciter_id: currentTrack.reciterId,
+            rewayat_id: currentTrack.rewayatId,
+            surah_id: currentTrack.surahId,
+          }}
+          trackTitle={currentTrack.title}
+          className="text-muted-foreground hover:text-foreground aria-pressed:text-brand-main hidden shrink-0 rounded-full p-1.5 transition-colors hover:bg-[var(--text-alpha-10)] sm:block"
+        />
       </div>
 
       {/* Controls + Progress — Center */}
