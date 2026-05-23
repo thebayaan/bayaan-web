@@ -17,6 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import Link from "next/link";
 import { usePlayerStore } from "@/stores/player-store";
 import type { Track } from "@/types/audio";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -186,9 +187,37 @@ export function QueuePanel({ open, onOpenChange }: QueuePanelProps): React.React
             ) : null}
 
             {tracks.length === 0 ? (
-              <div className="text-muted-foreground p-8 text-center">
-                <p>Queue is empty</p>
-                <p className="mt-1 text-xs">Select a reciter and surah to start listening</p>
+              <div className="px-6 py-12 text-center">
+                <svg
+                  width={48}
+                  height={48}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  className="text-muted-foreground mx-auto mb-4"
+                >
+                  <line x1="8" y1="6" x2="21" y2="6" />
+                  <line x1="8" y1="12" x2="21" y2="12" />
+                  <line x1="8" y1="18" x2="21" y2="18" />
+                  <line x1="3" y1="6" x2="3.01" y2="6" />
+                  <line x1="3" y1="12" x2="3.01" y2="12" />
+                  <line x1="3" y1="18" x2="3.01" y2="18" />
+                </svg>
+                <p className="text-foreground font-medium">Queue is empty</p>
+                <p className="text-muted-foreground mt-1 mb-6 text-sm">
+                  Pick a reciter and we&apos;ll line up the surah for you.
+                </p>
+                <Link
+                  href="/"
+                  onClick={() => onOpenChange(false)}
+                  className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors"
+                >
+                  Browse reciters
+                </Link>
               </div>
             ) : null}
           </div>
