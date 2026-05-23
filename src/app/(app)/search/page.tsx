@@ -3,12 +3,18 @@
 import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Fuse from "fuse.js";
+import Image from "next/image";
 import { useReciters } from "@/hooks/use-reciters";
-import { EmptyState } from "@/components/ui/empty-state";
+import { getFeaturedReciters } from "@/data/reciter-collections";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import type { Reciter } from "@/types/reciter";
 import Link from "next/link";
+
+// Popular surahs to seed the empty state. These mirror what most Quran apps
+// surface as "common reads" and give the page somewhere to start exploring
+// rather than the user staring at a static hint.
+const POPULAR_SURAH_IDS = [1, 18, 36, 55, 67, 112, 113, 114] as const;
 
 const surahs = surahData as unknown as Surah[];
 
@@ -82,27 +88,7 @@ function SearchPageContent() {
   }, [query, reciterFuse, surahFuse]);
 
   if (!query.trim()) {
-    return (
-      <EmptyState
-        icon={
-          <svg
-            width="48"
-            height="48"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-        }
-        title="Search Bayaan"
-        subtitle="Press ⌘K (or click the search bar above) to find surahs, reciters, and adhkar."
-      />
-    );
+    return <SearchEmptyState reciters={reciters} />;
   }
 
   return (
@@ -164,6 +150,77 @@ function SearchPageContent() {
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+function SearchEmptyState({ reciters }: { reciters: Reciter[] }) {
+  const popularSurahs = useMemo(
+    () =>
+      POPULAR_SURAH_IDS.map((id) => surahs.find((s) => s.id === id)).filter(
+        (s): s is Surah => s !== undefined,
+      ),
+    [],
+  );
+  const featured = useMemo(() => getFeaturedReciters(reciters).slice(0, 6), [reciters]);
+
+  return (
+    <div className="p-6">
+      <div className="mb-8">
+        <h1 className="mb-1 text-2xl font-bold">Search Bayaan</h1>
+        <p className="text-muted-foreground text-sm">
+          Find surahs, reciters, and adhkar. Press ⌘K from anywhere.
+        </p>
+      </div>
+
+      <section className="mb-8">
+        <h2 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+          Popular surahs
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {popularSurahs.map((surah) => (
+            <Link
+              key={surah.id}
+              href={`/quran/${surah.id}`}
+              className="border-border hover:bg-surface-raised duration-fast ease-standard inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors"
+            >
+              <span className="text-muted-foreground tabular-nums">{surah.id}</span>
+              <span>{surah.name}</span>
+              <span className="text-muted-foreground text-xs">{surah.translated_name_english}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {featured.length > 0 ? (
+        <section>
+          <h2 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+            Featured reciters
+          </h2>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {featured.map((r) => (
+              <Link
+                key={r.id}
+                href={`/reciter/${r.slug}`}
+                className="group rounded-md p-1.5 transition-colors hover:bg-[var(--text-alpha-04)]"
+              >
+                <div className="bg-muted relative aspect-square overflow-hidden rounded-md">
+                  {r.image_url ? (
+                    <Image
+                      src={r.image_url}
+                      alt={r.name}
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105"
+                      sizes="(max-width: 640px) 30vw, (max-width: 1024px) 20vw, 14vw"
+                    />
+                  ) : null}
+                </div>
+                <p className="mt-1.5 truncate text-[13px] font-semibold">{r.name}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }
