@@ -52,13 +52,29 @@ export function useFavoriteReciters() {
   }
 
   async function addFavoriteReciter(reciterId: string): Promise<FavoriteReciter> {
-    const response = await fetchBayaan<{ data: FavoriteReciter }>(FAVORITE_RECITERS_KEY, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reciter_id: reciterId }),
+    // Optimistic insert so the heart flips immediately without waiting on
+    // the network. The server's real id replaces this placeholder when the
+    // mutate() call below revalidates.
+    const placeholder: FavoriteReciter = {
+      id: `optimistic-${reciterId}`,
+      reciter_id: reciterId,
+      created_at: new Date().toISOString(),
+    };
+    await mutate((current) => ({ data: [...(current?.data ?? []), placeholder] }), {
+      revalidate: false,
     });
-    await mutate();
-    return response.data;
+    try {
+      const response = await fetchBayaan<{ data: FavoriteReciter }>(FAVORITE_RECITERS_KEY, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reciter_id: reciterId }),
+      });
+      await mutate();
+      return response.data;
+    } catch (err) {
+      await mutate();
+      throw err;
+    }
   }
 
   async function removeFavoriteReciter(reciterId: string): Promise<void> {
