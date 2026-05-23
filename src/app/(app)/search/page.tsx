@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Fuse from "fuse.js";
 import Image from "next/image";
 import { useReciters } from "@/hooks/use-reciters";
+import { useRecentSearchesStore } from "@/stores/recent-searches-store";
 import { getFeaturedReciters } from "@/data/reciter-collections";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
@@ -37,6 +38,7 @@ function SearchPageContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") ?? "";
   const { reciters, isLoading } = useReciters();
+  const pushRecentSearch = useRecentSearchesStore((s) => s.push);
 
   const reciterFuse = useMemo(
     () =>
@@ -86,6 +88,15 @@ function SearchPageContent() {
 
     return [...reciterResults, ...surahResults].sort((a, b) => a.score - b.score);
   }, [query, reciterFuse, surahFuse]);
+
+  // Record a search once we have results for it. Waiting until results land
+  // (rather than recording on every keystroke) keeps the history list to
+  // queries the user actually committed to.
+  useEffect(() => {
+    if (results.length > 0) {
+      pushRecentSearch(query);
+    }
+  }, [query, results.length, pushRecentSearch]);
 
   if (!query.trim()) {
     return <SearchEmptyState reciters={reciters} />;
@@ -163,6 +174,9 @@ function SearchEmptyState({ reciters }: { reciters: Reciter[] }) {
     [],
   );
   const featured = useMemo(() => getFeaturedReciters(reciters).slice(0, 6), [reciters]);
+  const recentSearches = useRecentSearchesStore((s) => s.entries);
+  const removeRecentSearch = useRecentSearchesStore((s) => s.remove);
+  const clearAllRecentSearches = useRecentSearchesStore((s) => s.clearAll);
 
   return (
     <div className="p-6">
@@ -172,6 +186,54 @@ function SearchEmptyState({ reciters }: { reciters: Reciter[] }) {
           Find surahs, reciters, and adhkar. Press ⌘K from anywhere.
         </p>
       </div>
+
+      {recentSearches.length > 0 ? (
+        <section className="mb-8">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+              Recent searches
+            </h2>
+            <button
+              type="button"
+              onClick={clearAllRecentSearches}
+              className="text-muted-foreground hover:text-foreground text-xs font-medium transition-colors"
+            >
+              Clear all
+            </button>
+          </div>
+          <ul className="flex flex-wrap gap-2">
+            {recentSearches.map((entry) => (
+              <li
+                key={entry.query}
+                className="border-border bg-surface-raised inline-flex items-center gap-1.5 rounded-full border pl-3 text-sm"
+              >
+                <Link
+                  href={`/search?q=${encodeURIComponent(entry.query)}`}
+                  className="duration-fast ease-standard py-1.5 transition-colors hover:underline"
+                >
+                  {entry.query}
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => removeRecentSearch(entry.query)}
+                  aria-label={`Remove "${entry.query}" from recent searches`}
+                  className="text-muted-foreground hover:text-foreground -mr-0.5 rounded-full p-1 transition-colors hover:bg-[var(--text-alpha-10)]"
+                >
+                  <svg
+                    width={12}
+                    height={12}
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                  </svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="mb-8">
         <h2 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
