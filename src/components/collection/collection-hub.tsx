@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { usePlaylists } from "@/hooks/use-playlists";
-import { useFavoriteReciters } from "@/hooks/use-favorites";
+import { useFavoriteReciters, useFavorites } from "@/hooks/use-favorites";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { useNotes } from "@/hooks/use-notes";
 
@@ -141,6 +141,7 @@ function MicrophoneIcon() {
 export function CollectionHub() {
   const { playlists } = usePlaylists();
   const { favoriteReciters } = useFavoriteReciters();
+  const { favorites } = useFavorites();
   const { bookmarks } = useBookmarks();
   const { notes } = useNotes();
 
@@ -154,7 +155,7 @@ export function CollectionHub() {
       icon: <PlaylistIcon />,
     },
     {
-      href: "/collection/favorites",
+      href: "/collection/favorite-reciters",
       label: "Reciters",
       emptyText: "No favorites yet",
       color: "#3B82F6",
@@ -166,7 +167,7 @@ export function CollectionHub() {
       label: "Loved",
       emptyText: "No loved surahs yet",
       color: "#FF6B6B",
-      count: 0,
+      count: favorites.length,
       icon: <HeartFilledIcon />,
     },
     {
