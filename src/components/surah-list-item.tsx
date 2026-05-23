@@ -1,7 +1,9 @@
 "use client";
 
+import type { KeyboardEvent } from "react";
 import type { Surah } from "@/types/quran";
 import { surahGlyphMap } from "@/data/surah-glyph-map";
+import { AddToPlaylistButton } from "@/components/playlists/add-to-playlist";
 
 interface Props {
   surah: Surah;
@@ -12,14 +14,33 @@ interface Props {
   durationLabel?: string;
 }
 
-export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack, durationLabel }: Props) {
+export function SurahListItem({
+  surah,
+  onPlay,
+  isPlaying,
+  isCurrentTrack,
+  playlistItem,
+  durationLabel,
+}: Props) {
   const paddedIndex = String(surah.id).padStart(2, "0");
 
+  function handleRowKey(e: KeyboardEvent<HTMLDivElement>): void {
+    // Only fire on the row itself — not on focused child buttons.
+    if (e.target !== e.currentTarget) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onPlay(surah.id);
+    }
+  }
+
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Play ${surah.name}`}
       onClick={() => onPlay(surah.id)}
-      className={`hover:bg-surface-raised duration-fast ease-standard group/row flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors sm:gap-5 sm:px-5 ${
+      onKeyDown={handleRowKey}
+      className={`hover:bg-surface-raised duration-fast ease-standard group/row flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors focus-visible:ring-2 focus-visible:ring-[var(--brand-weak)] focus-visible:outline-none sm:gap-5 sm:px-5 ${
         isCurrentTrack ? "bg-brand-light" : ""
       }`}
     >
@@ -49,44 +70,15 @@ export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack, durati
         {durationLabel ?? ""}
       </div>
       <div className="hidden w-16 shrink-0 items-center justify-end gap-1 sm:flex">
-        <span
-          className="text-muted-foreground opacity-0 transition-opacity group-hover/row:opacity-100"
-          aria-hidden
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-          </svg>
-        </span>
-        <span
-          className="text-muted-foreground opacity-0 transition-opacity group-hover/row:opacity-100"
-          aria-hidden
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="1" />
-            <circle cx="19" cy="12" r="1" />
-            <circle cx="5" cy="12" r="1" />
-          </svg>
-        </span>
+        {playlistItem ? (
+          <AddToPlaylistButton
+            label={`Add ${surah.name} to a playlist`}
+            item={{ ...playlistItem, surah_id: surah.id }}
+            className="text-muted-foreground hover:text-foreground rounded-full p-1.5 opacity-0 transition-all group-hover/row:opacity-100 hover:bg-[var(--text-alpha-10)] focus-visible:opacity-100"
+          />
+        ) : null}
       </div>
-    </button>
+    </div>
   );
 }
 
