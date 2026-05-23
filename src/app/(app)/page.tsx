@@ -42,21 +42,7 @@ export default function HomePage() {
   // removed: murattal, mojawwad, rewayatTypes (per user request)
 
   if (isLoading) {
-    return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-8">
-          <div className="h-6 w-36 rounded bg-[var(--text-alpha-06)]" />
-          <div className="flex gap-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="shrink-0 space-y-2">
-                <div className="h-[120px] w-[120px] rounded-lg bg-[var(--text-alpha-06)]" />
-                <div className="h-3 w-20 rounded bg-[var(--text-alpha-06)]" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <HomeSkeleton />;
   }
 
   return (
@@ -170,6 +156,33 @@ export default function HomePage() {
             </Link>
           ))}
       </HomeSection>
+    </div>
+  );
+}
+
+function HomeSkeleton() {
+  // Mirrors the real layout: two stacked sections (Featured + Adhkar) each
+  // with a heading pill and a row of cards. Sized to the actual ReciterCard
+  // grid so first paint doesn't shift when the real content swaps in.
+  return (
+    <div className="py-4 sm:py-6" aria-hidden="true">
+      {[0, 1].map((section) => (
+        <section key={section} className="mb-4 px-4 sm:mb-6 sm:px-6">
+          <div className="mb-3 flex items-center gap-3">
+            <div className="bg-surface-sunken h-4 w-32 animate-pulse rounded" />
+            <div className="bg-surface-sunken h-4 w-16 animate-pulse rounded-full" />
+          </div>
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div key={i} className="space-y-2 p-1.5">
+                <div className="bg-surface-sunken aspect-square animate-pulse rounded-md" />
+                <div className="bg-surface-sunken h-3 w-3/4 animate-pulse rounded" />
+                <div className="bg-surface-sunken h-2 w-1/2 animate-pulse rounded" />
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
