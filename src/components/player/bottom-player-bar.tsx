@@ -19,6 +19,7 @@ import { useSleepTimer } from "@/hooks/use-sleep-timer";
 import { SleepTimerMenu } from "./sleep-timer-menu";
 import { useRecentlyPlayedTracker } from "@/hooks/use-recently-played-tracker";
 import { HeartToggle } from "./heart-toggle";
+import { NowPlayingMenu } from "./now-playing-menu";
 
 export function BottomPlayerBar() {
   useAudioEvents();
@@ -151,6 +152,11 @@ export function BottomPlayerBar() {
           }}
           trackTitle={currentTrack.title}
           className="text-muted-foreground hover:text-foreground aria-pressed:text-brand-main hidden shrink-0 rounded-full p-1.5 transition-colors hover:bg-[var(--text-alpha-10)] sm:block"
+        />
+        <NowPlayingMenu
+          track={currentTrack}
+          reciterSlug={reciterSlug}
+          className="text-muted-foreground hover:text-foreground hidden shrink-0 rounded-full p-1.5 transition-colors hover:bg-[var(--text-alpha-10)] sm:block"
         />
       </div>
 
