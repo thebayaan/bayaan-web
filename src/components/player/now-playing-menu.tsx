@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AddToPlaylistDialog } from "@/components/playlists/add-to-playlist";
 import { recitationShareUrl } from "@/lib/share-urls";
+import { useMenuKeyboardNav } from "@/hooks/use-menu-keyboard-nav";
 import type { Track } from "@/types/audio";
 
 interface NowPlayingMenuProps {
@@ -18,6 +19,8 @@ export function NowPlayingMenu({ track, reciterSlug, className }: NowPlayingMenu
   const [playlistDialogOpen, setPlaylistDialogOpen] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const handleMenuKey = useMenuKeyboardNav();
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -35,6 +38,14 @@ export function NowPlayingMenu({ track, reciterSlug, className }: NowPlayingMenu
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  // ARIA APG: opening a menu focuses the first item so ArrowUp/Down have
+  // a starting point.
+  useEffect(() => {
+    if (!open) return;
+    const first = menuRef.current?.querySelector<HTMLElement>('[role^="menuitem"]:not([disabled])');
+    first?.focus();
   }, [open]);
 
   async function handleShare(): Promise<void> {
@@ -87,8 +98,10 @@ export function NowPlayingMenu({ track, reciterSlug, className }: NowPlayingMenu
         <>
           <div aria-hidden="true" className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div
+            ref={menuRef}
             role="menu"
             aria-label={`More actions for ${track.title}`}
+            onKeyDown={handleMenuKey}
             className="border-border bg-background absolute right-0 bottom-full z-20 mb-2 w-56 rounded-lg border p-1 shadow-xl"
           >
             <button
