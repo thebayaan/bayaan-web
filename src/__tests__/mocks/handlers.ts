@@ -18,6 +18,26 @@ export const handlers = [
   }),
 
   http.get(`${API}/bayaan/user/favorites`, () => HttpResponse.json({ data: [] })),
+  http.post(`${API}/bayaan/user/favorites`, async ({ request }) => {
+    const body = (await request.json()) as {
+      reciter_id: string;
+      rewayat_id: string;
+      surah_id: number;
+    };
+    return HttpResponse.json(
+      {
+        data: {
+          id: `fav-${body.reciter_id}-${body.surah_id}`,
+          ...body,
+          created_at: new Date().toISOString(),
+        },
+      },
+      { status: 201 },
+    );
+  }),
+  http.delete(`${API}/bayaan/user/favorites/:id`, () =>
+    HttpResponse.json({ data: { deleted: true } }),
+  ),
   http.get(`${API}/bayaan/user/favorite-reciters`, () => HttpResponse.json({ data: [] })),
   http.post(`${API}/bayaan/user/favorite-reciters`, async ({ request }) => {
     const body = (await request.json()) as { reciter_id: string };
