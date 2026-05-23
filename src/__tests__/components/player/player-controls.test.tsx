@@ -48,4 +48,21 @@ describe("PlayerControls", () => {
     await user.click(screen.getByRole("button", { name: /previous/i }));
     expect(onPrevious).toHaveBeenCalledTimes(1);
   });
+
+  it("renders a loading-state play button while isLoading", () => {
+    render(<PlayerControls {...defaultProps} isLoading />);
+    const btn = screen.getByRole("button", { name: /loading/i });
+    expect(btn).toBeInTheDocument();
+    expect(btn).toBeDisabled();
+    expect(btn).toHaveAttribute("aria-busy", "true");
+  });
+
+  it("does not fire onPlayPause when the button is in loading state", async () => {
+    const user = userEvent.setup();
+    const onPlayPause = vi.fn();
+    render(<PlayerControls {...defaultProps} isLoading onPlayPause={onPlayPause} />);
+    const btn = screen.getByRole("button", { name: /loading/i });
+    await user.click(btn);
+    expect(onPlayPause).not.toHaveBeenCalled();
+  });
 });
