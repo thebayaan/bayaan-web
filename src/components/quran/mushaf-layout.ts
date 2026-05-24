@@ -23,3 +23,17 @@ export function getMushafLineAlignment(pageNumber: number): MushafLineAlignment 
 }
 
 export const MUSHAF_BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ";
+
+/**
+ * Whether the inline mushaf renderer should draw a basmallah line above
+ * a surah's first ayah.
+ *
+ *   - Surah 1 (Al-Fatiha): basmallah IS verse 1:1 — drawing it inline
+ *     would duplicate the text the API already returns as words.
+ *   - Surah 9 (At-Tawbah): traditionally has no basmallah.
+ *   - Every other surah (2..114 except 9): gets an inline basmallah
+ *     between its surah-name header and the first ayah word.
+ */
+export function surahHasInlineBasmallah(surahNumber: number): boolean {
+  return surahNumber !== 1 && surahNumber !== 9;
+}

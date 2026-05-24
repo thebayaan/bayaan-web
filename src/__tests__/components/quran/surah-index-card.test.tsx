@@ -13,6 +13,7 @@ const surah: Surah = {
   revelation_place: "madinah",
   revelation_order: 87,
   bismillah_pre: true,
+  pages: "2-49",
 };
 
 describe("SurahIndexCard", () => {

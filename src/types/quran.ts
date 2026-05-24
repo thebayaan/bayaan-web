@@ -8,6 +8,14 @@ export interface Surah {
   bismillah_pre: boolean;
   verses_count: number;
   translated_name_english: string;
+  /**
+   * The Madani mushaf page range this surah occupies, formatted as
+   * "start-end" (e.g. "2-49" for Al-Baqarah). Surahs may share an endpoint
+   * with their neighbours when a surah starts partway down the same page
+   * the previous one ended on (e.g. An-Nisa "77-106" and Al-Ma'idah
+   * "106-127" both list page 106).
+   */
+  pages: string;
 }
 
 export interface Verse {

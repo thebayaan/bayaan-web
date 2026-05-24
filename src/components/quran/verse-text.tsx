@@ -19,13 +19,44 @@ interface VerseTextProps {
   selectable?: boolean;
 }
 
+// Hair-space (U+200A) is the narrowest space character. We use it for two
+// purposes that mirror the Bayaan native renderer (see comments in
+// `components/mushaf/qcf/QCFPage.tsx` on the develop branch):
+//   1. Replace any literal U+0020 the QF API embeds inside `code_v2`
+//      (happens on hizb-marker pages) so it never expands during justify.
+//   2. As a between-glyph separator when joining a mushaf line. The
+//      separator gives the browser a justification opportunity so
+//      `text-align-last: justify` can stretch the line to fill the 512px
+//      page width, matching the printed Madani mushaf where every line is
+//      edge-to-edge.
+const QCF_HAIR_SPACE = "\u200A";
+
+/**
+ * Order words within a single rendered group (a verse in reading mode, or a
+ * mushaf line that may span several verses) in canonical reading order.
+ *
+ * IMPORTANT: sort by (verse_id, position), NEVER by position alone. The
+ * QF API resets `position` to 1 at the start of every verse, so any line
+ * that holds multiple verses (e.g. line 3 of page 50 — verses 3:1, 3:2,
+ * 3:3 all land there) would otherwise interleave into 3:1:1 / 3:2:1 /
+ * 3:3:1 / 3:1:2 / 3:2:2 / ... — exactly the "smooshed / missing ayahs /
+ * garbled text" symptom we were chasing.
+ */
 function sortWords(words: QcfWord[]): QcfWord[] {
-  return [...words].sort((a, b) => a.position - b.position);
+  return [...words].sort((a, b) =>
+    a.verse_id !== b.verse_id ? a.verse_id - b.verse_id : a.position - b.position,
+  );
 }
 
 function primaryVerseKey(words: QcfWord[]): string {
   const endMarker = words.find((word) => word.char_type_name === "end");
   return endMarker?.verse_key ?? words[words.length - 1]?.verse_key ?? "";
+}
+
+function joinMushafLine(words: QcfWord[]): string {
+  return words
+    .map((word) => word.code_v2.replace(/ /g, QCF_HAIR_SPACE))
+    .join(QCF_HAIR_SPACE);
 }
 
 function MushafLine({
@@ -64,6 +95,10 @@ function MushafLine({
   }, [selectable, sortedWords, toggle]);
 
   if (isFontLoaded) {
+    // Framed pages (Al-Fatiha, Al-Baqarah opener) are short, centered
+    // lines. Every other page uses true edge-to-edge justification so
+    // each line fills the 512px page width like the printed mushaf.
+    const isCenter = lineAlignment === "center";
     return (
       <div
         ref={lineRef}
@@ -82,14 +117,23 @@ function MushafLine({
             : undefined
         }
         className={cn(
-          "w-full leading-[2.35] whitespace-nowrap",
-          lineAlignment === "center" ? "text-center" : "text-right",
+          "w-full whitespace-nowrap",
+          isCenter ? "text-center leading-[1.85]" : "leading-[2.35]",
           selectable && "cursor-pointer",
           className,
         )}
-        style={{ fontFamily, fontSize }}
+        style={{
+          fontFamily,
+          fontSize,
+          ...(isCenter
+            ? null
+            : {
+                textAlign: "justify",
+                textAlignLast: "justify",
+              }),
+        }}
       >
-        {sortedWords.map((word) => word.code_v2).join("")}
+        {joinMushafLine(sortedWords)}
       </div>
     );
   }
@@ -99,8 +143,8 @@ function MushafLine({
       ref={lineRef}
       dir="rtl"
       className={cn(
-        "flex w-full flex-nowrap items-baseline leading-[2.35]",
-        lineAlignment === "center" ? "justify-center" : "justify-between",
+        "flex w-full flex-nowrap items-baseline",
+        lineAlignment === "center" ? "justify-center leading-[1.85]" : "justify-between leading-[2.35]",
         className,
       )}
       style={{ fontSize }}

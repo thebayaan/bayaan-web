@@ -1,15 +1,30 @@
 import type { ReactNode } from "react";
 import { surahGlyphMap } from "@/data/surah-glyph-map";
-import { MUSHAF_BISMILLAH } from "./mushaf-layout";
+import { MushafBasmallah } from "./mushaf-surah-header";
+import type { QcfFontResolver } from "./quran-word";
 import { cn } from "@/lib/utils";
 
 interface MushafFramedPageProps {
   pageNumber: number;
   surahNumber: number;
   children: ReactNode;
+  /**
+   * Optional — when present, page-2's basmallah renders in the
+   * decorative KFGQPC ligature instead of the plain UthmanicHafs
+   * fallback. `MushafView` always preloads `p1-v2` so on the framed
+   * pages this should always be available; tests omit it intentionally.
+   */
+  fontResolver?: QcfFontResolver;
+  fontSize?: string;
 }
 
-export function MushafFramedPage({ pageNumber, surahNumber, children }: MushafFramedPageProps) {
+export function MushafFramedPage({
+  pageNumber,
+  surahNumber,
+  children,
+  fontResolver,
+  fontSize = "1.8rem",
+}: MushafFramedPageProps) {
   const glyph = surahGlyphMap[surahNumber];
   const showBismillah = pageNumber === 2;
 
@@ -27,16 +42,14 @@ export function MushafFramedPage({ pageNumber, surahNumber, children }: MushafFr
           </div>
         ) : null}
         {showBismillah ? (
-          <p
-            className="mb-6 w-full text-center font-[UthmanicHafs] leading-[2.4] text-[color:var(--color-label)]"
-            dir="rtl"
-            lang="ar"
-          >
-            {MUSHAF_BISMILLAH}
-          </p>
+          <MushafBasmallah
+            fontSize={fontSize}
+            fontResolver={fontResolver}
+            className="mb-6"
+          />
         ) : null}
       </div>
-      <div className={cn("flex flex-col gap-0.5 px-5 pb-8", showBismillah ? "" : "pt-2")}>
+      <div className={cn("flex flex-col gap-0 px-5 pb-8", showBismillah ? "" : "pt-2")}>
         {children}
       </div>
     </div>

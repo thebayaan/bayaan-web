@@ -20,6 +20,7 @@ describe("SurahListItem", () => {
     bismillah_pre: false,
     verses_count: 7,
     translated_name_english: "The Opening",
+    pages: "1-1",
   };
 
   it("renders the surah name and the SurahNames glyph", () => {
