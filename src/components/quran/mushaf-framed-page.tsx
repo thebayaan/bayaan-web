@@ -14,7 +14,7 @@ export function MushafFramedPage({ pageNumber, surahNumber, children }: MushafFr
   const showBismillah = pageNumber === 2;
 
   return (
-    <div className="mushaf-framed-page mx-auto w-full max-w-[512px]">
+    <div className="mx-auto w-full max-w-[512px]">
       <div className="flex flex-col items-center px-4 pt-6 pb-4">
         {glyph ? (
           <div

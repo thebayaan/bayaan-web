@@ -321,19 +321,3 @@
     opacity: 1;
   }
 }
-
-/* Madani mushaf ornamental frame for pages 1–2 (border SVGs from mushaf-page-border, hassaanmv.com). */
-.mushaf-framed-page {
-  border-style: solid;
-  margin: 0.25rem auto;
-  padding: 0 0.25rem;
-  border-image-slice: 30% 30.5%;
-  border-image-width: 2rem;
-  border-image-repeat: round;
-  border-image-outset: 0.5rem;
-  border-image-source: url("/mushaf/ayahbox-light.svg");
-}
-
-[data-theme="dark"] .mushaf-framed-page {
-  border-image-source: url("/mushaf/ayahbox-dark.svg");
-}
