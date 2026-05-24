@@ -1,7 +1,15 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { ReadingVerse } from "@/components/quran/reading-verse";
 import type { QcfVerse } from "@/types/quran-api";
+
+vi.mock("@/hooks/use-play-from-ayah", () => ({
+  usePlayFromAyah: () => ({
+    playFromAyah: vi.fn(),
+    canPlayFromAyah: false,
+    resolvedReciter: null,
+  }),
+}));
 
 const mockVerse: QcfVerse = {
   id: 1,
@@ -33,6 +41,8 @@ describe("ReadingVerse", () => {
         fontResolver={fontResolver}
         fontSize="1.8rem"
         showTranslation={false}
+        surahId={2}
+        surahName="Al-Baqarah"
       />,
     );
     expect(container.firstElementChild?.id).toBe("2:255");
@@ -45,6 +55,8 @@ describe("ReadingVerse", () => {
         fontResolver={fontResolver}
         fontSize="1.8rem"
         showTranslation={false}
+        surahId={2}
+        surahName="Al-Baqarah"
         isTarget
       />,
     );
@@ -58,6 +70,8 @@ describe("ReadingVerse", () => {
         fontResolver={fontResolver}
         fontSize="1.8rem"
         showTranslation={false}
+        surahId={2}
+        surahName="Al-Baqarah"
       />,
     );
     expect(container.firstElementChild).not.toHaveAttribute("aria-current");

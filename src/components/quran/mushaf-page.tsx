@@ -19,6 +19,7 @@ interface MushafPageProps {
   pageNumber: number;
   fontResolver: QcfFontResolver;
   fontSize: string;
+  playbackActiveVerseKey?: string | null;
 }
 
 export function MushafPage({
@@ -26,6 +27,7 @@ export function MushafPage({
   pageNumber,
   fontResolver,
   fontSize,
+  playbackActiveVerseKey,
 }: MushafPageProps) {
   const lines = useMemo(() => {
     const lineMap = new Map<number, QcfWord[]>();
@@ -88,9 +90,7 @@ export function MushafPage({
     if (isFramed) return map;
     for (const verse of verses) {
       if (verse.verse_number !== 1) continue;
-      const firstWord = verse.words.find(
-        (w) => w.page_number === pageNumber && w.position === 1,
-      );
+      const firstWord = verse.words.find((w) => w.page_number === pageNumber && w.position === 1);
       if (!firstWord) continue;
       const [surahStr] = verse.verse_key.split(":");
       const surahN = Number(surahStr);
@@ -113,6 +113,7 @@ export function MushafPage({
         selectable
         fontSize={fontSize}
         className="w-full"
+        playbackActiveVerseKey={playbackActiveVerseKey}
       />
     );
     if (surahStart == null) return verseText;
