@@ -3,10 +3,10 @@ import { binarySearchAyah } from "@/lib/timestamp-utils";
 import type { AyahTimestamp } from "@/types/timestamps";
 
 const TIMESTAMPS: AyahTimestamp[] = [
-  { ayah: 1, verse_key: "1:1", timestamp_from: 0, timestamp_to: 5000 },
-  { ayah: 2, verse_key: "1:2", timestamp_from: 5000, timestamp_to: 12000 },
-  { ayah: 3, verse_key: "1:3", timestamp_from: 12000, timestamp_to: 20000 },
-  { ayah: 4, verse_key: "1:4", timestamp_from: 20000, timestamp_to: 28000 },
+  { verse_key: "1:1", timestamp_from: 0, timestamp_to: 5000 },
+  { verse_key: "1:2", timestamp_from: 5000, timestamp_to: 12000 },
+  { verse_key: "1:3", timestamp_from: 12000, timestamp_to: 20000 },
+  { verse_key: "1:4", timestamp_from: 20000, timestamp_to: 28000 },
 ];
 
 describe("binarySearchAyah", () => {
