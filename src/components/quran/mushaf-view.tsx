@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useVersesByPage } from "@/hooks/use-verses-by-page";
 import { useQcfFont } from "@/hooks/use-qcf-font";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
@@ -38,6 +38,11 @@ export function MushafView() {
     // selection from one page doesn't linger into the reading view.
     return () => clearSelection();
   }, [clearSelection]);
+
+  const fontResolver = useMemo(
+    () => ({ isPageFontLoaded, getFontFamily }),
+    [isPageFontLoaded, getFontFamily],
+  );
 
   return (
     <div className="flex h-full flex-col">
@@ -89,8 +94,7 @@ export function MushafView() {
             <MushafPage
               verses={verses}
               pageNumber={currentPage}
-              isFontLoaded={isPageFontLoaded(currentPage)}
-              fontFamily={getFontFamily(currentPage)}
+              fontResolver={fontResolver}
               fontSize={`${fontSize}rem`}
             />
           </div>

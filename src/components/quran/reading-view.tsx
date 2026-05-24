@@ -31,7 +31,7 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
 
   const fontSize = useReadingSettingsStore((s) => s.fontSize);
   const translationIds = useReadingSettingsStore((s) => s.translationIds);
-  const { verses, isLoading } = useVersesByChapter(surahId, 1, translationIds);
+  const { verses, isLoading } = useVersesByChapter(surahId, translationIds);
   const pageNumbers = useMemo(
     () => [...new Set(verses.flatMap((v) => v.words.map((w) => w.page_number)))],
     [verses],
@@ -46,6 +46,11 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
     targetRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [targetKey, isLoading]);
 
+  const fontResolver = useMemo(
+    () => ({ isPageFontLoaded, getFontFamily }),
+    [isPageFontLoaded, getFontFamily],
+  );
+
   if (isLoading) {
     return (
       <div className="mx-auto max-w-3xl animate-pulse px-6 py-8">
@@ -59,8 +64,6 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
       </div>
     );
   }
-
-  const primaryPage = verses[0]?.words[0]?.page_number ?? 1;
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-8">
@@ -79,8 +82,7 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
               key={verse.verse_key}
               ref={isTarget ? targetRef : undefined}
               verse={verse}
-              isFontLoaded={isPageFontLoaded(primaryPage)}
-              fontFamily={getFontFamily(primaryPage)}
+              fontResolver={fontResolver}
               fontSize={`${fontSize}rem`}
               showTranslation={true}
               isTarget={isTarget}

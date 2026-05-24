@@ -1,21 +1,20 @@
 "use client";
 import { useMemo } from "react";
 import type { QcfVerse, QcfWord } from "@/types/quran-api";
+import type { QcfFontResolver } from "./quran-word";
 import { VerseText } from "./verse-text";
 
 interface MushafPageProps {
   verses: QcfVerse[];
   pageNumber: number;
-  isFontLoaded: boolean;
-  fontFamily: string;
+  fontResolver: QcfFontResolver;
   fontSize: string;
 }
 
 export function MushafPage({
   verses,
   pageNumber,
-  isFontLoaded,
-  fontFamily,
+  fontResolver,
   fontSize,
 }: MushafPageProps) {
   const lines = useMemo(() => {
@@ -37,8 +36,7 @@ export function MushafPage({
         <VerseText
           key={`line-${lineNumber}`}
           words={words}
-          isFontLoaded={isFontLoaded}
-          fontFamily={fontFamily}
+          fontResolver={fontResolver}
           mushafMode
           selectable
           fontSize={fontSize}

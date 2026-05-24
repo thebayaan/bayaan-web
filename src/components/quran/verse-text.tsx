@@ -1,11 +1,10 @@
 import type { QcfWord } from "@/types/quran-api";
-import { QuranWord } from "./quran-word";
+import { QuranWord, type QcfFontResolver } from "./quran-word";
 import { cn } from "@/lib/utils";
 
 interface VerseTextProps {
   words: QcfWord[];
-  isFontLoaded: boolean;
-  fontFamily: string;
+  fontResolver: QcfFontResolver;
   mushafMode?: boolean;
   fontSize?: string;
   className?: string;
@@ -15,8 +14,7 @@ interface VerseTextProps {
 
 export function VerseText({
   words,
-  isFontLoaded,
-  fontFamily,
+  fontResolver,
   mushafMode,
   fontSize = "1.8rem",
   className,
@@ -36,8 +34,7 @@ export function VerseText({
         <QuranWord
           key={`${word.verse_key}-${word.position}`}
           word={word}
-          isFontLoaded={isFontLoaded}
-          fontFamily={fontFamily}
+          fontResolver={fontResolver}
           selectable={selectable}
         />
       ))}

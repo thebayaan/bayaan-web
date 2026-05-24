@@ -3,24 +3,32 @@ import { useCallback, useRef } from "react";
 import type { QcfWord } from "@/types/quran-api";
 import { cn } from "@/lib/utils";
 import { useVerseSelectionStore } from "@/stores/verse-selection-store";
+import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
+
+export interface QcfFontResolver {
+  isPageFontLoaded: (pageNum: number) => boolean;
+  getFontFamily: (pageNum: number) => string;
+}
 
 interface QuranWordProps {
   word: QcfWord;
-  isFontLoaded: boolean;
-  fontFamily: string;
+  fontResolver: QcfFontResolver;
   className?: string;
   selectable?: boolean;
 }
 
 export function QuranWord({
   word,
-  isFontLoaded,
-  fontFamily,
+  fontResolver,
   className,
   selectable = false,
 }: QuranWordProps) {
+  const pageNum = word.page_number;
+  const isFontLoaded = fontResolver.isPageFontLoaded(pageNum);
+  const fontFamily = fontResolver.getFontFamily(pageNum);
   const text = isFontLoaded ? word.code_v2 : word.qpc_uthmani_hafs;
+  const showWordByWord = useReadingSettingsStore((s) => s.showWordByWord);
   const toggle = useVerseSelectionStore((s) => s.toggle);
   const selectedVerseKey = useVerseSelectionStore((s) => s.selectedVerseKey);
   const isSelected = selectable && selectedVerseKey === word.verse_key;
@@ -76,7 +84,7 @@ export function QuranWord({
       }
     >
       {text}
-      {hasPopover ? <WordPopover word={word} /> : null}
+      {showWordByWord && hasPopover ? <WordPopover word={word} /> : null}
     </span>
   );
 }

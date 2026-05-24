@@ -36,22 +36,23 @@ const mockWords: QcfWord[] = [
   },
 ];
 
+const fontResolver = {
+  isPageFontLoaded: () => false,
+  getFontFamily: () => "UthmanicHafs",
+};
+
 describe("VerseText", () => {
   it("renders all words", () => {
-    const { container } = render(
-      <VerseText words={mockWords} isFontLoaded={false} fontFamily="UthmanicHafs" />,
-    );
+    const { container } = render(<VerseText words={mockWords} fontResolver={fontResolver} />);
     expect(container.querySelectorAll("span")).toHaveLength(2);
   });
   it("applies RTL direction", () => {
-    const { container } = render(
-      <VerseText words={mockWords} isFontLoaded={false} fontFamily="UthmanicHafs" />,
-    );
+    const { container } = render(<VerseText words={mockWords} fontResolver={fontResolver} />);
     expect(container.firstElementChild?.getAttribute("dir")).toBe("rtl");
   });
   it("applies space-between for mushaf mode", () => {
     const { container } = render(
-      <VerseText words={mockWords} isFontLoaded={false} fontFamily="UthmanicHafs" mushafMode />,
+      <VerseText words={mockWords} fontResolver={fontResolver} mushafMode />,
     );
     expect(container.firstElementChild?.className).toContain("justify-between");
   });
