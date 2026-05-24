@@ -22,17 +22,39 @@ const mockWord: QcfWord = {
 describe("QuranWord", () => {
   it("renders fallback text when font not loaded", () => {
     const { container } = render(
-      <QuranWord word={mockWord} isFontLoaded={false} fontFamily="UthmanicHafs" />,
+      <QuranWord
+        word={mockWord}
+        fontResolver={{ isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" }}
+      />,
     );
     expect(container.querySelector("span")?.textContent).toBe("بِسْمِ");
   });
 
   it("renders glyph code when font loaded", () => {
     const { container } = render(
-      <QuranWord word={mockWord} isFontLoaded={true} fontFamily="p1-v2" />,
+      <QuranWord
+        word={mockWord}
+        fontResolver={{ isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" }}
+      />,
     );
     const span = container.querySelector("span");
     expect(span?.textContent).toBe("\ufc41");
     expect(span?.style.fontFamily).toBe("p1-v2");
+  });
+
+  it("uses the font for the word's page, not a shared page", () => {
+    const wordOnPage3: QcfWord = { ...mockWord, page_number: 3, code_v2: "\ufc99" };
+    const { container } = render(
+      <QuranWord
+        word={wordOnPage3}
+        fontResolver={{
+          isPageFontLoaded: (page) => page === 2,
+          getFontFamily: (page) => (page === 2 ? "p2-v2" : "UthmanicHafs"),
+        }}
+      />,
+    );
+    const span = container.querySelector("span");
+    expect(span?.textContent).toBe("بِسْمِ");
+    expect(span?.style.fontFamily).toBe("");
   });
 });

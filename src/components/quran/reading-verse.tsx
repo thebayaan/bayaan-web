@@ -1,6 +1,7 @@
 "use client";
 import { forwardRef } from "react";
 import type { QcfVerse } from "@/types/quran-api";
+import type { QcfFontResolver } from "./quran-word";
 import { VerseText } from "./verse-text";
 import { VerseActions } from "./verse-actions";
 import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
@@ -8,15 +9,14 @@ import { sanitizeHtml } from "@/lib/sanitize";
 
 interface ReadingVerseProps {
   verse: QcfVerse;
-  isFontLoaded: boolean;
-  fontFamily: string;
+  fontResolver: QcfFontResolver;
   fontSize: string;
   showTranslation: boolean;
   isTarget?: boolean;
 }
 
 export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(function ReadingVerse(
-  { verse, isFontLoaded, fontFamily, fontSize, showTranslation, isTarget = false },
+  { verse, fontResolver, fontSize, showTranslation, isTarget = false },
   ref,
 ) {
   const { getHighlight } = useHighlights();
@@ -45,12 +45,7 @@ export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(functi
         <VerseActions verse={verse} />
       </div>
       <div className="mb-3">
-        <VerseText
-          words={verse.words}
-          isFontLoaded={isFontLoaded}
-          fontFamily={fontFamily}
-          fontSize={fontSize}
-        />
+        <VerseText words={verse.words} fontResolver={fontResolver} fontSize={fontSize} />
       </div>
       {showTranslation &&
         verse.translations?.map((translation) => (

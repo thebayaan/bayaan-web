@@ -20,13 +20,17 @@ const mockVerse: QcfVerse = {
   translations: [],
 };
 
+const fontResolver = {
+  isPageFontLoaded: () => true,
+  getFontFamily: () => "UthmanicHafs",
+};
+
 describe("ReadingVerse", () => {
   it("uses verse_key as DOM id for fragment anchoring", () => {
     const { container } = render(
       <ReadingVerse
         verse={mockVerse}
-        isFontLoaded
-        fontFamily="UthmanicHafs"
+        fontResolver={fontResolver}
         fontSize="1.8rem"
         showTranslation={false}
       />,
@@ -38,8 +42,7 @@ describe("ReadingVerse", () => {
     const { container } = render(
       <ReadingVerse
         verse={mockVerse}
-        isFontLoaded
-        fontFamily="UthmanicHafs"
+        fontResolver={fontResolver}
         fontSize="1.8rem"
         showTranslation={false}
         isTarget
@@ -52,8 +55,7 @@ describe("ReadingVerse", () => {
     const { container } = render(
       <ReadingVerse
         verse={mockVerse}
-        isFontLoaded
-        fontFamily="UthmanicHafs"
+        fontResolver={fontResolver}
         fontSize="1.8rem"
         showTranslation={false}
       />,
