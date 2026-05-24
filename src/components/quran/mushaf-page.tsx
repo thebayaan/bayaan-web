@@ -31,19 +31,24 @@ export function MushafPage({
   }, [verses, pageNumber]);
 
   return (
-    <div className="flex min-h-[600px] flex-col items-center px-4 py-6">
-      {lines.map(([lineNumber, words]) => (
-        <VerseText
-          key={`line-${lineNumber}`}
-          words={words}
-          fontResolver={fontResolver}
-          mushafMode
-          selectable
-          fontSize={fontSize}
-          className="w-full max-w-[640px]"
-        />
-      ))}
-      <p className="text-muted-foreground mt-4 text-xs">{pageNumber}</p>
-    </div>
+    <article
+      aria-label={`Mushaf page ${pageNumber}`}
+      className="mx-auto flex min-h-[min(78vh,920px)] w-full flex-col rounded-2xl border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] px-5 py-8 shadow-sm"
+    >
+      <div className="flex flex-1 flex-col justify-center gap-1">
+        {lines.map(([lineNumber, words]) => (
+          <VerseText
+            key={`line-${lineNumber}`}
+            words={words}
+            fontResolver={fontResolver}
+            mushafMode
+            selectable
+            fontSize={fontSize}
+            className="w-full"
+          />
+        ))}
+      </div>
+      <p className="text-muted-foreground mt-6 text-center text-xs tabular-nums">{pageNumber}</p>
+    </article>
   );
 }

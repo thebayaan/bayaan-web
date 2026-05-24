@@ -50,10 +50,11 @@ describe("VerseText", () => {
     const { container } = render(<VerseText words={mockWords} fontResolver={fontResolver} />);
     expect(container.firstElementChild?.getAttribute("dir")).toBe("rtl");
   });
-  it("applies space-between for mushaf mode", () => {
+  it("centers mushaf lines instead of stretching words apart", () => {
     const { container } = render(
       <VerseText words={mockWords} fontResolver={fontResolver} mushafMode />,
     );
-    expect(container.firstElementChild?.className).toContain("justify-between");
+    expect(container.firstElementChild?.className).toContain("text-center");
+    expect(container.firstElementChild?.className).not.toContain("justify-between");
   });
 });

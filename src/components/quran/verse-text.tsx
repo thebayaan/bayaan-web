@@ -24,8 +24,8 @@ export function VerseText({
     <div
       dir="rtl"
       className={cn(
-        "flex flex-wrap leading-loose",
-        mushafMode ? "justify-between" : "justify-start gap-x-1",
+        "leading-[2.2]",
+        mushafMode ? "text-center" : "flex flex-wrap justify-start gap-x-1 leading-loose",
         className,
       )}
       style={{ fontSize }}
@@ -36,6 +36,7 @@ export function VerseText({
           word={word}
           fontResolver={fontResolver}
           selectable={selectable}
+          className={mushafMode ? "mx-[0.12em] inline-block align-middle" : undefined}
         />
       ))}
     </div>

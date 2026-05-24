@@ -1,106 +1,153 @@
 "use client";
-import { useState, useCallback, useEffect, useMemo } from "react";
-import { useVersesByPage } from "@/hooks/use-verses-by-page";
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQcfFont } from "@/hooks/use-qcf-font";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import { useVerseSelectionStore } from "@/stores/verse-selection-store";
-import { MushafPage } from "./mushaf-page";
 import { MushafActionBar } from "./mushaf-action-bar";
+import { MushafPageSection } from "./mushaf-page-section";
+import type { QcfVerse } from "@/types/quran-api";
 
 const TOTAL_PAGES = 604;
+
+function buildInitialPages(startPage: number): number[] {
+  const from = Math.max(1, startPage - 1);
+  const to = Math.min(TOTAL_PAGES, startPage + 1);
+  const pages: number[] = [];
+  for (let page = from; page <= to; page += 1) {
+    pages.push(page);
+  }
+  return pages;
+}
 
 export function MushafView() {
   const mushafPage = useReadingSettingsStore((s) => s.mushafPage);
   const setMushafPage = useReadingSettingsStore((s) => s.setMushafPage);
   const fontSize = useReadingSettingsStore((s) => s.fontSize);
-  const [currentPage, setCurrentPage] = useState(mushafPage);
-
-  const pagesToLoad = [currentPage - 1, currentPage, currentPage + 1].filter(
-    (p) => p >= 1 && p <= TOTAL_PAGES,
-  );
-  const { verses, isLoading } = useVersesByPage(currentPage);
-  const { isPageFontLoaded, getFontFamily } = useQcfFont(pagesToLoad);
-
   const clearSelection = useVerseSelectionStore((s) => s.clear);
 
-  const goToPage = useCallback(
-    (page: number) => {
-      const clamped = Math.max(1, Math.min(TOTAL_PAGES, page));
-      setCurrentPage(clamped);
-      setMushafPage(clamped);
-      clearSelection();
-    },
-    [setMushafPage, clearSelection],
-  );
+  const [loadedPages, setLoadedPages] = useState<number[]>(() => buildInitialPages(mushafPage));
+  const [visiblePage, setVisiblePage] = useState(mushafPage);
+  const [allVerses, setAllVerses] = useState<QcfVerse[]>([]);
 
-  useEffect(() => {
-    // Clear the selected verse whenever this view unmounts so a stale
-    // selection from one page doesn't linger into the reading view.
-    return () => clearSelection();
-  }, [clearSelection]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+  const hasScrolledToInitialPage = useRef(false);
+  const versesByPageRef = useRef<Map<number, QcfVerse[]>>(new Map());
 
+  const { isPageFontLoaded, getFontFamily } = useQcfFont(loadedPages);
   const fontResolver = useMemo(
     () => ({ isPageFontLoaded, getFontFamily }),
     [isPageFontLoaded, getFontFamily],
   );
 
+  const registerPageRef = useCallback((pageNumber: number, element: HTMLDivElement | null) => {
+    if (element) {
+      pageRefs.current.set(pageNumber, element);
+    } else {
+      pageRefs.current.delete(pageNumber);
+    }
+  }, []);
+
+  const handleVersesLoaded = useCallback((pageNumber: number, verses: QcfVerse[]) => {
+    versesByPageRef.current.set(pageNumber, verses);
+    setAllVerses(loadedPages.flatMap((page) => versesByPageRef.current.get(page) ?? []));
+  }, [loadedPages]);
+
+  useEffect(() => {
+    setAllVerses(loadedPages.flatMap((page) => versesByPageRef.current.get(page) ?? []));
+  }, [loadedPages]);
+
+  const appendNextPage = useCallback(() => {
+    const lastPage = loadedPages[loadedPages.length - 1];
+    if (lastPage >= TOTAL_PAGES) return;
+    const nextPage = lastPage + 1;
+    setLoadedPages((current) => (current.includes(nextPage) ? current : [...current, nextPage]));
+  }, [loadedPages]);
+
+  const prependPreviousPage = useCallback(() => {
+    const firstPage = loadedPages[0];
+    if (firstPage <= 1) return;
+    const previousPage = firstPage - 1;
+    setLoadedPages((current) =>
+      current.includes(previousPage) ? current : [previousPage, ...current],
+    );
+  }, [loadedPages]);
+
+  useEffect(() => {
+    return () => clearSelection();
+  }, [clearSelection]);
+
+  useEffect(() => {
+    if (hasScrolledToInitialPage.current || mushafPage <= 1) return;
+    const target = pageRefs.current.get(mushafPage);
+    if (!target) return;
+    target.scrollIntoView({ block: "start" });
+    hasScrolledToInitialPage.current = true;
+  }, [loadedPages, mushafPage]);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .map((entry) => Number((entry.target as HTMLElement).dataset.page))
+          .filter((page) => Number.isFinite(page));
+
+        if (visible.length === 0) return;
+
+        const nextVisiblePage = Math.min(...visible);
+        setVisiblePage(nextVisiblePage);
+        setMushafPage(nextVisiblePage);
+      },
+      { root: container, threshold: 0.35 },
+    );
+
+    pageRefs.current.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, [loadedPages, setMushafPage]);
+
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-border flex items-center justify-between border-b px-4 py-2">
-        <button
-          onClick={() => goToPage(currentPage - 1)}
-          disabled={currentPage <= 1}
-          aria-label="Previous page"
-          className="rounded-lg bg-[var(--text-alpha-06)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--text-alpha-10)] disabled:opacity-30"
-        >
-          &#8594; Previous
-        </button>
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground text-sm">Page</span>
-          <input
-            type="number"
-            min={1}
-            max={TOTAL_PAGES}
-            value={currentPage}
-            onChange={(e) => goToPage(parseInt(e.target.value, 10) || 1)}
-            className="w-16 rounded border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] px-2 py-1 text-center text-sm"
-          />
-          <span className="text-muted-foreground text-sm">/ {TOTAL_PAGES}</span>
+    <div className="relative flex h-full flex-col">
+      <div className="border-border sticky top-0 z-10 border-b bg-[var(--background)]/95 px-4 py-2 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-[420px] items-center justify-between gap-3">
+          <span className="text-muted-foreground text-sm">Mushaf</span>
+          <span className="text-sm font-medium tabular-nums">
+            Page {visiblePage} / {TOTAL_PAGES}
+          </span>
         </div>
-        <button
-          onClick={() => goToPage(currentPage + 1)}
-          disabled={currentPage >= TOTAL_PAGES}
-          aria-label="Next page"
-          className="rounded-lg bg-[var(--text-alpha-06)] px-3 py-1.5 text-sm transition-colors hover:bg-[var(--text-alpha-10)] disabled:opacity-30"
-        >
-          Next &#8592;
-        </button>
       </div>
-      <div className="flex-1 overflow-y-auto">
-        {isLoading ? (
-          <div className="flex min-h-[600px] items-center justify-center">
-            <div className="w-full max-w-[640px] animate-pulse space-y-4 px-8">
-              {Array.from({ length: 15 }).map((_, i) => (
+
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-[420px] flex-col px-4 py-6">
+          {loadedPages.map((pageNumber, index) => (
+            <div key={pageNumber}>
+              <MushafPageSection
+                pageNumber={pageNumber}
+                fontResolver={fontResolver}
+                fontSize={`${fontSize}rem`}
+                onVersesLoaded={handleVersesLoaded}
+                registerPageRef={registerPageRef}
+                onReachTop={prependPreviousPage}
+                onReachBottom={appendNextPage}
+                showTopSentinel={index === 0 && pageNumber > 1}
+                showBottomSentinel={index === loadedPages.length - 1 && pageNumber < TOTAL_PAGES}
+              />
+              {index < loadedPages.length - 1 ? (
                 <div
-                  key={i}
-                  className="h-6 rounded bg-[var(--text-alpha-06)]"
-                  style={{ width: `${70 + ((i * 7) % 30)}%` }}
+                  className="my-8 border-t border-[var(--text-alpha-10)]"
+                  aria-hidden="true"
                 />
-              ))}
+              ) : null}
             </div>
-          </div>
-        ) : (
-          <div key={currentPage} className="animate-page-fade-in">
-            <MushafPage
-              verses={verses}
-              pageNumber={currentPage}
-              fontResolver={fontResolver}
-              fontSize={`${fontSize}rem`}
-            />
-          </div>
-        )}
+          ))}
+        </div>
       </div>
-      <MushafActionBar verses={verses} />
+
+      <MushafActionBar verses={allVerses} />
     </div>
   );
 }

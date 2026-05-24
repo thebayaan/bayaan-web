@@ -1,8 +1,15 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { MushafView } from "@/components/quran/mushaf-view";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
+
+class MockIntersectionObserver {
+  observe = vi.fn();
+  disconnect = vi.fn();
+  unobserve = vi.fn();
+}
+
+vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
 
 vi.mock("@/hooks/use-verses-by-page", () => ({
   useVersesByPage: () => ({ verses: [], isLoading: false, error: undefined }),
@@ -15,38 +22,21 @@ vi.mock("@/hooks/use-qcf-font", () => ({
   }),
 }));
 
-vi.mock("./mushaf-page", () => ({
-  MushafPage: () => null,
-}));
-
-describe("MushafView nav buttons", () => {
+describe("MushafView", () => {
   beforeEach(() => {
-    useReadingSettingsStore.setState({ mushafPage: 42 });
-  });
-
-  it("Previous button decrements the page", async () => {
-    const user = userEvent.setup();
-    render(<MushafView />);
-    await user.click(screen.getByRole("button", { name: /previous page/i }));
-    expect(useReadingSettingsStore.getState().mushafPage).toBe(41);
-  });
-
-  it("Next button increments the page", async () => {
-    const user = userEvent.setup();
-    render(<MushafView />);
-    await user.click(screen.getByRole("button", { name: /next page/i }));
-    expect(useReadingSettingsStore.getState().mushafPage).toBe(43);
-  });
-
-  it("Previous is disabled on page 1", () => {
     useReadingSettingsStore.setState({ mushafPage: 1 });
-    render(<MushafView />);
-    expect(screen.getByRole("button", { name: /previous page/i })).toBeDisabled();
   });
 
-  it("Next is disabled on the last page", () => {
-    useReadingSettingsStore.setState({ mushafPage: 604 });
+  it("renders a continuous scroll layout with an initial page stack", () => {
     render(<MushafView />);
-    expect(screen.getByRole("button", { name: /next page/i })).toBeDisabled();
+    expect(screen.getByLabelText("Mushaf page 1")).toBeInTheDocument();
+    expect(screen.getByLabelText("Mushaf page 2")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /previous page/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /next page/i })).not.toBeInTheDocument();
+  });
+
+  it("shows the current page indicator", () => {
+    render(<MushafView />);
+    expect(screen.getByText("Page 1 / 604")).toBeInTheDocument();
   });
 });
