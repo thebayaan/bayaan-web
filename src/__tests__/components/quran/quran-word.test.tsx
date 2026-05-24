@@ -1,12 +1,20 @@
-import { describe, it, expect } from "vitest";
-import { render } from "@testing-library/react";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { QuranWord } from "@/components/quran/quran-word";
 import type { QcfWord } from "@/types/quran-api";
+
+const playMock = vi.fn();
+
+vi.mock("@/stores/word-audio-store", () => ({
+  useWordAudioStore: (
+    selector: (state: { activeLocation: string | null; play: typeof playMock }) => unknown,
+  ) => selector({ activeLocation: null, play: playMock }),
+}));
 
 const mockWord: QcfWord = {
   id: 1,
   position: 1,
-  audio_url: null,
+  audio_url: "wbw/001_001_001.mp3",
   char_type_name: "word",
   code_v2: "\ufc41",
   page_number: 1,
@@ -17,9 +25,15 @@ const mockWord: QcfWord = {
   verse_key: "1:1",
   verse_id: 1,
   location: "1:1:1",
+  translation: { text: "In (the) name", language_name: "english" },
+  transliteration: { text: "bis'mi", language_name: "english" },
 };
 
 describe("QuranWord", () => {
+  beforeEach(() => {
+    playMock.mockClear();
+  });
+
   it("renders fallback text when font not loaded", () => {
     const { container } = render(
       <QuranWord
@@ -27,7 +41,7 @@ describe("QuranWord", () => {
         fontResolver={{ isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" }}
       />,
     );
-    expect(container.querySelector("span")?.textContent).toBe("بِسْمِ");
+    expect(container.querySelector("span")?.textContent).toContain("بِسْمِ");
   });
 
   it("renders glyph code when font loaded", () => {
@@ -37,9 +51,9 @@ describe("QuranWord", () => {
         fontResolver={{ isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" }}
       />,
     );
-    const span = container.querySelector("span");
-    expect(span?.textContent).toBe("\ufc41");
-    expect(span?.style.fontFamily).toBe("p1-v2");
+    const span = container.querySelector("[data-word-location='1:1:1']");
+    expect(span?.textContent).toContain("\ufc41");
+    expect(span).toHaveStyle({ fontFamily: "p1-v2" });
   });
 
   it("uses the font for the word's page, not a shared page", () => {
@@ -53,8 +67,33 @@ describe("QuranWord", () => {
         }}
       />,
     );
-    const span = container.querySelector("span");
-    expect(span?.textContent).toBe("بِسْمِ");
-    expect(span?.style.fontFamily).toBe("");
+    const span = container.querySelector("[data-word-location='1:1:1']");
+    expect(span?.textContent).toContain("بِسْمِ");
+    expect(span).not.toHaveStyle({ fontFamily: "p2-v2" });
+  });
+
+  it("plays word audio when tapped in reading mode", () => {
+    render(
+      <QuranWord
+        word={mockWord}
+        wordAudioEnabled
+        fontResolver={{ isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" }}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button"));
+    expect(playMock).toHaveBeenCalledWith(mockWord);
+  });
+
+  it("does not play audio when wordAudioEnabled is false", () => {
+    render(
+      <QuranWord
+        word={mockWord}
+        fontResolver={{ isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" }}
+      />,
+    );
+
+    expect(screen.queryByRole("button")).toBeNull();
+    expect(playMock).not.toHaveBeenCalled();
   });
 });

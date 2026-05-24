@@ -17,6 +17,10 @@ interface VerseTextProps {
   className?: string;
   /** Pass through to each QuranWord — click-to-select in mushaf view. */
   selectable?: boolean;
+  /** Tap a word to hear pronunciation (reading view). */
+  wordAudioEnabled?: boolean;
+  /** Highlight words for the ayah currently playing in the player. */
+  playbackActiveVerseKey?: string | null;
 }
 
 // Hair-space (U+200A) is the narrowest space character. We use it for two
@@ -54,9 +58,7 @@ function primaryVerseKey(words: QcfWord[]): string {
 }
 
 function joinMushafLine(words: QcfWord[]): string {
-  return words
-    .map((word) => word.code_v2.replace(/ /g, QCF_HAIR_SPACE))
-    .join(QCF_HAIR_SPACE);
+  return words.map((word) => word.code_v2.replace(/ /g, QCF_HAIR_SPACE)).join(QCF_HAIR_SPACE);
 }
 
 function MushafLine({
@@ -66,6 +68,7 @@ function MushafLine({
   className,
   selectable,
   lineAlignment = "right",
+  playbackActiveVerseKey,
 }: {
   words: QcfWord[];
   fontResolver: QcfFontResolver;
@@ -73,6 +76,7 @@ function MushafLine({
   className?: string;
   selectable?: boolean;
   lineAlignment?: MushafLineAlignment;
+  playbackActiveVerseKey?: string | null;
 }) {
   const sortedWords = useMemo(() => sortWords(words), [words]);
   const pageNum = sortedWords[0]?.page_number ?? 1;
@@ -93,6 +97,10 @@ function MushafLine({
       height: rect.height,
     });
   }, [selectable, sortedWords, toggle]);
+
+  const lineHasPlaybackAyah =
+    playbackActiveVerseKey != null &&
+    sortedWords.some((word) => word.verse_key === playbackActiveVerseKey);
 
   if (isFontLoaded) {
     // Framed pages (Al-Fatiha, Al-Baqarah opener) are short, centered
@@ -117,11 +125,14 @@ function MushafLine({
             : undefined
         }
         className={cn(
-          "w-full whitespace-nowrap",
+          "w-full whitespace-nowrap transition-colors",
           isCenter ? "text-center leading-[1.85]" : "leading-[2.35]",
           selectable && "cursor-pointer",
+          lineHasPlaybackAyah &&
+            "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
           className,
         )}
+        data-verse-key={lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined}
         style={{
           fontFamily,
           fontSize,
@@ -144,7 +155,9 @@ function MushafLine({
       dir="rtl"
       className={cn(
         "flex w-full flex-nowrap items-baseline",
-        lineAlignment === "center" ? "justify-center leading-[1.85]" : "justify-between leading-[2.35]",
+        lineAlignment === "center"
+          ? "justify-center leading-[1.85]"
+          : "justify-between leading-[2.35]",
         className,
       )}
       style={{ fontSize }}
@@ -155,6 +168,7 @@ function MushafLine({
           word={word}
           fontResolver={fontResolver}
           selectable={selectable}
+          playbackActive={word.verse_key === playbackActiveVerseKey}
           className="shrink-0"
         />
       ))}
@@ -170,6 +184,8 @@ export function VerseText({
   fontSize = "1.8rem",
   className,
   selectable,
+  wordAudioEnabled,
+  playbackActiveVerseKey,
 }: VerseTextProps) {
   if (mushafMode) {
     return (
@@ -180,6 +196,7 @@ export function VerseText({
         className={className}
         selectable={selectable}
         lineAlignment={lineAlignment}
+        playbackActiveVerseKey={playbackActiveVerseKey}
       />
     );
   }
@@ -196,6 +213,8 @@ export function VerseText({
           word={word}
           fontResolver={fontResolver}
           selectable={selectable}
+          wordAudioEnabled={wordAudioEnabled}
+          playbackActive={word.verse_key === playbackActiveVerseKey}
         />
       ))}
     </div>

@@ -12,6 +12,7 @@ interface MushafPageSectionProps {
   pageNumber: number;
   fontResolver: QcfFontResolver;
   fontSize: string;
+  playbackActiveVerseKey?: string | null;
   onVersesLoaded: (pageNumber: number, verses: QcfVerse[]) => void;
   registerPageRef: (pageNumber: number, element: HTMLDivElement | null) => void;
   onReachBottom?: () => void;
@@ -24,6 +25,7 @@ export function MushafPageSection({
   pageNumber,
   fontResolver,
   fontSize,
+  playbackActiveVerseKey,
   onVersesLoaded,
   registerPageRef,
   onReachBottom,
@@ -101,10 +103,13 @@ export function MushafPageSection({
           pageNumber={pageNumber}
           fontResolver={fontResolver}
           fontSize={fontSize}
+          playbackActiveVerseKey={playbackActiveVerseKey}
         />
       )}
 
-      {showBottomSentinel ? <div ref={bottomSentinelRef} className="h-px" aria-hidden="true" /> : null}
+      {showBottomSentinel ? (
+        <div ref={bottomSentinelRef} className="h-px" aria-hidden="true" />
+      ) : null}
     </div>
   );
 }

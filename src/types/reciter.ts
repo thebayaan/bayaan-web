@@ -11,6 +11,8 @@ export interface Rewayat {
   surah_list: number[];
   mp3quran_read_id: number | null;
   qdc_reciter_id: number | null;
+  has_timestamps?: boolean;
+  timestamps_surah_list?: number[];
 }
 
 export interface Reciter {
