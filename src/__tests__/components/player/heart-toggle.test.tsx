@@ -41,9 +41,10 @@ describe("HeartToggle", () => {
     render(<HeartToggle target={ref} trackTitle="Ya-Sin" />);
 
     await user.click(screen.getByRole("button", { name: /save ya-sin to favorites/i }));
-    expect(
-      screen.getByRole("button", { name: /remove ya-sin from favorites/i }),
-    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /remove ya-sin from favorites/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
 
     await user.click(screen.getByRole("button", { name: /remove ya-sin from favorites/i }));
     expect(screen.getByRole("button", { name: /save ya-sin to favorites/i })).toHaveAttribute(

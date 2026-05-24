@@ -41,11 +41,7 @@ export function QuranWord({
   const tajweedWord = useTajweedStore((s) => s.byLocation?.[word.location]);
   const ensureTajweedLoaded = useTajweedStore((s) => s.ensureLoaded);
   const useTajweedRendering = showTajweed && Boolean(tajweedWord);
-  const text = useTajweedRendering
-    ? null
-    : isFontLoaded
-      ? word.code_v2
-      : word.qpc_uthmani_hafs;
+  const text = useTajweedRendering ? null : isFontLoaded ? word.code_v2 : word.qpc_uthmani_hafs;
   const toggle = useVerseSelectionStore((s) => s.toggle);
   const selectedVerseKey = useVerseSelectionStore((s) => s.selectedVerseKey);
   const activeLocation = useWordAudioStore((s) => s.activeLocation);

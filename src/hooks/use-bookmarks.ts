@@ -1,8 +1,5 @@
 import { useMemo } from "react";
-import {
-  useLibraryStore,
-  type CreateBookmarkInput,
-} from "@/stores/library-store";
+import { useLibraryStore, type CreateBookmarkInput } from "@/stores/library-store";
 import type { VerseBookmark } from "@/types/quran";
 
 export type { CreateBookmarkInput };

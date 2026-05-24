@@ -87,10 +87,7 @@ interface LibraryState {
   addFavoriteReciter: (reciterId: string) => FavoriteReciter;
   removeFavoriteReciter: (reciterId: string) => void;
   createPlaylist: (input: { name: string; description?: string }) => Playlist;
-  updatePlaylist: (
-    id: string,
-    input: { name?: string; description?: string },
-  ) => Playlist | null;
+  updatePlaylist: (id: string, input: { name?: string; description?: string }) => Playlist | null;
   deletePlaylist: (id: string) => void;
   addPlaylistItem: (playlistId: string, input: AddPlaylistItemInput) => PlaylistItem;
   removePlaylistItem: (playlistId: string, itemId: string) => void;
@@ -160,9 +157,7 @@ export const useLibraryStore = create<LibraryState>()(
         if (existing) {
           set((state) => ({
             notes: state.notes.map((entry) =>
-              entry.verse_key === verseKey
-                ? { ...entry, content, updated_at: stamp }
-                : entry,
+              entry.verse_key === verseKey ? { ...entry, content, updated_at: stamp } : entry,
             ),
           }));
           return;

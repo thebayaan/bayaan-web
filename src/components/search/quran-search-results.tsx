@@ -70,7 +70,13 @@ function MushafSearchResultRow({ result }: { result: MushafSearchResult }) {
       className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
     >
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--text-alpha-06)] text-xs font-semibold uppercase">
-        {result.type === "page" ? "Pg" : result.type === "juz" ? "Jz" : result.type === "verse" ? "Ay" : "Su"}
+        {result.type === "page"
+          ? "Pg"
+          : result.type === "juz"
+            ? "Jz"
+            : result.type === "verse"
+              ? "Ay"
+              : "Su"}
       </div>
       <div>
         <p className="text-sm font-medium">{result.title}</p>

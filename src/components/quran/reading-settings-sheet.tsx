@@ -36,7 +36,9 @@ export function ReadingSettingsSheet({ open, onOpenChange }: Props): React.JSX.E
       <SheetContent className="bg-surface flex w-full max-w-md flex-col">
         <SheetHeader>
           <SheetTitle>Reading settings</SheetTitle>
-          <SheetDescription>Adjust font size, translations, tafsir, and reading aids.</SheetDescription>
+          <SheetDescription>
+            Adjust font size, translations, tafsir, and reading aids.
+          </SheetDescription>
         </SheetHeader>
 
         <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">

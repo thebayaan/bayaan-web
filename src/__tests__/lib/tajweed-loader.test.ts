@@ -7,12 +7,12 @@ describe("processTajweedData", () => {
       "1:1:2": {
         word_index: 2,
         location: "1:1:2",
-        text: '<rule class=ham_wasl>ٱ</rule>للَّهِ',
+        text: "<rule class=ham_wasl>ٱ</rule>للَّهِ",
       },
       "1:1:3": {
         word_index: 3,
         location: "1:1:3",
-        text: '<rule class=ham_wasl>ٱ</rule><rule class=laam_shamsiyah>ل</rule>رَّحۡمَ<rule class=madda_normal>ـٰ</rule>نِ',
+        text: "<rule class=ham_wasl>ٱ</rule><rule class=laam_shamsiyah>ل</rule>رَّحۡمَ<rule class=madda_normal>ـٰ</rule>نِ",
       },
     });
 

@@ -103,9 +103,7 @@ export function MushafView({ surahId, targetAyah }: MushafViewProps = {}) {
   const playbackActiveVerseKey =
     surahId != null && trackedSurahId === surahId ? activeVerseKey : null;
   const targetVerseKey =
-    surahId != null && targetAyah != null && targetAyah >= 1
-      ? `${surahId}:${targetAyah}`
-      : null;
+    surahId != null && targetAyah != null && targetAyah >= 1 ? `${surahId}:${targetAyah}` : null;
   const highlightedVerseKey = playbackActiveVerseKey ?? targetVerseKey;
   const lastScrolledAyahRef = useRef<string | null>(null);
   const lastScrolledTargetRef = useRef<string | null>(null);

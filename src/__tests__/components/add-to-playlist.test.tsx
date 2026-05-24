@@ -37,7 +37,9 @@ describe("AddToPlaylistButton", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
-    const items = useLibraryStore.getState().playlistItems.filter((entry) => entry.playlist_id === playlistId);
+    const items = useLibraryStore
+      .getState()
+      .playlistItems.filter((entry) => entry.playlist_id === playlistId);
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject(item);
   });

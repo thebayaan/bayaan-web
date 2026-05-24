@@ -30,7 +30,9 @@ export function TafsirSheet({ verseKey, open, onOpenChange }: TafsirSheetProps) 
         <SheetHeader>
           <SheetTitle>Tafsir {verseKey ? `· ${verseKey}` : ""}</SheetTitle>
           <SheetDescription>
-            {edition ? `${edition.name}${edition.authorName ? ` · ${edition.authorName}` : ""}` : "Commentary"}
+            {edition
+              ? `${edition.name}${edition.authorName ? ` · ${edition.authorName}` : ""}`
+              : "Commentary"}
           </SheetDescription>
         </SheetHeader>
 

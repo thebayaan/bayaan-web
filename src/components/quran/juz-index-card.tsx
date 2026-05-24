@@ -23,7 +23,7 @@ export function JuzIndexCard({ entry }: JuzIndexCardProps) {
         <p className="text-muted-foreground mt-1 text-xs">
           Page {entry.startPage} · {entry.startVerseKey}
         </p>
-        <p className="text-muted-foreground mt-0.5 text-xs group-hover:text-foreground transition-colors">
+        <p className="text-muted-foreground group-hover:text-foreground mt-0.5 text-xs transition-colors">
           Open in mushaf
         </p>
       </div>
