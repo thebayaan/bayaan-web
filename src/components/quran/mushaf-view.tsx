@@ -6,7 +6,9 @@ import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import { useVerseSelectionStore } from "@/stores/verse-selection-store";
 import { MushafActionBar } from "./mushaf-action-bar";
 import { MushafPageSection } from "./mushaf-page-section";
+import { MUSHAF_PAGE_CLASS } from "./mushaf-layout";
 import type { QcfVerse } from "@/types/quran-api";
+import { cn } from "@/lib/utils";
 
 const TOTAL_PAGES = 604;
 
@@ -113,7 +115,7 @@ export function MushafView() {
   return (
     <div className="relative flex h-full flex-col">
       <div className="border-border sticky top-0 z-10 border-b bg-[var(--background)]/95 px-4 py-2 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-[420px] items-center justify-between gap-3">
+        <div className={cn(`${MUSHAF_PAGE_CLASS} flex items-center justify-between gap-3`)}>
           <span className="text-muted-foreground text-sm">Mushaf</span>
           <span className="text-sm font-medium tabular-nums">
             Page {visiblePage} / {TOTAL_PAGES}
@@ -122,7 +124,7 @@ export function MushafView() {
       </div>
 
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
-        <div className="mx-auto flex w-full max-w-[420px] flex-col px-4 py-6">
+        <div className={cn(`${MUSHAF_PAGE_CLASS} flex flex-col px-4 py-6`)}>
           {loadedPages.map((pageNumber, index) => (
             <div key={pageNumber}>
               <MushafPageSection

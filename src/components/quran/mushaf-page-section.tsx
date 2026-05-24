@@ -5,6 +5,8 @@ import { useVersesByPage } from "@/hooks/use-verses-by-page";
 import type { QcfVerse } from "@/types/quran-api";
 import type { QcfFontResolver } from "./quran-word";
 import { MushafPage } from "./mushaf-page";
+import { MUSHAF_PAGE_CLASS } from "./mushaf-layout";
+import { cn } from "@/lib/utils";
 
 interface MushafPageSectionProps {
   pageNumber: number;
@@ -84,7 +86,7 @@ export function MushafPageSection({
       {showTopSentinel ? <div ref={topSentinelRef} className="h-px" aria-hidden="true" /> : null}
 
       {isLoading ? (
-        <div className="mx-auto w-full max-w-[420px] animate-pulse px-6 py-10">
+        <div className={cn(`${MUSHAF_PAGE_CLASS} animate-pulse py-10`)}>
           {Array.from({ length: 15 }).map((_, index) => (
             <div
               key={index}

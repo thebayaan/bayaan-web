@@ -36,25 +36,47 @@ const mockWords: QcfWord[] = [
   },
 ];
 
-const fontResolver = {
-  isPageFontLoaded: () => false,
-  getFontFamily: () => "UthmanicHafs",
-};
-
 describe("VerseText", () => {
-  it("renders all words", () => {
+  it("renders all words in reading mode", () => {
+    const fontResolver = { isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" };
     const { container } = render(<VerseText words={mockWords} fontResolver={fontResolver} />);
     expect(container.querySelectorAll("span")).toHaveLength(2);
   });
-  it("applies RTL direction", () => {
+
+  it("applies RTL direction in reading mode", () => {
+    const fontResolver = { isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" };
     const { container } = render(<VerseText words={mockWords} fontResolver={fontResolver} />);
     expect(container.firstElementChild?.getAttribute("dir")).toBe("rtl");
   });
-  it("centers mushaf lines instead of stretching words apart", () => {
+
+  it("joins QCF glyph codes into one line when the page font is loaded", () => {
+    const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" };
     const { container } = render(
       <VerseText words={mockWords} fontResolver={fontResolver} mushafMode />,
     );
+    expect(container.firstElementChild?.textContent).toBe("\ufc41\ufc42");
+    expect(container.firstElementChild?.style.fontFamily).toBe("p1-v2");
+    expect(container.querySelectorAll("span")).toHaveLength(0);
+  });
+
+  it("centers mushaf lines on framed pages when requested", () => {
+    const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" };
+    const { container } = render(
+      <VerseText
+        words={mockWords}
+        fontResolver={fontResolver}
+        mushafMode
+        lineAlignment="center"
+      />,
+    );
     expect(container.firstElementChild?.className).toContain("text-center");
-    expect(container.firstElementChild?.className).not.toContain("justify-between");
+  });
+
+  it("justifies fallback mushaf lines when the page font is not loaded", () => {
+    const fontResolver = { isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" };
+    const { container } = render(
+      <VerseText words={mockWords} fontResolver={fontResolver} mushafMode />,
+    );
+    expect(container.firstElementChild?.className).toContain("justify-between");
   });
 });
