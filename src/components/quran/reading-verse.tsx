@@ -5,7 +5,9 @@ import type { QcfFontResolver } from "./quran-word";
 import { VerseText } from "./verse-text";
 import { VerseActions } from "./verse-actions";
 import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
+import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { VerseTransliteration } from "./verse-transliteration";
 
 interface ReadingVerseProps {
   verse: QcfVerse;
@@ -32,6 +34,7 @@ export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(functi
   ref,
 ) {
   const { getHighlight } = useHighlights();
+  const showTransliteration = useReadingSettingsStore((s) => s.showTransliteration);
   const highlight = getHighlight(verse.verse_key);
   const highlightColor = highlight ? HIGHLIGHT_SWATCH[highlight.color] : null;
 
@@ -69,6 +72,7 @@ export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(functi
           playbackActiveVerseKey={isPlaybackActive ? verse.verse_key : null}
         />
       </div>
+      {showTransliteration ? <VerseTransliteration verseKey={verse.verse_key} /> : null}
       {showTranslation &&
         verse.translations?.map((translation) => (
           <div key={translation.id} className="text-muted-foreground mt-3 text-sm leading-relaxed">

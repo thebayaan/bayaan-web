@@ -7,22 +7,26 @@ vi.mock("next/navigation", () => ({
   notFound: () => notFoundSpy(),
 }));
 
-vi.mock("@/components/quran/reading-view", () => ({
-  ReadingView: ({ surahId, targetAyah }: { surahId: number; targetAyah?: number }) => (
-    <div data-testid="reading-view" data-surah={surahId} data-ayah={targetAyah ?? ""} />
+vi.mock("@/components/quran/reader-content", () => ({
+  ReaderContent: ({ surahId, targetAyah }: { surahId: number; targetAyah?: number }) => (
+    <div data-testid="reader-content" data-surah={surahId} data-ayah={targetAyah ?? ""} />
   ),
+}));
+
+vi.mock("@/components/quran/reading-sub-header", () => ({
+  ReadingSubHeader: () => <div data-testid="reading-sub-header" />,
 }));
 
 import QuranAyahPage, { generateMetadata } from "@/app/(app)/quran/[surah]/[ayah]/page";
 import { render, screen } from "@testing-library/react";
 
 describe("/quran/[surah]/[ayah]", () => {
-  it("renders ReadingView with target verse for valid input", async () => {
+  it("renders ReaderContent with target verse for valid input", async () => {
     const page = await QuranAyahPage({
       params: Promise.resolve({ surah: "2", ayah: "255" }),
     });
     render(page);
-    const view = screen.getByTestId("reading-view");
+    const view = screen.getByTestId("reader-content");
     expect(view).toHaveAttribute("data-surah", "2");
     expect(view).toHaveAttribute("data-ayah", "255");
   });

@@ -5,6 +5,7 @@ import type { QcfVerse } from "@/types/quran-api";
 import { BookmarkToggle } from "./bookmark-toggle";
 import { HighlightPicker } from "./highlight-picker";
 import { NoteEditorButton } from "./note-editor";
+import { TafsirSheet } from "./tafsir-sheet";
 import { usePlayFromAyah } from "@/hooks/use-play-from-ayah";
 
 function getVerseText(verse: QcfVerse): string {
@@ -32,6 +33,7 @@ export function VerseActions({ verse, surahId, surahName }: VerseActionsProps) {
   const [copied, setCopied] = useState(false);
   const [playError, setPlayError] = useState<string | null>(null);
   const [isPlayingAyah, setIsPlayingAyah] = useState(false);
+  const [tafsirOpen, setTafsirOpen] = useState(false);
   const { playFromAyah, canPlayFromAyah, resolvedReciter } = usePlayFromAyah(surahId, surahName);
 
   async function handleCopy(): Promise<void> {
@@ -88,19 +90,32 @@ export function VerseActions({ verse, surahId, surahName }: VerseActionsProps) {
     : `Play from ${verse.verse_key} — choose a reciter in the header first`;
 
   return (
-    <div className="flex items-center gap-0.5" aria-label={`Actions for verse ${verse.verse_key}`}>
-      <button
-        type="button"
-        onClick={() => void handlePlayFromAyah()}
-        disabled={!canPlayFromAyah || isPlayingAyah}
-        aria-label={playLabel}
-        title={playLabel}
-        className={COMMON_BUTTON}
-      >
-        <svg width={14} height={14} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M8 5v14l11-7z" />
-        </svg>
-      </button>
+    <>
+      <div className="flex items-center gap-0.5" aria-label={`Actions for verse ${verse.verse_key}`}>
+        <button
+          type="button"
+          onClick={() => void handlePlayFromAyah()}
+          disabled={!canPlayFromAyah || isPlayingAyah}
+          aria-label={playLabel}
+          title={playLabel}
+          className={COMMON_BUTTON}
+        >
+          <svg width={14} height={14} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onClick={() => setTafsirOpen(true)}
+          aria-label={`Tafsir for ${verse.verse_key}`}
+          title={`Tafsir for ${verse.verse_key}`}
+          className={COMMON_BUTTON}
+        >
+          <svg width={14} height={14} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+        </button>
       <BookmarkToggle verseKey={verse.verse_key} className={COMMON_BUTTON} />
       <HighlightPicker verseKey={verse.verse_key} className={COMMON_BUTTON} />
       <NoteEditorButton verseKey={verse.verse_key} className={COMMON_BUTTON} />
@@ -136,6 +151,12 @@ export function VerseActions({ verse, surahId, surahName }: VerseActionsProps) {
           {playError}
         </span>
       ) : null}
-    </div>
+      </div>
+      <TafsirSheet
+        verseKey={verse.verse_key}
+        open={tafsirOpen}
+        onOpenChange={setTafsirOpen}
+      />
+    </>
   );
 }

@@ -1,6 +1,8 @@
 "use client";
 
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
+import { useTranslationResources } from "@/hooks/use-translation-resources";
+import { AVAILABLE_TAFASEER } from "@/data/available-tafaseer";
 import {
   Sheet,
   SheetContent,
@@ -17,19 +19,24 @@ interface Props {
 export function ReadingSettingsSheet({ open, onOpenChange }: Props): React.JSX.Element {
   const fontSize = useReadingSettingsStore((s) => s.fontSize);
   const setFontSize = useReadingSettingsStore((s) => s.setFontSize);
+  const translationIds = useReadingSettingsStore((s) => s.translationIds);
+  const setTranslationIds = useReadingSettingsStore((s) => s.setTranslationIds);
+  const tafsirId = useReadingSettingsStore((s) => s.tafsirId);
+  const setTafsirId = useReadingSettingsStore((s) => s.setTafsirId);
   const showTransliteration = useReadingSettingsStore((s) => s.showTransliteration);
   const toggleTransliteration = useReadingSettingsStore((s) => s.toggleTransliteration);
   const showWordByWord = useReadingSettingsStore((s) => s.showWordByWord);
   const toggleWordByWord = useReadingSettingsStore((s) => s.toggleWordByWord);
   const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
   const toggleTajweed = useReadingSettingsStore((s) => s.toggleTajweed);
+  const { translations } = useTranslationResources();
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="bg-surface flex w-full max-w-md flex-col">
         <SheetHeader>
           <SheetTitle>Reading settings</SheetTitle>
-          <SheetDescription>Adjust font size, translations, and reading aids.</SheetDescription>
+          <SheetDescription>Adjust font size, translations, tafsir, and reading aids.</SheetDescription>
         </SheetHeader>
 
         <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
@@ -55,11 +62,32 @@ export function ReadingSettingsSheet({ open, onOpenChange }: Props): React.JSX.E
           <section className="space-y-3">
             <h3 className="text-foreground text-sm font-semibold">Translation</h3>
             <select
-              defaultValue="131"
+              value={translationIds}
+              onChange={(e) => setTranslationIds(e.target.value)}
               className="border-border bg-surface-sunken w-full rounded-lg border px-3 py-2 text-sm"
               aria-label="Translation"
             >
-              <option value="131">Dr. Mustafa Khattab — The Clear Quran</option>
+              {translations.map((translation) => (
+                <option key={translation.id} value={String(translation.id)}>
+                  {translation.author_name} — {translation.name}
+                </option>
+              ))}
+            </select>
+          </section>
+
+          <section className="space-y-3">
+            <h3 className="text-foreground text-sm font-semibold">Tafsir</h3>
+            <select
+              value={tafsirId}
+              onChange={(e) => setTafsirId(e.target.value)}
+              className="border-border bg-surface-sunken w-full rounded-lg border px-3 py-2 text-sm"
+              aria-label="Tafsir edition"
+            >
+              {AVAILABLE_TAFASEER.map((edition) => (
+                <option key={edition.id} value={edition.id}>
+                  {edition.name} ({edition.language})
+                </option>
+              ))}
             </select>
           </section>
 

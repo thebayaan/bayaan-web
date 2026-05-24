@@ -55,8 +55,6 @@ jobs:
       NEXT_PUBLIC_BAYAAN_API_URL: https://api.example.invalid
       BAYAAN_INTERNAL_API_URL: https://api.internal.example.invalid
       BAYAAN_API_KEY: ci-placeholder
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -89,11 +87,6 @@ jobs:
           echo "Smoke test passed"
           kill $SERVER_PID
 
-  # Requires two GitHub repo secrets matching the Clerk Development
-  # instance keys: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY (pk_test_…) and
-  # CLERK_SECRET_KEY (sk_test_…). Clerk format-validates the publishable
-  # key at boot, so placeholders cause `next start` to error out and
-  # Playwright's webServer to time out.
   e2e:
     name: Playwright smoke
     runs-on: ubuntu-latest
@@ -102,8 +95,6 @@ jobs:
       NEXT_PUBLIC_BAYAAN_API_URL: https://api.example.invalid
       BAYAAN_INTERNAL_API_URL: https://api.internal.example.invalid
       BAYAAN_API_KEY: ci-placeholder
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -111,13 +102,6 @@ jobs:
         with:
           node-version: 22
           cache: npm
-
-      - name: Verify Clerk secrets are set
-        run: |
-          if [ -z "${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}" ] || [ -z "${CLERK_SECRET_KEY}" ]; then
-            echo "::error::NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY must be set as repo secrets."
-            exit 1
-          fi
 
       - name: Install dependencies
         run: npm ci

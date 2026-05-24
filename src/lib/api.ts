@@ -26,7 +26,7 @@ export class ApiError extends Error {
 }
 
 function friendlyForStatus(status: number): string {
-  if (status === 401) return "You need to sign in again to do that.";
+  if (status === 401) return "This request isn't authorized.";
   if (status === 403) return "You don't have permission to do that.";
   if (status === 404) return "We couldn't find that.";
   if (status === 429) return "Too many requests — try again in a moment.";
@@ -35,9 +35,9 @@ function friendlyForStatus(status: number): string {
 }
 
 const CODE_MESSAGES: Record<string, string> = {
-  USER_SYNC_FAILED: "We couldn't sync your account from Clerk. Try again in a moment.",
+  USER_SYNC_FAILED: "We couldn't sync your account. Try again in a moment.",
   USER_NOT_FOUND: "Your account isn't synced yet. Try again in a moment.",
-  UNAUTHORIZED: "Your session expired. Please sign in again.",
+  UNAUTHORIZED: "Your session expired. Please try again.",
 };
 
 async function buildApiError(response: Response): Promise<ApiError> {

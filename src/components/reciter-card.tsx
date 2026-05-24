@@ -5,7 +5,6 @@ import Link from "next/link";
 import type { MouseEvent } from "react";
 import type { Reciter } from "@/types/reciter";
 import { usePlayerStore } from "@/stores/player-store";
-import { useAuthGate } from "@/hooks/use-auth-gate";
 import { createQueueFromSurah } from "@/lib/audio-utils";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
@@ -38,7 +37,6 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
   const pause = usePlayerStore((s) => s.pause);
   const isPlaying = usePlayerStore((s) => s.playback.isPlaying);
   const currentTrack = usePlayerStore((s) => s.queue.tracks[s.queue.currentIndex]);
-  const gate = useAuthGate();
 
   const isThisReciterPlaying =
     isPlaying && currentTrack !== undefined && currentTrack.reciterId === reciter.id;
@@ -106,7 +104,7 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
       </Link>
       <button
         type="button"
-        onClick={gate(handlePlayClick)}
+        onClick={handlePlayClick}
         aria-label={isThisReciterPlaying ? `Pause ${reciter.name}` : `Play ${reciter.name}`}
         className={cn(
           "bg-brand-main text-brand-main-foreground absolute right-2.5 flex h-10 w-10 items-center justify-center rounded-full shadow-xl transition-all duration-200",

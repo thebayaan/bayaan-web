@@ -7,8 +7,8 @@ test("root renders without 5xx", async ({ page }) => {
   await expect(page.locator("body")).not.toBeEmpty();
 });
 
-test("sign-in page loads", async ({ page }) => {
-  const response = await page.goto("/sign-in");
+test("quran index loads", async ({ page }) => {
+  const response = await page.goto("/quran");
   expect(response).not.toBeNull();
   expect(response!.status()).toBeLessThan(500);
 });

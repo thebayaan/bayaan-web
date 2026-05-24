@@ -11,6 +11,8 @@ import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import type { Reciter } from "@/types/reciter";
 import Link from "next/link";
+import { parseMushafSearchQuery } from "@/lib/mushaf-navigation";
+import { QuranSearchResults } from "@/components/search/quran-search-results";
 
 // Popular surahs to seed the empty state. These mirror what most Quran apps
 // surface as "common reads" and give the page somewhere to start exploring
@@ -71,6 +73,8 @@ function SearchPageContent() {
     [],
   );
 
+  const mushafResults = useMemo(() => parseMushafSearchQuery(query), [query]);
+
   const results = useMemo<SearchResult[]>(() => {
     if (query.length < 2) return [];
 
@@ -103,63 +107,69 @@ function SearchPageContent() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="mb-4 text-2xl font-bold">Search</h1>
-      {results.length === 0 ? (
+    <div className="space-y-8 p-6">
+      <h1 className="text-2xl font-bold">Search</h1>
+      <QuranSearchResults query={query} />
+      {results.length > 0 ? (
+        <section className="space-y-2">
+          <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+            Surahs & reciters
+          </h2>
+          <div className="space-y-2">
+            {results.map((result) => {
+              if (result.type === "reciter" && result.reciter) {
+                return (
+                  <Link
+                    key={`reciter-${result.reciter.id}`}
+                    href={`/reciter/${result.reciter.slug}`}
+                    className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
+                  >
+                    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[var(--text-alpha-06)]">
+                      {result.reciter.image_url && (
+                        <img
+                          src={result.reciter.image_url}
+                          alt={result.reciter.name}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{result.reciter.name}</p>
+                      <p className="text-muted-foreground text-xs capitalize">
+                        Reciter &middot; {result.reciter.rewayat[0]?.style ?? ""}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              }
+              if (result.type === "surah" && result.surah) {
+                return (
+                  <Link
+                    key={`surah-${result.surah.id}`}
+                    href={`/quran/${result.surah.id}`}
+                    className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--text-alpha-06)] text-sm font-medium">
+                      {result.surah.id}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{result.surah.name}</p>
+                      <p className="text-muted-foreground text-xs">
+                        {result.surah.translated_name_english} &middot; {result.surah.verses_count}{" "}
+                        verses
+                      </p>
+                    </div>
+                  </Link>
+                );
+              }
+              return null;
+            })}
+          </div>
+        </section>
+      ) : mushafResults.length === 0 && query.trim().length >= 3 ? null : (
         <p className="text-muted-foreground">
-          {isLoading ? "Searching…" : <>No results for &ldquo;{query}&rdquo;</>}
+          {isLoading ? "Searching…" : <>No surah or reciter matches for &ldquo;{query}&rdquo;</>}
         </p>
-      ) : (
-        <div className="space-y-2">
-          {results.map((result) => {
-            if (result.type === "reciter" && result.reciter) {
-              return (
-                <Link
-                  key={`reciter-${result.reciter.id}`}
-                  href={`/reciter/${result.reciter.slug}`}
-                  className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
-                >
-                  <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-[var(--text-alpha-06)]">
-                    {result.reciter.image_url && (
-                      <img
-                        src={result.reciter.image_url}
-                        alt={result.reciter.name}
-                        className="h-full w-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{result.reciter.name}</p>
-                    <p className="text-muted-foreground text-xs capitalize">
-                      Reciter &middot; {result.reciter.rewayat[0]?.style ?? ""}
-                    </p>
-                  </div>
-                </Link>
-              );
-            }
-            if (result.type === "surah" && result.surah) {
-              return (
-                <Link
-                  key={`surah-${result.surah.id}`}
-                  href={`/quran/${result.surah.id}`}
-                  className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--text-alpha-06)] text-sm font-medium">
-                    {result.surah.id}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{result.surah.name}</p>
-                    <p className="text-muted-foreground text-xs">
-                      {result.surah.translated_name_english} &middot; {result.surah.verses_count}{" "}
-                      verses
-                    </p>
-                  </div>
-                </Link>
-              );
-            }
-            return null;
-          })}
-        </div>
       )}
     </div>
   );
@@ -183,7 +193,8 @@ function SearchEmptyState({ reciters }: { reciters: Reciter[] }) {
       <div className="mb-8">
         <h1 className="mb-1 text-2xl font-bold">Search Bayaan</h1>
         <p className="text-muted-foreground text-sm">
-          Find surahs, reciters, and adhkar. Press ⌘K from anywhere.
+          Find surahs, reciters, mushaf pages, juz, verses, and translation text. Press ⌘K from
+          anywhere.
         </p>
       </div>
 

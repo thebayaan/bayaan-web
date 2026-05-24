@@ -1,22 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { Surah } from "@/types/quran";
+import { getHizbForPage, getJuzForPage } from "@/data/juz-data";
 import { ReadingSettingsSheet } from "./reading-settings-sheet";
 import { ReaderPlayChip } from "./reader-play-chip";
+import { PagePicker } from "./page-picker";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 
 interface Props {
   surah: Surah;
-  page?: number;
-  juz?: number;
 }
 
-export function ReadingSubHeader({ surah, page, juz }: Props): React.JSX.Element {
+export function ReadingSubHeader({ surah }: Props): React.JSX.Element {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [pagePickerOpen, setPagePickerOpen] = useState(false);
   const viewMode = useReadingSettingsStore((s) => s.viewMode);
   const setViewMode = useReadingSettingsStore((s) => s.setViewMode);
+  const mushafPage = useReadingSettingsStore((s) => s.mushafPage);
+
+  const { page, juz, hizb } = useMemo(() => {
+    if (viewMode !== "mushaf") return { page: undefined, juz: undefined, hizb: undefined };
+    return {
+      page: mushafPage,
+      juz: getJuzForPage(mushafPage),
+      hizb: getHizbForPage(mushafPage),
+    };
+  }, [viewMode, mushafPage]);
 
   return (
     <>
@@ -50,12 +61,25 @@ export function ReadingSubHeader({ surah, page, juz }: Props): React.JSX.Element
         </Link>
 
         {page !== undefined && (
-          <div className="text-muted-foreground flex items-center gap-3 text-xs font-medium">
-            <span>Page {page}</span>
+          <div className="text-muted-foreground flex flex-wrap items-center gap-3 text-xs font-medium">
+            <button
+              type="button"
+              onClick={() => setPagePickerOpen(true)}
+              className="hover:text-foreground transition-colors"
+              aria-label={`Go to page ${page}`}
+            >
+              Page {page}
+            </button>
             {juz !== undefined && (
               <>
                 <span className="bg-border-divider h-3 w-px" />
                 <span>Juz {juz}</span>
+              </>
+            )}
+            {hizb !== undefined && (
+              <>
+                <span className="bg-border-divider h-3 w-px" />
+                <span>Hizb {hizb}</span>
               </>
             )}
           </div>
@@ -114,6 +138,15 @@ export function ReadingSubHeader({ surah, page, juz }: Props): React.JSX.Element
 
         <button
           type="button"
+          onClick={() => setPagePickerOpen(true)}
+          aria-label="Go to mushaf page"
+          className="border-border hover:bg-surface-raised duration-fast ease-standard hidden h-9 items-center rounded-lg border px-3 text-xs font-semibold transition-colors sm:inline-flex"
+        >
+          Go to page
+        </button>
+
+        <button
+          type="button"
           onClick={() => setSettingsOpen(true)}
           aria-label="Reading settings"
           className="border-border hover:bg-surface-raised duration-fast ease-standard flex h-9 w-9 items-center justify-center rounded-lg border transition-colors"
@@ -135,6 +168,7 @@ export function ReadingSubHeader({ surah, page, juz }: Props): React.JSX.Element
       </div>
 
       <ReadingSettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <PagePicker open={pagePickerOpen} onOpenChange={setPagePickerOpen} surahId={surah.id} />
     </>
   );
 }

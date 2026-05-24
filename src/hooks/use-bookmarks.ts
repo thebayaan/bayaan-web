@@ -1,30 +1,20 @@
-import useSWR from "swr";
 import { useMemo } from "react";
-import { fetchBayaan } from "@/lib/api";
+import {
+  useLibraryStore,
+  type CreateBookmarkInput,
+} from "@/stores/library-store";
 import type { VerseBookmark } from "@/types/quran";
 
-interface BookmarksResponse {
-  data: VerseBookmark[];
-}
-
-export interface CreateBookmarkInput {
-  verse_key: string;
-  surah_number: number;
-  ayah_number: number;
-  note?: string;
-}
-
-const KEY = "user/bookmarks";
+export type { CreateBookmarkInput };
 
 export function useBookmarks() {
-  const { data, error, isLoading, mutate } = useSWR<BookmarksResponse>(KEY, fetchBayaan, {
-    revalidateOnFocus: false,
-  });
-  const bookmarks = data?.data ?? [];
+  const bookmarks = useLibraryStore((s) => s.bookmarks);
+  const addBookmark = useLibraryStore((s) => s.addBookmark);
+  const removeBookmark = useLibraryStore((s) => s.removeBookmark);
 
   const bookmarkByKey = useMemo(() => {
     const map = new Map<string, VerseBookmark>();
-    for (const bm of bookmarks) map.set(bm.verse_key, bm);
+    for (const bookmark of bookmarks) map.set(bookmark.verse_key, bookmark);
     return map;
   }, [bookmarks]);
 
@@ -32,46 +22,23 @@ export function useBookmarks() {
     return bookmarkByKey.has(verseKey);
   }
 
-  async function addBookmark(input: CreateBookmarkInput): Promise<VerseBookmark> {
-    const response = await fetchBayaan<{ data: VerseBookmark }>(KEY, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
-    });
-    await mutate();
-    return response.data;
-  }
-
-  async function removeBookmark(verseKey: string): Promise<void> {
-    await mutate(
-      (current) => ({ data: (current?.data ?? []).filter((b) => b.verse_key !== verseKey) }),
-      { revalidate: false },
-    );
-    try {
-      await fetchBayaan(`${KEY}/${encodeURIComponent(verseKey)}`, { method: "DELETE" });
-    } catch (err) {
-      await mutate();
-      throw err;
-    }
-  }
-
   async function toggleBookmark(input: CreateBookmarkInput): Promise<void> {
     if (bookmarkByKey.has(input.verse_key)) {
-      await removeBookmark(input.verse_key);
-    } else {
-      await addBookmark(input);
+      removeBookmark(input.verse_key);
+      return;
     }
+    addBookmark(input);
   }
 
   return {
     bookmarks,
     bookmarkByKey,
     isBookmarked,
-    isLoading,
-    error,
-    mutate,
-    addBookmark,
-    removeBookmark,
+    isLoading: false,
+    error: undefined,
+    mutate: async () => undefined,
+    addBookmark: async (input: CreateBookmarkInput) => addBookmark(input),
+    removeBookmark: async (verseKey: string) => removeBookmark(verseKey),
     toggleBookmark,
   };
 }

@@ -49,7 +49,7 @@ describe("fetchBayaan", () => {
     await expect(fetchBayaan("user/playlists")).rejects.toMatchObject({
       status: 503,
       code: "USER_SYNC_FAILED",
-      message: expect.stringMatching(/sync your account from Clerk/i),
+      message: expect.stringMatching(/sync your account/i),
     });
   });
 

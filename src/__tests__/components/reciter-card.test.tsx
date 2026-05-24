@@ -3,11 +3,6 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { usePlayerStore } from "@/stores/player-store";
 
-vi.mock("@/lib/auth", () => ({
-  useAuth: () => ({ isSignedIn: true, isLoaded: true }),
-  CLERK_ENABLED: true,
-}));
-
 vi.mock("next/image", () => ({
   default: ({ alt, ...props }: { alt: string; [key: string]: unknown }) => (
     <img alt={alt} {...props} />

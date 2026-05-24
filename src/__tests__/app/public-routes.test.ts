@@ -1,35 +1,14 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 
-describe("middleware public carve-outs", () => {
-  it("treats reading surfaces (/quran, /surah, /adhkar, /settings) as public and gates /reciter", async () => {
-    const capturedPatterns: string[][] = [];
-    vi.resetModules();
-    vi.doMock("@clerk/nextjs/server", () => ({
-      clerkMiddleware: vi.fn((handler: unknown) => handler),
-      createRouteMatcher: (patterns: string[]) => {
-        capturedPatterns.push(patterns);
-        return () => false;
-      },
-    }));
-    await import("@/../proxy");
-    expect(capturedPatterns[0]).toEqual(
-      expect.arrayContaining([
-        "/sign-in(.*)",
-        "/sign-up(.*)",
-        "/api/quran(.*)",
-        "/quran(.*)",
-        "/surah(.*)",
-        "/mushaf(.*)",
-        "/adhkar(.*)",
-        "/settings(.*)",
-        "/sitemap.xml",
-        "/robots.txt",
-        "/.well-known(.*)",
-      ]),
-    );
-    expect(capturedPatterns[0]).not.toContain("/reciter(.*)");
-    vi.doUnmock("@clerk/nextjs/server");
-    vi.resetModules();
+describe("middleware", () => {
+  it("redirects / to /quran", async () => {
+    const { middleware } = await import("@/../middleware");
+    const { NextRequest } = await import("next/server");
+    const request = new NextRequest("http://localhost:3000/");
+    const response = middleware(request);
+    expect(response.status).toBeGreaterThanOrEqual(300);
+    expect(response.status).toBeLessThan(400);
+    expect(response.headers.get("location")).toContain("/quran");
   });
 });
 

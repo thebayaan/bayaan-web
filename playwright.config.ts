@@ -21,15 +21,13 @@ export default defineConfig({
     },
   ],
   // Production build is verified by a separate "Next build" job in CI.
-  // The E2E smoke only needs to prove routing + Clerk middleware work,
-  // so we run `next dev` here to avoid the output:"standalone" pain
-  // (the standalone bundle doesn't emit request logs and wouldn't
-  // respond to Playwright's HTTP probe in testing).
+  // The E2E smoke only needs to prove core routing works, so we run
+  // `next dev` here to avoid the output:"standalone" pain.
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
         command: "npm run dev",
-        url: `${BASE_URL}/sign-in`,
+        url: `${BASE_URL}/quran`,
         timeout: 180_000,
         reuseExistingServer: !process.env.CI,
         stdout: "pipe",

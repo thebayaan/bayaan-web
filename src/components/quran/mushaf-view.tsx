@@ -88,9 +88,11 @@ interface MushafViewProps {
    * "open whatever page is in the store" behaviour.
    */
   surahId?: number;
+  /** Deep-link ayah to scroll to and highlight when opening in mushaf mode. */
+  targetAyah?: number;
 }
 
-export function MushafView({ surahId }: MushafViewProps = {}) {
+export function MushafView({ surahId, targetAyah }: MushafViewProps = {}) {
   const mushafPage = useReadingSettingsStore((s) => s.mushafPage);
   const setMushafPage = useReadingSettingsStore((s) => s.setMushafPage);
   const fontSize = useReadingSettingsStore((s) => s.fontSize);
@@ -100,7 +102,13 @@ export function MushafView({ surahId }: MushafViewProps = {}) {
   const isPlaying = usePlayerStore((s) => s.playback.isPlaying);
   const playbackActiveVerseKey =
     surahId != null && trackedSurahId === surahId ? activeVerseKey : null;
+  const targetVerseKey =
+    surahId != null && targetAyah != null && targetAyah >= 1
+      ? `${surahId}:${targetAyah}`
+      : null;
+  const highlightedVerseKey = playbackActiveVerseKey ?? targetVerseKey;
   const lastScrolledAyahRef = useRef<string | null>(null);
+  const lastScrolledTargetRef = useRef<string | null>(null);
 
   // Bounds the scroll window. When surahId is provided we clamp to the
   // surah's first/last mushaf page so the continuous scroll stops at
@@ -117,6 +125,26 @@ export function MushafView({ surahId }: MushafViewProps = {}) {
   );
   const [visiblePage, setVisiblePage] = useState(() => resolveInitialPage(surahId, mushafPage));
   const [allVerses, setAllVerses] = useState<QcfVerse[]>([]);
+  const targetPageLoadedRef = useRef(false);
+
+  useEffect(() => {
+    if (!surahId || !targetAyah || targetPageLoadedRef.current) return;
+    const verseKey = `${surahId}:${targetAyah}`;
+    targetPageLoadedRef.current = true;
+
+    void fetch(`/api/quran/verses/by_key/${encodeURIComponent(verseKey)}?fields=page_number`)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body: { verse?: { page_number?: number } } | null) => {
+        const page = body?.verse?.page_number;
+        if (!page || page < minPage || page > maxPage) return;
+        setMushafPage(page);
+        setVisiblePage(page);
+        setLoadedPages(buildInitialPages(page, minPage, maxPage));
+      })
+      .catch(() => {
+        targetPageLoadedRef.current = false;
+      });
+  }, [surahId, targetAyah, minPage, maxPage, setMushafPage]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
@@ -269,6 +297,26 @@ export function MushafView({ surahId }: MushafViewProps = {}) {
     pageEl.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [playbackActiveVerseKey, allVerses, isPlaying]);
 
+  useEffect(() => {
+    if (!targetVerseKey) {
+      lastScrolledTargetRef.current = null;
+      return;
+    }
+    if (lastScrolledTargetRef.current === targetVerseKey) return;
+
+    const verse = allVerses.find((entry) => entry.verse_key === targetVerseKey);
+    if (!verse) return;
+
+    const line = document.querySelector(`[data-verse-key="${targetVerseKey}"]`);
+    if (line && typeof line.scrollIntoView === "function") {
+      line.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      const pageEl = pageRefs.current.get(verse.page_number);
+      pageEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    lastScrolledTargetRef.current = targetVerseKey;
+  }, [targetVerseKey, allVerses]);
+
   return (
     <div className="relative flex h-full flex-col">
       <ReaderPlaybackSync surahId={surahId ?? 0} scrollContainerRef={scrollContainerRef} />
@@ -289,7 +337,7 @@ export function MushafView({ surahId }: MushafViewProps = {}) {
                 pageNumber={pageNumber}
                 fontResolver={fontResolver}
                 fontSize={`${fontSize}rem`}
-                playbackActiveVerseKey={playbackActiveVerseKey}
+                playbackActiveVerseKey={highlightedVerseKey}
                 onVersesLoaded={handleVersesLoaded}
                 registerPageRef={registerPageRef}
                 onReachTop={prependPreviousPage}
