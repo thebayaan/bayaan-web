@@ -15,7 +15,7 @@ function Sheet({
   onOpenChange?: (open: boolean) => void;
 }) {
   return (
-    <DrawerPrimitive.Root open={open} onOpenChange={onOpenChange} modal>
+    <DrawerPrimitive.Root open={open} onOpenChange={onOpenChange} modal swipeDirection="right">
       {children}
     </DrawerPrimitive.Root>
   );
@@ -49,18 +49,20 @@ function SheetContent({
   return (
     <SheetPortal>
       <SheetBackdrop />
-      <DrawerPrimitive.Popup
-        className={cn(
-          "fixed top-0 right-0 bottom-0 z-50 h-full",
-          "border-border bg-background border-l shadow-xl",
-          "data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full",
-          "transition-transform duration-300 ease-in-out",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-      </DrawerPrimitive.Popup>
+      <DrawerPrimitive.Viewport>
+        <DrawerPrimitive.Popup
+          className={cn(
+            "fixed top-0 right-0 bottom-0 z-50 h-full",
+            "border-border bg-background border-l shadow-xl",
+            "data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full",
+            "transition-transform duration-300 ease-in-out",
+            className,
+          )}
+          {...props}
+        >
+          {children}
+        </DrawerPrimitive.Popup>
+      </DrawerPrimitive.Viewport>
     </SheetPortal>
   );
 }

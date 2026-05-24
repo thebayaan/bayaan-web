@@ -63,7 +63,7 @@ export function BottomPlayerBar() {
     return (
       <footer
         data-player-hidden={false}
-        className="border-border bg-background/80 duration-regular ease-standard flex h-20 items-center justify-center border-t px-4 backdrop-blur-2xl transition-transform data-[player-hidden=true]:translate-y-full"
+        className="border-border bg-background/80 duration-regular ease-standard flex h-20 shrink-0 items-center justify-center border-t px-4 backdrop-blur-2xl transition-transform data-[player-hidden=true]:translate-y-full"
       >
         <p className="text-muted-foreground text-sm">Select a reciter to start listening</p>
       </footer>
@@ -97,10 +97,11 @@ export function BottomPlayerBar() {
   };
 
   return (
-    <footer
-      data-player-hidden={false}
-      className="border-border bg-background/80 duration-regular ease-standard flex h-20 min-w-0 items-center gap-2 border-t px-2 backdrop-blur-2xl transition-transform data-[player-hidden=true]:translate-y-full sm:gap-4 sm:px-4"
-    >
+    <>
+      <footer
+        data-player-hidden={false}
+        className="border-border bg-background/80 duration-regular ease-standard flex h-20 shrink-0 min-w-0 items-center gap-2 border-t px-2 backdrop-blur-2xl transition-transform data-[player-hidden=true]:translate-y-full sm:gap-4 sm:px-4"
+      >
       {/* Track Info — Left. Title + artwork open the full player; the
           artist link jumps to the reciter page so it still works even
           when the rest of the row is acting as a big button. */}
@@ -220,11 +221,12 @@ export function BottomPlayerBar() {
           onMuteToggle={handleMuteToggle}
         />
       </div>
-      <FullPlayerView open={showFullPlayer} onOpenChange={setShowFullPlayer} />
-      <QueuePanel open={showQueue} onOpenChange={setShowQueue} />
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {playback.isPlaying ? "Playing" : "Paused"}: {currentTrack.title} by {currentTrack.artist}
       </div>
-    </footer>
+      </footer>
+      <FullPlayerView open={showFullPlayer} onOpenChange={setShowFullPlayer} />
+      <QueuePanel open={showQueue} onOpenChange={setShowQueue} />
+    </>
   );
 }

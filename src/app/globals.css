@@ -239,7 +239,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground overflow-x-hidden;
+    @apply bg-background text-foreground overflow-x-hidden overflow-y-hidden;
     overscroll-behavior: none;
   }
 

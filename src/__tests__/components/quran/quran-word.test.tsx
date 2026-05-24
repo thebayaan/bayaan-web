@@ -1,7 +1,9 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { render } from "@testing-library/react";
 import { QuranWord } from "@/components/quran/quran-word";
 import type { QcfWord } from "@/types/quran-api";
+import { useReadingSettingsStore } from "@/stores/reading-settings-store";
+import { useTajweedStore } from "@/stores/tajweed-store";
 
 const mockWord: QcfWord = {
   id: 1,
@@ -20,6 +22,11 @@ const mockWord: QcfWord = {
 };
 
 describe("QuranWord", () => {
+  beforeEach(() => {
+    useReadingSettingsStore.setState({ showTajweed: false, showWordByWord: false });
+    useTajweedStore.setState({ byLocation: null, indexedTajweedData: null, isLoading: false, error: null });
+  });
+
   it("renders fallback text when font not loaded", () => {
     const { container } = render(
       <QuranWord
@@ -56,5 +63,35 @@ describe("QuranWord", () => {
     const span = container.querySelector("span");
     expect(span?.textContent).toBe("بِسْمِ");
     expect(span?.style.fontFamily).toBe("");
+  });
+
+  it("renders coloured tajweed segments when enabled", () => {
+    useReadingSettingsStore.setState({ showTajweed: true });
+    useTajweedStore.setState({
+      byLocation: {
+        "1:1:1": {
+          word_index: 1,
+          location: "1:1:1",
+          segments: [
+            { text: "ٱ", rule: "ham_wasl" },
+            { text: "للَّهِ", rule: null },
+          ],
+        },
+      },
+      indexedTajweedData: null,
+      isLoading: false,
+      error: null,
+    });
+
+    const { container } = render(
+      <QuranWord
+        word={mockWord}
+        fontResolver={{ isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" }}
+      />,
+    );
+
+    const colored = container.querySelector("span[style]");
+    expect(colored?.textContent).toBe("ٱ");
+    expect(colored?.getAttribute("style")).toContain("color");
   });
 });

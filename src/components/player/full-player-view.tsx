@@ -41,7 +41,7 @@ export function FullPlayerView({
 
   const currentTrack = tracks[currentIndex];
 
-  if (!currentTrack) return null;
+  if (!currentTrack || !open) return null;
 
   const handlePlayPause = (): void => {
     if (playback.isPlaying) {
@@ -69,10 +69,7 @@ export function FullPlayerView({
       role="dialog"
       aria-modal="true"
       aria-label="Now Playing"
-      aria-hidden={!open}
-      className={`bg-surface duration-regular ease-standard fixed inset-0 z-50 transition-[transform,opacity] ${
-        open ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-full opacity-0"
-      }`}
+      className="bg-surface duration-regular ease-standard fixed inset-0 z-50 transition-[transform,opacity]"
     >
       <div className="flex h-full flex-col items-center justify-center gap-6 p-8">
         {/* Close button */}

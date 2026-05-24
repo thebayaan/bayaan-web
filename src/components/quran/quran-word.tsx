@@ -1,10 +1,12 @@
 "use client";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { QcfWord } from "@/types/quran-api";
 import { cn } from "@/lib/utils";
 import { useVerseSelectionStore } from "@/stores/verse-selection-store";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
+import { useTajweedStore } from "@/stores/tajweed-store";
+import { TajweedSegments } from "./tajweed-segments";
 
 export interface QcfFontResolver {
   isPageFontLoaded: (pageNum: number) => boolean;
@@ -27,14 +29,26 @@ export function QuranWord({
   const pageNum = word.page_number;
   const isFontLoaded = fontResolver.isPageFontLoaded(pageNum);
   const fontFamily = fontResolver.getFontFamily(pageNum);
-  const text = isFontLoaded ? word.code_v2 : word.qpc_uthmani_hafs;
   const showWordByWord = useReadingSettingsStore((s) => s.showWordByWord);
+  const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
+  const tajweedWord = useTajweedStore((s) => s.byLocation?.[word.location]);
+  const ensureTajweedLoaded = useTajweedStore((s) => s.ensureLoaded);
+  const useTajweedRendering = showTajweed && Boolean(tajweedWord);
+  const text = useTajweedRendering
+    ? null
+    : isFontLoaded
+      ? word.code_v2
+      : word.qpc_uthmani_hafs;
   const toggle = useVerseSelectionStore((s) => s.toggle);
   const selectedVerseKey = useVerseSelectionStore((s) => s.selectedVerseKey);
   const isSelected = selectable && selectedVerseKey === word.verse_key;
   const { getHighlight } = useHighlights();
   const highlight = selectable ? getHighlight(word.verse_key) : undefined;
   const ref = useRef<HTMLSpanElement | null>(null);
+
+  useEffect(() => {
+    if (showTajweed) void ensureTajweedLoaded();
+  }, [showTajweed, ensureTajweedLoaded]);
 
   const handleSelect = useCallback(() => {
     if (!ref.current) return;
@@ -54,12 +68,12 @@ export function QuranWord({
       ref={ref}
       className={cn(
         "group/word relative inline-block cursor-pointer transition-colors hover:text-[var(--brand-main)]",
-        !isFontLoaded && "font-[UthmanicHafs]",
+        (!isFontLoaded || useTajweedRendering) && "font-[UthmanicHafs]",
         isSelected && "rounded bg-[var(--text-alpha-10)]",
         className,
       )}
       style={{
-        ...(isFontLoaded ? { fontFamily } : undefined),
+        ...(isFontLoaded && !useTajweedRendering ? { fontFamily } : undefined),
         ...(highlight
           ? {
               backgroundColor: `${HIGHLIGHT_SWATCH[highlight.color]}66`,
@@ -83,7 +97,11 @@ export function QuranWord({
           : undefined
       }
     >
-      {text}
+      {useTajweedRendering && tajweedWord ? (
+        <TajweedSegments segments={tajweedWord.segments} showTajweed={showTajweed} />
+      ) : (
+        text
+      )}
       {showWordByWord && hasPopover ? <WordPopover word={word} /> : null}
     </span>
   );
