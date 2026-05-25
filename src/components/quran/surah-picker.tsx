@@ -7,10 +7,9 @@ import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import {
   type MushafSearchResult,
-  getSurahIdForPage,
+  navigateToMushafPage,
   parseMushafSearchQuery,
 } from "@/lib/mushaf-navigation";
-import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 const surahs = surahData as unknown as Surah[];
@@ -129,8 +128,6 @@ interface PickerContentProps {
 
 function PickerContent({ currentSurahId, onClose }: PickerContentProps): React.JSX.Element {
   const router = useRouter();
-  const setMushafPage = useReadingSettingsStore((s) => s.setMushafPage);
-  const setViewMode = useReadingSettingsStore((s) => s.setViewMode);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const [query, setQuery] = useState("");
@@ -175,10 +172,7 @@ function PickerContent({ currentSurahId, onClose }: PickerContentProps): React.J
         break;
       case "page":
       case "juz": {
-        setMushafPage(result.page);
-        setViewMode("mushaf");
-        const surahId = getSurahIdForPage(result.page);
-        router.push(surahId ? `/quran/${surahId}` : `/mushaf/${result.page}`);
+        navigateToMushafPage(result.page, router);
         break;
       }
     }

@@ -90,7 +90,7 @@ export function ReadingSubHeader({ surah }: Props): React.JSX.Element {
         <ReadingSettings />
       </div>
 
-      <PagePicker open={pagePickerOpen} onOpenChange={setPagePickerOpen} surahId={surah.id} />
+      <PagePicker open={pagePickerOpen} onOpenChange={setPagePickerOpen} />
     </>
   );
 }

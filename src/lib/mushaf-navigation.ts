@@ -1,6 +1,7 @@
 import surahData from "@/data/surah-data.json";
 import { JUZ_START_PAGES, getJuzName } from "@/data/juz-data";
 import { getSurahPageRange } from "@/lib/surah-pages";
+import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import type { Surah } from "@/types/quran";
 
 const surahs = surahData as unknown as Surah[];
@@ -25,6 +26,20 @@ const PAGE_TO_SURAH = buildPageToSurahMap();
 export function getSurahIdForPage(page: number): number | null {
   const id = PAGE_TO_SURAH[page];
   return id ?? null;
+}
+
+/** Reader route for a mushaf page — prefers the surah reader when a chapter owns the page. */
+export function getMushafReaderPath(page: number): string {
+  const surahId = getSurahIdForPage(page);
+  return surahId ? `/quran/${surahId}` : `/mushaf/${page}`;
+}
+
+type MushafRouter = { push: (path: string) => void };
+
+/** Update reading settings and route to the mushaf page (juz tab, picker, palette, etc.). */
+export function navigateToMushafPage(page: number, router: MushafRouter): void {
+  useReadingSettingsStore.getState().jumpToMushafPage(page);
+  router.push(getMushafReaderPath(page));
 }
 
 export type MushafSearchResult =
@@ -59,7 +74,7 @@ export function parseMushafSearchQuery(query: string): MushafSearchResult[] {
         page,
         title: `Page ${page}`,
         subtitle: surahNameForPage(page),
-        href: `/mushaf/${page}`,
+        href: getMushafReaderPath(page),
       });
     }
     return results;
@@ -74,7 +89,7 @@ export function parseMushafSearchQuery(query: string): MushafSearchResult[] {
         page,
         title: getJuzName(juz),
         subtitle: `Page ${page} · ${surahNameForPage(page)}`,
-        href: `/mushaf/${page}`,
+        href: getMushafReaderPath(page),
       });
     }
     return results;
@@ -98,7 +113,7 @@ export function parseMushafSearchQuery(query: string): MushafSearchResult[] {
         page,
         title: getJuzName(juz),
         subtitle: `Page ${page} · ${surahNameForPage(page)}`,
-        href: `/mushaf/${page}`,
+        href: getMushafReaderPath(page),
       });
     }
     if (juzMatch) return results;
@@ -144,7 +159,7 @@ export function parseMushafSearchQuery(query: string): MushafSearchResult[] {
         page,
         title: getJuzName(plainNum),
         subtitle: `Page ${page} · ${surahNameForPage(page)}`,
-        href: `/mushaf/${page}`,
+        href: getMushafReaderPath(page),
       });
     }
     if (plainNum >= 1 && plainNum <= 604) {
@@ -153,7 +168,7 @@ export function parseMushafSearchQuery(query: string): MushafSearchResult[] {
         page: plainNum,
         title: `Page ${plainNum}`,
         subtitle: surahNameForPage(plainNum),
-        href: `/mushaf/${plainNum}`,
+        href: getMushafReaderPath(plainNum),
       });
     }
     return results;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useMushafFontResolver } from "@/hooks/use-mushaf-font-resolver";
 import {
   useReadingSettingsStore,
@@ -90,9 +90,15 @@ interface MushafViewProps {
   surahId?: number;
   /** Deep-link ayah to scroll to and highlight when opening in mushaf mode. */
   targetAyah?: number;
+  /**
+   * Explicit mushaf page from the URL (e.g. `/mushaf/42`). Takes precedence
+   * over the persisted store on mount so juz/page deep links don't flash
+   * page 1 while the store catches up.
+   */
+  entryPage?: number;
 }
 
-export function MushafView({ surahId, targetAyah }: MushafViewProps = {}) {
+export function MushafView({ surahId, targetAyah, entryPage }: MushafViewProps = {}) {
   const mushafPage = useReadingSettingsStore((s) => s.mushafPage);
   const setMushafPage = useReadingSettingsStore((s) => s.setMushafPage);
   const fontSize = useReadingSettingsStore((s) => s.fontSize);
@@ -115,15 +121,37 @@ export function MushafView({ surahId, targetAyah }: MushafViewProps = {}) {
   // range so that flow still scrolls through the whole Qur'an.
   const { min: minPage, max: maxPage } = useMemo(() => getSurahBounds(surahId), [surahId]);
 
-  // Compute the entry page once, lazily, so the initial render lines up
-  // with the surah scope. After mount, the surah-change effect below
-  // handles further navigation.
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+  const pendingScrollPage = useRef<number | null>(null);
+  const pendingScrollAnchor = useRef<number | null>(null);
+  const versesByPageRef = useRef<Map<number, QcfVerse[]>>(new Map());
+
+  const openPage = entryPage ?? mushafPage;
+  const initialResolvedPage = resolveInitialPage(surahId, openPage);
+
   const [loadedPages, setLoadedPages] = useState<number[]>(() =>
-    buildInitialPages(resolveInitialPage(surahId, mushafPage), minPage, maxPage),
+    buildInitialPages(initialResolvedPage, minPage, maxPage),
   );
-  const [visiblePage, setVisiblePage] = useState(() => resolveInitialPage(surahId, mushafPage));
+  const [visiblePage, setVisiblePage] = useState(initialResolvedPage);
   const [allVerses, setAllVerses] = useState<QcfVerse[]>([]);
   const targetPageLoadedRef = useRef(false);
+  const didScheduleInitialScrollRef = useRef(false);
+
+  const scheduleScrollForPage = useCallback(
+    (page: number, storedPage: number): void => {
+      const scrollToAnchor = shouldScrollToSurahAnchor(surahId, storedPage);
+      pendingScrollPage.current = !scrollToAnchor && page > 1 ? page : null;
+      pendingScrollAnchor.current = scrollToAnchor && surahId ? surahId : null;
+    },
+    [surahId],
+  );
+
+  useLayoutEffect(() => {
+    if (didScheduleInitialScrollRef.current) return;
+    didScheduleInitialScrollRef.current = true;
+    scheduleScrollForPage(initialResolvedPage, openPage);
+  }, [initialResolvedPage, openPage, scheduleScrollForPage]);
 
   useEffect(() => {
     if (!surahId || !targetAyah || targetPageLoadedRef.current) return;
@@ -143,21 +171,6 @@ export function MushafView({ surahId, targetAyah }: MushafViewProps = {}) {
         targetPageLoadedRef.current = false;
       });
   }, [surahId, targetAyah, minPage, maxPage, setMushafPage]);
-
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-  const initialPage = resolveInitialPage(surahId, mushafPage);
-  const scrollToAnchor = shouldScrollToSurahAnchor(surahId, mushafPage);
-  // Page-top scroll for resume flows. Skipped when we anchor-scroll to the
-  // surah banner (shared-page surah starts) because scrolling the page
-  // wrapper to the top would land on the previous surah's tail.
-  const pendingScrollPage = useRef<number | null>(
-    !scrollToAnchor && initialPage > 1 ? initialPage : null,
-  );
-  // Surah banner anchor scroll — consumed once the inline header mounts
-  // after verses load (see the effect below keyed on `allVerses`).
-  const pendingScrollAnchor = useRef<number | null>(scrollToAnchor && surahId ? surahId : null);
-  const versesByPageRef = useRef<Map<number, QcfVerse[]>>(new Map());
 
   // Always include page 1 in the font-load set: the KFGQPC p1-v2 font
   // owns the decorative basmallah glyphs (PUA codepoints U+FC41..U+FC44)
