@@ -15,9 +15,10 @@ import { NextIcon, PreviousIcon } from "@/components/icons";
 interface DhikrPageClientProps {
   superId: string;
   dhikrId: string;
+  playAll?: boolean;
 }
 
-export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
+export function DhikrPageClient({ superId, dhikrId, playAll = false }: DhikrPageClientProps) {
   const router = useRouter();
   const dhikr = getDhikrById(dhikrId);
   if (!dhikr) notFound();
@@ -32,12 +33,23 @@ export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
   const playbackUrl = getDhikrPlaybackUrl(dhikr);
   const { prev, next, index, total } = getDhikrNeighbors(superId, dhikrId);
 
+  const dhikrHref = useCallback(
+    (targetId: string) =>
+      playAll ? `/adhkar/${superId}/${targetId}?playAll=1` : `/adhkar/${superId}/${targetId}`,
+    [playAll, superId],
+  );
+
   const goTo = useCallback(
     (targetId: string) => {
-      router.push(`/adhkar/${superId}/${targetId}`);
+      router.push(dhikrHref(targetId));
     },
-    [router, superId],
+    [router, dhikrHref],
   );
+
+  const advancePlayAll = useCallback(() => {
+    if (!playAll || !next) return;
+    router.push(dhikrHref(next.id));
+  }, [playAll, next, router, dhikrHref]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -78,7 +90,13 @@ export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
           {dhikr.translation}
         </p>
 
-        {playbackUrl ? <AdhkarAudioControls audioUrl={playbackUrl} /> : null}
+        {playbackUrl ? (
+          <AdhkarAudioControls
+            audioUrl={playbackUrl}
+            autoPlay={playAll}
+            onEnded={advancePlayAll}
+          />
+        ) : null}
 
         <TasbeehCounter dhikrId={dhikr.id} target={dhikr.repeatCount} />
 
@@ -91,7 +109,7 @@ export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
         <div className="mt-8 flex w-full max-w-md items-center justify-between gap-3">
           {prev ? (
             <Link
-              href={`/adhkar/${superId}/${prev.id}`}
+              href={dhikrHref(prev.id)}
               className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 rounded-lg bg-[var(--text-alpha-04)] px-3 py-2 text-sm transition-colors hover:bg-[var(--text-alpha-06)]"
             >
               <PreviousIcon size={16} />
@@ -102,7 +120,7 @@ export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
           )}
           {next ? (
             <Link
-              href={`/adhkar/${superId}/${next.id}`}
+              href={dhikrHref(next.id)}
               className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 rounded-lg bg-[var(--text-alpha-04)] px-3 py-2 text-sm transition-colors hover:bg-[var(--text-alpha-06)]"
             >
               Next

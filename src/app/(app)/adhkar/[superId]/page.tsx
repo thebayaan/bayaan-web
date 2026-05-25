@@ -4,9 +4,10 @@ import { notFound } from "next/navigation";
 import { getCategoryById } from "@/data/adhkar-data";
 import { ALL_ADHKAR_SUPER, resolveAdhkarSuperSlug } from "@/data/adhkar-super-categories";
 import { adhkarOgBackground, type OgTheme } from "@/lib/og";
-import { getDhikrSections } from "@/lib/adhkar-navigation";
+import { getDhikrSections, getDhikrSequence } from "@/lib/adhkar-navigation";
 import { AdhkarCategoryHero } from "@/components/adhkar/adhkar-category-hero";
 import { AdhkarArabicText } from "@/components/adhkar/adhkar-arabic-text";
+import { PlayIcon } from "@/components/icons";
 
 type SearchParams = { theme?: string | string[] };
 
@@ -67,6 +68,7 @@ export default async function AdhkarCategoryPage({
 
   const { superCategory, category, slug } = resolved;
   const sections = getDhikrSections(superId);
+  const firstDhikr = getDhikrSequence(superId)[0];
   const title = superCategory?.title ?? category?.title ?? "Adhkar";
   const dhikrUrlPrefix = slug ?? category?.id;
   const showSectionHeaders = sections.length > 1;
@@ -85,6 +87,16 @@ export default async function AdhkarCategoryPage({
       ) : (
         <h1 className="mb-6 text-2xl font-bold">{title}</h1>
       )}
+
+      {firstDhikr ? (
+        <Link
+          href={`/adhkar/${dhikrUrlPrefix}/${firstDhikr.id}?playAll=1`}
+          className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong duration-fast ease-standard mb-8 inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold shadow-[var(--elevation-s)] transition-colors"
+        >
+          <PlayIcon size={14} color="currentColor" />
+          Play All
+        </Link>
+      ) : null}
 
       <div className="space-y-8">
         {sections.map((section) => (

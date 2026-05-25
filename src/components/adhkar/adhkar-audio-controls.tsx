@@ -15,9 +15,11 @@ function formatTime(seconds: number): string {
 
 interface AdhkarAudioControlsProps {
   audioUrl: string;
+  autoPlay?: boolean;
+  onEnded?: () => void;
 }
 
-export function AdhkarAudioControls({ audioUrl }: AdhkarAudioControlsProps) {
+export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: AdhkarAudioControlsProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLooping, setIsLooping] = useState(false);
@@ -42,6 +44,27 @@ export function AdhkarAudioControls({ audioUrl }: AdhkarAudioControlsProps) {
     const audio = audioRef.current;
     if (audio) audio.loop = isLooping;
   }, [isLooping]);
+
+  useEffect(() => {
+    if (!autoPlay) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const tryPlay = () => {
+      usePlayerStore.getState().pause();
+      void audio.play().catch(() => {
+        // Browser blocked autoplay or the clip failed to load.
+      });
+    };
+
+    if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      tryPlay();
+      return;
+    }
+
+    audio.addEventListener("loadedmetadata", tryPlay, { once: true });
+    return () => audio.removeEventListener("loadedmetadata", tryPlay);
+  }, [audioUrl, autoPlay]);
 
   const togglePlay = useCallback(async () => {
     const audio = audioRef.current;
@@ -100,7 +123,10 @@ export function AdhkarAudioControls({ audioUrl }: AdhkarAudioControlsProps) {
         onLoadedMetadata={() => setDuration(audioRef.current?.duration ?? 0)}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={() => {
+          setIsPlaying(false);
+          onEnded?.();
+        }}
       />
 
       <div className="mb-4 flex w-full items-center gap-2">

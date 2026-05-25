@@ -5,7 +5,7 @@ import { ALL_ADHKAR_SUPER, resolveAdhkarSuperSlug } from "@/data/adhkar-super-ca
 import { adhkarOgBackground, type OgTheme } from "@/lib/og";
 import { DhikrPageClient } from "./dhikr-page-client";
 
-type SearchParams = { theme?: string | string[] };
+type SearchParams = { theme?: string | string[]; playAll?: string | string[] };
 
 function pickFirst(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;
@@ -62,11 +62,20 @@ export async function generateMetadata({
 
 export default async function DhikrPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ superId: string; dhikrId: string }>;
+  searchParams: Promise<SearchParams>;
 }): Promise<React.ReactElement> {
   const { superId, dhikrId } = await params;
+  const { playAll } = await searchParams;
   const resolved = resolveDhikr(superId, dhikrId);
   if (!resolved) notFound();
-  return <DhikrPageClient superId={superId} dhikrId={dhikrId} />;
+  return (
+    <DhikrPageClient
+      superId={superId}
+      dhikrId={dhikrId}
+      playAll={pickFirst(playAll) === "1"}
+    />
+  );
 }
