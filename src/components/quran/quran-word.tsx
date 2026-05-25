@@ -9,6 +9,7 @@ import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
 import { useTajweedStore } from "@/stores/tajweed-store";
 import { TajweedSegments } from "./tajweed-segments";
 import type { MushafFontResolver } from "@/lib/mushaf-fonts";
+import { END_MARKER_FONT_FAMILY, isVerseEndMarker } from "@/lib/mushaf-fonts";
 
 export type { MushafFontResolver };
 
@@ -36,7 +37,8 @@ export function QuranWord({
 }: QuranWordProps) {
   const pageNum = word.page_number;
   const isFontLoaded = fontResolver.isPageFontLoaded(pageNum);
-  const fontFamily = fontResolver.getFontFamily(pageNum);
+  const isEndMarker = isVerseEndMarker(word);
+  const fontFamily = fontResolver.getWordFontFamily(word);
   const quranFontId = useReadingSettingsStore((s) => s.quranFontId);
   const showWordByWord = useReadingSettingsStore((s) => s.showWordByWord);
   const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
@@ -45,7 +47,8 @@ export function QuranWord({
   const useJsonTajweed = showTajweed && quranFontId !== "qcf_tajweed_v4" && Boolean(tajweedWord);
   const useTajweedRendering = useJsonTajweed;
   const text = useTajweedRendering ? null : fontResolver.getWordText(word);
-  const usesUnicodeFont = !fontResolver.useGlyphLineJoin || !isFontLoaded || useTajweedRendering;
+  const usesUnicodeFont =
+    isEndMarker || !fontResolver.useGlyphLineJoin || !isFontLoaded || useTajweedRendering;
   const toggle = useVerseSelectionStore((s) => s.toggle);
   const selectedVerseKey = useVerseSelectionStore((s) => s.selectedVerseKey);
   const activeLocation = useWordAudioStore((s) => s.activeLocation);
@@ -101,8 +104,10 @@ export function QuranWord({
       style={{
         ...(isFontLoaded && !useTajweedRendering
           ? {
-              fontFamily,
-              ...(fontResolver.fontPalette ? { fontPalette: fontResolver.fontPalette } : undefined),
+              fontFamily: isEndMarker ? END_MARKER_FONT_FAMILY : fontFamily,
+              ...(fontResolver.fontPalette && !isEndMarker
+                ? { fontPalette: fontResolver.fontPalette }
+                : undefined),
             }
           : undefined),
         ...(highlight

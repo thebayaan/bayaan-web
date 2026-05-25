@@ -157,6 +157,17 @@ export function getPageFontName(config: MushafFontConfig, pageNum: number): stri
   return `p${pageNum}-${config.fontNameSuffix ?? "v2"}`;
 }
 
+/** Verse-end ayah markers always render in UthmanicHafs (Quran.com guidance). */
+export const END_MARKER_FONT_FAMILY = "UthmanicHafs";
+
+export function isVerseEndMarker(word: QcfWord): boolean {
+  return word.char_type_name === "end";
+}
+
+function getEndMarkerText(word: QcfWord): string {
+  return word.text_qpc_hafs || word.qpc_uthmani_hafs || word.text_uthmani || "";
+}
+
 function getUnicodeFallback(word: QcfWord): string {
   return (
     word.qpc_uthmani_hafs || word.text_qpc_hafs || word.text_uthmani || word.text_indopak || ""
@@ -178,8 +189,8 @@ export function getWordDisplayText(
   config: MushafFontConfig,
   isFontReady: boolean,
 ): string {
-  if (word.char_type_name === "end") {
-    return getUnicodeFallback(word);
+  if (isVerseEndMarker(word)) {
+    return getEndMarkerText(word);
   }
 
   if (config.rendering === "unicode") {
@@ -198,10 +209,30 @@ export function joinMushafGlyphLine(words: QcfWord[], config: MushafFontConfig):
   const hairSpace = "\u200A";
   return words
     .map((word) => {
+      if (isVerseEndMarker(word)) {
+        return (config.glyphField === "code_v1" ? word.code_v1 : word.code_v2) ?? "";
+      }
       const glyph = config.glyphField === "code_v1" ? (word.code_v1 ?? "") : (word.code_v2 ?? "");
       return glyph.replace(/ /g, hairSpace);
     })
+    .filter(Boolean)
     .join(hairSpace);
+}
+
+export function getWordFontFamily(
+  word: QcfWord,
+  config: MushafFontConfig,
+  loader: MushafFontLoader,
+): string {
+  if (isVerseEndMarker(word)) {
+    return END_MARKER_FONT_FAMILY;
+  }
+  if (config.rendering === "unicode") {
+    return config.staticFontFamily ?? END_MARKER_FONT_FAMILY;
+  }
+  return loader.isPageFontLoaded(word.page_number)
+    ? getPageFontName(config, word.page_number)
+    : END_MARKER_FONT_FAMILY;
 }
 
 export interface MushafFontLoader {
@@ -213,6 +244,7 @@ export interface MushafFontLoader {
 export interface MushafFontResolver extends MushafFontLoader {
   config: MushafFontConfig;
   getWordText: (word: QcfWord) => string | null;
+  getWordFontFamily: (word: QcfWord) => string;
   useGlyphLineJoin: boolean;
   fontPalette?: string;
 }
@@ -233,12 +265,13 @@ export function createMushafFontResolver(
     isPageFontLoaded: loader.isPageFontLoaded,
     getFontFamily: (pageNum) =>
       config.rendering === "unicode"
-        ? (config.staticFontFamily ?? "UthmanicHafs")
+        ? (config.staticFontFamily ?? END_MARKER_FONT_FAMILY)
         : loader.getFontFamily(pageNum),
     isStaticFontLoaded: loader.isStaticFontLoaded,
     useGlyphLineJoin: config.useGlyphLineJoin,
     fontPalette: options?.fontPalette,
     getWordText: (word) => getWordDisplayText(word, config, isReady(word.page_number)),
+    getWordFontFamily: (word) => getWordFontFamily(word, config, loader),
   };
 }
 

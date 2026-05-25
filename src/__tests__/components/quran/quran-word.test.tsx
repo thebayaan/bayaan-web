@@ -83,6 +83,29 @@ describe("QuranWord", () => {
     expect(span).not.toHaveStyle({ fontFamily: "p2-v2" });
   });
 
+  it("uses UthmanicHafs for verse end markers in glyph fonts", () => {
+    const endMarker: QcfWord = {
+      ...mockWord,
+      id: 5,
+      position: 5,
+      char_type_name: "end",
+      code_v2: "\ufc45",
+      text_qpc_hafs: "۝٢",
+      qpc_uthmani_hafs: "۝٢",
+      text_uthmani: "٢",
+      location: "1:1:5",
+    };
+    const { container } = render(
+      <QuranWord
+        word={endMarker}
+        fontResolver={createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" })}
+      />,
+    );
+    const span = container.querySelector("[data-word-location='1:1:5']");
+    expect(span?.textContent).toBe("۝٢");
+    expect(span).toHaveStyle({ fontFamily: "UthmanicHafs" });
+  });
+
   it("plays word audio when tapped in reading mode", () => {
     render(<QuranWord word={mockWord} wordAudioEnabled fontResolver={createTestFontResolver()} />);
 

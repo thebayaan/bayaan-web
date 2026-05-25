@@ -168,9 +168,18 @@ function MushafLine({
         }
         className={cn(lineClassName, !isCenter && "text-right")}
         data-verse-key={lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined}
-        style={{ fontFamily, fontSize }}
+        style={{ fontSize }}
       >
-        {joinMushafLine(sortedWords, fontResolver)}
+        {sortedWords.map((word) => (
+          <QuranWord
+            key={`${word.verse_key}-${word.position}`}
+            word={word}
+            fontResolver={fontResolver}
+            selectable={selectable}
+            playbackActive={word.verse_key === playbackActiveVerseKey}
+            className="shrink-0"
+          />
+        ))}
       </div>
     );
   }

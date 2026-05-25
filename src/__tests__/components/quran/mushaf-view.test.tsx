@@ -38,6 +38,7 @@ const { mockFontResolver } = vi.hoisted(() => ({
     },
     isPageFontLoaded: () => true,
     getFontFamily: () => "p1-v2",
+    getWordFontFamily: () => "p1-v2",
     isStaticFontLoaded: true,
     useGlyphLineJoin: true,
     getWordText: () => "\ufc41",

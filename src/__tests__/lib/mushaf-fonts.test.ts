@@ -2,8 +2,10 @@ import { describe, it, expect } from "vitest";
 import type { QcfWord } from "@/types/quran-api";
 import {
   createMushafFontResolver,
+  END_MARKER_FONT_FAMILY,
   getMushafFontConfig,
   getWordDisplayText,
+  getWordFontFamily,
   joinMushafGlyphLine,
   MUSHAF_FONT_OPTIONS,
 } from "@/lib/mushaf-fonts";
@@ -75,5 +77,43 @@ describe("mushaf-fonts", () => {
 
     expect(resolver.getWordText(mockWord)).toBe("\ufc41");
     expect(resolver.useGlyphLineJoin).toBe(true);
+  });
+
+  it("uses qpc hafs text and UthmanicHafs for verse end markers", () => {
+    const endMarker: QcfWord = {
+      ...mockWord,
+      id: 5,
+      position: 5,
+      char_type_name: "end",
+      code_v2: "\ufc45",
+      text_qpc_hafs: "۝١",
+      qpc_uthmani_hafs: "۝١",
+      text_uthmani: "١",
+      text_indopak: "١",
+    };
+    const config = getMushafFontConfig("indopak");
+    const loader = {
+      isPageFontLoaded: () => true,
+      getFontFamily: () => "IndoPak",
+      isStaticFontLoaded: true,
+    };
+
+    expect(getWordDisplayText(endMarker, config, true)).toBe("۝١");
+    expect(getWordFontFamily(endMarker, config, loader)).toBe(END_MARKER_FONT_FAMILY);
+    expect(getWordFontFamily(mockWord, config, loader)).toBe("IndoPak");
+  });
+
+  it("keeps end marker glyphs in joined mushaf lines", () => {
+    const endMarker: QcfWord = {
+      ...mockWord,
+      id: 5,
+      position: 5,
+      char_type_name: "end",
+      code_v2: "\ufc45",
+      text_qpc_hafs: "۝١",
+      qpc_uthmani_hafs: "۝١",
+    };
+    const config = getMushafFontConfig("qcf_v2");
+    expect(joinMushafGlyphLine([mockWord, endMarker], config)).toBe("\ufc41\u200a\ufc45");
   });
 });
