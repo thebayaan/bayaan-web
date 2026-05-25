@@ -2,30 +2,30 @@
 
 import type { KeyboardEvent } from "react";
 import type { Surah } from "@/types/quran";
+import type { Reciter, Rewayat } from "@/types/reciter";
 import { surahGlyphMap } from "@/data/surah-glyph-map";
-import { AddToPlaylistButton } from "@/components/playlists/add-to-playlist";
+import { useFavorites } from "@/hooks/use-favorites";
+import { SurahRowMoreMenu } from "@/components/surah-row-more-menu";
+import { HeartIcon } from "@/components/icons";
 
 interface Props {
   surah: Surah;
   onPlay: (surahId: number) => void;
   isPlaying?: boolean;
   isCurrentTrack?: boolean;
-  playlistItem?: { reciter_id: string; rewayat_id: string };
-  durationLabel?: string;
+  /** Enables the per-row heart toggle + 3-dot menu. */
+  actions?: { reciter: Reciter; rewayat: Rewayat };
 }
 
-export function SurahListItem({
-  surah,
-  onPlay,
-  isPlaying,
-  isCurrentTrack,
-  playlistItem,
-  durationLabel,
-}: Props) {
+export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack, actions }: Props) {
   const paddedIndex = String(surah.id).padStart(2, "0");
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favoriteRef = actions
+    ? { reciter_id: actions.reciter.id, rewayat_id: actions.rewayat.id, surah_id: surah.id }
+    : null;
+  const isLoved = favoriteRef ? isFavorite(favoriteRef) : false;
 
   function handleRowKey(e: KeyboardEvent<HTMLDivElement>): void {
-    // Only fire on the row itself — not on focused child buttons.
     if (e.target !== e.currentTarget) return;
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -40,43 +40,76 @@ export function SurahListItem({
       aria-label={`Play ${surah.name}`}
       onClick={() => onPlay(surah.id)}
       onKeyDown={handleRowKey}
-      className={`hover:bg-surface-raised duration-fast ease-standard group/row flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors focus-visible:ring-2 focus-visible:ring-[var(--brand-weak)] focus-visible:outline-none sm:gap-5 sm:px-5 ${
+      className={`hover:bg-surface-raised duration-fast ease-standard group/row flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors focus-visible:ring-2 focus-visible:ring-[var(--brand-weak)] focus-visible:outline-none sm:px-4 ${
         isCurrentTrack ? "bg-brand-light" : ""
       }`}
     >
+      {/* # column */}
       <div
-        className={`w-7 shrink-0 text-center text-sm font-semibold tabular-nums sm:w-9 ${
+        className={`w-8 shrink-0 text-center text-sm font-semibold tabular-nums sm:w-10 ${
           isCurrentTrack ? "text-brand-main" : "text-muted-foreground"
         }`}
       >
         {isPlaying && isCurrentTrack ? <EqualizerGlyph /> : paddedIndex}
       </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <div
-          className={`truncate text-[15px] font-semibold ${
+
+      {/* SURAH column: English name on the left, Arabic glyph on the right */}
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        <span
+          className={`min-w-0 flex-1 truncate text-[15px] font-semibold ${
             isCurrentTrack ? "text-brand-main" : "text-foreground"
           }`}
         >
           {surah.name}
-        </div>
-        <div className="text-muted-foreground truncate text-xs font-medium">
-          {surah.translated_name_english} · {surah.verses_count} ayahs
-        </div>
+        </span>
+        <span className="font-surah-names text-foreground shrink-0 text-[18px] leading-none">
+          {surahGlyphMap[surah.id] ?? surah.name_arabic}
+        </span>
       </div>
-      <div className="font-surah-names text-foreground w-20 shrink-0 truncate text-right text-[22px] leading-none sm:w-40 sm:text-[28px]">
-        {surahGlyphMap[surah.id] ?? surah.name_arabic}
-      </div>
-      <div className="text-muted-foreground hidden w-[72px] shrink-0 text-right text-[13px] font-medium tabular-nums sm:block">
-        {durationLabel ?? ""}
-      </div>
-      <div className="hidden w-16 shrink-0 items-center justify-end gap-1 sm:flex">
-        {playlistItem ? (
-          <AddToPlaylistButton
-            label={`Add ${surah.name} to a playlist`}
-            item={{ ...playlistItem, surah_id: surah.id }}
-            className="text-muted-foreground hover:text-foreground rounded-full p-1.5 opacity-0 transition-all group-hover/row:opacity-100 hover:bg-[var(--text-alpha-10)] focus-visible:opacity-100"
+
+      {/* Actions column: heart + 3-dot, always visible */}
+      <div className="flex shrink-0 items-center gap-1">
+        {favoriteRef ? (
+          <button
+            type="button"
+            aria-label={
+              isLoved ? `Remove ${surah.name} from favorites` : `Add ${surah.name} to favorites`
+            }
+            aria-pressed={isLoved}
+            onClick={(e) => {
+              e.stopPropagation();
+              void toggleFavorite(favoriteRef);
+            }}
+            className={`duration-fast ease-standard flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-[var(--text-alpha-10)] ${
+              isLoved ? "text-[#ef4444]" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <HeartIcon size={16} color="currentColor" filled={isLoved} />
+          </button>
+        ) : null}
+        {actions ? (
+          <SurahRowMoreMenu
+            reciter={actions.reciter}
+            rewayat={actions.rewayat}
+            surah={surah}
+            className="text-muted-foreground hover:text-foreground duration-fast ease-standard flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-[var(--text-alpha-10)]"
           />
         ) : null}
+      </div>
+
+      {/* ENGLISH column */}
+      <div className="text-muted-foreground hidden w-32 shrink-0 truncate text-sm font-medium sm:block">
+        {surah.translated_name_english}
+      </div>
+
+      {/* REVELATION column */}
+      <div className="text-muted-foreground hidden w-24 shrink-0 text-sm font-medium sm:block">
+        {String(surah.revelation_place).toLowerCase() === "madinah" ? "Madinah" : "Makkah"}
+      </div>
+
+      {/* AYAHS column */}
+      <div className="text-muted-foreground hidden w-12 shrink-0 text-right text-sm font-medium tabular-nums sm:block">
+        {surah.verses_count}
       </div>
     </div>
   );
