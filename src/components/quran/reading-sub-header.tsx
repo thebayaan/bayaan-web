@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import type { Surah } from "@/types/quran";
 import { getHizbForPage, getJuzForPage } from "@/data/juz-data";
 import { ReadingSettingsSheet } from "./reading-settings-sheet";
 import { ReaderPlayChip } from "./reader-play-chip";
 import { PagePicker } from "./page-picker";
+import { SurahPicker } from "./surah-picker";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 
 interface Props {
@@ -32,33 +32,7 @@ export function ReadingSubHeader({ surah }: Props): React.JSX.Element {
   return (
     <>
       <div className="border-border-divider bg-surface/95 sticky top-0 z-20 flex flex-wrap items-center gap-3 border-b px-4 py-3 backdrop-blur-md sm:gap-4 sm:px-10">
-        <Link
-          href="/quran"
-          className="border-border bg-surface hover:bg-surface-raised duration-fast ease-standard flex items-center gap-2.5 rounded-xl border px-3 py-2 transition-colors"
-        >
-          <span className="bg-brand-light text-brand-main flex h-7 w-7 items-center justify-center rounded-md text-[12px] font-bold tabular-nums">
-            {String(surah.id).padStart(2, "0")}
-          </span>
-          <span className="flex flex-col items-start">
-            <span className="text-foreground text-sm leading-none font-bold">{surah.name}</span>
-            <span className="text-muted-foreground mt-0.5 text-[11px] leading-none font-medium">
-              {surah.translated_name_english} · {surah.verses_count} ayahs
-            </span>
-          </span>
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-muted-foreground ml-1"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </Link>
+        <SurahPicker surah={surah} />
 
         {page !== undefined && (
           <div className="text-muted-foreground flex flex-wrap items-center gap-3 text-xs font-medium">
