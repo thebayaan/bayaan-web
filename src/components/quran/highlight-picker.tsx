@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useHighlights, HIGHLIGHT_COLORS, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
+import { HighlightIcon } from "@/components/icons";
 
 export function HighlightPicker({ verseKey, className }: { verseKey: string; className?: string }) {
   const { getHighlight, setHighlight, removeHighlight } = useHighlights();
@@ -26,9 +27,7 @@ export function HighlightPicker({ verseKey, className }: { verseKey: string; cla
         aria-expanded={open}
         className={className}
       >
-        <svg width={14} height={14} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M3 21v-4l11-11 4 4-11 11H3zm14-13 3-3-4-4-3 3 4 4z" />
-        </svg>
+        <HighlightIcon size={14} aria-hidden="true" />
         {current ? (
           <span
             aria-hidden="true"

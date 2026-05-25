@@ -145,12 +145,12 @@ export function HeartIcon({ size = 24, color = "currentColor", filled, ...props 
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
       {filled ? (
         <path
-          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+          d="M12 5.95q0.06 0 0.07-0.01c1.75-2.18 5.25-3.94 7.46-1.13 0.97 1.24 0.83 2.98 0.3 4.42-1.19 3.24-4.22 6.13-7.34 7.52q-0.17 0.08-0.48 0.08t-0.48-0.08c-3.12-1.38-6.15-4.28-7.34-7.52c-0.53-1.44-0.67-3.18 0.3-4.42 2.21-2.81 5.71-1.05 7.46 1.13q0.01 0.01 0.07 0.01z"
           fill={color}
         />
       ) : (
         <path
-          d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+          d="M12 5.95q0.06 0 0.07-0.01c1.75-2.18 5.25-3.94 7.46-1.13 0.97 1.24 0.83 2.98 0.3 4.42-1.19 3.24-4.22 6.13-7.34 7.52q-0.17 0.08-0.48 0.08t-0.48-0.08c-3.12-1.38-6.15-4.28-7.34-7.52c-0.53-1.44-0.67-3.18 0.3-4.42 2.21-2.81 5.71-1.05 7.46 1.13q0.01 0.01 0.07 0.01z"
           stroke={color}
           strokeWidth={1.5}
           fill="none"
@@ -189,30 +189,25 @@ export function QuranIcon({ size = 24, color = "currentColor", filled, ...props 
   );
 }
 
-// Heroicons cog-6-tooth — the standard 6-tooth gear that reads as
-// "settings" universally. Matches the native iOS SF Symbols gearshape
-// family conceptually without hand-rolling the path.
 export function SettingsIcon({ size = 24, color = "currentColor", filled, ...props }: IconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" {...props}>
       {filled ? (
         <path
-          fillRule="evenodd"
-          clipRule="evenodd"
+          d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
           fill={color}
-          d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 0 0-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 0 0-2.282.819l-.922 1.597a1.875 1.875 0 0 0 .432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 0 0 0 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 0 0-.432 2.385l.922 1.597a1.875 1.875 0 0 0 2.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 0 0 2.28-.819l.923-1.597a1.875 1.875 0 0 0-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 0 0 0-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 0 0-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 0 0-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 0 0-1.85-1.567h-1.843ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z"
         />
       ) : (
-        <g
-          fill="none"
-          stroke={color}
-          strokeWidth={1.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 0 1 0 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.213-1.281Z" />
-          <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-        </g>
+        <>
+          <path
+            d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"
+            fill={color}
+          />
+          <path
+            d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"
+            fill={color}
+          />
+        </>
       )}
     </svg>
   );
@@ -270,6 +265,564 @@ export function LogoIcon({
       <path
         d="M436.69 266.09L308.26 266.09L427.06 217.31L418.32 196.03L297.58 245.61L389.13 152.58L372.75 136.46L284.03 226.61L333.27 110.1L312.1 101.15L261.5 220.87L261.5 220.87L261.5 90.9L238.5 90.9L238.5 219.33L189.72 100.53L168.44 109.26L218.02 230.01L124.99 138.45L108.87 154.84L199.02 243.56L82.51 194.32L73.56 215.49L193.28 266.09L193.28 266.09L63.31 266.09L63.31 289.09L222.57 289.09L202.42 309.57L150.2 363.9L166.58 380.02L215.97 328.57L215.98 328.56L238.5 305.66L238.5 334.31L238.5 334.31L238.5 409.1L261.5 409.1L261.5 305.02L281.98 325.17L336.31 377.39L352.43 361.01L300.98 311.62L300.97 311.61L278.07 289.09L306.72 289.09L306.72 289.09L436.69 289.09L436.69 266.09"
         fill={fill}
+      />
+    </svg>
+  );
+}
+
+// Mobile uses StackedVolumesIcon (3 stacked books) for the tafseer action in VerseActionsSheet.
+export function TafseerIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <rect
+        x="2"
+        y="4"
+        width="13"
+        height="17"
+        rx={1.5}
+        stroke={color}
+        strokeWidth={1.2}
+        opacity={0.35}
+      />
+      <rect
+        x="5"
+        y="2.5"
+        width="13"
+        height="17"
+        rx={1.5}
+        stroke={color}
+        strokeWidth={1.2}
+        opacity={0.6}
+      />
+      <rect x="8" y="1" width="13" height="17" rx={1.5} stroke={color} strokeWidth={1.3} />
+    </svg>
+  );
+}
+
+export function MoonIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <path
+        d="M20.5 12.5c-.67 4.44-4.64 7.5-9.11 7.5C6.48 20 2.5 16.48 2.5 11.5c0-4.47 3.06-8.44 7.5-9.11a8 8 0 0010.5 10.11z"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function SunIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <circle cx={12} cy={12} r={4.5} stroke={color} strokeWidth={1.5} />
+      <line
+        x1={12}
+        y1={2.5}
+        x2={12}
+        y2={5}
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+      <line
+        x1={12}
+        y1={19}
+        x2={12}
+        y2={21.5}
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+      <line
+        x1={2.5}
+        y1={12}
+        x2={5}
+        y2={12}
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+      <line
+        x1={19}
+        y1={12}
+        x2={21.5}
+        y2={12}
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+      <line
+        x1={5.28}
+        y1={5.28}
+        x2={7.05}
+        y2={7.05}
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+      <line
+        x1={16.95}
+        y1={16.95}
+        x2={18.72}
+        y2={18.72}
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+      <line
+        x1={5.28}
+        y1={18.72}
+        x2={7.05}
+        y2={16.95}
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+      <line
+        x1={16.95}
+        y1={7.05}
+        x2={18.72}
+        y2={5.28}
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function AutoThemeIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <circle cx={12} cy={12} r={8.5} stroke={color} strokeWidth={1.5} />
+      <path d="M12 3.5a8.5 8.5 0 010 17V3.5z" fill={color} opacity={0.85} />
+      <circle cx={14.5} cy={10} r={1} fill="white" opacity={0.9} />
+      <circle cx={16} cy={13.5} r={0.6} fill="white" opacity={0.7} />
+    </svg>
+  );
+}
+
+export function ShareIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <line x1={12} y1={3} x2={12} y2={15} stroke={color} strokeWidth={1.4} strokeLinecap="round" />
+      <path
+        d="M8 7L12 3L16 7"
+        stroke={color}
+        strokeWidth={1.3}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5 12V19C5 19.55 5.45 20 6 20H18C18.55 20 19 19.55 19 19V12"
+        stroke={color}
+        strokeWidth={1.3}
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function CopyIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <rect
+        x={2}
+        y={6}
+        width={13}
+        height={15}
+        rx={2}
+        stroke={color}
+        strokeWidth={1.2}
+        opacity={0.35}
+      />
+      <rect x={7} y={3} width={13} height={15} rx={2} stroke={color} strokeWidth={1.3} />
+    </svg>
+  );
+}
+
+export function HighlightIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <rect
+        x="4"
+        y="8"
+        width="16"
+        height="6"
+        rx={1.5}
+        stroke={color}
+        strokeWidth={1.5}
+        opacity={0.35}
+        fill={color}
+      />
+      <path d="M6 8V5" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+      <path d="M10 8V6" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+      <path d="M14 8V5.5" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+      <path d="M18 8V6.5" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+      <path d="M6 14V18" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+      <path d="M10 14V17" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+      <path d="M14 14V18" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+      <path d="M18 14V16.5" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function ChainLinksIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M9 12H15" stroke={color} strokeWidth={1.5} strokeLinecap="round" />
+      <rect x="3" y="8" width="8" height="8" rx={4} stroke={color} strokeWidth={1.5} />
+      <rect x="13" y="8" width="8" height="8" rx={4} stroke={color} strokeWidth={1.5} />
+    </svg>
+  );
+}
+
+export function ProfileIcon({ size = 24, color = "currentColor", filled, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      {filled ? (
+        <g fill={color}>
+          <path d="M4 18C4 15.7908 5.79086 14 8 14H16C18.2091 14 20 15.7908 20 18V18C20 19.1045 19.1046 20 18 20H6C4.89543 20 4 19.1045 4 18V18Z" />
+          <circle cx="12" cy="6.99997" r="3" />
+        </g>
+      ) : (
+        <g stroke={color} strokeWidth="2.5" strokeLinejoin="round" fill="none">
+          <path d="M4 18C4 15.7908 5.79086 14 8 14H16C18.2091 14 20 15.7908 20 18V18C20 19.1045 19.1046 20 18 20H6C4.89543 20 4 19.1045 4 18V18Z" />
+          <circle cx="12" cy="6.99997" r="3" />
+        </g>
+      )}
+    </svg>
+  );
+}
+
+export function DownloadIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <path
+        d="M8 12L12 16M12 16L16 12M12 16V8M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function QueueIcon({ size = 24, color = "currentColor", filled, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <path
+        d="M12 4.5q3.2-.03 6.3.41c1.17.16.93.95.94 2.06c.01 1.02.27 1.89-1.13 2.07q-3.1.48-6.08.51q-3.2.03-6.3-.41c-1.17-.16-.93-.95-.94-2.06c-.01-1.02-.27-1.89 1.13-2.07q3.1-.48 6.08-.51z"
+        fill={filled ? color : "none"}
+        stroke={color}
+        strokeWidth="1.5"
+      />
+      <rect x="4" y="13" width="16" height="1.5" rx="0.5" fill={color} />
+      <rect x="4" y="17" width="16" height="1.5" rx="0.5" fill={color} />
+    </svg>
+  );
+}
+
+export function TimerIcon({ size = 24, color = "currentColor", filled, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      {filled ? (
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM13 7C13 6.44772 12.5523 6 12 6C11.4477 6 11 6.44772 11 7V12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12V7Z"
+          fill={color}
+        />
+      ) : (
+        <>
+          <path
+            d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+            stroke={color}
+            strokeWidth="2"
+          />
+          <path
+            d="M12 7L12 12"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </>
+      )}
+      <path
+        d="M21 4L20 3"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+// PageQuillIcon in mobile — a page with a quill drawing on it. Used for notes / journaling surfaces.
+export function NotesIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <rect x="3" y="2" width="14" height="20" rx={1.5} stroke={color} strokeWidth={1.3} />
+      <line
+        x1="6"
+        y1="6"
+        x2="14"
+        y2="6"
+        stroke={color}
+        strokeWidth={0.8}
+        strokeLinecap="round"
+        opacity={0.4}
+      />
+      <line
+        x1="6"
+        y1="8.5"
+        x2="14"
+        y2="8.5"
+        stroke={color}
+        strokeWidth={0.8}
+        strokeLinecap="round"
+        opacity={0.4}
+      />
+      <line
+        x1="6"
+        y1="11"
+        x2="12"
+        y2="11"
+        stroke={color}
+        strokeWidth={0.8}
+        strokeLinecap="round"
+        opacity={0.4}
+      />
+      <path
+        d="M21 2C21 2 18 5 16 9C15 11 14.5 13 14 15L15 15.5C16.5 13.5 18 11 19.5 8C21 5 22 3 21 2Z"
+        stroke={color}
+        strokeWidth={1.2}
+        strokeLinejoin="round"
+        fill={color}
+        opacity={0.15}
+      />
+      <path
+        d="M14 15L13 19L15 15.5"
+        stroke={color}
+        strokeWidth={1.2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function CheckIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <path
+        d="M20 6L9 17L4 12"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+// Mushaf-page pill for the view-mode toggle (mobile MushafSettingsContent).
+export function MushafPagePillIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <rect x="3" y="1.5" width="18" height="21" rx={1.5} stroke={color} strokeWidth={1.3} />
+      <line
+        x1="6"
+        y1="4"
+        x2="18"
+        y2="4"
+        stroke={color}
+        strokeWidth={1.4}
+        strokeLinecap="round"
+        opacity={0.9}
+      />
+      <line
+        x1="7"
+        y1="5.8"
+        x2="17"
+        y2="5.8"
+        stroke={color}
+        strokeWidth={0.7}
+        strokeLinecap="round"
+        opacity={0.45}
+      />
+      <line
+        x1="8"
+        y1="7.2"
+        x2="16"
+        y2="7.2"
+        stroke={color}
+        strokeWidth={0.7}
+        strokeLinecap="round"
+        opacity={0.45}
+      />
+      <line
+        x1="6"
+        y1="9"
+        x2="18"
+        y2="9"
+        stroke={color}
+        strokeWidth={1.4}
+        strokeLinecap="round"
+        opacity={0.9}
+      />
+      <line
+        x1="7"
+        y1="10.8"
+        x2="17"
+        y2="10.8"
+        stroke={color}
+        strokeWidth={0.7}
+        strokeLinecap="round"
+        opacity={0.45}
+      />
+      <line
+        x1="7.5"
+        y1="12.2"
+        x2="16.5"
+        y2="12.2"
+        stroke={color}
+        strokeWidth={0.7}
+        strokeLinecap="round"
+        opacity={0.45}
+      />
+      <line
+        x1="9"
+        y1="13.6"
+        x2="15"
+        y2="13.6"
+        stroke={color}
+        strokeWidth={0.7}
+        strokeLinecap="round"
+        opacity={0.45}
+      />
+      <line
+        x1="6"
+        y1="15.4"
+        x2="18"
+        y2="15.4"
+        stroke={color}
+        strokeWidth={1.4}
+        strokeLinecap="round"
+        opacity={0.9}
+      />
+      <line
+        x1="7"
+        y1="17.2"
+        x2="17"
+        y2="17.2"
+        stroke={color}
+        strokeWidth={0.7}
+        strokeLinecap="round"
+        opacity={0.45}
+      />
+      <line
+        x1="8"
+        y1="18.6"
+        x2="16"
+        y2="18.6"
+        stroke={color}
+        strokeWidth={0.7}
+        strokeLinecap="round"
+        opacity={0.45}
+      />
+      <line
+        x1="9"
+        y1="20"
+        x2="15"
+        y2="20"
+        stroke={color}
+        strokeWidth={0.7}
+        strokeLinecap="round"
+        opacity={0.45}
+      />
+    </svg>
+  );
+}
+
+// List-view pill for the view-mode toggle (mobile MushafSettingsContent).
+export function ListViewPillIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <rect
+        x={10}
+        y={2.5}
+        width={11}
+        height={3}
+        rx={1.5}
+        fill={color}
+        opacity={0.15}
+        stroke={color}
+        strokeWidth={0.8}
+      />
+      <rect
+        x={3}
+        y={7.5}
+        width={12}
+        height={3}
+        rx={1.5}
+        fill={color}
+        stroke={color}
+        strokeWidth={0.8}
+        opacity={0.5}
+      />
+      <rect
+        x={9}
+        y={12.5}
+        width={12}
+        height={3}
+        rx={1.5}
+        fill={color}
+        opacity={0.15}
+        stroke={color}
+        strokeWidth={0.8}
+      />
+      <rect
+        x={3}
+        y={17.5}
+        width={11}
+        height={3}
+        rx={1.5}
+        fill={color}
+        stroke={color}
+        strokeWidth={0.8}
+        opacity={0.5}
+      />
+    </svg>
+  );
+}
+
+export function TasbihIcon({ size = 24, color = "currentColor", ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <circle cx={12} cy={2} r={1.4} fill={color} />
+      <circle cx={7.5} cy={3.8} r={1.4} fill={color} />
+      <circle cx={16.5} cy={3.8} r={1.4} fill={color} />
+      <circle cx={5} cy={7} r={1.4} fill={color} />
+      <circle cx={19} cy={7} r={1.4} fill={color} />
+      <circle cx={5} cy={10.5} r={1.4} fill={color} />
+      <circle cx={19} cy={10.5} r={1.4} fill={color} />
+      <circle cx={7.5} cy={13.2} r={1.4} fill={color} />
+      <circle cx={16.5} cy={13.2} r={1.4} fill={color} />
+      <circle cx={12} cy={15} r={1.9} fill={color} />
+      <line
+        x1={12}
+        y1={17}
+        x2={12}
+        y2={22}
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
       />
     </svg>
   );

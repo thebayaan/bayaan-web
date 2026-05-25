@@ -6,6 +6,7 @@ import { reciterShareUrl } from "@/lib/share-urls";
 import { createQueueFromSurah } from "@/lib/audio-utils";
 import { useMenuKeyboardNav } from "@/hooks/use-menu-keyboard-nav";
 import type { Reciter, Rewayat } from "@/types/reciter";
+import { ChainLinksIcon, QueueIcon } from "@/components/icons";
 
 interface ReciterMoreMenuProps {
   reciter: Reciter;
@@ -125,24 +126,7 @@ export function ReciterMoreMenu({
               disabled={!rewayat || rewayat.surah_list.length === 0}
               className="hover:bg-surface-raised flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors disabled:opacity-50"
             >
-              <svg
-                width={16}
-                height={16}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <line x1="8" y1="6" x2="21" y2="6" />
-                <line x1="8" y1="12" x2="21" y2="12" />
-                <line x1="8" y1="18" x2="21" y2="18" />
-                <line x1="3" y1="6" x2="3.01" y2="6" />
-                <line x1="3" y1="12" x2="3.01" y2="12" />
-                <line x1="3" y1="18" x2="3.01" y2="18" />
-              </svg>
+              <QueueIcon size={16} aria-hidden="true" />
               <span>Add all to queue</span>
             </button>
             <button
@@ -151,20 +135,7 @@ export function ReciterMoreMenu({
               onClick={() => void handleCopyLink()}
               className="hover:bg-surface-raised flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors"
             >
-              <svg
-                width={16}
-                height={16}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-              </svg>
+              <ChainLinksIcon size={16} aria-hidden="true" />
               <span>Copy link</span>
             </button>
           </div>

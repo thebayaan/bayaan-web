@@ -5,6 +5,7 @@ import { AddToPlaylistDialog } from "@/components/playlists/add-to-playlist";
 import { recitationShareUrl } from "@/lib/share-urls";
 import { useMenuKeyboardNav } from "@/hooks/use-menu-keyboard-nav";
 import type { Track } from "@/types/audio";
+import { ShareIcon } from "@/components/icons";
 
 interface NowPlayingMenuProps {
   track: Track;
@@ -128,23 +129,7 @@ export function NowPlayingMenu({ track, reciterSlug, className }: NowPlayingMenu
               disabled={!reciterSlug}
               className="hover:bg-surface-raised flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors disabled:opacity-50"
             >
-              <svg
-                width={16}
-                height={16}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <circle cx="18" cy="5" r="3" />
-                <circle cx="6" cy="12" r="3" />
-                <circle cx="18" cy="19" r="3" />
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-              </svg>
+              <ShareIcon size={16} aria-hidden="true" />
               <span>Share</span>
             </button>
           </div>

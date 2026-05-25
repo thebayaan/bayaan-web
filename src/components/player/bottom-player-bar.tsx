@@ -10,6 +10,7 @@ import { ProgressBar } from "./progress-bar";
 import { VolumeControl } from "./volume-control";
 import { FullPlayerView } from "./full-player-view";
 import { QueuePanel } from "./queue-panel";
+import { QueueIcon } from "@/components/icons";
 import { audioService } from "@/services/audio/audio-service";
 import type { RepeatMode } from "@/types/audio";
 import { useAudioEvents } from "@/hooks/use-audio-events";
@@ -189,21 +190,7 @@ export function BottomPlayerBar() {
             className="text-muted-foreground hover:text-foreground p-2 transition-colors"
             aria-label="Toggle queue"
           >
-            <svg
-              width={16}
-              height={16}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <line x1="8" y1="6" x2="21" y2="6" />
-              <line x1="8" y1="12" x2="21" y2="12" />
-              <line x1="8" y1="18" x2="21" y2="18" />
-              <line x1="3" y1="6" x2="3.01" y2="6" />
-              <line x1="3" y1="12" x2="3.01" y2="12" />
-              <line x1="3" y1="18" x2="3.01" y2="18" />
-            </svg>
+            <QueueIcon size={16} aria-hidden="true" />
           </button>
           <button
             type="button"

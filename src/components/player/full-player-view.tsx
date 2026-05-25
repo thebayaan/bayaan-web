@@ -6,6 +6,7 @@ import { usePlayerStore } from "@/stores/player-store";
 import { PlayerControls } from "./player-controls";
 import { ProgressBar } from "./progress-bar";
 import type { RepeatMode } from "@/types/audio";
+import { ProfileIcon } from "@/components/icons";
 
 interface FullPlayerViewProps {
   open: boolean;
@@ -104,17 +105,7 @@ export function FullPlayerView({
             />
           ) : (
             <div className="text-muted-foreground flex h-full w-full items-center justify-center">
-              <svg
-                width={64}
-                height={64}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M20 21a8 8 0 10-16 0" />
-              </svg>
+              <ProfileIcon size={64} aria-hidden="true" />
             </div>
           )}
         </div>
