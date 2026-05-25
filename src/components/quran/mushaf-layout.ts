@@ -1,7 +1,30 @@
+import type { MushafFontRendering } from "@/lib/mushaf-fonts";
+
 /** Standard Madani mushaf content width used by Quran.com (px). */
 export const MUSHAF_PAGE_WIDTH_PX = 512;
 
+/** Font size (rem) the QCF per-page glyph fonts are authored for. */
+export const MUSHAF_DESIGN_FONT_SIZE_REM = 1.8;
+
 export const MUSHAF_PAGE_CLASS = "mx-auto w-full max-w-[512px]";
+
+/**
+ * QCF glyph fonts are fixed-width at {@link MUSHAF_DESIGN_FONT_SIZE_REM}.
+ * Changing line font-size breaks edge-to-edge justification and centered
+ * opener pages, so glyph mushafs zoom via CSS scale instead.
+ */
+export function getMushafFontScale(
+  fontSizeRem: number,
+  rendering: MushafFontRendering,
+): { scale: number; renderFontSizeRem: number } {
+  if (rendering === "unicode") {
+    return { scale: 1, renderFontSizeRem: fontSizeRem };
+  }
+  return {
+    scale: fontSizeRem / MUSHAF_DESIGN_FONT_SIZE_REM,
+    renderFontSizeRem: MUSHAF_DESIGN_FONT_SIZE_REM,
+  };
+}
 
 /** Pages 1–2 use centered lines and ornamental surah frames in the Madani mushaf. */
 export const MUSHAF_FRAMED_PAGES = new Set([1, 2]);
