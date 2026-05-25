@@ -3,10 +3,12 @@
 import { useRef, useState, useSyncExternalStore } from "react";
 import { Popover } from "@base-ui/react/popover";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
+import { supportsTajweedColoring } from "@/lib/mushaf-fonts";
 import { useTranslationResources } from "@/hooks/use-translation-resources";
 import { AVAILABLE_TAFASEER } from "@/data/available-tafaseer";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { SettingsIcon } from "@/components/icons";
+import { QuranFontPicker } from "./quran-font-picker";
 
 interface ReadingSettingsProps {
   className?: string;
@@ -76,7 +78,9 @@ function SettingsContent({ onClose }: { onClose: () => void }): React.JSX.Elemen
   const showWordByWord = useReadingSettingsStore((s) => s.showWordByWord);
   const toggleWordByWord = useReadingSettingsStore((s) => s.toggleWordByWord);
   const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
+  const quranFontId = useReadingSettingsStore((s) => s.quranFontId);
   const toggleTajweed = useReadingSettingsStore((s) => s.toggleTajweed);
+  const showTajweedToggle = supportsTajweedColoring(quranFontId);
   const { translations } = useTranslationResources();
 
   return (
@@ -106,6 +110,8 @@ function SettingsContent({ onClose }: { onClose: () => void }): React.JSX.Elemen
             aria-label="Arabic font size"
           />
         </section>
+
+        <QuranFontPicker />
 
         <section className="space-y-2">
           <h3 className="text-foreground text-xs font-semibold">Translation</h3>
@@ -153,12 +159,14 @@ function SettingsContent({ onClose }: { onClose: () => void }): React.JSX.Elemen
             checked={showWordByWord}
             onChange={toggleWordByWord}
           />
-          <ToggleRow
-            label="Tajweed coloring"
-            description="Color-code recitation rules."
-            checked={showTajweed}
-            onChange={toggleTajweed}
-          />
+          {showTajweedToggle ? (
+            <ToggleRow
+              label="Tajweed coloring"
+              description="Color-code recitation rules."
+              checked={showTajweed}
+              onChange={toggleTajweed}
+            />
+          ) : null}
         </section>
       </div>
       <div className="text-muted-foreground hidden border-t border-[var(--text-alpha-06)] px-4 py-2 text-[11px] sm:block">

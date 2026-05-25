@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import { VerseText } from "@/components/quran/verse-text";
 import type { QcfWord } from "@/types/quran-api";
+import { createTestFontResolver } from "@/__tests__/helpers/mushaf-font-resolver";
 
 const mockWords: QcfWord[] = [
   {
@@ -38,19 +39,48 @@ const mockWords: QcfWord[] = [
 
 describe("VerseText", () => {
   it("renders all words in reading mode", () => {
-    const fontResolver = { isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" };
+    const fontResolver = createTestFontResolver();
     const { container } = render(<VerseText words={mockWords} fontResolver={fontResolver} />);
     expect(container.querySelectorAll("span")).toHaveLength(2);
   });
 
   it("applies RTL direction in reading mode", () => {
-    const fontResolver = { isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" };
+    const fontResolver = createTestFontResolver();
     const { container } = render(<VerseText words={mockWords} fontResolver={fontResolver} />);
     expect(container.firstElementChild?.getAttribute("dir")).toBe("rtl");
   });
 
+  it("renders Al-Fatiha basmallah as a connected glyph in reading mode", () => {
+    const basmallahWords: QcfWord[] = [
+      mockWords[0]!,
+      mockWords[1]!,
+      {
+        ...mockWords[1]!,
+        id: 3,
+        position: 3,
+        code_v2: "\ufc43",
+        location: "1:1:3",
+      },
+      {
+        ...mockWords[1]!,
+        id: 4,
+        position: 4,
+        code_v2: "\ufc44",
+        location: "1:1:4",
+      },
+    ];
+    const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" });
+    const { container, getByLabelText } = render(
+      <VerseText words={basmallahWords} fontResolver={fontResolver} />,
+    );
+    const basmallah = getByLabelText("Bismillah ar-Rahman ar-Raheem");
+    expect(basmallah.textContent).toBe("\uFC41\uFC42\uFC43\uFC44");
+    expect((basmallah as HTMLElement).style.fontFamily).toBe("p1-v2");
+    expect(container.querySelectorAll("[data-word-location]")).toHaveLength(0);
+  });
+
   it("joins QCF glyph codes with hair-space separators when the page font is loaded", () => {
-    const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" };
+    const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" });
     const { container } = render(
       <VerseText words={mockWords} fontResolver={fontResolver} mushafMode />,
     );
@@ -64,7 +94,7 @@ describe("VerseText", () => {
   });
 
   it("justifies non-centered mushaf lines edge-to-edge when the font is loaded", () => {
-    const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" };
+    const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" });
     const { container } = render(
       <VerseText words={mockWords} fontResolver={fontResolver} mushafMode />,
     );
@@ -143,7 +173,7 @@ describe("VerseText", () => {
         location: "3:2:2",
       },
     ];
-    const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p50-v2" };
+    const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p50-v2" });
     const { container } = render(
       <VerseText words={multiVerseWords} fontResolver={fontResolver} mushafMode />,
     );
@@ -156,7 +186,7 @@ describe("VerseText", () => {
   });
 
   it("centers mushaf lines on framed pages when requested", () => {
-    const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" };
+    const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" });
     const { container } = render(
       <VerseText words={mockWords} fontResolver={fontResolver} mushafMode lineAlignment="center" />,
     );
@@ -164,10 +194,41 @@ describe("VerseText", () => {
   });
 
   it("justifies fallback mushaf lines when the page font is not loaded", () => {
-    const fontResolver = { isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" };
+    const fontResolver = createTestFontResolver();
     const { container } = render(
       <VerseText words={mockWords} fontResolver={fontResolver} mushafMode />,
     );
-    expect(container.firstElementChild?.className).toContain("justify-between");
+    const el = container.firstElementChild as HTMLElement;
+    expect(el.style.textAlign).toBe("justify");
+    expect(el.style.textAlignLast).toBe("justify");
+  });
+
+  it("centers IndoPak lines on the page with natural word spacing", () => {
+    const indopakWords: QcfWord[] = [
+      {
+        ...mockWords[0]!,
+        text_indopak: "الٓمّٓ",
+      },
+      {
+        ...mockWords[1]!,
+        id: 3,
+        position: 2,
+        text_indopak: "ۚ",
+      },
+    ];
+    const fontResolver = createTestFontResolver({
+      fontId: "indopak",
+      pageLoaded: true,
+      fontFamily: "IndoPak",
+    });
+    const { container } = render(
+      <VerseText words={indopakWords} fontResolver={fontResolver} mushafMode />,
+    );
+    expect(container.firstElementChild?.className).toContain("justify-center");
+    const el = container.querySelector("[dir='rtl']") as HTMLElement;
+    expect(el.textContent).toBe("الٓمّٓ ۚ");
+    expect(el.className).toContain("inline-block");
+    expect(el.className).not.toContain("w-full");
+    expect(el.style.textAlign).toBe("");
   });
 });

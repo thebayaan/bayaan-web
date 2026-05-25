@@ -24,6 +24,12 @@ export function getMushafLineAlignment(pageNumber: number): MushafLineAlignment 
 
 export const MUSHAF_BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ";
 
+/** KFGQPC V1 page-1 basmallah glyphs (verse 1:1 words 1–4). */
+export const BASMALLAH_GLYPH_V1 = "\uFB51\uFB52\uFB53\uFB54";
+
+/** KFGQPC V2/V4 page-1 basmallah glyphs (verse 1:1 words 1–4). */
+export const BASMALLAH_GLYPH_V2 = "\uFC41\uFC42\uFC43\uFC44";
+
 /**
  * Whether the inline mushaf renderer should draw a basmallah line above
  * a surah's first ayah.

@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { ReadingVerse } from "@/components/quran/reading-verse";
 import type { QcfVerse } from "@/types/quran-api";
+import { createTestFontResolver } from "@/__tests__/helpers/mushaf-font-resolver";
 
 vi.mock("@/hooks/use-play-from-ayah", () => ({
   usePlayFromAyah: () => ({
@@ -28,10 +29,7 @@ const mockVerse: QcfVerse = {
   translations: [],
 };
 
-const fontResolver = {
-  isPageFontLoaded: () => true,
-  getFontFamily: () => "UthmanicHafs",
-};
+const fontResolver = createTestFontResolver({ pageLoaded: true });
 
 describe("ReadingVerse", () => {
   it("uses verse_key as DOM id for fragment anchoring", () => {

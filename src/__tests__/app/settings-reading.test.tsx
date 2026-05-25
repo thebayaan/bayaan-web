@@ -33,4 +33,26 @@ describe("Reading settings", () => {
     await user.click(screen.getByRole("switch", { name: /tajweed colors/i }));
     expect(useReadingSettingsStore.getState().showTajweed).toBe(true);
   });
+
+  it("hides tajweed toggle when Tajweed Mushaf font is selected", () => {
+    useReadingSettingsStore.setState({ quranFontId: "qcf_tajweed_v4" });
+    render(<ReadingSettingsPage />);
+
+    expect(screen.queryByRole("switch", { name: /tajweed colors/i })).not.toBeInTheDocument();
+  });
+
+  it("hides tajweed toggle when IndoPak font is selected", () => {
+    useReadingSettingsStore.setState({ quranFontId: "indopak" });
+    render(<ReadingSettingsPage />);
+
+    expect(screen.queryByRole("switch", { name: /tajweed colors/i })).not.toBeInTheDocument();
+  });
+
+  it("changes quran font", async () => {
+    const user = userEvent.setup();
+    render(<ReadingSettingsPage />);
+
+    await user.selectOptions(screen.getByLabelText(/quran font/i), "indopak");
+    expect(useReadingSettingsStore.getState().quranFontId).toBe("indopak");
+  });
 });

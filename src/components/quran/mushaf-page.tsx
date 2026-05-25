@@ -1,7 +1,7 @@
 "use client";
 import { Fragment, useMemo } from "react";
 import type { QcfVerse, QcfWord } from "@/types/quran-api";
-import type { QcfFontResolver } from "./quran-word";
+import type { MushafFontResolver } from "@/lib/mushaf-fonts";
 import {
   getMushafLineAlignment,
   getMushafPageSurah,
@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 interface MushafPageProps {
   verses: QcfVerse[];
   pageNumber: number;
-  fontResolver: QcfFontResolver;
+  fontResolver: MushafFontResolver;
   fontSize: string;
   playbackActiveVerseKey?: string | null;
 }

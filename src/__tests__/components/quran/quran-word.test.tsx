@@ -4,6 +4,7 @@ import { QuranWord } from "@/components/quran/quran-word";
 import type { QcfWord } from "@/types/quran-api";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import { useTajweedStore } from "@/stores/tajweed-store";
+import { createTestFontResolver } from "@/__tests__/helpers/mushaf-font-resolver";
 
 const playMock = vi.fn();
 
@@ -34,7 +35,11 @@ const mockWord: QcfWord = {
 describe("QuranWord", () => {
   beforeEach(() => {
     playMock.mockClear();
-    useReadingSettingsStore.setState({ showTajweed: false, showWordByWord: false });
+    useReadingSettingsStore.setState({
+      showTajweed: false,
+      showWordByWord: false,
+      quranFontId: "qcf_v2",
+    });
     useTajweedStore.setState({
       byLocation: null,
       indexedTajweedData: null,
@@ -45,10 +50,7 @@ describe("QuranWord", () => {
 
   it("renders fallback text when font not loaded", () => {
     const { container } = render(
-      <QuranWord
-        word={mockWord}
-        fontResolver={{ isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" }}
-      />,
+      <QuranWord word={mockWord} fontResolver={createTestFontResolver()} />,
     );
     expect(container.querySelector("span")?.textContent).toContain("بِسْمِ");
   });
@@ -57,7 +59,7 @@ describe("QuranWord", () => {
     const { container } = render(
       <QuranWord
         word={mockWord}
-        fontResolver={{ isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" }}
+        fontResolver={createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" })}
       />,
     );
     const span = container.querySelector("[data-word-location='1:1:1']");
@@ -70,10 +72,10 @@ describe("QuranWord", () => {
     const { container } = render(
       <QuranWord
         word={wordOnPage3}
-        fontResolver={{
-          isPageFontLoaded: (page) => page === 2,
-          getFontFamily: (page) => (page === 2 ? "p2-v2" : "UthmanicHafs"),
-        }}
+        fontResolver={createTestFontResolver({
+          pageLoaded: (page) => page === 2,
+          fontFamily: (page) => (page === 2 ? "p2-v2" : "UthmanicHafs"),
+        })}
       />,
     );
     const span = container.querySelector("[data-word-location='1:1:1']");
@@ -81,26 +83,38 @@ describe("QuranWord", () => {
     expect(span).not.toHaveStyle({ fontFamily: "p2-v2" });
   });
 
-  it("plays word audio when tapped in reading mode", () => {
-    render(
+  it("uses UthmanicHafs for verse end markers in glyph fonts", () => {
+    const endMarker: QcfWord = {
+      ...mockWord,
+      id: 5,
+      position: 5,
+      char_type_name: "end",
+      code_v2: "\ufc45",
+      text_qpc_hafs: "۝٢",
+      qpc_uthmani_hafs: "۝٢",
+      text_uthmani: "٢",
+      location: "1:1:5",
+    };
+    const { container } = render(
       <QuranWord
-        word={mockWord}
-        wordAudioEnabled
-        fontResolver={{ isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" }}
+        word={endMarker}
+        fontResolver={createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" })}
       />,
     );
+    const span = container.querySelector("[data-word-location='1:1:5']");
+    expect(span?.textContent).toBe("۝٢");
+    expect(span).toHaveStyle({ fontFamily: "UthmanicHafs" });
+  });
+
+  it("plays word audio when tapped in reading mode", () => {
+    render(<QuranWord word={mockWord} wordAudioEnabled fontResolver={createTestFontResolver()} />);
 
     fireEvent.click(screen.getByRole("button"));
     expect(playMock).toHaveBeenCalledWith(mockWord);
   });
 
   it("does not play audio when wordAudioEnabled is false", () => {
-    render(
-      <QuranWord
-        word={mockWord}
-        fontResolver={{ isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" }}
-      />,
-    );
+    render(<QuranWord word={mockWord} fontResolver={createTestFontResolver()} />);
 
     expect(screen.queryByRole("button")).toBeNull();
     expect(playMock).not.toHaveBeenCalled();
@@ -127,7 +141,7 @@ describe("QuranWord", () => {
     const { container } = render(
       <QuranWord
         word={mockWord}
-        fontResolver={{ isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" }}
+        fontResolver={createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" })}
       />,
     );
 

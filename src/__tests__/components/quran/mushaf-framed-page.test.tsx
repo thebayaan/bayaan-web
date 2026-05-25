@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MushafFramedPage } from "@/components/quran/mushaf-framed-page";
+import { createTestFontResolver } from "@/__tests__/helpers/mushaf-font-resolver";
 
 describe("MushafFramedPage", () => {
   it("renders the surah banner for page 1", () => {
@@ -32,10 +33,10 @@ describe("MushafFramedPage", () => {
       <MushafFramedPage
         pageNumber={2}
         surahNumber={2}
-        fontResolver={{
-          isPageFontLoaded: () => true,
-          getFontFamily: (n) => `p${n}-v2`,
-        }}
+        fontResolver={createTestFontResolver({
+          pageLoaded: true,
+          fontFamily: (page) => `p${page}-v2`,
+        })}
         fontSize="2rem"
       >
         <p>lines</p>

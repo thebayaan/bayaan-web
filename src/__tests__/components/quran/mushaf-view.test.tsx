@@ -29,11 +29,29 @@ vi.mock("@/hooks/use-verses-by-page", () => ({
   useVersesByPage: (pageNumber: number) => versesByPageMock(pageNumber),
 }));
 
-vi.mock("@/hooks/use-qcf-font", () => ({
-  useQcfFont: () => ({
+const { mockFontResolver } = vi.hoisted(() => ({
+  mockFontResolver: {
+    config: {
+      id: "qcf_v2",
+      basmallahMode: "glyph",
+      rendering: "glyph-per-page",
+    },
     isPageFontLoaded: () => true,
-    getFontFamily: () => "code_v2",
-  }),
+    getFontFamily: () => "p1-v2",
+    getWordFontFamily: () => "p1-v2",
+    getPageFontPalette: undefined,
+    isBasmallahGlyphLoaded: () => true,
+    getBasmallahFontFamily: () => "p1-v2",
+    isStaticFontLoaded: true,
+    useGlyphLineJoin: true,
+    mushafLineJustify: true,
+    mushafLineCenter: false,
+    getWordText: () => "\ufc41",
+  },
+}));
+
+vi.mock("@/hooks/use-mushaf-font-resolver", () => ({
+  useMushafFontResolver: () => mockFontResolver,
 }));
 
 describe("MushafView", () => {

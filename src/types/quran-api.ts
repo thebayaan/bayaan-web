@@ -3,11 +3,14 @@ export interface QcfWord {
   position: number;
   audio_url: string | null;
   char_type_name: "word" | "end" | "pause";
+  code_v1?: string;
   code_v2: string;
   page_number: number;
   line_number: number;
   text_uthmani: string;
   text_imlaei_simple: string;
+  text_qpc_hafs?: string;
+  text_indopak?: string;
   qpc_uthmani_hafs: string;
   verse_key: string;
   verse_id: number;
