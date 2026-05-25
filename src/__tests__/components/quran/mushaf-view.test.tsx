@@ -111,14 +111,18 @@ describe("MushafView", () => {
   });
 
   it("does not preload pages before the surah's first page when scoped", () => {
-    // Mirror of the above for the leading edge: Al-Imran is pages
-    // 50..76. Opening at page 50 should not also pull in page 49
-    // (Al-Baqarah's last page), even though it's the ±1 neighbour.
     useReadingSettingsStore.setState({ mushafPage: 50 });
     render(<MushafView surahId={3} />);
     expect(screen.getByLabelText("Mushaf page 50")).toBeInTheDocument();
     expect(screen.getByLabelText("Mushaf page 51")).toBeInTheDocument();
     expect(screen.queryByLabelText("Mushaf page 49")).not.toBeInTheDocument();
+  });
+
+  it("allows cross-surah neighbors in legacy unscoped mushaf mode", () => {
+    useReadingSettingsStore.setState({ mushafPage: 49 });
+    render(<MushafView />);
+    expect(screen.getByLabelText("Mushaf page 49")).toBeInTheDocument();
+    expect(screen.getByLabelText("Mushaf page 50")).toBeInTheDocument();
   });
 
   it("scrolls to the surah's basmallah anchor when opening on a shared page", async () => {
