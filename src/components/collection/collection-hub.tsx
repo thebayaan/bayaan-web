@@ -6,6 +6,7 @@ import { usePlaylists } from "@/hooks/use-playlists";
 import { useFavoriteReciters, useFavorites } from "@/hooks/use-favorites";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { useNotes } from "@/hooks/use-notes";
+import { HeartIcon, NotesIcon, ProfileIcon } from "@/components/icons";
 
 interface CollectionItem {
   href: string;
@@ -32,8 +33,8 @@ function ChevronRight() {
   );
 }
 
-/* Icons ported from mobile's components/Icons.tsx with exact SVG paths */
-
+// PlaylistIcon is kept inline (per user preference — the existing path
+// renders well at this row's size).
 function PlaylistIcon() {
   return (
     <svg width={22} height={22} viewBox="0 0 24 24" fill="none">
@@ -47,23 +48,7 @@ function PlaylistIcon() {
   );
 }
 
-function ProfileIcon() {
-  return (
-    <svg width={22} height={22} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M4 18C4 15.79 5.79 14 8 14H16C18.21 14 20 15.79 20 18C20 19.1 19.1 20 18 20H6C4.9 20 4 19.1 4 18Z" />
-      <circle cx="12" cy="7" r="3" />
-    </svg>
-  );
-}
-
-function HeartFilledIcon() {
-  return (
-    <svg width={22} height={22} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 5.95q0.06 0 0.07-0.01c1.75-2.18 5.25-3.94 7.46-1.13 0.97 1.24 0.83 2.98 0.3 4.42-1.19 3.24-4.22 6.13-7.34 7.52q-0.17 0.08-0.48 0.08t-0.48-0.08c-3.12-1.38-6.15-4.28-7.34-7.52c-0.53-1.44-0.67-3.18 0.3-4.42 2.21-2.81 5.71-1.05 7.46 1.13q0.01 0.01 0.07 0.01z" />
-    </svg>
-  );
-}
-
+// Bookmark glyph kept inline — no mobile equivalent in the shared icon set.
 function BookmarkIcon() {
   return (
     <svg
@@ -77,63 +62,6 @@ function BookmarkIcon() {
       strokeLinejoin="round"
     >
       <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-    </svg>
-  );
-}
-
-function FileTextIcon() {
-  return (
-    <svg
-      width={22}
-      height={22}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <polyline points="14 2 14 8 20 8" />
-      <line x1="16" y1="13" x2="8" y2="13" />
-      <line x1="16" y1="17" x2="8" y2="17" />
-      <polyline points="10 9 9 9 8 9" />
-    </svg>
-  );
-}
-
-function DownloadIcon() {
-  return (
-    <svg
-      width={22}
-      height={22}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8 12L12 16M12 16L16 12M12 16V8M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" />
-    </svg>
-  );
-}
-
-function MicrophoneIcon() {
-  return (
-    <svg
-      width={22}
-      height={22}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 1C10.34 1 9 2.34 9 4V12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12V4C15 2.34 13.66 1 12 1Z" />
-      <path d="M19 10V12C19 15.866 15.866 19 12 19C8.13401 19 5 15.866 5 12V10" />
-      <path d="M12 19V23M8 23H16" />
     </svg>
   );
 }
@@ -160,7 +88,7 @@ export function CollectionHub() {
       emptyText: "No favorite reciters yet",
       color: "#3B82F6",
       count: favoriteReciters.length,
-      icon: <ProfileIcon />,
+      icon: <ProfileIcon size={22} filled />,
     },
     {
       href: "/collection/favorites",
@@ -168,7 +96,7 @@ export function CollectionHub() {
       emptyText: "No loved surahs yet",
       color: "#FF6B6B",
       count: favorites.length,
-      icon: <HeartFilledIcon />,
+      icon: <HeartIcon size={22} filled />,
     },
     {
       href: "/collection/bookmarks",
@@ -184,7 +112,7 @@ export function CollectionHub() {
       emptyText: "No notes yet",
       color: "#3B82F6",
       count: notes.length,
-      icon: <FileTextIcon />,
+      icon: <NotesIcon size={22} />,
     },
   ];
 

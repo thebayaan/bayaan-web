@@ -21,6 +21,7 @@ import Link from "next/link";
 import { usePlayerStore } from "@/stores/player-store";
 import type { Track } from "@/types/audio";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { QueueIcon } from "@/components/icons";
 
 interface QueuePanelProps {
   open: boolean;
@@ -188,25 +189,9 @@ export function QueuePanel({ open, onOpenChange }: QueuePanelProps): React.React
 
             {tracks.length === 0 ? (
               <div className="px-6 py-12 text-center">
-                <svg
-                  width={48}
-                  height={48}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                  className="text-muted-foreground mx-auto mb-4"
-                >
-                  <line x1="8" y1="6" x2="21" y2="6" />
-                  <line x1="8" y1="12" x2="21" y2="12" />
-                  <line x1="8" y1="18" x2="21" y2="18" />
-                  <line x1="3" y1="6" x2="3.01" y2="6" />
-                  <line x1="3" y1="12" x2="3.01" y2="12" />
-                  <line x1="3" y1="18" x2="3.01" y2="18" />
-                </svg>
+                <div className="text-muted-foreground mx-auto mb-4 flex justify-center">
+                  <QueueIcon size={48} aria-hidden="true" />
+                </div>
                 <p className="text-foreground font-medium">Queue is empty</p>
                 <p className="text-muted-foreground mt-1 mb-6 text-sm">
                   Pick a reciter and we&apos;ll line up the surah for you.
