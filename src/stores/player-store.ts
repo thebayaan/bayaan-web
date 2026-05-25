@@ -426,6 +426,17 @@ export const usePlayerStore = create<PlayerStoreState>()(
           state.queue.shuffleOrder = null;
           state.queue.shufflePosition = 0;
         }
+        // Preload the persisted track into the audio element so the first
+        // play-button press works. Without this, the UI shows the last
+        // track but <audio>.src is empty and play() rejects.
+        if (typeof window === "undefined") return;
+        const track = state.queue.tracks[state.queue.currentIndex];
+        if (track) {
+          audioService.load(track.url);
+          if (state.playback.positionMs > 0) {
+            audioService.seek(state.playback.positionMs / 1000);
+          }
+        }
       },
     },
   ),
