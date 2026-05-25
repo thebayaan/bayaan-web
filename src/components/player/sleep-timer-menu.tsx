@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePlayerStore } from "@/stores/player-store";
 import { useMenuKeyboardNav } from "@/hooks/use-menu-keyboard-nav";
+import { TimerIcon } from "@/components/icons";
 
 const PRESET_MINUTES = [15, 30, 45, 60] as const;
 
@@ -69,19 +70,7 @@ export function SleepTimerMenu({ remainingMs, className }: SleepTimerMenuProps) 
           }`
         }
       >
-        <svg
-          width={16}
-          height={16}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.8}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M12 3a6 6 0 0 0 9 5.2A9 9 0 1 1 12 3z" />
-        </svg>
+        <TimerIcon size={16} aria-hidden="true" />
         {isActive && remainingLabel ? <span className="tabular-nums">{remainingLabel}</span> : null}
       </button>
       {open ? (

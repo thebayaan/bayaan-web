@@ -9,6 +9,7 @@ import { createQueueFromSurah } from "@/lib/audio-utils";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import { cn } from "@/lib/utils";
+import { PauseIcon, PlayIcon, ProfileIcon } from "@/components/icons";
 
 interface ReciterCardProps {
   reciter: Reciter;
@@ -82,18 +83,7 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
             />
           ) : (
             <div className="text-muted-foreground flex h-full w-full items-center justify-center">
-              <svg
-                width={28}
-                height={28}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M20 21a8 8 0 10-16 0" />
-              </svg>
+              <ProfileIcon size={28} aria-hidden="true" />
             </div>
           )}
         </div>
@@ -120,21 +110,9 @@ export function ReciterCard({ reciter, className }: ReciterCardProps) {
         )}
       >
         {isThisReciterPlaying ? (
-          <svg width={14} height={14} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <rect x="6" y="5" width="4" height="14" />
-            <rect x="14" y="5" width="4" height="14" />
-          </svg>
+          <PauseIcon size={14} aria-hidden="true" />
         ) : (
-          <svg
-            width={14}
-            height={14}
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
-            className="translate-x-[1px]"
-          >
-            <polygon points="6,4 20,12 6,20" />
-          </svg>
+          <PlayIcon size={14} aria-hidden="true" className="translate-x-[1px]" />
         )}
       </button>
     </div>

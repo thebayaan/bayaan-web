@@ -9,7 +9,7 @@ import { usePlayerStore } from "@/stores/player-store";
 import { createQueueFromSurah } from "@/lib/audio-utils";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
-import { PlayIcon } from "@/components/icons";
+import { PauseIcon, PlayIcon } from "@/components/icons";
 
 const MAX_VISIBLE = 8;
 
@@ -123,16 +123,7 @@ export function RecentlyPlayedSection() {
                 }`}
               >
                 {active ? (
-                  <svg
-                    width={12}
-                    height={12}
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <rect x="6" y="5" width="4" height="14" />
-                    <rect x="14" y="5" width="4" height="14" />
-                  </svg>
+                  <PauseIcon size={12} aria-hidden="true" />
                 ) : (
                   <PlayIcon size={12} color="currentColor" />
                 )}

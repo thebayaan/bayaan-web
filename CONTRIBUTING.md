@@ -21,7 +21,8 @@ Thank you for contributing. This guide covers getting the app running locally, f
 ### Prerequisites
 
 - **Node.js 22+** (CI runs against Node 22; older versions may work but aren't validated)
-- **A Clerk Development instance** — required. Auth is integrated at the root layout level; without valid Clerk keys the dev server fails to boot. Create a free instance at [clerk.com](https://clerk.com) → new application → Development environment → copy the two API keys from the instance dashboard. Takes about 2 minutes.
+- **No accounts or API keys required** — the dev server boots with zero configuration. Library data (bookmarks, favorites, playlists, notes) is stored in the browser via localStorage.
+- **Optional:** a Bayaan API key if you're working on reciter catalogue, audio playback, or timestamp features. See [Backend API for development](#backend-api-for-development) below.
 
 ### Clone and install
 
@@ -37,29 +38,41 @@ The `prepare` script runs Husky automatically on install, setting up the pre-com
 
 ## Environment variables
 
+Environment variables are **optional** for local development. Copy the template if you need to override defaults:
+
 ```bash
 cp .env.example .env.local
 ```
 
 `.env.example` has inline documentation for every variable. Quick reference:
 
-| Variable                            | Required | Description                                                                                      |
-| ----------------------------------- | -------- | ------------------------------------------------------------------------------------------------ |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | **Yes**  | Clerk publishable key (`pk_test_…`). App won't boot without it.                                  |
-| `CLERK_SECRET_KEY`                  | **Yes**  | Clerk secret key (`sk_test_…`).                                                                  |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_URL`     | No       | Defaults to `/sign-in`.                                                                          |
-| `NEXT_PUBLIC_CLERK_SIGN_UP_URL`     | No       | Defaults to `/sign-up`.                                                                          |
-| `NEXT_PUBLIC_SITE_URL`              | No       | Public base URL for canonical links and OG metadata. Defaults to `http://localhost:3000` in dev. |
-| `NEXT_PUBLIC_BAYAAN_API_URL`        | No       | Bayaan backend base URL. Blank = bundled fallback data.                                          |
-| `BAYAAN_INTERNAL_API_URL`           | No       | Private backend URL used from server routes. Falls back to `NEXT_PUBLIC_BAYAAN_API_URL`.         |
-| `BAYAAN_API_KEY`                    | No       | Bearer token for the Bayaan API. Blank = bundled fallback data.                                  |
-| `NEXT_PUBLIC_BAYAAN_CDN_URL`        | No       | Media CDN base.                                                                                  |
-| `NEXT_PUBLIC_APP_VERSION`           | No       | Version shown in footer/about. Falls back to commit SHA.                                         |
-| `ANDROID_SHA256_CERT`               | No       | SHA-256 fingerprint for Android App Links (`/.well-known/assetlinks.json`).                      |
+| Variable                     | Required | Description                                                                                      |
+| ---------------------------- | -------- | ------------------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SITE_URL`       | No       | Public base URL for canonical links and OG metadata. Defaults to `http://localhost:3000` in dev. |
+| `NEXT_PUBLIC_BAYAAN_API_URL` | No       | Bayaan backend base URL. Defaults to `https://api.thebayaan.com`.                                |
+| `BAYAAN_INTERNAL_API_URL`    | No       | Private backend URL used from server routes. Falls back to `NEXT_PUBLIC_BAYAAN_API_URL`.         |
+| `BAYAAN_API_KEY`             | No       | Bearer token for the Bayaan API. Required for reciter catalogue and audio.                       |
+| `NEXT_PUBLIC_BAYAAN_CDN_URL` | No       | Media CDN base.                                                                                  |
+| `NEXT_PUBLIC_APP_VERSION`    | No       | Version shown in settings/about. Falls back to commit SHA.                                       |
+| `ANDROID_SHA256_CERT`        | No       | SHA-256 fingerprint for Android App Links (`/.well-known/assetlinks.json`).                      |
 
 ### Backend API for development
 
-The Bayaan backend is a separate project. For most UI work, leaving the API variables blank is fine — the app gracefully degrades to bundled data. If you're working on a feature that requires the live catalogue, open an issue titled "Community API key request" for a rate-limited development key.
+The Bayaan backend is a separate project. Without `BAYAAN_API_KEY`, these features still work:
+
+- **Quran reader** — text, translations, tafsir (via `/api/quran-v4` proxy to Quran.com)
+- **Mushaf** — page rendering with bundled tajweed data (`public/data/qpc-hafs-tajweed.json`)
+- **Transliteration** — bundled fallback (`public/data/transliteration.json`)
+- **Adhkar** — bundled JSON (`src/data/adhkar.json`)
+- **Library** — bookmarks, favorites, playlists, notes (localStorage via `src/stores/library-store.ts`)
+
+These features require a valid `BAYAAN_API_KEY`:
+
+- Reciter catalogue and profiles
+- Audio playback and ayah timestamps
+- Reciter OG images
+
+For a rate-limited development key, open an issue titled **"Community API key request"**.
 
 ---
 
@@ -111,7 +124,7 @@ All four must pass. Husky + lint-staged already runs Prettier on staged files on
 ### React + Next.js 16
 
 - This repo is on **Next.js 16** — APIs, conventions, and file structure may differ from older Next.js knowledge. When in doubt, check the docs bundled in `node_modules/next/dist/docs/`.
-- Server Components by default. Add `"use client"` only when needed (interactivity, browser APIs, Clerk hooks).
+- Server Components by default. Add `"use client"` only when needed (interactivity, browser APIs, hooks).
 - Data fetching via SWR on the client, `fetch` in Server Components on the server.
 - State management via Zustand stores under `src/stores/`.
 
@@ -139,10 +152,10 @@ All four must pass. Husky + lint-staged already runs Prettier on staged files on
 ## Testing
 
 - **Unit + integration** — Vitest with `@testing-library/react`. Test files live next to source as `*.test.ts(x)` or under `src/__tests__/`.
-- **E2E** — Playwright under `e2e/`. These run against a real `next start` server and need Clerk dev keys set.
+- **E2E** — Playwright under `e2e/`. These run against a real `next start` server with no external credentials required.
 - **Mocking** — MSW for HTTP request interception in tests.
 
-When adding a feature, include at least one Vitest test covering the core behaviour. E2E is reserved for critical user flows (sign-in, reciter listening, playlist creation).
+When adding a feature, include at least one Vitest test covering the core behaviour. E2E is reserved for critical user flows (Quran reading, reciter listening, playlist creation).
 
 ---
 
@@ -150,24 +163,23 @@ When adding a feature, include at least one Vitest test covering the core behavi
 
 ### Key files
 
-| What                                  | Where                                   |
-| ------------------------------------- | --------------------------------------- |
-| Root layout (Clerk + Theme providers) | `src/app/layout.tsx`                    |
-| Auth middleware                       | `middleware.ts`                         |
-| Public route matcher                  | `middleware.ts` + `proxy.ts`            |
-| Bayaan API proxy                      | `src/app/api/bayaan/[...path]/route.ts` |
-| Zustand stores                        | `src/stores/`                           |
-| Shared hooks                          | `src/hooks/`                            |
-| UI primitives                         | `src/components/ui/`                    |
-| Feature components                    | `src/components/<feature>/`             |
+| What                         | Where                                     |
+| ---------------------------- | ----------------------------------------- |
+| Root layout (Theme provider) | `src/app/layout.tsx`                      |
+| Middleware                   | `middleware.ts`                           |
+| Bayaan API proxy             | `src/app/api/bayaan/[...path]/route.ts`   |
+| Quran.com API proxy          | `src/app/api/quran-v4/[...path]/route.ts` |
+| Library store (localStorage) | `src/stores/library-store.ts`             |
+| Zustand stores               | `src/stores/`                             |
+| Shared hooks                 | `src/hooks/`                              |
+| UI primitives                | `src/components/ui/`                      |
+| Feature components           | `src/components/<feature>/`               |
 
-### Auth flow
+### Library persistence
 
-Clerk's `clerkMiddleware` in `middleware.ts` protects routes not listed in `isPublicRoute`. The public surface includes Quran reading (`/quran/*`), the Mushaf, adhkar, reciter profiles, and OG/SEO artefacts. Library features (`/collection/*`, playlist detail) require sign-in.
+There is no sign-in. Bookmarks, favorites, playlists, notes, and highlights are stored in the browser via Zustand's `persist` middleware (`src/stores/library-store.ts` and related stores). Data stays on the device and is not synced to a server.
 
-Client-side, `useAuthGate` in `src/hooks/use-auth-gate.ts` wraps actions so they run immediately for signed-in users and redirect to sign-in (with a return URL) for guests.
-
-Server routes proxy to the Bayaan backend via `src/app/api/bayaan/[...path]/route.ts`. User-specific endpoints (`/v1/user/...`) attach the Clerk JWT; everything else uses the Bayaan API key.
+The Bayaan API proxy (`src/app/api/bayaan/[...path]/route.ts`) forwards catalogue requests using `BAYAAN_API_KEY`. Legacy `/v1/user/...` routes return `410 Gone` with a message pointing callers to local storage.
 
 ---
 

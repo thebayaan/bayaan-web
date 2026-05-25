@@ -1,21 +1,40 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useReciter } from "@/hooks/use-reciter";
 import { useFavoriteReciters } from "@/hooks/use-favorites";
 import { usePlayerStore } from "@/stores/player-store";
 import { ReciterHeader } from "@/components/reciter-header";
 import { SurahListItem } from "@/components/surah-list-item";
 import { ReciterMoreMenu } from "@/components/reciter-more-menu";
-import { PlayIcon, HeartIcon } from "@/components/icons";
+import { HeartIcon, PlayIcon, ShareIcon } from "@/components/icons";
 import { createQueueFromSurah } from "@/lib/audio-utils";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 
-function handleShare(): void {
-  if (typeof navigator !== "undefined" && navigator.clipboard) {
-    void navigator.clipboard.writeText(window.location.href);
+async function shareReciter(name: string): Promise<"shared" | "copied" | "failed"> {
+  if (typeof window === "undefined") return "failed";
+  const url = window.location.href;
+  const nav = window.navigator;
+  if (typeof nav.share === "function") {
+    try {
+      await nav.share({ title: name, url });
+      return "shared";
+    } catch (err) {
+      // User aborted the share sheet — treat as no-op, not an error.
+      if (err instanceof Error && err.name === "AbortError") return "shared";
+      // Fall through to clipboard on any other error.
+    }
   }
+  if (nav.clipboard) {
+    try {
+      await nav.clipboard.writeText(url);
+      return "copied";
+    } catch {
+      return "failed";
+    }
+  }
+  return "failed";
 }
 
 const surahs = surahData as unknown as Surah[];
@@ -33,6 +52,12 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
   const [selectedRewayatIdx, setSelectedRewayatIdx] = useState(0);
   const { isFavoriteReciter, toggleFavoriteReciter } = useFavoriteReciters();
   const isFavorited = reciter ? isFavoriteReciter(reciter.id) : false;
+  const [shareToast, setShareToast] = useState<"shared" | "copied" | "failed" | null>(null);
+  useEffect(() => {
+    if (!shareToast) return undefined;
+    const t = window.setTimeout(() => setShareToast(null), 1800);
+    return () => window.clearTimeout(t);
+  }, [shareToast]);
 
   const updateQueue = usePlayerStore((s) => s.updateQueue);
   const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
@@ -154,29 +179,27 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
         >
           <HeartIcon size={18} color="currentColor" filled={isFavorited} />
         </button>
-        <button
-          type="button"
-          aria-label="Share reciter"
-          onClick={handleShare}
-          className="border-border hover:bg-surface-raised duration-fast ease-standard text-muted-foreground flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        <div className="relative">
+          <button
+            type="button"
+            aria-label="Share reciter"
+            onClick={() => {
+              void shareReciter(reciter.name).then(setShareToast);
+            }}
+            className="border-border hover:bg-surface-raised duration-fast ease-standard text-muted-foreground flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
           >
-            <circle cx="18" cy="5" r="3" />
-            <circle cx="6" cy="12" r="3" />
-            <circle cx="18" cy="19" r="3" />
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-          </svg>
-        </button>
+            <ShareIcon size={18} aria-hidden="true" />
+          </button>
+          {shareToast === "copied" || shareToast === "failed" ? (
+            <span
+              role="status"
+              aria-live="polite"
+              className="bg-foreground text-background pointer-events-none absolute right-0 -bottom-9 z-30 rounded-md px-2.5 py-1 text-xs font-medium whitespace-nowrap shadow-lg"
+            >
+              {shareToast === "copied" ? "Link copied" : "Couldn't share"}
+            </span>
+          ) : null}
+        </div>
         <ReciterMoreMenu
           reciter={reciter}
           rewayat={selectedRewayat}

@@ -7,6 +7,7 @@ import { HighlightPicker } from "./highlight-picker";
 import { NoteEditorButton } from "./note-editor";
 import { TafsirSheet } from "./tafsir-sheet";
 import { usePlayFromAyah } from "@/hooks/use-play-from-ayah";
+import { CopyIcon, PlayIcon, ShareIcon, TafseerIcon } from "@/components/icons";
 
 function getVerseText(verse: QcfVerse): string {
   const arabic = verse.words
@@ -103,9 +104,7 @@ export function VerseActions({ verse, surahId, surahName }: VerseActionsProps) {
           title={playLabel}
           className={COMMON_BUTTON}
         >
-          <svg width={14} height={14} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M8 5v14l11-7z" />
-          </svg>
+          <PlayIcon size={14} aria-hidden="true" />
         </button>
         <button
           type="button"
@@ -114,10 +113,7 @@ export function VerseActions({ verse, surahId, surahName }: VerseActionsProps) {
           title={`Tafsir for ${verse.verse_key}`}
           className={COMMON_BUTTON}
         >
-          <svg width={14} height={14} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-          </svg>
+          <TafseerIcon size={14} aria-hidden="true" />
         </button>
         <BookmarkToggle verseKey={verse.verse_key} className={COMMON_BUTTON} />
         <HighlightPicker verseKey={verse.verse_key} className={COMMON_BUTTON} />
@@ -127,18 +123,14 @@ export function VerseActions({ verse, surahId, surahName }: VerseActionsProps) {
           aria-label={`Copy ${verse.verse_key}`}
           className={COMMON_BUTTON}
         >
-          <svg width={14} height={14} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z" />
-          </svg>
+          <CopyIcon size={14} aria-hidden="true" />
         </button>
         <button
           onClick={() => void handleShare()}
           aria-label={`Share ${verse.verse_key}`}
           className={COMMON_BUTTON}
         >
-          <svg width={14} height={14} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 1 0 0-6 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81A3 3 0 1 0 6 15.08l7.05 4.11c-.05.23-.09.46-.09.7 0 1.65 1.35 3 3 3a3 3 0 1 0 .04-6.81z" />
-          </svg>
+          <ShareIcon size={14} aria-hidden="true" />
         </button>
         {copied ? (
           <span role="status" aria-live="polite" className="text-muted-foreground ml-1 text-[10px]">

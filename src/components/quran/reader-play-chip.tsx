@@ -7,7 +7,7 @@ import { useReciters } from "@/hooks/use-reciters";
 import { usePlayerStore } from "@/stores/player-store";
 import { useReaderPlayerStore } from "@/stores/reader-player-store";
 import { createTrack } from "@/lib/audio-utils";
-import { PlayIcon } from "@/components/icons";
+import { PauseIcon, PlayIcon } from "@/components/icons";
 import type { Reciter, Rewayat } from "@/types/reciter";
 
 interface ReaderPlayChipProps {
@@ -122,10 +122,7 @@ export function ReaderPlayChip({ surahId, surahName }: ReaderPlayChipProps) {
           className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong duration-fast ease-standard flex h-7 w-7 items-center justify-center rounded-full transition-colors"
         >
           {isThisTrackPlaying ? (
-            <svg width={12} height={12} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <rect x="6" y="5" width="4" height="14" />
-              <rect x="14" y="5" width="4" height="14" />
-            </svg>
+            <PauseIcon size={12} aria-hidden="true" />
           ) : (
             <PlayIcon size={12} color="currentColor" />
           )}

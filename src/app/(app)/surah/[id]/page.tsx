@@ -4,7 +4,7 @@ import { use, useMemo } from "react";
 import { useReciters } from "@/hooks/use-reciters";
 import { usePlayerStore } from "@/stores/player-store";
 import { createTrack } from "@/lib/audio-utils";
-import { PlayIcon } from "@/components/icons";
+import { PlayIcon, TafseerIcon } from "@/components/icons";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import Link from "next/link";
@@ -55,20 +55,7 @@ export default function SurahPage({ params }: { params: Promise<{ id: string }> 
           href={`/quran/${surah.id}`}
           className="border-border hover:bg-surface-raised duration-fast ease-standard mt-4 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors"
         >
-          <svg
-            width={16}
-            height={16}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-          </svg>
+          <TafseerIcon size={16} aria-hidden="true" />
           Read this surah
         </Link>
       </div>

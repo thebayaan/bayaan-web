@@ -10,6 +10,7 @@ import { ProgressBar } from "./progress-bar";
 import { VolumeControl } from "./volume-control";
 import { FullPlayerView } from "./full-player-view";
 import { QueuePanel } from "./queue-panel";
+import { QueueIcon } from "@/components/icons";
 import { audioService } from "@/services/audio/audio-service";
 import type { RepeatMode } from "@/types/audio";
 import { useAudioEvents } from "@/hooks/use-audio-events";
@@ -130,18 +131,23 @@ export function BottomPlayerBar() {
             </button>
             <div className="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs">
               {reciterSlug ? (
-                <Link href={`/reciter/${reciterSlug}`} className="min-w-0 truncate hover:underline">
+                <Link
+                  href={`/reciter/${reciterSlug}`}
+                  className="min-w-0 flex-1 truncate hover:underline"
+                >
                   {currentTrack.artist}
                 </Link>
               ) : (
-                <span className="min-w-0 truncate">{currentTrack.artist}</span>
+                <span className="min-w-0 flex-1 truncate">{currentTrack.artist}</span>
               )}
               {rewayahName ? (
                 <>
                   <span aria-hidden className="hidden shrink-0 opacity-50 sm:inline">
                     ·
                   </span>
-                  <span className="hidden shrink-0 capitalize sm:inline">{rewayahName}</span>
+                  <span className="hidden max-w-[7rem] shrink-0 truncate capitalize sm:inline">
+                    {rewayahName}
+                  </span>
                 </>
               ) : null}
             </div>
@@ -189,21 +195,7 @@ export function BottomPlayerBar() {
             className="text-muted-foreground hover:text-foreground p-2 transition-colors"
             aria-label="Toggle queue"
           >
-            <svg
-              width={16}
-              height={16}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <line x1="8" y1="6" x2="21" y2="6" />
-              <line x1="8" y1="12" x2="21" y2="12" />
-              <line x1="8" y1="18" x2="21" y2="18" />
-              <line x1="3" y1="6" x2="3.01" y2="6" />
-              <line x1="3" y1="12" x2="3.01" y2="12" />
-              <line x1="3" y1="18" x2="3.01" y2="18" />
-            </svg>
+            <QueueIcon size={16} aria-hidden="true" />
           </button>
           <button
             type="button"

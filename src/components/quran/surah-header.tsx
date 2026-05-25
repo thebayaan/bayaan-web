@@ -28,11 +28,7 @@ export function SurahHeader({
         )}
       </div>
       {showBismillah && surahNumber !== 9 && surahNumber !== 1 ? (
-        <MushafBasmallah
-          fontSize={fontSize}
-          fontResolver={fontResolver}
-          className="mt-4"
-        />
+        <MushafBasmallah fontSize={fontSize} fontResolver={fontResolver} className="mt-4" />
       ) : null}
     </div>
   );
