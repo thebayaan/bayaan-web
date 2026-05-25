@@ -41,23 +41,32 @@ function SheetBackdrop({
   );
 }
 
+type SheetSide = "right" | "bottom";
+
 function SheetContent({
   className,
   children,
+  side = "right",
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Popup>) {
+}: React.ComponentProps<typeof DrawerPrimitive.Popup> & { side?: SheetSide }) {
+  const sideClasses =
+    side === "bottom"
+      ? [
+          "fixed inset-x-0 bottom-0 z-50 h-auto max-h-[85vh]",
+          "border-border bg-background rounded-t-2xl border-t shadow-xl",
+          "data-[ending-style]:translate-y-full data-[starting-style]:translate-y-full",
+        ]
+      : [
+          "fixed top-0 right-0 bottom-0 z-50 h-full",
+          "border-border bg-background border-l shadow-xl",
+          "data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full",
+        ];
   return (
     <SheetPortal>
       <SheetBackdrop />
       <DrawerPrimitive.Viewport>
         <DrawerPrimitive.Popup
-          className={cn(
-            "fixed top-0 right-0 bottom-0 z-50 h-full",
-            "border-border bg-background border-l shadow-xl",
-            "data-[ending-style]:translate-x-full data-[starting-style]:translate-x-full",
-            "transition-transform duration-300 ease-in-out",
-            className,
-          )}
+          className={cn(...sideClasses, "transition-transform duration-300 ease-in-out", className)}
           {...props}
         >
           {children}
