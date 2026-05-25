@@ -232,4 +232,59 @@ export const handlers = [
       pagination: { per_page: 50, current_page: 1, total_pages: 1, total_records: 1 },
     }),
   ),
+
+  http.get(`${API}/timestamps/:rewayatId/:surah`, ({ params }) =>
+    HttpResponse.json({
+      data: {
+        rewayat_id: String(params.rewayatId),
+        surah: Number(params.surah),
+        timestamps: [
+          { verse_key: `${params.surah}:1`, timestamp_from: 0, timestamp_to: 5000 },
+          { verse_key: `${params.surah}:2`, timestamp_from: 5000, timestamp_to: 10000 },
+        ],
+      },
+    }),
+  ),
+
+  http.get(`${API}/quran-v4/search`, ({ request }) => {
+    const url = new URL(request.url);
+    const q = url.searchParams.get("q") ?? "";
+    if (q.length < 3) return HttpResponse.json({ search: { results: [], pagination: {} } });
+    return HttpResponse.json({
+      search: {
+        results: [
+          {
+            verse_key: "2:255",
+            verse_id: 295,
+            text: "Allah - there is no deity except Him",
+            highlighted: "Allah",
+            translations: [{ text: "Allah — there is no deity except Him", resource_id: 131, resource_name: "Clear Quran" }],
+          },
+        ],
+        pagination: { current_page: 0, total_pages: 1, total_records: 1 },
+      },
+    });
+  }),
+
+  http.get(`${API}/quran-v4/tafsirs/:tafsirId/by_ayah/:verseKey`, ({ params }) =>
+    HttpResponse.json({
+      tafsir: {
+        verses: [{ resource_id: Number(params.tafsirId), verse_key: String(params.verseKey), text: "<p>Mock tafsir text</p>" }],
+      },
+    }),
+  ),
+
+  http.get(`${API}/quran/resources/translations`, () =>
+    HttpResponse.json({
+      translations: [
+        { id: 131, name: "Clear Quran", author_name: "Dr. Mustafa Khattab", slug: "en-clear-quran", language_name: "english" },
+      ],
+    }),
+  ),
+
+  http.get(`${API}/quran/verses/by_key/:verseKey`, ({ params }) =>
+    HttpResponse.json({
+      verse: { verse_key: String(params.verseKey), page_number: 42 },
+    }),
+  ),
 ];
