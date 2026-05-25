@@ -32,14 +32,26 @@ describe("GET /api/timestamps/[rewayatId]/[surah]", () => {
     expect(response.status).toBe(400);
   });
 
-  it("proxies the R2 JSON for a known rewayat + surah, pads the surah to 3 digits", async () => {
-    const timestamps = [{ verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 }];
-    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(timestamps), { status: 200 }));
+  it("normalizes the R2 CDN camelCase payload", async () => {
+    const cdnPayload = [
+      {
+        surahNumber: 1,
+        ayahNumber: 2,
+        timestampFrom: 6800,
+        timestampTo: 11700,
+        durationMs: 4900,
+      },
+    ];
+    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(cdnPayload), { status: 200 }));
 
     const response = await callRoute("rw-1", "1");
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({
-      data: { rewayat_id: "rw-1", surah: 1, timestamps },
+      data: {
+        rewayat_id: "rw-1",
+        surah: 1,
+        timestamps: [{ verse_key: "1:2", timestamp_from: 6800, timestamp_to: 11700 }],
+      },
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith(
@@ -48,8 +60,54 @@ describe("GET /api/timestamps/[rewayatId]/[surah]", () => {
     );
   });
 
-  it("returns 404 when R2 has no JSON for this rewayat/surah", async () => {
-    fetchMock.mockResolvedValueOnce(new Response(null, { status: 404 }));
+  it("passes through already-normalized CDN rows", async () => {
+    const timestamps = [{ verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 }];
+    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(timestamps), { status: 200 }));
+
+    const response = await callRoute("rw-1", "1");
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      data: { rewayat_id: "rw-1", surah: 1, timestamps },
+    });
+  });
+
+  it("falls back to MP3Quran when the CDN has no JSON for this rewayat/surah", async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response(null, { status: 404 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            data: {
+              id: "rw-1",
+              mp3quran_read_id: 49,
+              qdc_reciter_id: null,
+            },
+          }),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify([{ ayah: 2, start_time: 6800, end_time: 11700 }]), {
+          status: 200,
+        }),
+      );
+
+    const response = await callRoute("rw-1", "1");
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      data: {
+        rewayat_id: "rw-1",
+        surah: 1,
+        timestamps: [{ verse_key: "1:2", timestamp_from: 6800, timestamp_to: 11700 }],
+      },
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it("returns 404 when CDN and fallback both fail", async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response(null, { status: 404 }))
+      .mockResolvedValueOnce(new Response(null, { status: 404 }));
 
     const response = await callRoute("missing", "1");
     expect(response.status).toBe(404);
@@ -64,13 +122,33 @@ describe("GET /api/timestamps/[rewayatId]/[surah]", () => {
     expect(await response.json()).toEqual({ error: "upstream down" });
   });
 
-  it("returns 502 when the CDN returns a non-array payload", async () => {
-    fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify({ not: "an array" }), { status: 200 }),
-    );
+  it("falls back when the CDN returns a non-array payload", async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response(JSON.stringify({ not: "an array" }), { status: 200 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            data: {
+              id: "rw-1",
+              mp3quran_read_id: 49,
+              qdc_reciter_id: null,
+            },
+          }),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify([{ ayah: 1, start_time: 0, end_time: 1000 }]), { status: 200 }),
+      );
 
     const response = await callRoute("rw-1", "1");
-    expect(response.status).toBe(502);
-    expect(await response.json()).toEqual({ error: "Malformed timestamps payload" });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      data: {
+        rewayat_id: "rw-1",
+        surah: 1,
+        timestamps: [{ verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 }],
+      },
+    });
   });
 });

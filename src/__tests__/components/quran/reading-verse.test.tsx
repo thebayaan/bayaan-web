@@ -8,6 +8,7 @@ vi.mock("@/hooks/use-play-from-ayah", () => ({
   usePlayFromAyah: () => ({
     playFromAyah: vi.fn(),
     canPlayFromAyah: false,
+    availableReciters: [],
     resolvedReciter: null,
   }),
 }));

@@ -68,4 +68,28 @@ describe("useTimestampLoader", () => {
       expect(fetchSpy).not.toHaveBeenCalled();
     });
   });
+
+  it("reloads when cached timestamps are malformed CDN rows", async () => {
+    useAyahTrackerStore.getState().setTimestamps("rewayat-1:1", 1, [
+      {
+        surahNumber: 1,
+        ayahNumber: 1,
+        timestampFrom: 0,
+        timestampTo: 1000,
+      } as never,
+    ]);
+    usePlayerStore.setState({
+      queue: { tracks: [sampleTrack], currentIndex: 0, shuffleOrder: null, shufflePosition: 0 },
+    });
+
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    renderHook(() => useTimestampLoader());
+
+    await waitFor(() => {
+      expect(fetchSpy).toHaveBeenCalled();
+    });
+    await waitFor(() => {
+      expect(useAyahTrackerStore.getState().timestamps[0]?.verse_key).toBe("1:1");
+    });
+  });
 });
