@@ -40,8 +40,8 @@ export interface MushafFontConfig {
   /** Decorative basmallah ligature from page-1 QCF glyphs. */
   basmallahMode: "glyph" | "unicode";
   totalPages: number;
-  /** Tailwind classes for the page container width. Overrides MUSHAF_PAGE_CLASS when set. */
-  mushafPageClass?: string;
+  /** Scale factor for dynamic page width: maxWidth = scale * fontSize (in rem). */
+  mushafPageWidthScale?: number;
 }
 
 const QURAN_FONT_CDN = "https://verses.quran.foundation/fonts/quran/hafs";
@@ -105,12 +105,12 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
     staticFontFamily: "IndoPak",
     staticFontUrl: `${QURAN_FONT_CDN}/nastaleeq/indopak/indopak-nastaleeq-waqf-lazim-v4.2.1.woff2`,
     useGlyphLineJoin: false,
-    mushafLineJustify: false,
+    mushafLineJustify: true,
     mushafLineCenter: false,
     mushafWordSeparator: " ",
     basmallahMode: "unicode",
     totalPages: 604,
-    mushafPageClass: "mx-auto w-full max-w-[700px]",
+    mushafPageWidthScale: 20,
   },
 ];
 
