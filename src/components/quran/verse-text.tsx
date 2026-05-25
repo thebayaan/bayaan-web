@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import type { QcfWord } from "@/types/quran-api";
 import { QuranWord } from "./quran-word";
 import { MushafBasmallah } from "./mushaf-surah-header";
@@ -84,51 +84,66 @@ function MushafLine({
   const useFlexCenter = fontResolver.mushafLineCenter;
   const useTextCenter = lineAlignment === "center" && !useFlexCenter;
   const useJustifiedLine = fontResolver.mushafLineJustify && lineAlignment !== "center";
+  const useFlexJustify = useJustifiedLine && !fontResolver.useGlyphLineJoin;
   const useCssJustify = useJustifiedLine && fontResolver.useGlyphLineJoin;
-  const useWordSpacingJustify = useJustifiedLine && !fontResolver.useGlyphLineJoin;
-  const lineText = joinMushafLineText(sortedWords, fontResolver.config, (word) =>
-    fontResolver.getWordText(word),
-  );
+  const lineText = useFlexJustify
+    ? ""
+    : joinMushafLineText(sortedWords, fontResolver.config, (word) =>
+        fontResolver.getWordText(word),
+      );
   const lineFontFamily = isFontLoaded ? fontFamily : END_MARKER_FONT_FAMILY;
 
-  useLayoutEffect(() => {
-    const el = lineRef.current;
-    if (!useWordSpacingJustify || !el) return;
+  const sharedProps = {
+    ref: lineRef,
+    dir: "rtl" as const,
+    role: selectable ? ("button" as const) : undefined,
+    tabIndex: selectable ? 0 : undefined,
+    onClick: selectable ? handleLineSelect : undefined,
+    onKeyDown: selectable
+      ? (event: React.KeyboardEvent) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleLineSelect();
+          }
+        }
+      : undefined,
+    "data-verse-key": lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined,
+  };
 
-    el.style.wordSpacing = "normal";
-    el.style.width = "fit-content";
-    const naturalWidth = el.offsetWidth;
-    el.style.width = "";
-    const containerWidth = el.offsetWidth;
-
-    if (naturalWidth >= containerWidth || containerWidth <= 0) {
-      el.style.wordSpacing = "";
-      return;
-    }
-
-    const wordCount = lineText.split(/\s+/).filter(Boolean).length;
-    const gaps = Math.max(wordCount - 1, 1);
-    const extraPerGap = (containerWidth - naturalWidth) / gaps;
-    el.style.wordSpacing = extraPerGap <= 10 ? `${extraPerGap}px` : "";
-  }, [useWordSpacingJustify, lineText, fontSize]);
+  if (useFlexJustify) {
+    return (
+      <div
+        {...sharedProps}
+        className={cn(
+          "flex w-full leading-[2.35] whitespace-nowrap transition-colors",
+          lineAlignment === "center" ? "justify-center" : "justify-between",
+          selectable && "cursor-pointer",
+          lineHasPlaybackAyah &&
+            "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
+          className,
+        )}
+        style={{
+          fontFamily: lineFontFamily,
+          fontSize,
+          ...(lineFontPalette ? { fontPalette: lineFontPalette } : undefined),
+        }}
+      >
+        {sortedWords.map((word) => {
+          const text = fontResolver.getWordText(word);
+          if (!text) return null;
+          return (
+            <span key={`${word.verse_key}-${word.position}`} className="inline-block">
+              {text}
+            </span>
+          );
+        })}
+      </div>
+    );
+  }
 
   const lineNode = (
     <div
-      ref={lineRef}
-      dir="rtl"
-      role={selectable ? "button" : undefined}
-      tabIndex={selectable ? 0 : undefined}
-      onClick={selectable ? handleLineSelect : undefined}
-      onKeyDown={
-        selectable
-          ? (event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                handleLineSelect();
-              }
-            }
-          : undefined
-      }
+      {...sharedProps}
       className={cn(
         "whitespace-nowrap transition-colors",
         useFlexCenter && "inline-block leading-[2.5]",
@@ -138,7 +153,6 @@ function MushafLine({
         lineHasPlaybackAyah && "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
         !useFlexCenter && className,
       )}
-      data-verse-key={lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined}
       style={{
         fontFamily: lineFontFamily,
         fontSize,
