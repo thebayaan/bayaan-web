@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  getMushafFontScale,
-  MUSHAF_DESIGN_FONT_SIZE_REM,
-} from "@/components/quran/mushaf-layout";
+import { getMushafFontScale, MUSHAF_DESIGN_FONT_SIZE_REM } from "@/components/quran/mushaf-layout";
 
 describe("getMushafFontScale", () => {
   it("keeps glyph mushaf lines at the design font size and scales the page", () => {
