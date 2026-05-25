@@ -31,6 +31,12 @@ export interface MushafFontConfig {
   staticFontUrl?: string;
   /** Whether mushaf lines join glyph codes edge-to-edge. */
   useGlyphLineJoin: boolean;
+  /** CSS justify for mushaf lines (QCF glyph fonts). */
+  mushafLineJustify: boolean;
+  /** Center each line on the page (IndoPak Nastaleeq). */
+  mushafLineCenter: boolean;
+  /** Separator between words when joining unicode mushaf lines. */
+  mushafWordSeparator: string;
   /** Decorative basmallah ligature from page-1 QCF glyphs. */
   basmallahMode: "glyph" | "unicode";
   totalPages: number;
@@ -49,6 +55,9 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
     cdnVersion: "v2",
     fontNameSuffix: "v2",
     useGlyphLineJoin: true,
+    mushafLineJustify: true,
+    mushafLineCenter: false,
+    mushafWordSeparator: "\u200A",
     basmallahMode: "glyph",
     totalPages: 604,
   },
@@ -62,6 +71,9 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
     cdnVersion: "v1",
     fontNameSuffix: "v1",
     useGlyphLineJoin: true,
+    mushafLineJustify: true,
+    mushafLineCenter: false,
+    mushafWordSeparator: "\u200A",
     basmallahMode: "glyph",
     totalPages: 604,
   },
@@ -75,6 +87,9 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
     cdnVersion: "v4",
     fontNameSuffix: "v4",
     useGlyphLineJoin: true,
+    mushafLineJustify: true,
+    mushafLineCenter: false,
+    mushafWordSeparator: "\u200A",
     basmallahMode: "glyph",
     totalPages: 604,
   },
@@ -88,12 +103,19 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
     staticFontFamily: "IndoPak",
     staticFontUrl: `${QURAN_FONT_CDN}/nastaleeq/indopak/indopak-nastaleeq-waqf-lazim-v4.2.1.woff2`,
     useGlyphLineJoin: false,
+    mushafLineJustify: false,
+    mushafLineCenter: true,
+    mushafWordSeparator: " ",
     basmallahMode: "unicode",
     totalPages: 604,
   },
 ];
 
 export const DEFAULT_MUSHAF_FONT_ID: MushafFontId = "qcf_v2";
+
+/** QCF V2 page-1 font used for the decorative basmallah on unicode scripts. */
+export const BASMALLAH_GLYPH_FONT_ID: MushafFontId = "qcf_v2";
+export const BASMALLAH_GLYPH_PAGE = 1;
 
 const REMOVED_MUSHAF_FONT_IDS = new Set(["uthmani", "qpc_hafs"]);
 
@@ -111,6 +133,10 @@ export function isBuiltinTajweedFont(id: MushafFontId): boolean {
   return id === "qcf_tajweed_v4";
 }
 
+export function supportsTajweedColoring(id: MushafFontId): boolean {
+  return id !== "qcf_tajweed_v4" && id !== "indopak";
+}
+
 export function getBasmallahGlyphText(config: MushafFontConfig): string | null {
   if (config.basmallahMode !== "glyph") return null;
   if (config.glyphField === "code_v1") return BASMALLAH_GLYPH_V1;
@@ -125,6 +151,8 @@ export function getBasmallahUnicodeText(_config?: MushafFontConfig): string {
 export function getBasmallahUnicodeFontFamily(_config?: MushafFontConfig): string {
   return END_MARKER_FONT_FAMILY;
 }
+
+export { BASMALLAH_GLYPH_V2 } from "@/components/quran/mushaf-layout";
 
 /** Shared word fields requested for all font modes (superset for cache reuse). */
 export const MUSHAF_WORD_FIELDS =
@@ -169,7 +197,10 @@ export function isVerseEndMarker(word: QcfWord): boolean {
   return word.char_type_name === "end";
 }
 
-function getEndMarkerText(word: QcfWord): string {
+function getEndMarkerText(word: QcfWord, config?: MushafFontConfig): string {
+  if (config?.unicodeField === "text_indopak" && word.text_indopak) {
+    return word.text_indopak;
+  }
   return word.text_qpc_hafs || word.qpc_uthmani_hafs || word.text_uthmani || "";
 }
 
@@ -192,7 +223,7 @@ export function getWordDisplayText(
   isFontReady: boolean,
 ): string {
   if (isVerseEndMarker(word)) {
-    return getEndMarkerText(word);
+    return getEndMarkerText(word, config);
   }
 
   if (config.rendering === "unicode") {
@@ -221,12 +252,38 @@ export function joinMushafGlyphLine(words: QcfWord[], config: MushafFontConfig):
     .join(hairSpace);
 }
 
+/** IndoPak unicode lines join on regular spaces so justify can fill the line. */
+export function joinMushafUnicodeLine(
+  words: QcfWord[],
+  getWordText: (word: QcfWord) => string | null,
+  separator = " ",
+): string {
+  return words
+    .map((word) => getWordText(word) ?? "")
+    .filter(Boolean)
+    .join(separator);
+}
+
+export function joinMushafLineText(
+  words: QcfWord[],
+  config: MushafFontConfig,
+  getWordText: (word: QcfWord) => string | null,
+): string {
+  if (config.useGlyphLineJoin) {
+    return joinMushafGlyphLine(words, config);
+  }
+  return joinMushafUnicodeLine(words, getWordText, config.mushafWordSeparator);
+}
+
 export function getWordFontFamily(
   word: QcfWord,
   config: MushafFontConfig,
   loader: MushafFontLoader,
 ): string {
   if (isVerseEndMarker(word)) {
+    if (config.unicodeField === "text_indopak") {
+      return config.staticFontFamily ?? END_MARKER_FONT_FAMILY;
+    }
     return END_MARKER_FONT_FAMILY;
   }
   if (config.rendering === "unicode") {
@@ -248,7 +305,11 @@ export interface MushafFontResolver extends MushafFontLoader {
   getWordText: (word: QcfWord) => string | null;
   getWordFontFamily: (word: QcfWord) => string;
   getPageFontPalette?: (pageNum: number) => string | undefined;
+  isBasmallahGlyphLoaded: () => boolean;
+  getBasmallahFontFamily: () => string;
   useGlyphLineJoin: boolean;
+  mushafLineJustify: boolean;
+  mushafLineCenter: boolean;
 }
 
 /** @deprecated Use MushafFontResolver */
@@ -257,10 +318,16 @@ export type QcfFontResolver = Pick<MushafFontResolver, "isPageFontLoaded" | "get
 export function createMushafFontResolver(
   config: MushafFontConfig,
   loader: MushafFontLoader,
-  options?: { tajweedTheme?: TajweedPaletteTheme },
+  options?: { tajweedTheme?: TajweedPaletteTheme; basmallahLoader?: MushafFontLoader },
 ): MushafFontResolver {
   const isReady = (pageNum: number) =>
     config.rendering === "unicode" ? loader.isStaticFontLoaded : loader.isPageFontLoaded(pageNum);
+
+  const basmallahConfig = getMushafFontConfig(BASMALLAH_GLYPH_FONT_ID);
+  const nativeBasmallahGlyphLoaded =
+    config.basmallahMode === "glyph" && loader.isPageFontLoaded(BASMALLAH_GLYPH_PAGE);
+  const fallbackBasmallahGlyphLoaded =
+    options?.basmallahLoader?.isPageFontLoaded(BASMALLAH_GLYPH_PAGE) ?? false;
 
   return {
     config,
@@ -271,8 +338,20 @@ export function createMushafFontResolver(
         : loader.getFontFamily(pageNum),
     isStaticFontLoaded: loader.isStaticFontLoaded,
     useGlyphLineJoin: config.useGlyphLineJoin,
+    mushafLineJustify: config.mushafLineJustify,
+    mushafLineCenter: config.mushafLineCenter,
     getWordText: (word) => getWordDisplayText(word, config, isReady(word.page_number)),
     getWordFontFamily: (word) => getWordFontFamily(word, config, loader),
+    isBasmallahGlyphLoaded: () => nativeBasmallahGlyphLoaded || fallbackBasmallahGlyphLoaded,
+    getBasmallahFontFamily: () => {
+      if (nativeBasmallahGlyphLoaded) {
+        return loader.getFontFamily(BASMALLAH_GLYPH_PAGE);
+      }
+      if (fallbackBasmallahGlyphLoaded && options?.basmallahLoader) {
+        return options.basmallahLoader.getFontFamily(BASMALLAH_GLYPH_PAGE);
+      }
+      return getPageFontName(basmallahConfig, BASMALLAH_GLYPH_PAGE);
+    },
     getPageFontPalette:
       config.id === "qcf_tajweed_v4" && options?.tajweedTheme
         ? (pageNum) => {

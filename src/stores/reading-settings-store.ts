@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import {
   DEFAULT_MUSHAF_FONT_ID,
-  isBuiltinTajweedFont,
   normalizeMushafFontId,
+  supportsTajweedColoring,
   type MushafFontId,
 } from "@/lib/mushaf-fonts";
 
@@ -63,7 +63,7 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       setQuranFontId: (id) =>
         set((s) => ({
           quranFontId: id,
-          ...(isBuiltinTajweedFont(id) ? { showTajweed: false } : {}),
+          ...(!supportsTajweedColoring(id) ? { showTajweed: false } : {}),
         })),
       setLightTheme: (id) => set({ lightThemeId: id }),
       setDarkTheme: (id) => set({ darkThemeId: id }),
@@ -83,9 +83,11 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       version: 1,
       migrate: (persistedState) => {
         const state = persistedState as ReadingSettingsState;
+        const quranFontId = normalizeMushafFontId(state.quranFontId);
         return {
           ...state,
-          quranFontId: normalizeMushafFontId(state.quranFontId),
+          quranFontId,
+          showTajweed: supportsTajweedColoring(quranFontId) ? state.showTajweed : false,
         };
       },
     },

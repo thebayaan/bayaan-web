@@ -5,7 +5,6 @@ import {
   MushafSurahHeader,
   mushafSurahAnchorId,
 } from "@/components/quran/mushaf-surah-header";
-import { MUSHAF_BISMILLAH } from "@/components/quran/mushaf-layout";
 import { createTestFontResolver } from "@/__tests__/helpers/mushaf-font-resolver";
 
 const loadedV2Resolver = createTestFontResolver({
@@ -17,11 +16,6 @@ const loadedV1Resolver = createTestFontResolver({
   fontId: "qcf_v1",
   pageLoaded: true,
   fontFamily: (page) => `p${page}-v1`,
-});
-
-const loadedIndoPakResolver = createTestFontResolver({
-  fontId: "indopak",
-  pageLoaded: true,
 });
 
 const unloadedResolver = createTestFontResolver({ pageLoaded: false });
@@ -62,11 +56,16 @@ describe("MushafBasmallah", () => {
     expect((el as HTMLElement).style.fontFamily).toBe("p1-v1");
   });
 
-  it("uses Uthmani basmallah for IndoPak", () => {
-    render(<MushafBasmallah fontSize="1.8rem" fontResolver={loadedIndoPakResolver} />);
+  it("uses decorative basmallah glyph for IndoPak when page-1 QCF font is loaded", () => {
+    const resolver = createTestFontResolver({
+      fontId: "indopak",
+      pageLoaded: true,
+      basmallahLoaded: true,
+    });
+    render(<MushafBasmallah fontSize="1.8rem" fontResolver={resolver} />);
     const el = screen.getByLabelText("Bismillah ar-Rahman ar-Raheem");
-    expect(el.textContent).toBe(MUSHAF_BISMILLAH);
-    expect((el as HTMLElement).style.fontFamily).toBe("UthmanicHafs");
+    expect(el.textContent).toBe("\uFC41\uFC42\uFC43\uFC44");
+    expect((el as HTMLElement).style.fontFamily).toBe("p1-v2");
   });
 
   it("falls back to Uthmani text while glyph fonts load", () => {

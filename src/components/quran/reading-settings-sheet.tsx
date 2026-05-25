@@ -1,7 +1,7 @@
 "use client";
 
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
-import { isBuiltinTajweedFont } from "@/lib/mushaf-fonts";
+import { supportsTajweedColoring } from "@/lib/mushaf-fonts";
 import { useTranslationResources } from "@/hooks/use-translation-resources";
 import { AVAILABLE_TAFASEER } from "@/data/available-tafaseer";
 import {
@@ -32,7 +32,7 @@ export function ReadingSettingsSheet({ open, onOpenChange }: Props): React.JSX.E
   const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
   const quranFontId = useReadingSettingsStore((s) => s.quranFontId);
   const toggleTajweed = useReadingSettingsStore((s) => s.toggleTajweed);
-  const showTajweedToggle = !isBuiltinTajweedFont(quranFontId);
+  const showTajweedToggle = supportsTajweedColoring(quranFontId);
   const { translations } = useTranslationResources();
 
   return (

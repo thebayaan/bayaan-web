@@ -1,35 +1,17 @@
 import { surahGlyphMap } from "@/data/surah-glyph-map";
 import {
+  BASMALLAH_GLYPH_V2,
   getBasmallahGlyphText,
   getBasmallahUnicodeFontFamily,
   getBasmallahUnicodeText,
   type MushafFontResolver,
 } from "@/lib/mushaf-fonts";
-import { MUSHAF_BISMILLAH } from "@/components/quran/mushaf-layout";
 import { cn } from "@/lib/utils";
 
-/**
- * Stable DOM id for the surah-name banner of a given surah. Used by
- * MushafView's anchor-scroll effect to land readers exactly on the
- * basmallah when they open a surah whose first page is shared with the
- * tail of the previous surah (e.g. opening /quran/16 An-Nahl, whose
- * basmallah sits halfway down page 267 below the tail of Al-Hijr).
- * Without this anchor the page-top scroll lands on Al-Hijr's last
- * verses, which the user reported as "I see the last part of the
- * previous surah".
- */
 export function mushafSurahAnchorId(surahNumber: number): string {
   return `mushaf-surah-${surahNumber}-anchor`;
 }
 
-/**
- * Centered surah-name glyph drawn above the first ayah of a surah when
- * that surah starts on a non-framed mushaf page. Mirrors what the native
- * Bayaan client does via `SkiaSurahHeader` (see
- * `components/mushaf/skia/SkiaSurahHeader.tsx` on the develop branch),
- * but in plain CSS — the glyph itself comes from the SurahNames OpenType
- * font we already ship for the framed pages 1–2 banner.
- */
 export function MushafSurahHeader({
   surahNumber,
   className,
@@ -43,8 +25,6 @@ export function MushafSurahHeader({
     <div
       id={mushafSurahAnchorId(surahNumber)}
       className={cn(
-        // scroll-mt offsets the sticky mushaf header so anchor scrolls
-        // don't tuck the banner underneath it.
         "flex w-full scroll-mt-16 items-center justify-center py-2 select-none",
         className,
       )}
@@ -55,13 +35,46 @@ export function MushafSurahHeader({
   );
 }
 
-/**
- * Centered basmallah line drawn between a surah-name header and the
- * surah's first ayah.
- *
- * QCF fonts render the decorative page-1 ligature when loaded; unicode
- * fonts use script-appropriate text in their own typeface.
- */
+function resolveBasmallahRender(fontResolver?: MushafFontResolver): {
+  mode: "glyph" | "unicode";
+  text: string;
+  fontFamily: string;
+  fontPalette?: string;
+} {
+  if (!fontResolver) {
+    return {
+      mode: "unicode",
+      text: getBasmallahUnicodeText(),
+      fontFamily: getBasmallahUnicodeFontFamily(),
+    };
+  }
+
+  const config = fontResolver.config;
+  const nativeGlyph = getBasmallahGlyphText(config);
+  if (nativeGlyph && config.basmallahMode === "glyph" && fontResolver.isPageFontLoaded(1)) {
+    return {
+      mode: "glyph",
+      text: nativeGlyph,
+      fontFamily: fontResolver.getFontFamily(1),
+      fontPalette: fontResolver.getPageFontPalette?.(1),
+    };
+  }
+
+  if (fontResolver.isBasmallahGlyphLoaded()) {
+    return {
+      mode: "glyph",
+      text: BASMALLAH_GLYPH_V2,
+      fontFamily: fontResolver.getBasmallahFontFamily(),
+    };
+  }
+
+  return {
+    mode: "unicode",
+    text: getBasmallahUnicodeText(config),
+    fontFamily: getBasmallahUnicodeFontFamily(config),
+  };
+}
+
 export function MushafBasmallah({
   fontSize,
   fontResolver,
@@ -72,11 +85,9 @@ export function MushafBasmallah({
   className?: string;
 }) {
   const ariaLabel = "Bismillah ar-Rahman ar-Raheem";
-  const config = fontResolver?.config;
-  const glyphText = config ? getBasmallahGlyphText(config) : null;
-  const useGlyphBasmallah = Boolean(glyphText) && Boolean(fontResolver?.isPageFontLoaded(1));
+  const { mode, text, fontFamily, fontPalette } = resolveBasmallahRender(fontResolver);
 
-  if (useGlyphBasmallah && fontResolver && glyphText) {
+  if (mode === "glyph") {
     return (
       <div
         dir="rtl"
@@ -84,20 +95,15 @@ export function MushafBasmallah({
         aria-label={ariaLabel}
         className={cn("w-full py-1 text-center leading-[1.4] select-none", className)}
         style={{
-          fontFamily: fontResolver.getFontFamily(1),
+          fontFamily,
           fontSize,
-          ...(fontResolver.getPageFontPalette?.(1)
-            ? { fontPalette: fontResolver.getPageFontPalette(1) }
-            : undefined),
+          ...(fontPalette ? { fontPalette } : undefined),
         }}
       >
-        {glyphText}
+        {text}
       </div>
     );
   }
-
-  const unicodeText = config ? getBasmallahUnicodeText(config) : MUSHAF_BISMILLAH;
-  const unicodeFontFamily = config ? getBasmallahUnicodeFontFamily(config) : "UthmanicHafs";
 
   return (
     <p
@@ -105,9 +111,9 @@ export function MushafBasmallah({
       lang="ar"
       aria-label={ariaLabel}
       className={cn("w-full text-center leading-[1.9]", className)}
-      style={{ fontFamily: unicodeFontFamily, fontSize }}
+      style={{ fontFamily, fontSize }}
     >
-      {unicodeText}
+      {text}
     </p>
   );
 }

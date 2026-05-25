@@ -9,7 +9,11 @@ import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
 import { useTajweedStore } from "@/stores/tajweed-store";
 import { TajweedSegments } from "./tajweed-segments";
 import type { MushafFontResolver } from "@/lib/mushaf-fonts";
-import { END_MARKER_FONT_FAMILY, isVerseEndMarker } from "@/lib/mushaf-fonts";
+import {
+  END_MARKER_FONT_FAMILY,
+  isVerseEndMarker,
+  supportsTajweedColoring,
+} from "@/lib/mushaf-fonts";
 
 export type { MushafFontResolver };
 
@@ -44,11 +48,14 @@ export function QuranWord({
   const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
   const tajweedWord = useTajweedStore((s) => s.byLocation?.[word.location]);
   const ensureTajweedLoaded = useTajweedStore((s) => s.ensureLoaded);
-  const useJsonTajweed = showTajweed && quranFontId !== "qcf_tajweed_v4" && Boolean(tajweedWord);
+  const useJsonTajweed =
+    showTajweed && supportsTajweedColoring(quranFontId) && Boolean(tajweedWord);
   const useTajweedRendering = useJsonTajweed;
   const text = useTajweedRendering ? null : fontResolver.getWordText(word);
-  const usesUnicodeFont =
-    isEndMarker || !fontResolver.useGlyphLineJoin || !isFontLoaded || useTajweedRendering;
+  const usesUthmanicHafsFallback =
+    useTajweedRendering ||
+    (isEndMarker && quranFontId !== "indopak") ||
+    (!isFontLoaded && fontResolver.useGlyphLineJoin);
   const toggle = useVerseSelectionStore((s) => s.toggle);
   const selectedVerseKey = useVerseSelectionStore((s) => s.selectedVerseKey);
   const activeLocation = useWordAudioStore((s) => s.activeLocation);
@@ -96,7 +103,7 @@ export function QuranWord({
       className={cn(
         "group/word relative inline-block transition-colors",
         (canPlayWord || selectable) && "cursor-pointer hover:text-[var(--brand-main)]",
-        usesUnicodeFont && "font-[UthmanicHafs]",
+        usesUthmanicHafsFallback && "font-[UthmanicHafs]",
         isSelected && "rounded bg-[var(--text-alpha-10)]",
         playbackActive && "rounded bg-[var(--brand-light)] text-[var(--brand-main)]",
         isWordActive && "rounded text-[var(--brand-main)] ring-2 ring-[var(--brand-main)]/40",

@@ -110,8 +110,8 @@ describe("mushaf-fonts", () => {
       isStaticFontLoaded: true,
     };
 
-    expect(getWordDisplayText(endMarker, config, true)).toBe("۝١");
-    expect(getWordFontFamily(endMarker, config, loader)).toBe(END_MARKER_FONT_FAMILY);
+    expect(getWordDisplayText(endMarker, config, true)).toBe("١");
+    expect(getWordFontFamily(endMarker, config, loader)).toBe("IndoPak");
     expect(getWordFontFamily(mockWord, config, loader)).toBe("IndoPak");
   });
 

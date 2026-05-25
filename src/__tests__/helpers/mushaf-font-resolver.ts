@@ -1,7 +1,9 @@
 import {
+  BASMALLAH_GLYPH_PAGE,
   createMushafFontResolver,
   getMushafFontConfig,
   type MushafFontId,
+  type MushafFontLoader,
   type MushafFontResolver,
 } from "@/lib/mushaf-fonts";
 
@@ -9,6 +11,7 @@ export function createTestFontResolver(options?: {
   fontId?: MushafFontId;
   pageLoaded?: boolean | ((page: number) => boolean);
   fontFamily?: string | ((page: number) => string);
+  basmallahLoaded?: boolean;
 }): MushafFontResolver {
   const fontId = options?.fontId ?? "qcf_v2";
   const config = getMushafFontConfig(fontId);
@@ -30,7 +33,7 @@ export function createTestFontResolver(options?: {
     return isPageFontLoaded(page) ? `p${page}-v2` : "UthmanicHafs";
   };
 
-  return createMushafFontResolver(config, {
+  const loader: MushafFontLoader = {
     isPageFontLoaded,
     getFontFamily,
     isStaticFontLoaded:
@@ -39,5 +42,16 @@ export function createTestFontResolver(options?: {
           ? options.pageLoaded
           : false
         : true,
-  });
+  };
+
+  const basmallahLoader: MushafFontLoader | undefined =
+    options?.basmallahLoaded === true
+      ? {
+          isPageFontLoaded: (page) => page === BASMALLAH_GLYPH_PAGE,
+          getFontFamily: () => "p1-v2",
+          isStaticFontLoaded: true,
+        }
+      : undefined;
+
+  return createMushafFontResolver(config, loader, { basmallahLoader });
 }

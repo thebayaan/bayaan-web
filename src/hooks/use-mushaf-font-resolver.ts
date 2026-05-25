@@ -2,6 +2,8 @@
 
 import { useMemo } from "react";
 import {
+  BASMALLAH_GLYPH_FONT_ID,
+  BASMALLAH_GLYPH_PAGE,
   createMushafFontResolver,
   getMushafFontConfig,
   resolveTajweedTheme,
@@ -20,10 +22,20 @@ export function useMushafFontResolver(pageNumbers: number[]) {
   const config = getMushafFontConfig(quranFontId);
   const tajweedTheme = resolveTajweedTheme(colorMode, lightThemeId, resolvedTheme);
   const loader = useMushafFont(pageNumbers, quranFontId, tajweedTheme);
+  const needsBasmallahGlyphLoader = config.rendering === "unicode";
+  const basmallahLoader = useMushafFont(
+    needsBasmallahGlyphLoader ? [BASMALLAH_GLYPH_PAGE] : [],
+    BASMALLAH_GLYPH_FONT_ID,
+    tajweedTheme,
+  );
 
   return useMemo(
-    () => createMushafFontResolver(config, loader, { tajweedTheme }),
-    [config, loader, tajweedTheme],
+    () =>
+      createMushafFontResolver(config, loader, {
+        tajweedTheme,
+        basmallahLoader: needsBasmallahGlyphLoader ? basmallahLoader : undefined,
+      }),
+    [config, loader, tajweedTheme, basmallahLoader, needsBasmallahGlyphLoader],
   );
 }
 

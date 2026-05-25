@@ -40,8 +40,12 @@ const { mockFontResolver } = vi.hoisted(() => ({
     getFontFamily: () => "p1-v2",
     getWordFontFamily: () => "p1-v2",
     getPageFontPalette: undefined,
+    isBasmallahGlyphLoaded: () => true,
+    getBasmallahFontFamily: () => "p1-v2",
     isStaticFontLoaded: true,
     useGlyphLineJoin: true,
+    mushafLineJustify: true,
+    mushafLineCenter: false,
     getWordText: () => "\ufc41",
   },
 }));

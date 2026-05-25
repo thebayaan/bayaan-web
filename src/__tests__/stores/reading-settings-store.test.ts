@@ -40,6 +40,11 @@ describe("reading-settings-store", () => {
     useReadingSettingsStore.getState().setQuranFontId("qcf_tajweed_v4");
     expect(useReadingSettingsStore.getState().showTajweed).toBe(false);
   });
+  it("clears tajweed coloring when selecting IndoPak font", () => {
+    useReadingSettingsStore.setState({ showTajweed: true });
+    useReadingSettingsStore.getState().setQuranFontId("indopak");
+    expect(useReadingSettingsStore.getState().showTajweed).toBe(false);
+  });
   it("defaults to King Fahd Complex V2", () => {
     expect(useReadingSettingsStore.getState().quranFontId).toBe("qcf_v2");
   });

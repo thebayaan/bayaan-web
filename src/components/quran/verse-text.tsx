@@ -6,7 +6,7 @@ import { QuranWord } from "./quran-word";
 import { cn } from "@/lib/utils";
 import { useVerseSelectionStore } from "@/stores/verse-selection-store";
 import type { MushafFontResolver } from "@/lib/mushaf-fonts";
-import { joinMushafGlyphLine } from "@/lib/mushaf-fonts";
+import { END_MARKER_FONT_FAMILY, joinMushafLineText } from "@/lib/mushaf-fonts";
 
 import type { MushafLineAlignment } from "./mushaf-layout";
 
@@ -17,28 +17,11 @@ interface VerseTextProps {
   lineAlignment?: MushafLineAlignment;
   fontSize?: string;
   className?: string;
-  /** Pass through to each QuranWord — click-to-select in mushaf view. */
   selectable?: boolean;
-  /** Tap a word to hear pronunciation (reading view). */
   wordAudioEnabled?: boolean;
-  /** Highlight words for the ayah currently playing in the player. */
   playbackActiveVerseKey?: string | null;
 }
 
-// Hair-space (U+200A) separators for glyph line joining live in
-// `joinMushafGlyphLine` inside `src/lib/mushaf-fonts.ts`.
-
-/**
- * Order words within a single rendered group (a verse in reading mode, or a
- * mushaf line that may span several verses) in canonical reading order.
- *
- * IMPORTANT: sort by (verse_id, position), NEVER by position alone. The
- * QF API resets `position` to 1 at the start of every verse, so any line
- * that holds multiple verses (e.g. line 3 of page 50 — verses 3:1, 3:2,
- * 3:3 all land there) would otherwise interleave into 3:1:1 / 3:2:1 /
- * 3:3:1 / 3:1:2 / 3:2:2 / ... — exactly the "smooshed / missing ayahs /
- * garbled text" symptom we were chasing.
- */
 function sortWords(words: QcfWord[]): QcfWord[] {
   return [...words].sort((a, b) =>
     a.verse_id !== b.verse_id ? a.verse_id - b.verse_id : a.position - b.position,
@@ -48,16 +31,6 @@ function sortWords(words: QcfWord[]): QcfWord[] {
 function primaryVerseKey(words: QcfWord[]): string {
   const endMarker = words.find((word) => word.char_type_name === "end");
   return endMarker?.verse_key ?? words[words.length - 1]?.verse_key ?? "";
-}
-
-function joinMushafLine(words: QcfWord[], fontResolver: MushafFontResolver): string {
-  if (fontResolver.useGlyphLineJoin) {
-    return joinMushafGlyphLine(words, fontResolver.config);
-  }
-  return words
-    .map((word) => fontResolver.getWordText(word) ?? "")
-    .filter(Boolean)
-    .join("\u200A");
 }
 
 function MushafLine({
@@ -101,115 +74,63 @@ function MushafLine({
     playbackActiveVerseKey != null &&
     sortedWords.some((word) => word.verse_key === playbackActiveVerseKey);
 
-  const useJoinedLine = fontResolver.useGlyphLineJoin && isFontLoaded;
   const lineFontPalette = fontResolver.getPageFontPalette?.(pageNum);
-  const isCenter = lineAlignment === "center";
-  const lineClassName = cn(
-    "w-full whitespace-nowrap transition-colors",
-    isCenter ? "text-center leading-[1.85]" : "leading-[2.35]",
-    selectable && "cursor-pointer",
-    lineHasPlaybackAyah && "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
-    className,
+  const useFlexCenter = fontResolver.mushafLineCenter;
+  const useTextCenter = lineAlignment === "center" && !useFlexCenter;
+  const useJustifiedLine = fontResolver.mushafLineJustify && lineAlignment !== "center";
+  const lineText = joinMushafLineText(sortedWords, fontResolver.config, (word) =>
+    fontResolver.getWordText(word),
   );
+  const lineFontFamily = isFontLoaded ? fontFamily : END_MARKER_FONT_FAMILY;
 
-  if (useJoinedLine) {
-    return (
-      <div
-        ref={lineRef}
-        dir="rtl"
-        role={selectable ? "button" : undefined}
-        tabIndex={selectable ? 0 : undefined}
-        onClick={selectable ? handleLineSelect : undefined}
-        onKeyDown={
-          selectable
-            ? (event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  handleLineSelect();
-                }
-              }
-            : undefined
-        }
-        className={lineClassName}
-        data-verse-key={lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined}
-        style={{
-          fontFamily,
-          fontSize,
-          ...(lineFontPalette ? { fontPalette: lineFontPalette } : undefined),
-          ...(isCenter
-            ? null
-            : {
-                textAlign: "justify",
-                textAlignLast: "justify",
-              }),
-        }}
-      >
-        {joinMushafLine(sortedWords, fontResolver)}
-      </div>
-    );
-  }
-
-  if (isFontLoaded && !fontResolver.useGlyphLineJoin) {
-    return (
-      <div
-        ref={lineRef}
-        dir="rtl"
-        role={selectable ? "button" : undefined}
-        tabIndex={selectable ? 0 : undefined}
-        onClick={selectable ? handleLineSelect : undefined}
-        onKeyDown={
-          selectable
-            ? (event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  handleLineSelect();
-                }
-              }
-            : undefined
-        }
-        className={cn(lineClassName, !isCenter && "text-right")}
-        data-verse-key={lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined}
-        style={{ fontSize }}
-      >
-        {sortedWords.map((word) => (
-          <QuranWord
-            key={`${word.verse_key}-${word.position}`}
-            word={word}
-            fontResolver={fontResolver}
-            selectable={selectable}
-            playbackActive={word.verse_key === playbackActiveVerseKey}
-            className="shrink-0"
-          />
-        ))}
-      </div>
-    );
-  }
-
-  return (
+  const lineNode = (
     <div
       ref={lineRef}
       dir="rtl"
+      role={selectable ? "button" : undefined}
+      tabIndex={selectable ? 0 : undefined}
+      onClick={selectable ? handleLineSelect : undefined}
+      onKeyDown={
+        selectable
+          ? (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                handleLineSelect();
+              }
+            }
+          : undefined
+      }
       className={cn(
-        "flex w-full flex-nowrap items-baseline",
-        lineAlignment === "center"
-          ? "justify-center leading-[1.85]"
-          : "justify-between leading-[2.35]",
-        className,
+        "whitespace-nowrap transition-colors",
+        useFlexCenter && "inline-block leading-[2.5]",
+        !useFlexCenter && "w-full leading-[2.35]",
+        useTextCenter && "text-center leading-[2.5]",
+        selectable && "cursor-pointer",
+        lineHasPlaybackAyah && "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
+        !useFlexCenter && className,
       )}
-      style={{ fontSize }}
+      data-verse-key={lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined}
+      style={{
+        fontFamily: lineFontFamily,
+        fontSize,
+        ...(lineFontPalette ? { fontPalette: lineFontPalette } : undefined),
+        ...(useJustifiedLine
+          ? {
+              textAlign: "justify",
+              textAlignLast: "justify",
+            }
+          : undefined),
+      }}
     >
-      {sortedWords.map((word) => (
-        <QuranWord
-          key={`${word.verse_key}-${word.position}`}
-          word={word}
-          fontResolver={fontResolver}
-          selectable={selectable}
-          playbackActive={word.verse_key === playbackActiveVerseKey}
-          className="shrink-0"
-        />
-      ))}
+      {lineText}
     </div>
   );
+
+  if (useFlexCenter) {
+    return <div className={cn("flex w-full justify-center", className)}>{lineNode}</div>;
+  }
+
+  return lineNode;
 }
 
 export function VerseText({

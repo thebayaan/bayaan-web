@@ -41,6 +41,13 @@ describe("Reading settings", () => {
     expect(screen.queryByRole("switch", { name: /tajweed colors/i })).not.toBeInTheDocument();
   });
 
+  it("hides tajweed toggle when IndoPak font is selected", () => {
+    useReadingSettingsStore.setState({ quranFontId: "indopak" });
+    render(<ReadingSettingsPage />);
+
+    expect(screen.queryByRole("switch", { name: /tajweed colors/i })).not.toBeInTheDocument();
+  });
+
   it("changes quran font", async () => {
     const user = userEvent.setup();
     render(<ReadingSettingsPage />);
