@@ -11,6 +11,32 @@ export default function AboutSettingsPage() {
           <dd>{APP_VERSION}</dd>
         </div>
         <div className="flex justify-between">
+          <dt className="text-muted-foreground">Source code</dt>
+          <dd>
+            <a
+              href="https://github.com/thebayaan/bayaan-web"
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-2"
+            >
+              GitHub
+            </a>
+          </dd>
+        </div>
+        <div className="flex justify-between">
+          <dt className="text-muted-foreground">License</dt>
+          <dd>
+            <a
+              href="https://github.com/thebayaan/bayaan-web/blob/main/LICENSE"
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-2"
+            >
+              AGPL-3.0-or-later
+            </a>
+          </dd>
+        </div>
+        <div className="flex justify-between">
           <dt className="text-muted-foreground">Mobile app</dt>
           <dd>
             <a

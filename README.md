@@ -17,7 +17,7 @@ Bayaan Web is the Next.js companion to the Bayaan mobile app. It offers the same
 - **Digital Mushaf** — Page-by-page classic Mushaf rendering at `/mushaf/[page]`
 - **Adhkar** — Browse and read daily adhkar collections at `/adhkar`
 - **Reciter catalogue** — 200+ reciters with full profiles at `/reciter/[slug]`
-- **Library** — Bookmarks, favorites, notes, and custom playlists (requires sign-in)
+- **Library** — Bookmarks, favorites, notes, and custom playlists (stored locally in your browser)
 - **Command palette** — ⌘K-style quick nav across the entire catalogue
 - **Fuzzy search** — Fast client-side search via Fuse.js across reciters, surahs, adhkar
 - **Share-ready** — OG images + Spotify-style metadata on every Quran, surah, verse, reciter, and adhkar page
@@ -34,9 +34,8 @@ Bayaan Web is the Next.js companion to the Bayaan mobile app. It offers the same
 | Language                 | TypeScript 5 (strict)                          |
 | Styling                  | Tailwind CSS 4 + `prettier-plugin-tailwindcss` |
 | Components               | shadcn + `@base-ui/react`                      |
-| State                    | Zustand                                        |
+| State                    | Zustand (persisted to localStorage)            |
 | Data fetching            | SWR                                            |
-| Auth                     | Clerk (required for library features)          |
 | Search                   | Fuse.js                                        |
 | DnD                      | `@dnd-kit/*` (playlist reordering)             |
 | Icons                    | `lucide-react`                                 |
@@ -53,8 +52,8 @@ Bayaan Web is the Next.js companion to the Bayaan mobile app. It offers the same
 ### Prerequisites
 
 - **Node.js 22+** (matches CI)
-- **A Clerk Development instance** — auth is a hard dependency for the library features; boot-time fails without valid keys. Sign up free at [clerk.com](https://clerk.com) and create a Development instance (takes ~2 minutes).
-- Optionally, access to a Bayaan backend API (see `EXPO_PUBLIC_BAYAAN_API_KEY` in the mobile repo's `CONTRIBUTING.md`). Without it, the app still boots but reciter data will be empty.
+- **No API keys required to boot** — clone, install, and run. Quran reading, mushaf, adhkar, and library features work out of the box.
+- **Optional:** a Bayaan backend API key for the live reciter catalogue and audio playback. Without it, reciter profiles and playback are unavailable; everything else still works from bundled data and public Quran APIs. See [CONTRIBUTING.md](CONTRIBUTING.md#backend-api-for-development) for how to request a community development key.
 
 ### Install
 
@@ -64,20 +63,21 @@ cd bayaan-web
 npm install
 ```
 
-### Configure environment
+### Configure environment (optional)
 
 ```bash
 cp .env.example .env.local
 ```
 
-Open `.env.local` and fill in at minimum:
+All variables are documented inline in `.env.example`. None are required for local development.
 
-```
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
-CLERK_SECRET_KEY=sk_test_...
-```
+| With no env vars                              | With `BAYAAN_API_KEY`                              |
+| --------------------------------------------- | -------------------------------------------------- |
+| Quran reader, mushaf, tafsir, transliteration | Everything above, plus reciter catalogue and audio |
+| Adhkar, search, library (localStorage)        | Timestamps, OG images for reciter pages            |
+| Bundled tajweed + transliteration data        | Live catalogue updates from the backend            |
 
-All variables are documented inline in `.env.example`. The Bayaan API keys are optional for UI work — the app gracefully degrades.
+Server routes proxy to `api.thebayaan.com` by default when API variables are unset.
 
 ### Run
 
@@ -103,7 +103,7 @@ npm run format:check  # Prettier check (CI uses this)
 npm test              # Vitest
 npm run test:watch
 npm run test:coverage
-npm run test:e2e      # Playwright (needs Clerk dev keys)
+npm run test:e2e      # Playwright smoke tests
 npm run test:e2e:ui   # Playwright UI mode
 ```
 
@@ -126,18 +126,16 @@ bayaan-web/
 │   │   │   ├── search/     # Fuzzy search across everything
 │   │   │   ├── settings/   # User preferences
 │   │   │   └── surah/      # Surah index
-│   │   ├── api/            # Server routes (Bayaan API proxy, OG images)
-│   │   ├── sign-in/        # Clerk sign-in catch-all
-│   │   └── sign-up/        # Clerk sign-up catch-all
+│   │   └── api/            # Server routes (Bayaan API proxy, Quran.com proxy, OG images)
 │   ├── components/         # Shared UI components
-│   ├── hooks/              # Custom React hooks (auth-gate, SWR helpers, etc.)
+│   ├── hooks/              # Custom React hooks (SWR helpers, playback, etc.)
 │   ├── lib/                # Pure utilities (audio, fonts, metadata)
 │   ├── services/           # API clients
 │   ├── stores/             # Zustand stores
 │   └── types/              # Shared TypeScript types
 ├── e2e/                    # Playwright specs
-├── public/                 # Static assets (icons, favicons)
-└── middleware.ts           # Clerk auth middleware
+├── public/                 # Static assets (icons, bundled Quran data)
+└── middleware.ts           # Next.js middleware (request passthrough)
 ```
 
 ---

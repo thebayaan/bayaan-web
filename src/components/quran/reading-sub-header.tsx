@@ -3,11 +3,11 @@
 import { useMemo, useState } from "react";
 import type { Surah } from "@/types/quran";
 import { getHizbForPage, getJuzForPage } from "@/data/juz-data";
-import { ReadingSettingsSheet } from "./reading-settings-sheet";
+import { ReadingSettings } from "./reading-settings-sheet";
 import { ReaderPlayChip } from "./reader-play-chip";
 import { PagePicker } from "./page-picker";
 import { SurahPicker } from "./surah-picker";
-import { ListViewPillIcon, MushafPagePillIcon, SettingsIcon } from "@/components/icons";
+import { ListViewPillIcon, MushafPagePillIcon } from "@/components/icons";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 
 interface Props {
@@ -15,7 +15,6 @@ interface Props {
 }
 
 export function ReadingSubHeader({ surah }: Props): React.JSX.Element {
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [pagePickerOpen, setPagePickerOpen] = useState(false);
   const viewMode = useReadingSettingsStore((s) => s.viewMode);
   const setViewMode = useReadingSettingsStore((s) => s.setViewMode);
@@ -88,17 +87,9 @@ export function ReadingSubHeader({ surah }: Props): React.JSX.Element {
           Go to page
         </button>
 
-        <button
-          type="button"
-          onClick={() => setSettingsOpen(true)}
-          aria-label="Reading settings"
-          className="border-border hover:bg-surface-raised duration-fast ease-standard flex h-9 w-9 items-center justify-center rounded-lg border transition-colors"
-        >
-          <SettingsIcon size={16} />
-        </button>
+        <ReadingSettings />
       </div>
 
-      <ReadingSettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} />
       <PagePicker open={pagePickerOpen} onOpenChange={setPagePickerOpen} />
     </>
   );
