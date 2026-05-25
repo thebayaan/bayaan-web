@@ -74,6 +74,8 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
           surahNumber={surah.id}
           surahName={surah.name}
           showBismillah={surah.bismillah_pre}
+          fontResolver={fontResolver}
+          fontSize={`${fontSize}rem`}
         />
       )}
       <div className="mt-6">

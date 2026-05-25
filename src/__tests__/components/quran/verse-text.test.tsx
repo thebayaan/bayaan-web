@@ -50,6 +50,35 @@ describe("VerseText", () => {
     expect(container.firstElementChild?.getAttribute("dir")).toBe("rtl");
   });
 
+  it("renders Al-Fatiha basmallah as a connected glyph in reading mode", () => {
+    const basmallahWords: QcfWord[] = [
+      mockWords[0]!,
+      mockWords[1]!,
+      {
+        ...mockWords[1]!,
+        id: 3,
+        position: 3,
+        code_v2: "\ufc43",
+        location: "1:1:3",
+      },
+      {
+        ...mockWords[1]!,
+        id: 4,
+        position: 4,
+        code_v2: "\ufc44",
+        location: "1:1:4",
+      },
+    ];
+    const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" });
+    const { container, getByLabelText } = render(
+      <VerseText words={basmallahWords} fontResolver={fontResolver} />,
+    );
+    const basmallah = getByLabelText("Bismillah ar-Rahman ar-Raheem");
+    expect(basmallah.textContent).toBe("\uFC41\uFC42\uFC43\uFC44");
+    expect((basmallah as HTMLElement).style.fontFamily).toBe("p1-v2");
+    expect(container.querySelectorAll("[data-word-location]")).toHaveLength(0);
+  });
+
   it("joins QCF glyph codes with hair-space separators when the page font is loaded", () => {
     const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" });
     const { container } = render(

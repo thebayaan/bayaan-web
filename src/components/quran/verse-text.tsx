@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useRef } from "react";
 import type { QcfWord } from "@/types/quran-api";
 import { QuranWord } from "./quran-word";
+import { MushafBasmallah } from "./mushaf-surah-header";
 import { cn } from "@/lib/utils";
 import { useVerseSelectionStore } from "@/stores/verse-selection-store";
 import type { MushafFontResolver } from "@/lib/mushaf-fonts";
@@ -31,6 +32,11 @@ function sortWords(words: QcfWord[]): QcfWord[] {
 function primaryVerseKey(words: QcfWord[]): string {
   const endMarker = words.find((word) => word.char_type_name === "end");
   return endMarker?.verse_key ?? words[words.length - 1]?.verse_key ?? "";
+}
+
+function isFatihaBasmallah(words: QcfWord[]): boolean {
+  const wordCount = words.filter((word) => word.char_type_name === "word").length;
+  return words.some((word) => word.verse_key === "1:1") && wordCount >= 4;
 }
 
 function MushafLine({
@@ -154,6 +160,16 @@ export function VerseText({
         selectable={selectable}
         lineAlignment={lineAlignment}
         playbackActiveVerseKey={playbackActiveVerseKey}
+      />
+    );
+  }
+
+  if (isFatihaBasmallah(words)) {
+    return (
+      <MushafBasmallah
+        fontSize={fontSize}
+        fontResolver={fontResolver}
+        className={cn("py-2", className)}
       />
     );
   }

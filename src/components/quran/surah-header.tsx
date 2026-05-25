@@ -1,12 +1,22 @@
 import { surahGlyphMap } from "@/data/surah-glyph-map";
+import type { MushafFontResolver } from "@/lib/mushaf-fonts";
+import { MushafBasmallah } from "./mushaf-surah-header";
 
 interface SurahHeaderProps {
   surahNumber: number;
   surahName: string;
   showBismillah: boolean;
+  fontResolver?: MushafFontResolver;
+  fontSize?: string;
 }
 
-export function SurahHeader({ surahNumber, surahName, showBismillah }: SurahHeaderProps) {
+export function SurahHeader({
+  surahNumber,
+  surahName,
+  showBismillah,
+  fontResolver,
+  fontSize = "1.8rem",
+}: SurahHeaderProps) {
   const glyph = surahGlyphMap[surahNumber];
   return (
     <div className="py-4 text-center">
@@ -17,11 +27,13 @@ export function SurahHeader({ surahNumber, surahName, showBismillah }: SurahHead
           <span className="text-lg font-semibold">{surahName}</span>
         )}
       </div>
-      {showBismillah && surahNumber !== 9 && surahNumber !== 1 && (
-        <p className="mt-4 font-[UthmanicHafs] text-2xl" dir="rtl">
-          بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
-        </p>
-      )}
+      {showBismillah && surahNumber !== 9 && surahNumber !== 1 ? (
+        <MushafBasmallah
+          fontSize={fontSize}
+          fontResolver={fontResolver}
+          className="mt-4"
+        />
+      ) : null}
     </div>
   );
 }
