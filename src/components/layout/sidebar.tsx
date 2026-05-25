@@ -6,7 +6,9 @@ import { ContinueReadingCard } from "./continue-reading-card";
 
 const NAV_ITEMS = [
   { href: "/", icon: HomeIcon, label: "Home" },
-  { href: "/quran", icon: QuranIcon, label: "Read Quran" },
+  // The Read Quran icon's artwork fills its viewBox edge-to-edge, so it
+  // looks bigger than its neighbours at the same `size`. Render slightly smaller.
+  { href: "/quran", icon: QuranIcon, label: "Read Quran", iconSize: 17 },
   { href: "/collection", icon: CollectionIcon, label: "Collection" },
 ] as const;
 
