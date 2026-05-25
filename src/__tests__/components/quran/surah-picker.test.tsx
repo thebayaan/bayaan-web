@@ -13,7 +13,8 @@ vi.mock("next/navigation", () => ({
 const FATIHAH: Surah = {
   id: 1,
   name: "Al-Fatihah",
-  revelation_place: "Makkah",
+  name_simple: "Al-Fatihah",
+  revelation_place: "makkah",
   revelation_order: 5,
   bismillah_pre: false,
   name_arabic: "الفاتحة",
