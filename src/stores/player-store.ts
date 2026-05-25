@@ -441,3 +441,7 @@ export const usePlayerStore = create<PlayerStoreState>()(
     },
   ),
 );
+
+audioCoordinator.registerPauseHandler("main", () => {
+  usePlayerStore.getState().pause();
+});

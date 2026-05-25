@@ -8,15 +8,21 @@ import { useWordAudioStore } from "@/stores/word-audio-store";
 import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
 import { useTajweedStore } from "@/stores/tajweed-store";
 import { TajweedSegments } from "./tajweed-segments";
+import type { MushafFontResolver } from "@/lib/mushaf-fonts";
+import {
+  END_MARKER_FONT_FAMILY,
+  isVerseEndMarker,
+  supportsTajweedColoring,
+} from "@/lib/mushaf-fonts";
 
-export interface QcfFontResolver {
-  isPageFontLoaded: (pageNum: number) => boolean;
-  getFontFamily: (pageNum: number) => string;
-}
+export type { MushafFontResolver };
+
+/** @deprecated Use MushafFontResolver */
+export type QcfFontResolver = Pick<MushafFontResolver, "isPageFontLoaded" | "getFontFamily">;
 
 interface QuranWordProps {
   word: QcfWord;
-  fontResolver: QcfFontResolver;
+  fontResolver: MushafFontResolver;
   className?: string;
   selectable?: boolean;
   /** Tap to hear word pronunciation (independent of word-by-word toggle). */
@@ -35,13 +41,21 @@ export function QuranWord({
 }: QuranWordProps) {
   const pageNum = word.page_number;
   const isFontLoaded = fontResolver.isPageFontLoaded(pageNum);
-  const fontFamily = fontResolver.getFontFamily(pageNum);
+  const isEndMarker = isVerseEndMarker(word);
+  const fontFamily = fontResolver.getWordFontFamily(word);
+  const quranFontId = useReadingSettingsStore((s) => s.quranFontId);
   const showWordByWord = useReadingSettingsStore((s) => s.showWordByWord);
   const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
   const tajweedWord = useTajweedStore((s) => s.byLocation?.[word.location]);
   const ensureTajweedLoaded = useTajweedStore((s) => s.ensureLoaded);
-  const useTajweedRendering = showTajweed && Boolean(tajweedWord);
-  const text = useTajweedRendering ? null : isFontLoaded ? word.code_v2 : word.qpc_uthmani_hafs;
+  const useJsonTajweed =
+    showTajweed && supportsTajweedColoring(quranFontId) && Boolean(tajweedWord);
+  const useTajweedRendering = useJsonTajweed;
+  const text = useTajweedRendering ? null : fontResolver.getWordText(word);
+  const usesUthmanicHafsFallback =
+    useTajweedRendering ||
+    (isEndMarker && quranFontId !== "indopak") ||
+    (!isFontLoaded && fontResolver.useGlyphLineJoin);
   const toggle = useVerseSelectionStore((s) => s.toggle);
   const selectedVerseKey = useVerseSelectionStore((s) => s.selectedVerseKey);
   const activeLocation = useWordAudioStore((s) => s.activeLocation);
@@ -81,6 +95,7 @@ export function QuranWord({
   const hasPopover = Boolean(word.translation?.text || word.transliteration?.text);
   const showHoverPopover = showWordByWord && hasPopover && !isWordActive;
   const showTapPopover = isWordActive && hasPopover;
+  const fontPalette = fontResolver.getPageFontPalette?.(pageNum);
 
   return (
     <span
@@ -88,14 +103,19 @@ export function QuranWord({
       className={cn(
         "group/word relative inline-block transition-colors",
         (canPlayWord || selectable) && "cursor-pointer hover:text-[var(--brand-main)]",
-        (!isFontLoaded || useTajweedRendering) && "font-[UthmanicHafs]",
+        usesUthmanicHafsFallback && "font-[UthmanicHafs]",
         isSelected && "rounded bg-[var(--text-alpha-10)]",
         playbackActive && "rounded bg-[var(--brand-light)] text-[var(--brand-main)]",
         isWordActive && "rounded text-[var(--brand-main)] ring-2 ring-[var(--brand-main)]/40",
         className,
       )}
       style={{
-        ...(isFontLoaded && !useTajweedRendering ? { fontFamily } : undefined),
+        ...(isFontLoaded && !useTajweedRendering
+          ? {
+              fontFamily: isEndMarker ? END_MARKER_FONT_FAMILY : fontFamily,
+              ...(fontPalette && !isEndMarker ? { fontPalette } : undefined),
+            }
+          : undefined),
         ...(highlight
           ? {
               backgroundColor: `${HIGHLIGHT_SWATCH[highlight.color]}66`,

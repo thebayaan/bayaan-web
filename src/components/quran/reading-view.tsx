@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef } from "react";
 import { useVersesByChapter } from "@/hooks/use-verses-by-chapter";
-import { useQcfFont } from "@/hooks/use-qcf-font";
+import { useMushafFontResolver } from "@/hooks/use-mushaf-font-resolver";
 import {
   useReadingSettingsStore,
   type ReadingSettingsState,
@@ -38,7 +38,7 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
     () => [...new Set(verses.flatMap((v) => v.words.map((w) => w.page_number)))],
     [verses],
   );
-  const { isPageFontLoaded, getFontFamily } = useQcfFont(pageNumbers);
+  const fontResolver = useMushafFontResolver(pageNumbers);
   const surah = surahs.find((s) => s.id === surahId);
   const targetRef = useRef<HTMLDivElement | null>(null);
   const targetKey = targetAyah ? `${surahId}:${targetAyah}` : null;
@@ -47,11 +47,6 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
     if (!targetKey || isLoading || !targetRef.current) return;
     targetRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [targetKey, isLoading]);
-
-  const fontResolver = useMemo(
-    () => ({ isPageFontLoaded, getFontFamily }),
-    [isPageFontLoaded, getFontFamily],
-  );
 
   const activeVerseKey = useAyahTrackerStore((s) => s.activeVerseKey);
   const trackedSurahId = useAyahTrackerStore((s) => s.trackedSurahId);
@@ -79,6 +74,8 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
           surahNumber={surah.id}
           surahName={surah.name}
           showBismillah={surah.bismillah_pre}
+          fontResolver={fontResolver}
+          fontSize={`${fontSize}rem`}
         />
       )}
       <div className="mt-6">

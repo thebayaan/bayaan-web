@@ -2,7 +2,6 @@ import { create } from "zustand";
 import type { QcfWord } from "@/types/quran-api";
 import { buildWordAudioUrl } from "@/lib/word-audio";
 import { audioCoordinator } from "@/services/audio/audio-coordinator";
-import { usePlayerStore } from "@/stores/player-store";
 
 interface WordAudioState {
   activeLocation: string | null;
@@ -38,7 +37,6 @@ export const useWordAudioStore = create<WordAudioState>((set, get) => ({
     const audio = getAudioElement();
     if (!audio) return;
 
-    usePlayerStore.getState().pause();
     audioCoordinator.mushafWillPlay();
 
     const url = buildWordAudioUrl(word.audio_url);
@@ -68,3 +66,7 @@ export const useWordAudioStore = create<WordAudioState>((set, get) => ({
     audioCoordinator.sourceDidStop("mushaf");
   },
 }));
+
+audioCoordinator.registerPauseHandler("mushaf", () => {
+  useWordAudioStore.getState().stop();
+});

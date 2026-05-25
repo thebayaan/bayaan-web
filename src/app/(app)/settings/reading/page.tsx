@@ -1,8 +1,10 @@
 "use client";
 
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
+import { supportsTajweedColoring } from "@/lib/mushaf-fonts";
 import { SettingsShell } from "@/components/settings/settings-shell";
 import { SettingToggle } from "@/components/settings/setting-toggle";
+import { QuranFontPicker } from "@/components/quran/quran-font-picker";
 
 const MIN_FONT = 1.2;
 const MAX_FONT = 3.0;
@@ -14,13 +16,17 @@ export default function ReadingSettingsPage() {
   const showTransliteration = useReadingSettingsStore((s) => s.showTransliteration);
   const showWordByWord = useReadingSettingsStore((s) => s.showWordByWord);
   const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
+  const quranFontId = useReadingSettingsStore((s) => s.quranFontId);
   const toggleTransliteration = useReadingSettingsStore((s) => s.toggleTransliteration);
   const toggleWordByWord = useReadingSettingsStore((s) => s.toggleWordByWord);
   const toggleTajweed = useReadingSettingsStore((s) => s.toggleTajweed);
+  const showTajweedToggle = supportsTajweedColoring(quranFontId);
 
   return (
     <SettingsShell title="Reading" description="Controls that affect the Mushaf and verse display.">
       <div className="space-y-4">
+        <QuranFontPicker />
+
         <div className="flex items-center justify-between">
           <label className="text-sm" htmlFor="font-size">
             Arabic Font Size
@@ -52,7 +58,9 @@ export default function ReadingSettingsPage() {
           onChange={toggleTransliteration}
         />
         <SettingToggle label="Word-by-Word" checked={showWordByWord} onChange={toggleWordByWord} />
-        <SettingToggle label="Tajweed Colors" checked={showTajweed} onChange={toggleTajweed} />
+        {showTajweedToggle ? (
+          <SettingToggle label="Tajweed Colors" checked={showTajweed} onChange={toggleTajweed} />
+        ) : null}
       </div>
     </SettingsShell>
   );

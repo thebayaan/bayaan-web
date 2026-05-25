@@ -104,6 +104,36 @@ export const MAIN_ADHKAR: AdhkarSuperCategory[] = [
     ...img("praises-of-allah"),
   },
   {
+    id: "istighfar",
+    title: "Istighfar",
+    arabicTitle: "الاستغفار",
+    color: "#06B6D4",
+    section: "main",
+    sortOrder: 5,
+    categoryIds: ["44", "129"],
+    ...img("istighfar"),
+  },
+  {
+    id: "nightmares",
+    title: "Nightmares",
+    arabicTitle: "الكوابيس",
+    color: "#7C3AED",
+    section: "main",
+    sortOrder: 5,
+    categoryIds: ["31"],
+    ...img("nightmares"),
+  },
+  {
+    id: "protection-of-iman",
+    title: "Protection of Iman",
+    arabicTitle: "حماية الإيمان",
+    color: "#7C3AED",
+    section: "main",
+    sortOrder: 6,
+    categoryIds: ["40", "42", "45", "88", "92", "94", "128"],
+    ...img("protection-of-iman"),
+  },
+  {
     id: "difficulties-happiness",
     title: "Difficulties & Happiness",
     arabicTitle: "الشدة والفرح",
@@ -113,9 +143,39 @@ export const MAIN_ADHKAR: AdhkarSuperCategory[] = [
     categoryIds: ["34", "35", "43", "46", "82", "106", "122", "123", "126"],
     ...img("difficulties-happiness"),
   },
+  {
+    id: "quranic-duas",
+    title: "Quranic Duas",
+    arabicTitle: "أدعية قرآنية",
+    color: "#0D9488",
+    section: "main",
+    sortOrder: 7,
+    categoryIds: ["quranic-duas"],
+    ...img("quranic-duas"),
+  },
 ];
 
 export const OTHER_ADHKAR: AdhkarSuperCategory[] = [
+  {
+    id: "names-of-allah",
+    title: "99 Names of Allah",
+    arabicTitle: "أسماء الله الحسنى",
+    color: "#8B5CF6",
+    section: "other",
+    sortOrder: 0,
+    categoryIds: ["names-of-allah"],
+    ...img("names-of-allah"),
+  },
+  {
+    id: "lavatory-wudu",
+    title: "Lavatory & Wudu",
+    arabicTitle: "الخلاء والوضوء",
+    color: "#6B7280",
+    section: "other",
+    sortOrder: 1,
+    categoryIds: ["6", "7", "8", "9"],
+    ...img("lavatory-wudu"),
+  },
   {
     id: "clothes",
     title: "Clothes",
@@ -145,6 +205,26 @@ export const OTHER_ADHKAR: AdhkarSuperCategory[] = [
     sortOrder: 2,
     categoryIds: ["10", "11", "97", "98"],
     ...img("home"),
+  },
+  {
+    id: "istikharah",
+    title: "Istikharah",
+    arabicTitle: "الاستخارة",
+    color: "#8B5CF6",
+    section: "other",
+    sortOrder: 3,
+    categoryIds: ["26"],
+    ...img("istikharah"),
+  },
+  {
+    id: "gatherings",
+    title: "Gatherings",
+    arabicTitle: "المجالس",
+    color: "#EC4899",
+    section: "other",
+    sortOrder: 3,
+    categoryIds: ["84", "85"],
+    ...img("gatherings"),
   },
   {
     id: "food-drink",
@@ -177,6 +257,35 @@ export const OTHER_ADHKAR: AdhkarSuperCategory[] = [
     ...img("nature"),
   },
   {
+    id: "social-interactions",
+    title: "Social Interactions",
+    arabicTitle: "التعاملات الاجتماعية",
+    color: "#EC4899",
+    section: "other",
+    sortOrder: 5,
+    categoryIds: [
+      "36",
+      "37",
+      "38",
+      "39",
+      "77",
+      "78",
+      "86",
+      "87",
+      "89",
+      "90",
+      "91",
+      "93",
+      "108",
+      "109",
+      "112",
+      "113",
+      "114",
+      "127",
+    ],
+    ...img("social-interactions"),
+  },
+  {
     id: "hajj-umrah",
     title: "Hajj & Umrah",
     arabicTitle: "الحج والعمرة",
@@ -195,6 +304,16 @@ export const OTHER_ADHKAR: AdhkarSuperCategory[] = [
     sortOrder: 6,
     categoryIds: ["47", "48", "79", "80", "81"],
     ...img("marriage-children"),
+  },
+  {
+    id: "death",
+    title: "Death",
+    arabicTitle: "الموت",
+    color: "#6B7280",
+    section: "other",
+    sortOrder: 7,
+    categoryIds: ["51", "52", "53", "54", "55", "56", "57", "58", "59", "60"],
+    ...img("death"),
   },
   {
     id: "ruqyah-illness",
@@ -219,6 +338,17 @@ export const OTHER_ADHKAR: AdhkarSuperCategory[] = [
 ];
 
 export const ALL_ADHKAR_SUPER: AdhkarSuperCategory[] = [...MAIN_ADHKAR, ...OTHER_ADHKAR];
+
+/** Map each numbered category id to its parent super-category (for thumbnails). */
+export function buildSuperCategoryMap(): Map<string, AdhkarSuperCategory> {
+  const map = new Map<string, AdhkarSuperCategory>();
+  for (const sc of ALL_ADHKAR_SUPER) {
+    for (const cid of sc.categoryIds) {
+      if (!map.has(cid)) map.set(cid, sc);
+    }
+  }
+  return map;
+}
 
 /**
  * Resolve an adhkar URL segment to the super-category slug used for CDN

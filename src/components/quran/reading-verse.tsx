@@ -1,7 +1,7 @@
 "use client";
 import { forwardRef } from "react";
 import type { QcfVerse } from "@/types/quran-api";
-import type { QcfFontResolver } from "./quran-word";
+import type { MushafFontResolver } from "@/lib/mushaf-fonts";
 import { VerseText } from "./verse-text";
 import { VerseActions } from "./verse-actions";
 import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
@@ -11,7 +11,7 @@ import { VerseTransliteration } from "./verse-transliteration";
 
 interface ReadingVerseProps {
   verse: QcfVerse;
-  fontResolver: QcfFontResolver;
+  fontResolver: MushafFontResolver;
   fontSize: string;
   showTranslation: boolean;
   isTarget?: boolean;

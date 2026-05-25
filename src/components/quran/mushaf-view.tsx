@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useQcfFont } from "@/hooks/use-qcf-font";
+import { useMushafFontResolver } from "@/hooks/use-mushaf-font-resolver";
 import {
   useReadingSettingsStore,
   type ReadingSettingsState,
@@ -178,11 +178,7 @@ export function MushafView({ surahId, targetAyah, entryPage }: MushafViewProps =
   // it loaded even when the user is reading, say, Al-A'raf at page 151
   // where page 1 is otherwise miles out of the visible window.
   const fontPages = useMemo(() => [...new Set([1, ...loadedPages])], [loadedPages]);
-  const { isPageFontLoaded, getFontFamily } = useQcfFont(fontPages);
-  const fontResolver = useMemo(
-    () => ({ isPageFontLoaded, getFontFamily }),
-    [isPageFontLoaded, getFontFamily],
-  );
+  const fontResolver = useMushafFontResolver(fontPages);
 
   const registerPageRef = useCallback((pageNumber: number, element: HTMLDivElement | null) => {
     if (element) {

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { AudioCoordinator } from "@/services/audio/audio-coordinator";
 
 describe("AudioCoordinator", () => {
@@ -12,27 +12,46 @@ describe("AudioCoordinator", () => {
     expect(coordinator.getActiveSource()).toBe("none");
   });
 
-  it("sets active source to main on mainWillPlay", () => {
+  it("sets active source on willPlay", () => {
     coordinator.mainWillPlay();
     expect(coordinator.getActiveSource()).toBe("main");
-  });
 
-  it("sets active source to mushaf on mushafWillPlay", () => {
     coordinator.mushafWillPlay();
     expect(coordinator.getActiveSource()).toBe("mushaf");
+
+    coordinator.adhkarWillPlay();
+    expect(coordinator.getActiveSource()).toBe("adhkar");
   });
 
-  it("switches from main to mushaf", () => {
+  it("pauses the previously active source when switching", () => {
+    const pauseMain = vi.fn();
+    const pauseMushaf = vi.fn();
+    const pauseAdhkar = vi.fn();
+
+    coordinator.registerPauseHandler("main", pauseMain);
+    coordinator.registerPauseHandler("mushaf", pauseMushaf);
+    coordinator.registerPauseHandler("adhkar", pauseAdhkar);
+
+    coordinator.adhkarWillPlay();
     coordinator.mainWillPlay();
-    expect(coordinator.getActiveSource()).toBe("main");
+    expect(pauseAdhkar).toHaveBeenCalledTimes(1);
+    expect(pauseMain).not.toHaveBeenCalled();
+
     coordinator.mushafWillPlay();
-    expect(coordinator.getActiveSource()).toBe("mushaf");
+    expect(pauseMain).toHaveBeenCalledTimes(1);
+
+    coordinator.adhkarWillPlay();
+    expect(pauseMushaf).toHaveBeenCalledTimes(1);
   });
 
-  it("switches from mushaf to main", () => {
-    coordinator.mushafWillPlay();
-    expect(coordinator.getActiveSource()).toBe("mushaf");
+  it("does not pause the same source when it claims playback again", () => {
+    const pauseMain = vi.fn();
+    coordinator.registerPauseHandler("main", pauseMain);
+
     coordinator.mainWillPlay();
+    coordinator.mainWillPlay();
+
+    expect(pauseMain).not.toHaveBeenCalled();
     expect(coordinator.getActiveSource()).toBe("main");
   });
 

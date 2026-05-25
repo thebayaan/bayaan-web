@@ -1,21 +1,25 @@
 import useSWR from "swr";
 import type { VersesResponse } from "@/types/quran-api";
+import { MUSHAF_WORD_FIELDS, getMushafFontConfig } from "@/lib/mushaf-fonts";
+import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 
 const BASE_URL = typeof window !== "undefined" ? "" : "http://localhost:3000";
 
-const WORD_FIELDS =
-  "verse_key,verse_id,page_number,location,audio_url,text_uthmani,text_imlaei_simple,code_v2,qpc_uthmani_hafs";
-
 const PER_PAGE = 50;
 
-function buildChapterPath(chapterId: number, translationIds: string, page: number): string {
+function buildChapterPath(
+  chapterId: number,
+  translationIds: string,
+  page: number,
+  mushafId: number,
+): string {
   const params = new URLSearchParams({
     words: "true",
     per_page: PER_PAGE.toString(),
     fields: "text_uthmani,chapter_id,hizb_number",
     translations: translationIds,
-    word_fields: WORD_FIELDS,
-    mushaf: "1",
+    word_fields: MUSHAF_WORD_FIELDS,
+    mushaf: mushafId.toString(),
     page: page.toString(),
   });
   return `verses/by_chapter/${chapterId}?${params.toString()}`;
@@ -32,8 +36,9 @@ async function fetchVersesPage(path: string): Promise<VersesResponse> {
 async function fetchAllChapterVerses(
   chapterId: number,
   translationIds: string,
+  mushafId: number,
 ): Promise<VersesResponse> {
-  const first = await fetchVersesPage(buildChapterPath(chapterId, translationIds, 1));
+  const first = await fetchVersesPage(buildChapterPath(chapterId, translationIds, 1, mushafId));
   const totalPages = first.pagination?.total_pages ?? 1;
 
   if (totalPages <= 1) {
@@ -42,7 +47,7 @@ async function fetchAllChapterVerses(
 
   const rest = await Promise.all(
     Array.from({ length: totalPages - 1 }, (_, index) =>
-      fetchVersesPage(buildChapterPath(chapterId, translationIds, index + 2)),
+      fetchVersesPage(buildChapterPath(chapterId, translationIds, index + 2, mushafId)),
     ),
   );
 
@@ -61,9 +66,14 @@ export function useVersesByChapter(
   isLoading: boolean;
   error: Error | undefined;
 } {
+  const quranFontId = useReadingSettingsStore((s) => s.quranFontId);
+  const mushafId = getMushafFontConfig(quranFontId).mushafId;
+
   const { data, error, isLoading } = useSWR<VersesResponse>(
-    chapterId > 0 ? `verses/by_chapter/${chapterId}/all?translations=${translationIds}` : null,
-    () => fetchAllChapterVerses(chapterId, translationIds),
+    chapterId > 0
+      ? `verses/by_chapter/${chapterId}/all?translations=${translationIds}&mushaf=${mushafId}&font=${quranFontId}`
+      : null,
+    () => fetchAllChapterVerses(chapterId, translationIds, mushafId),
     { revalidateOnFocus: false, dedupingInterval: 300000 },
   );
 
