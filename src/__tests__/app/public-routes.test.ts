@@ -1,14 +1,13 @@
 import { describe, it, expect } from "vitest";
 
 describe("middleware", () => {
-  it("redirects / to /quran", async () => {
+  it("allows / to serve the home page without redirecting", async () => {
     const { middleware } = await import("@/../middleware");
     const { NextRequest } = await import("next/server");
     const request = new NextRequest("http://localhost:3000/");
     const response = middleware(request);
-    expect(response.status).toBeGreaterThanOrEqual(300);
-    expect(response.status).toBeLessThan(400);
-    expect(response.headers.get("location")).toContain("/quran");
+    expect(response.status).toBe(200);
+    expect(response.headers.get("location")).toBeNull();
   });
 });
 
