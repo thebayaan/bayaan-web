@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
+import { useCallback, useEffect } from "react";
 import { getDhikrById, getDhikrPlaybackUrl } from "@/data/adhkar-data";
 import { ALL_ADHKAR_SUPER, resolveAdhkarSuperSlug } from "@/data/adhkar-super-categories";
+import { getDhikrNeighbors } from "@/lib/adhkar-navigation";
 import { AdhkarAudioControls } from "@/components/adhkar/adhkar-audio-controls";
+import { AdhkarArabicText } from "@/components/adhkar/adhkar-arabic-text";
 import { TasbeehCounter } from "@/components/adhkar/tasbeeh-counter";
+import { NextIcon, PreviousIcon } from "@/components/icons";
 
 interface DhikrPageClientProps {
   superId: string;
@@ -13,11 +18,10 @@ interface DhikrPageClientProps {
 }
 
 export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
+  const router = useRouter();
   const dhikr = getDhikrById(dhikrId);
   if (!dhikr) notFound();
 
-  // superId is either the slug ("morning-adhkar") or the numeric
-  // category id ("27"). Accept the match under either form.
   const superSlug = resolveAdhkarSuperSlug(superId);
   const superCategory = superSlug ? ALL_ADHKAR_SUPER.find((s) => s.id === superSlug) : null;
   const matches = superCategory
@@ -26,23 +30,45 @@ export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
   if (!matches) notFound();
 
   const playbackUrl = getDhikrPlaybackUrl(dhikr);
+  const { prev, next, index, total } = getDhikrNeighbors(superId, dhikrId);
+
+  const goTo = useCallback(
+    (targetId: string) => {
+      router.push(`/adhkar/${superId}/${targetId}`);
+    },
+    [router, superId],
+  );
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "ArrowLeft" && prev) goTo(prev.id);
+      if (event.key === "ArrowRight" && next) goTo(next.id);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [goTo, prev, next]);
 
   return (
     <div className="flex min-h-[70vh] flex-col items-center p-6">
-      <Link
-        href={`/adhkar/${superId}`}
-        className="text-muted-foreground hover:text-foreground self-start text-sm transition-colors"
-      >
-        &larr; Back
-      </Link>
-      <div className="flex w-full max-w-2xl flex-1 flex-col items-center justify-center">
-        <p
-          className="mb-6 text-center font-[UthmanicHafs] text-2xl leading-relaxed"
-          dir="rtl"
-          lang="ar"
+      <div className="flex w-full max-w-2xl items-center justify-between">
+        <Link
+          href={`/adhkar/${superId}`}
+          className="text-muted-foreground hover:text-foreground text-sm transition-colors"
         >
+          &larr; Back
+        </Link>
+        {total > 0 ? (
+          <span className="text-muted-foreground text-xs tabular-nums">
+            {index + 1} / {total}
+          </span>
+        ) : null}
+      </div>
+
+      <div className="flex w-full max-w-2xl flex-1 flex-col items-center justify-center">
+        <AdhkarArabicText className="mb-6 text-center text-2xl sm:text-3xl">
           {dhikr.arabic}
-        </p>
+        </AdhkarArabicText>
+
         {dhikr.transliteration ? (
           <p className="text-muted-foreground mb-4 max-w-xl text-center text-xs italic">
             {dhikr.transliteration}
@@ -61,6 +87,31 @@ export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
             {dhikr.instruction}
           </p>
         ) : null}
+
+        <div className="mt-8 flex w-full max-w-md items-center justify-between gap-3">
+          {prev ? (
+            <Link
+              href={`/adhkar/${superId}/${prev.id}`}
+              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 rounded-lg bg-[var(--text-alpha-04)] px-3 py-2 text-sm transition-colors hover:bg-[var(--text-alpha-06)]"
+            >
+              <PreviousIcon size={16} />
+              Previous
+            </Link>
+          ) : (
+            <span />
+          )}
+          {next ? (
+            <Link
+              href={`/adhkar/${superId}/${next.id}`}
+              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 rounded-lg bg-[var(--text-alpha-04)] px-3 py-2 text-sm transition-colors hover:bg-[var(--text-alpha-06)]"
+            >
+              Next
+              <NextIcon size={16} />
+            </Link>
+          ) : (
+            <span />
+          )}
+        </div>
       </div>
     </div>
   );

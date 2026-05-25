@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PlayIcon, PauseIcon, RepeatIcon } from "@/components/icons";
+import { Slider } from "@/components/ui/slider";
 import { usePlayerStore } from "@/stores/player-store";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,8 @@ export function AdhkarAudioControls({ audioUrl }: AdhkarAudioControlsProps) {
   const [isLooping, setIsLooping] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragValue, setDragValue] = useState(0);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -57,70 +60,88 @@ export function AdhkarAudioControls({ audioUrl }: AdhkarAudioControlsProps) {
     }
   }, [isPlaying]);
 
-  const seek = useCallback(
-    (nextProgress: number) => {
+  const seekToProgress = useCallback(
+    (progress: number) => {
       const audio = audioRef.current;
       if (!audio || !duration) return;
-      audio.currentTime = nextProgress * duration;
+      audio.currentTime = (progress / 100) * duration;
+      setCurrentTime(audio.currentTime);
     },
     [duration],
   );
 
-  const progress = duration > 0 ? currentTime / duration : 0;
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const displayProgress = isDragging ? dragValue : progress;
+  const displayTime = isDragging ? (dragValue / 100) * duration : currentTime;
+
+  const handleValueChange = useCallback((value: number | readonly number[]) => {
+    const v = typeof value === "number" ? value : (value[0] ?? 0);
+    setDragValue(v);
+    setIsDragging(true);
+  }, []);
+
+  const handleValueCommitted = useCallback(
+    (value: number | readonly number[]) => {
+      const v = typeof value === "number" ? value : (value[0] ?? 0);
+      seekToProgress(v);
+      setIsDragging(false);
+    },
+    [seekToProgress],
+  );
 
   return (
     <div className="mb-8 w-full max-w-md">
       <audio
         ref={audioRef}
         preload="metadata"
-        onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime ?? 0)}
+        onTimeUpdate={() => {
+          if (!isDragging) setCurrentTime(audioRef.current?.currentTime ?? 0);
+        }}
         onLoadedMetadata={() => setDuration(audioRef.current?.duration ?? 0)}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onEnded={() => setIsPlaying(false)}
       />
 
-      <input
-        type="range"
-        min={0}
-        max={1}
-        step={0.001}
-        value={progress}
-        onChange={(event) => seek(Number(event.target.value))}
-        aria-label="Audio progress"
-        className="accent-foreground mb-3 h-1 w-full cursor-pointer"
-      />
-
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-muted-foreground w-10 text-xs tabular-nums">{formatTime(currentTime)}</span>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => void togglePlay()}
-            className="text-foreground flex h-10 w-10 items-center justify-center rounded-full bg-[var(--text-alpha-06)] transition-transform hover:scale-105"
-            aria-label={isPlaying ? "Pause audio" : "Play audio"}
-          >
-            {isPlaying ? <PauseIcon size={20} /> : <PlayIcon size={20} />}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsLooping((value) => !value)}
-            className={cn(
-              "rounded-full p-2 transition-colors",
-              isLooping ? "text-foreground" : "text-muted-foreground hover:text-foreground",
-            )}
-            aria-label={isLooping ? "Disable loop" : "Enable loop"}
-            aria-pressed={isLooping}
-          >
-            <RepeatIcon size={18} color="currentColor" />
-          </button>
-        </div>
-
-        <span className="text-muted-foreground w-10 text-right text-xs tabular-nums">
+      <div className="mb-4 flex w-full items-center gap-2">
+        <span className="text-muted-foreground w-10 shrink-0 text-right text-[10px] tabular-nums">
+          {formatTime(displayTime)}
+        </span>
+        <Slider
+          value={displayProgress}
+          max={100}
+          step={0.1}
+          onValueChange={handleValueChange}
+          onValueCommitted={handleValueCommitted}
+          className="flex-1"
+        />
+        <span className="text-muted-foreground w-10 shrink-0 text-[10px] tabular-nums">
           {formatTime(duration)}
         </span>
+      </div>
+
+      <div className="flex items-center justify-center gap-2">
+        <button
+          type="button"
+          onClick={() => void togglePlay()}
+          className="text-foreground flex h-10 w-10 items-center justify-center rounded-full bg-[var(--text-alpha-06)] transition-transform hover:scale-105"
+          aria-label={isPlaying ? "Pause audio" : "Play audio"}
+        >
+          {isPlaying ? <PauseIcon size={20} /> : <PlayIcon size={20} />}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setIsLooping((value) => !value)}
+          className={cn(
+            "rounded-full p-2 transition-colors",
+            isLooping ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+          )}
+          aria-label={isLooping ? "Disable loop" : "Enable loop"}
+          aria-pressed={isLooping}
+        >
+          <RepeatIcon size={18} color="currentColor" />
+        </button>
       </div>
     </div>
   );

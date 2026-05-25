@@ -1,4 +1,13 @@
 import localFont from "next/font/local";
+import { Scheherazade_New } from "next/font/google";
+
+/** Matches mobile adhkar Arabic typography (Scheherazade New). */
+export const scheherazade = Scheherazade_New({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "700"],
+  variable: "--font-scheherazade",
+  display: "swap",
+});
 
 export const manrope = localFont({
   src: [
