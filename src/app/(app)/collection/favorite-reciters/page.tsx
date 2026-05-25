@@ -49,7 +49,7 @@ export default function FavoriteRecitersPage() {
             Heart a reciter to save them here for quick access.
           </p>
           <Link
-            href="/quran"
+            href="/reciters"
             className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors"
           >
             Browse reciters

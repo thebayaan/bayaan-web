@@ -197,7 +197,7 @@ export function QueuePanel({ open, onOpenChange }: QueuePanelProps): React.React
                   Pick a reciter and we&apos;ll line up the surah for you.
                 </p>
                 <Link
-                  href="/"
+                  href="/reciters"
                   onClick={() => onOpenChange(false)}
                   className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors"
                 >

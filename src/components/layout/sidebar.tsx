@@ -1,11 +1,12 @@
 "use client";
 
-import { HomeIcon, QuranIcon, CollectionIcon, SettingsIcon } from "@/components/icons";
+import { HomeIcon, QuranIcon, CollectionIcon, ProfileIcon, SettingsIcon } from "@/components/icons";
 import { SidebarNavItem } from "./sidebar-nav-item";
 import { ContinueReadingCard } from "./continue-reading-card";
 
 const NAV_ITEMS = [
   { href: "/", icon: HomeIcon, label: "Home" },
+  { href: "/reciters", icon: ProfileIcon, label: "Reciters" },
   { href: "/quran", icon: QuranIcon, label: "Read Quran" },
   { href: "/collection", icon: CollectionIcon, label: "Collection" },
 ] as const;

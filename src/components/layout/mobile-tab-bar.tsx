@@ -2,12 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HomeIcon, SearchIcon, QuranIcon, CollectionIcon, SettingsIcon } from "@/components/icons";
+import {
+  HomeIcon,
+  SearchIcon,
+  QuranIcon,
+  CollectionIcon,
+  ProfileIcon,
+  SettingsIcon,
+} from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 const TABS = [
   { href: "/", icon: HomeIcon, label: "Home" },
   { href: "/search", icon: SearchIcon, label: "Search" },
+  { href: "/reciters", icon: ProfileIcon, label: "Reciters" },
   { href: "/quran", icon: QuranIcon, label: "Read" },
   { href: "/collection", icon: CollectionIcon, label: "Collection" },
   { href: "/settings", icon: SettingsIcon, label: "Settings" },
@@ -31,7 +39,7 @@ export function MobileTabBar() {
               )}
             >
               <Icon size={20} filled={isActive} />
-              <span>{label}</span>
+              <span className="hidden min-[390px]:inline">{label}</span>
             </Link>
           );
         })}
