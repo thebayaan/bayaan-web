@@ -14,11 +14,6 @@ export function MushafPageScaler({ scale, children }: MushafPageScalerProps) {
   const [scaledHeight, setScaledHeight] = useState<number | undefined>();
 
   useLayoutEffect(() => {
-    if (Math.abs(scale - 1) < 0.001) {
-      setScaledHeight(undefined);
-      return;
-    }
-
     const node = innerRef.current;
     if (!node) return;
 
