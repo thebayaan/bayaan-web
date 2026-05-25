@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import { VerseText } from "@/components/quran/verse-text";
 import type { QcfWord } from "@/types/quran-api";
+import { createTestFontResolver } from "@/__tests__/helpers/mushaf-font-resolver";
 
 const mockWords: QcfWord[] = [
   {
@@ -38,19 +39,19 @@ const mockWords: QcfWord[] = [
 
 describe("VerseText", () => {
   it("renders all words in reading mode", () => {
-    const fontResolver = { isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" };
+    const fontResolver = createTestFontResolver();
     const { container } = render(<VerseText words={mockWords} fontResolver={fontResolver} />);
     expect(container.querySelectorAll("span")).toHaveLength(2);
   });
 
   it("applies RTL direction in reading mode", () => {
-    const fontResolver = { isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" };
+    const fontResolver = createTestFontResolver();
     const { container } = render(<VerseText words={mockWords} fontResolver={fontResolver} />);
     expect(container.firstElementChild?.getAttribute("dir")).toBe("rtl");
   });
 
   it("joins QCF glyph codes with hair-space separators when the page font is loaded", () => {
-    const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" };
+    const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" });
     const { container } = render(
       <VerseText words={mockWords} fontResolver={fontResolver} mushafMode />,
     );
@@ -64,7 +65,7 @@ describe("VerseText", () => {
   });
 
   it("justifies non-centered mushaf lines edge-to-edge when the font is loaded", () => {
-    const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" };
+    const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" });
     const { container } = render(
       <VerseText words={mockWords} fontResolver={fontResolver} mushafMode />,
     );
@@ -143,7 +144,7 @@ describe("VerseText", () => {
         location: "3:2:2",
       },
     ];
-    const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p50-v2" };
+    const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p50-v2" });
     const { container } = render(
       <VerseText words={multiVerseWords} fontResolver={fontResolver} mushafMode />,
     );
@@ -156,7 +157,7 @@ describe("VerseText", () => {
   });
 
   it("centers mushaf lines on framed pages when requested", () => {
-    const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" };
+    const fontResolver = createTestFontResolver({ pageLoaded: true, fontFamily: "p1-v2" });
     const { container } = render(
       <VerseText words={mockWords} fontResolver={fontResolver} mushafMode lineAlignment="center" />,
     );
@@ -164,7 +165,7 @@ describe("VerseText", () => {
   });
 
   it("justifies fallback mushaf lines when the page font is not loaded", () => {
-    const fontResolver = { isPageFontLoaded: () => false, getFontFamily: () => "UthmanicHafs" };
+    const fontResolver = createTestFontResolver();
     const { container } = render(
       <VerseText words={mockWords} fontResolver={fontResolver} mushafMode />,
     );

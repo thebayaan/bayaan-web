@@ -5,16 +5,14 @@ import {
   MushafSurahHeader,
   mushafSurahAnchorId,
 } from "@/components/quran/mushaf-surah-header";
+import { createTestFontResolver } from "@/__tests__/helpers/mushaf-font-resolver";
 
-const loadedResolver = {
-  isPageFontLoaded: () => true,
-  getFontFamily: (n: number) => `p${n}-v2`,
-};
+const loadedResolver = createTestFontResolver({
+  pageLoaded: true,
+  fontFamily: (page) => `p${page}-v2`,
+});
 
-const unloadedResolver = {
-  isPageFontLoaded: () => false,
-  getFontFamily: (n: number) => `p${n}-v2`,
-};
+const unloadedResolver = createTestFontResolver({ pageLoaded: false });
 
 describe("MushafSurahHeader", () => {
   it("renders the surah-name glyph with an aria-label", () => {

@@ -2,11 +2,12 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MushafPage } from "@/components/quran/mushaf-page";
 import type { QcfVerse, QcfWord } from "@/types/quran-api";
+import { createTestFontResolver } from "@/__tests__/helpers/mushaf-font-resolver";
 
-const fontResolver = {
-  isPageFontLoaded: () => true,
-  getFontFamily: (n: number) => `p${n}-v2`,
-};
+const fontResolver = createTestFontResolver({
+  pageLoaded: true,
+  fontFamily: (page) => `p${page}-v2`,
+});
 
 /**
  * Tiny helper for building plausible-looking QcfWord fixtures without

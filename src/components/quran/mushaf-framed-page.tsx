@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { surahGlyphMap } from "@/data/surah-glyph-map";
 import { MushafBasmallah } from "./mushaf-surah-header";
-import type { QcfFontResolver } from "./quran-word";
+import type { MushafFontResolver } from "@/lib/mushaf-fonts";
 import { cn } from "@/lib/utils";
 
 interface MushafFramedPageProps {
@@ -14,7 +14,7 @@ interface MushafFramedPageProps {
    * fallback. `MushafView` always preloads `p1-v2` so on the framed
    * pages this should always be available; tests omit it intentionally.
    */
-  fontResolver?: QcfFontResolver;
+  fontResolver?: MushafFontResolver;
   fontSize?: string;
 }
 

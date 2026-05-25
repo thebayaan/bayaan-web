@@ -31,4 +31,11 @@ describe("reading-settings-store", () => {
     useReadingSettingsStore.getState().setLightTheme("parchment");
     expect(useReadingSettingsStore.getState().lightThemeId).toBe("parchment");
   });
+  it("sets quran font id", () => {
+    useReadingSettingsStore.getState().setQuranFontId("indopak");
+    expect(useReadingSettingsStore.getState().quranFontId).toBe("indopak");
+  });
+  it("defaults to Uthmani", () => {
+    expect(useReadingSettingsStore.getState().quranFontId).toBe("uthmani");
+  });
 });

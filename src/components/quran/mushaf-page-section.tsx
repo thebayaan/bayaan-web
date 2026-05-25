@@ -3,14 +3,14 @@
 import { useEffect, useRef } from "react";
 import { useVersesByPage } from "@/hooks/use-verses-by-page";
 import type { QcfVerse } from "@/types/quran-api";
-import type { QcfFontResolver } from "./quran-word";
+import type { MushafFontResolver } from "@/lib/mushaf-fonts";
 import { MushafPage } from "./mushaf-page";
 import { MUSHAF_PAGE_CLASS } from "./mushaf-layout";
 import { cn } from "@/lib/utils";
 
 interface MushafPageSectionProps {
   pageNumber: number;
-  fontResolver: QcfFontResolver;
+  fontResolver: MushafFontResolver;
   fontSize: string;
   playbackActiveVerseKey?: string | null;
   onVersesLoaded: (pageNumber: number, verses: QcfVerse[]) => void;

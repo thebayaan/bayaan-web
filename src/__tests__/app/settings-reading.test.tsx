@@ -33,4 +33,12 @@ describe("Reading settings", () => {
     await user.click(screen.getByRole("switch", { name: /tajweed colors/i }));
     expect(useReadingSettingsStore.getState().showTajweed).toBe(true);
   });
+
+  it("changes quran font", async () => {
+    const user = userEvent.setup();
+    render(<ReadingSettingsPage />);
+
+    await user.selectOptions(screen.getByLabelText(/quran font/i), "indopak");
+    expect(useReadingSettingsStore.getState().quranFontId).toBe("indopak");
+  });
 });

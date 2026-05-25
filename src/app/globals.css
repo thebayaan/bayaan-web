@@ -177,6 +177,21 @@
   font-display: swap;
 }
 
+@font-palette-values --mushaf-tajweed-light {
+  font-family: "p1-v4";
+  base-palette: 0;
+}
+
+@font-palette-values --mushaf-tajweed-dark {
+  font-family: "p1-v4";
+  base-palette: 1;
+}
+
+@font-palette-values --mushaf-tajweed-sepia {
+  font-family: "p1-v4";
+  base-palette: 2;
+}
+
 /* Facelift semantic tokens — layered on top of shadcn aliases. */
 :root {
   /* Surfaces */

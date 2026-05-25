@@ -1,6 +1,6 @@
 import { surahGlyphMap } from "@/data/surah-glyph-map";
 import { MUSHAF_BISMILLAH } from "./mushaf-layout";
-import type { QcfFontResolver } from "./quran-word";
+import type { MushafFontResolver } from "@/lib/mushaf-fonts";
 import { cn } from "@/lib/utils";
 
 /**
@@ -19,7 +19,6 @@ import { cn } from "@/lib/utils";
  * between them would visually break the join.
  */
 const BASMALLAH_CODE_V2 = "\uFC41\uFC42\uFC43\uFC44";
-const BASMALLAH_FONT_FAMILY = "p1-v2";
 
 /**
  * Stable DOM id for the surah-name banner of a given surah. Used by
@@ -85,20 +84,25 @@ export function MushafBasmallah({
   className,
 }: {
   fontSize: string;
-  fontResolver?: QcfFontResolver;
+  fontResolver?: MushafFontResolver;
   className?: string;
 }) {
-  const isFontLoaded = fontResolver?.isPageFontLoaded(1) ?? false;
+  const useGlyphBasmallah =
+    fontResolver?.config.basmallahMode === "glyph" && fontResolver.isPageFontLoaded(1);
   const ariaLabel = "Bismillah ar-Rahman ar-Raheem";
 
-  if (isFontLoaded) {
+  if (useGlyphBasmallah && fontResolver) {
     return (
       <div
         dir="rtl"
         lang="ar"
         aria-label={ariaLabel}
         className={cn("w-full py-1 text-center leading-[1.4] select-none", className)}
-        style={{ fontFamily: BASMALLAH_FONT_FAMILY, fontSize }}
+        style={{
+          fontFamily: fontResolver.getFontFamily(1),
+          fontSize,
+          ...(fontResolver.fontPalette ? { fontPalette: fontResolver.fontPalette } : undefined),
+        }}
       >
         {BASMALLAH_CODE_V2}
       </div>

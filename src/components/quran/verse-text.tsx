@@ -2,15 +2,17 @@
 
 import { useCallback, useMemo, useRef } from "react";
 import type { QcfWord } from "@/types/quran-api";
-import { QuranWord, type QcfFontResolver } from "./quran-word";
+import { QuranWord } from "./quran-word";
 import { cn } from "@/lib/utils";
 import { useVerseSelectionStore } from "@/stores/verse-selection-store";
+import type { MushafFontResolver } from "@/lib/mushaf-fonts";
+import { joinMushafGlyphLine } from "@/lib/mushaf-fonts";
 
 import type { MushafLineAlignment } from "./mushaf-layout";
 
 interface VerseTextProps {
   words: QcfWord[];
-  fontResolver: QcfFontResolver;
+  fontResolver: MushafFontResolver;
   mushafMode?: boolean;
   lineAlignment?: MushafLineAlignment;
   fontSize?: string;
@@ -23,17 +25,8 @@ interface VerseTextProps {
   playbackActiveVerseKey?: string | null;
 }
 
-// Hair-space (U+200A) is the narrowest space character. We use it for two
-// purposes that mirror the Bayaan native renderer (see comments in
-// `components/mushaf/qcf/QCFPage.tsx` on the develop branch):
-//   1. Replace any literal U+0020 the QF API embeds inside `code_v2`
-//      (happens on hizb-marker pages) so it never expands during justify.
-//   2. As a between-glyph separator when joining a mushaf line. The
-//      separator gives the browser a justification opportunity so
-//      `text-align-last: justify` can stretch the line to fill the 512px
-//      page width, matching the printed Madani mushaf where every line is
-//      edge-to-edge.
-const QCF_HAIR_SPACE = "\u200A";
+// Hair-space (U+200A) separators for glyph line joining live in
+// `joinMushafGlyphLine` inside `src/lib/mushaf-fonts.ts`.
 
 /**
  * Order words within a single rendered group (a verse in reading mode, or a
@@ -57,8 +50,14 @@ function primaryVerseKey(words: QcfWord[]): string {
   return endMarker?.verse_key ?? words[words.length - 1]?.verse_key ?? "";
 }
 
-function joinMushafLine(words: QcfWord[]): string {
-  return words.map((word) => word.code_v2.replace(/ /g, QCF_HAIR_SPACE)).join(QCF_HAIR_SPACE);
+function joinMushafLine(words: QcfWord[], fontResolver: MushafFontResolver): string {
+  if (fontResolver.useGlyphLineJoin) {
+    return joinMushafGlyphLine(words, fontResolver.config);
+  }
+  return words
+    .map((word) => fontResolver.getWordText(word) ?? "")
+    .filter(Boolean)
+    .join("\u200A");
 }
 
 function MushafLine({
@@ -71,7 +70,7 @@ function MushafLine({
   playbackActiveVerseKey,
 }: {
   words: QcfWord[];
-  fontResolver: QcfFontResolver;
+  fontResolver: MushafFontResolver;
   fontSize: string;
   className?: string;
   selectable?: boolean;
@@ -102,11 +101,18 @@ function MushafLine({
     playbackActiveVerseKey != null &&
     sortedWords.some((word) => word.verse_key === playbackActiveVerseKey);
 
-  if (isFontLoaded) {
-    // Framed pages (Al-Fatiha, Al-Baqarah opener) are short, centered
-    // lines. Every other page uses true edge-to-edge justification so
-    // each line fills the 512px page width like the printed mushaf.
-    const isCenter = lineAlignment === "center";
+  const useJoinedLine = fontResolver.useGlyphLineJoin && isFontLoaded;
+  const isCenter = lineAlignment === "center";
+  const lineClassName = cn(
+    "w-full whitespace-nowrap transition-colors",
+    isCenter ? "text-center leading-[1.85]" : "leading-[2.35]",
+    selectable && "cursor-pointer",
+    lineHasPlaybackAyah &&
+      "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
+    className,
+  );
+
+  if (useJoinedLine) {
     return (
       <div
         ref={lineRef}
@@ -124,18 +130,12 @@ function MushafLine({
               }
             : undefined
         }
-        className={cn(
-          "w-full whitespace-nowrap transition-colors",
-          isCenter ? "text-center leading-[1.85]" : "leading-[2.35]",
-          selectable && "cursor-pointer",
-          lineHasPlaybackAyah &&
-            "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
-          className,
-        )}
+        className={lineClassName}
         data-verse-key={lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined}
         style={{
           fontFamily,
           fontSize,
+          ...(fontResolver.fontPalette ? { fontPalette: fontResolver.fontPalette } : undefined),
           ...(isCenter
             ? null
             : {
@@ -144,7 +144,34 @@ function MushafLine({
               }),
         }}
       >
-        {joinMushafLine(sortedWords)}
+        {joinMushafLine(sortedWords, fontResolver)}
+      </div>
+    );
+  }
+
+  if (isFontLoaded && !fontResolver.useGlyphLineJoin) {
+    return (
+      <div
+        ref={lineRef}
+        dir="rtl"
+        role={selectable ? "button" : undefined}
+        tabIndex={selectable ? 0 : undefined}
+        onClick={selectable ? handleLineSelect : undefined}
+        onKeyDown={
+          selectable
+            ? (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  handleLineSelect();
+                }
+              }
+            : undefined
+        }
+        className={cn(lineClassName, !isCenter && "text-right")}
+        data-verse-key={lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined}
+        style={{ fontFamily, fontSize }}
+      >
+        {joinMushafLine(sortedWords, fontResolver)}
       </div>
     );
   }

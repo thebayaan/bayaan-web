@@ -10,6 +10,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import { QuranFontPicker } from "./quran-font-picker";
 
 interface Props {
   open: boolean;
@@ -42,6 +43,8 @@ export function ReadingSettingsSheet({ open, onOpenChange }: Props): React.JSX.E
         </SheetHeader>
 
         <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
+          <QuranFontPicker />
+
           <section className="space-y-3">
             <label className="text-foreground block text-sm font-semibold">
               Font size

@@ -8,15 +8,16 @@ import { useWordAudioStore } from "@/stores/word-audio-store";
 import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
 import { useTajweedStore } from "@/stores/tajweed-store";
 import { TajweedSegments } from "./tajweed-segments";
+import type { MushafFontResolver } from "@/lib/mushaf-fonts";
 
-export interface QcfFontResolver {
-  isPageFontLoaded: (pageNum: number) => boolean;
-  getFontFamily: (pageNum: number) => string;
-}
+export type { MushafFontResolver };
+
+/** @deprecated Use MushafFontResolver */
+export type QcfFontResolver = Pick<MushafFontResolver, "isPageFontLoaded" | "getFontFamily">;
 
 interface QuranWordProps {
   word: QcfWord;
-  fontResolver: QcfFontResolver;
+  fontResolver: MushafFontResolver;
   className?: string;
   selectable?: boolean;
   /** Tap to hear word pronunciation (independent of word-by-word toggle). */
@@ -36,12 +37,17 @@ export function QuranWord({
   const pageNum = word.page_number;
   const isFontLoaded = fontResolver.isPageFontLoaded(pageNum);
   const fontFamily = fontResolver.getFontFamily(pageNum);
+  const quranFontId = useReadingSettingsStore((s) => s.quranFontId);
   const showWordByWord = useReadingSettingsStore((s) => s.showWordByWord);
   const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
   const tajweedWord = useTajweedStore((s) => s.byLocation?.[word.location]);
   const ensureTajweedLoaded = useTajweedStore((s) => s.ensureLoaded);
-  const useTajweedRendering = showTajweed && Boolean(tajweedWord);
-  const text = useTajweedRendering ? null : isFontLoaded ? word.code_v2 : word.qpc_uthmani_hafs;
+  const useJsonTajweed =
+    showTajweed && quranFontId !== "qcf_tajweed_v4" && Boolean(tajweedWord);
+  const useTajweedRendering = useJsonTajweed;
+  const text = useTajweedRendering ? null : fontResolver.getWordText(word);
+  const usesUnicodeFont =
+    !fontResolver.useGlyphLineJoin || !isFontLoaded || useTajweedRendering;
   const toggle = useVerseSelectionStore((s) => s.toggle);
   const selectedVerseKey = useVerseSelectionStore((s) => s.selectedVerseKey);
   const activeLocation = useWordAudioStore((s) => s.activeLocation);
@@ -88,14 +94,21 @@ export function QuranWord({
       className={cn(
         "group/word relative inline-block transition-colors",
         (canPlayWord || selectable) && "cursor-pointer hover:text-[var(--brand-main)]",
-        (!isFontLoaded || useTajweedRendering) && "font-[UthmanicHafs]",
+        usesUnicodeFont && "font-[UthmanicHafs]",
         isSelected && "rounded bg-[var(--text-alpha-10)]",
         playbackActive && "rounded bg-[var(--brand-light)] text-[var(--brand-main)]",
         isWordActive && "rounded text-[var(--brand-main)] ring-2 ring-[var(--brand-main)]/40",
         className,
       )}
       style={{
-        ...(isFontLoaded && !useTajweedRendering ? { fontFamily } : undefined),
+        ...(isFontLoaded && !useTajweedRendering
+          ? {
+              fontFamily,
+              ...(fontResolver.fontPalette
+                ? { fontPalette: fontResolver.fontPalette }
+                : undefined),
+            }
+          : undefined),
         ...(highlight
           ? {
               backgroundColor: `${HIGHLIGHT_SWATCH[highlight.color]}66`,
