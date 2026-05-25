@@ -22,6 +22,7 @@ const mockReciter = {
       surah_list: [1, 2, 3],
       mp3quran_read_id: 11,
       qdc_reciter_id: null,
+      has_timestamps: true,
     },
   ],
 };
