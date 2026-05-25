@@ -115,8 +115,7 @@ function MushafLine({
       <div
         {...sharedProps}
         className={cn(
-          "flex w-full leading-[2.35] whitespace-nowrap transition-colors",
-          lineAlignment === "center" ? "justify-center" : "justify-between",
+          "flex w-full justify-between leading-[2.35] whitespace-nowrap transition-colors",
           selectable && "cursor-pointer",
           lineHasPlaybackAyah &&
             "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
