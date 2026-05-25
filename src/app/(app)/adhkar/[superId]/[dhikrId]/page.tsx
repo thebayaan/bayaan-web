@@ -72,10 +72,6 @@ export default async function DhikrPage({
   const resolved = resolveDhikr(superId, dhikrId);
   if (!resolved) notFound();
   return (
-    <DhikrPageClient
-      superId={superId}
-      dhikrId={dhikrId}
-      playAll={pickFirst(playAll) === "1"}
-    />
+    <DhikrPageClient superId={superId} dhikrId={dhikrId} playAll={pickFirst(playAll) === "1"} />
   );
 }

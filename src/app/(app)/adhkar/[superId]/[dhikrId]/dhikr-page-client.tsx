@@ -91,11 +91,7 @@ export function DhikrPageClient({ superId, dhikrId, playAll = false }: DhikrPage
         </p>
 
         {playbackUrl ? (
-          <AdhkarAudioControls
-            audioUrl={playbackUrl}
-            autoPlay={playAll}
-            onEnded={advancePlayAll}
-          />
+          <AdhkarAudioControls audioUrl={playbackUrl} autoPlay={playAll} onEnded={advancePlayAll} />
         ) : null}
 
         <TasbeehCounter dhikrId={dhikr.id} target={dhikr.repeatCount} />

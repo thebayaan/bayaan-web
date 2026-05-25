@@ -21,7 +21,11 @@ interface AdhkarAudioControlsProps {
   onEnded?: () => void;
 }
 
-export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: AdhkarAudioControlsProps) {
+export function AdhkarAudioControls({
+  audioUrl,
+  autoPlay = false,
+  onEnded,
+}: AdhkarAudioControlsProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLooping, setIsLooping] = useState(false);

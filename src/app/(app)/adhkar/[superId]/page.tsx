@@ -111,10 +111,12 @@ export default async function AdhkarCategoryPage({
                 <Link
                   key={dhikr.id}
                   href={`/adhkar/${dhikrUrlPrefix}/${dhikr.id}`}
-                  className="hover:bg-[var(--text-alpha-06)] block rounded-xl bg-[var(--text-alpha-04)] p-4 transition-colors"
+                  className="block rounded-xl bg-[var(--text-alpha-04)] p-4 transition-colors hover:bg-[var(--text-alpha-06)]"
                 >
                   <AdhkarArabicText className="text-lg">{dhikr.arabic}</AdhkarArabicText>
-                  <p className="text-muted-foreground mt-2 line-clamp-2 text-sm">{dhikr.translation}</p>
+                  <p className="text-muted-foreground mt-2 line-clamp-2 text-sm">
+                    {dhikr.translation}
+                  </p>
                   <div className="mt-2 flex items-center gap-2">
                     <span className="rounded-full bg-[var(--text-alpha-06)] px-2 py-0.5 text-xs">
                       {dhikr.repeatCount}x
