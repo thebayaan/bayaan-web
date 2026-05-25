@@ -9,8 +9,17 @@ describe("Settings overview", () => {
     const expectedHrefs = [
       "/settings/appearance",
       "/settings/reading",
+      "/settings/translations",
       "/settings/reading-themes",
+      "/settings/storage",
+      "https://thebayaan.com/support",
+      "https://thebayaan.com/support",
+      "/settings/whats-new",
       "/settings/about",
+      "/settings/credits",
+      "https://github.com/thebayaan/bayaan-web",
+      "https://thebayaan.com/terms",
+      "https://thebayaan.com/privacy",
     ];
     const actualHrefs = Array.from(nav.querySelectorAll("a")).map((a) => a.getAttribute("href"));
     expect(actualHrefs).toEqual(expectedHrefs);
