@@ -11,7 +11,6 @@ interface QuranFontPickerProps {
 export function QuranFontPicker({ className }: QuranFontPickerProps): React.JSX.Element {
   const quranFontId = useReadingSettingsStore((s) => s.quranFontId);
   const setQuranFontId = useReadingSettingsStore((s) => s.setQuranFontId);
-  const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
 
   return (
     <div className={cn("space-y-3", className)}>
@@ -34,12 +33,6 @@ export function QuranFontPicker({ className }: QuranFontPickerProps): React.JSX.
       <p className="text-muted-foreground text-xs leading-relaxed">
         {MUSHAF_FONT_OPTIONS.find((option) => option.id === quranFontId)?.description}
       </p>
-      {quranFontId === "qcf_tajweed_v4" && showTajweed ? (
-        <p className="text-muted-foreground text-xs leading-relaxed">
-          Tajweed colors are built into the Tajweed Mushaf font. Turn off the separate tajweed
-          coloring toggle to avoid overlapping styles.
-        </p>
-      ) : null}
     </div>
   );
 }

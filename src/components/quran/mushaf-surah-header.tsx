@@ -1,24 +1,12 @@
 import { surahGlyphMap } from "@/data/surah-glyph-map";
-import { MUSHAF_BISMILLAH } from "./mushaf-layout";
-import type { MushafFontResolver } from "@/lib/mushaf-fonts";
+import {
+  getBasmallahGlyphText,
+  getBasmallahUnicodeFontFamily,
+  getBasmallahUnicodeText,
+  type MushafFontResolver,
+} from "@/lib/mushaf-fonts";
+import { MUSHAF_BISMILLAH } from "@/components/quran/mushaf-layout";
 import { cn } from "@/lib/utils";
-
-/**
- * The basmallah encoded as the 4 KFGQPC V2 word-glyphs that live in the
- * page-1 font (`p1-v2`) at U+FC41..U+FC44. These are the same PUA
- * codepoints the QF API returns as `code_v2` for verse 1:1 (see
- * `api.qurancdn.com/api/qdc/verses/by_page/1`) — joining them in
- * `p1-v2` renders the same decorative connected ligature the printed
- * Madani mushaf draws above every surah that has a basmallah, and the
- * same one Quran.com displays. This is the canonical approach the
- * native Bayaan client uses (see `BASMALA_TEXT` / `BASMALA_FONT_FAMILY`
- * in `services/mushaf/QCFDataService.ts` on the develop branch).
- *
- * No hair-space separators here: the basmallah glyphs are designed to
- * render as a single connected ligature, and dropping separators
- * between them would visually break the join.
- */
-const BASMALLAH_CODE_V2 = "\uFC41\uFC42\uFC43\uFC44";
 
 /**
  * Stable DOM id for the surah-name banner of a given surah. Used by
@@ -71,12 +59,8 @@ export function MushafSurahHeader({
  * Centered basmallah line drawn between a surah-name header and the
  * surah's first ayah.
  *
- * When the page-1 KFGQPC font is loaded (which `MushafView` now
- * preloads unconditionally — see the `fontPages` memo there) this
- * renders the decorative connected ligature the printed Madani mushaf
- * uses. Otherwise we fall back to the literal Arabic text in
- * `UthmanicHafs` so the basmallah is always *something*, even during
- * the brief first-paint window before the woff2 finishes downloading.
+ * QCF fonts render the decorative page-1 ligature when loaded; unicode
+ * fonts use script-appropriate text in their own typeface.
  */
 export function MushafBasmallah({
   fontSize,
@@ -87,11 +71,12 @@ export function MushafBasmallah({
   fontResolver?: MushafFontResolver;
   className?: string;
 }) {
-  const useGlyphBasmallah =
-    fontResolver?.config.basmallahMode === "glyph" && fontResolver.isPageFontLoaded(1);
   const ariaLabel = "Bismillah ar-Rahman ar-Raheem";
+  const config = fontResolver?.config;
+  const glyphText = config ? getBasmallahGlyphText(config) : null;
+  const useGlyphBasmallah = Boolean(glyphText) && Boolean(fontResolver?.isPageFontLoaded(1));
 
-  if (useGlyphBasmallah && fontResolver) {
+  if (useGlyphBasmallah && fontResolver && glyphText) {
     return (
       <div
         dir="rtl"
@@ -106,20 +91,23 @@ export function MushafBasmallah({
             : undefined),
         }}
       >
-        {BASMALLAH_CODE_V2}
+        {glyphText}
       </div>
     );
   }
+
+  const unicodeText = config ? getBasmallahUnicodeText(config) : MUSHAF_BISMILLAH;
+  const unicodeFontFamily = config ? getBasmallahUnicodeFontFamily(config) : "UthmanicHafs";
 
   return (
     <p
       dir="rtl"
       lang="ar"
       aria-label={ariaLabel}
-      className={cn("w-full text-center font-[UthmanicHafs] leading-[1.9]", className)}
-      style={{ fontSize }}
+      className={cn("w-full text-center leading-[1.9]", className)}
+      style={{ fontFamily: unicodeFontFamily, fontSize }}
     >
-      {MUSHAF_BISMILLAH}
+      {unicodeText}
     </p>
   );
 }

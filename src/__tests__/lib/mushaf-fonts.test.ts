@@ -6,9 +6,13 @@ import {
   getMushafFontConfig,
   getWordDisplayText,
   getWordFontFamily,
+  getBasmallahGlyphText,
+  getBasmallahUnicodeText,
   joinMushafGlyphLine,
   MUSHAF_FONT_OPTIONS,
+  normalizeMushafFontId,
 } from "@/lib/mushaf-fonts";
+import { MUSHAF_BISMILLAH } from "@/components/quran/mushaf-layout";
 
 const mockWord: QcfWord = {
   id: 1,
@@ -35,10 +39,13 @@ describe("mushaf-fonts", () => {
       "qcf_v2",
       "qcf_v1",
       "qcf_tajweed_v4",
-      "uthmani",
-      "qpc_hafs",
       "indopak",
     ]);
+  });
+
+  it("migrates removed font ids to the default", () => {
+    expect(normalizeMushafFontId("uthmani")).toBe("qcf_v2");
+    expect(normalizeMushafFontId("qpc_hafs")).toBe("qcf_v2");
   });
 
   it("uses code_v2 glyphs when QCF V2 font is ready", () => {
@@ -49,11 +56,16 @@ describe("mushaf-fonts", () => {
   it("uses code_v1 glyphs when QCF V1 font is ready", () => {
     const config = getMushafFontConfig("qcf_v1");
     expect(getWordDisplayText(mockWord, config, true)).toBe("\uf001");
+    expect(getBasmallahGlyphText(config)).toBe("\uFB51\uFB52\uFB53\uFB54");
   });
 
   it("uses indopak unicode text when IndoPak font is selected", () => {
     const config = getMushafFontConfig("indopak");
     expect(getWordDisplayText(mockWord, config, true)).toBe("بِسْمِ");
+  });
+
+  it("uses Uthmani basmallah text for all unicode fonts", () => {
+    expect(getBasmallahUnicodeText(getMushafFontConfig("indopak"))).toBe(MUSHAF_BISMILLAH);
   });
 
   it("falls back to unicode text while glyph fonts load", () => {

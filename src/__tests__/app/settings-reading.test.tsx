@@ -34,6 +34,13 @@ describe("Reading settings", () => {
     expect(useReadingSettingsStore.getState().showTajweed).toBe(true);
   });
 
+  it("hides tajweed toggle when Tajweed Mushaf font is selected", () => {
+    useReadingSettingsStore.setState({ quranFontId: "qcf_tajweed_v4" });
+    render(<ReadingSettingsPage />);
+
+    expect(screen.queryByRole("switch", { name: /tajweed colors/i })).not.toBeInTheDocument();
+  });
+
   it("changes quran font", async () => {
     const user = userEvent.setup();
     render(<ReadingSettingsPage />);

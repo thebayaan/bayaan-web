@@ -35,7 +35,12 @@ describe("reading-settings-store", () => {
     useReadingSettingsStore.getState().setQuranFontId("indopak");
     expect(useReadingSettingsStore.getState().quranFontId).toBe("indopak");
   });
-  it("defaults to Uthmani", () => {
-    expect(useReadingSettingsStore.getState().quranFontId).toBe("uthmani");
+  it("clears tajweed coloring when selecting Tajweed Mushaf font", () => {
+    useReadingSettingsStore.setState({ showTajweed: true });
+    useReadingSettingsStore.getState().setQuranFontId("qcf_tajweed_v4");
+    expect(useReadingSettingsStore.getState().showTajweed).toBe(false);
+  });
+  it("defaults to King Fahd Complex V2", () => {
+    expect(useReadingSettingsStore.getState().quranFontId).toBe("qcf_v2");
   });
 });

@@ -1,6 +1,11 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { DEFAULT_MUSHAF_FONT_ID, type MushafFontId } from "@/lib/mushaf-fonts";
+import {
+  DEFAULT_MUSHAF_FONT_ID,
+  isBuiltinTajweedFont,
+  normalizeMushafFontId,
+  type MushafFontId,
+} from "@/lib/mushaf-fonts";
 
 export type ReaderViewMode = "reading" | "mushaf";
 
@@ -55,7 +60,11 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       lastReadSurahId: null,
       lastReadSurahAt: null,
       setFontSize: (size) => set({ fontSize: size }),
-      setQuranFontId: (id) => set({ quranFontId: id }),
+      setQuranFontId: (id) =>
+        set((s) => ({
+          quranFontId: id,
+          ...(isBuiltinTajweedFont(id) ? { showTajweed: false } : {}),
+        })),
       setLightTheme: (id) => set({ lightThemeId: id }),
       setDarkTheme: (id) => set({ darkThemeId: id }),
       setTranslationIds: (ids) => set({ translationIds: ids }),
@@ -71,6 +80,14 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
     {
       name: "bayaan-reading-settings",
       storage: createJSONStorage(() => localStorage),
+      version: 1,
+      migrate: (persistedState) => {
+        const state = persistedState as ReadingSettingsState;
+        return {
+          ...state,
+          quranFontId: normalizeMushafFontId(state.quranFontId),
+        };
+      },
     },
   ),
 );

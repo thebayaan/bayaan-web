@@ -1,6 +1,7 @@
 "use client";
 
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
+import { isBuiltinTajweedFont } from "@/lib/mushaf-fonts";
 import { useTranslationResources } from "@/hooks/use-translation-resources";
 import { AVAILABLE_TAFASEER } from "@/data/available-tafaseer";
 import {
@@ -29,7 +30,9 @@ export function ReadingSettingsSheet({ open, onOpenChange }: Props): React.JSX.E
   const showWordByWord = useReadingSettingsStore((s) => s.showWordByWord);
   const toggleWordByWord = useReadingSettingsStore((s) => s.toggleWordByWord);
   const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
+  const quranFontId = useReadingSettingsStore((s) => s.quranFontId);
   const toggleTajweed = useReadingSettingsStore((s) => s.toggleTajweed);
+  const showTajweedToggle = !isBuiltinTajweedFont(quranFontId);
   const { translations } = useTranslationResources();
 
   return (
@@ -110,12 +113,14 @@ export function ReadingSettingsSheet({ open, onOpenChange }: Props): React.JSX.E
               checked={showWordByWord}
               onChange={toggleWordByWord}
             />
-            <ToggleRow
-              label="Tajweed coloring"
-              description="Color-code recitation rules."
-              checked={showTajweed}
-              onChange={toggleTajweed}
-            />
+            {showTajweedToggle ? (
+              <ToggleRow
+                label="Tajweed coloring"
+                description="Color-code recitation rules."
+                checked={showTajweed}
+                onChange={toggleTajweed}
+              />
+            ) : null}
           </section>
         </div>
       </SheetContent>

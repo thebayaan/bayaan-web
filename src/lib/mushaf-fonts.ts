@@ -1,14 +1,13 @@
 import type { QcfWord } from "@/types/quran-api";
+import {
+  MUSHAF_BISMILLAH,
+  BASMALLAH_GLYPH_V1,
+  BASMALLAH_GLYPH_V2,
+} from "@/components/quran/mushaf-layout";
 import { getTajweedV4FontPalette, type TajweedPaletteTheme } from "@/lib/tajweed-v4-palettes";
 
 /** Quran.com-compatible mushaf / script options. */
-export type MushafFontId =
-  | "qcf_v2"
-  | "qcf_v1"
-  | "qcf_tajweed_v4"
-  | "uthmani"
-  | "qpc_hafs"
-  | "indopak";
+export type MushafFontId = "qcf_v2" | "qcf_v1" | "qcf_tajweed_v4" | "indopak";
 
 export type MushafFontRendering = "glyph-per-page" | "unicode";
 
@@ -21,7 +20,7 @@ export interface MushafFontConfig {
   /** QCF glyph field when rendering is glyph-per-page. */
   glyphField?: "code_v1" | "code_v2";
   /** Primary Unicode field for unicode fonts. */
-  unicodeField?: "text_uthmani" | "text_qpc_hafs" | "text_indopak";
+  unicodeField?: "text_indopak";
   /** CDN version segment for per-page QCF fonts (v1, v2, v4). */
   cdnVersion?: "v1" | "v2" | "v4";
   /** Suffix used in FontFace family names, e.g. p1-v2. */
@@ -63,7 +62,7 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
     cdnVersion: "v1",
     fontNameSuffix: "v1",
     useGlyphLineJoin: true,
-    basmallahMode: "unicode",
+    basmallahMode: "glyph",
     totalPages: 604,
   },
   {
@@ -77,32 +76,6 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
     fontNameSuffix: "v4",
     useGlyphLineJoin: true,
     basmallahMode: "glyph",
-    totalPages: 604,
-  },
-  {
-    id: "uthmani",
-    label: "Uthmani",
-    description: "Standard Uthmani Unicode script (default)",
-    mushafId: 4,
-    rendering: "unicode",
-    unicodeField: "text_uthmani",
-    staticFontFamily: "UthmanicHafs",
-    staticFontUrl: `${QURAN_FONT_CDN}/uthmanic_hafs/UthmanicHafs1Ver18.woff2`,
-    useGlyphLineJoin: false,
-    basmallahMode: "unicode",
-    totalPages: 604,
-  },
-  {
-    id: "qpc_hafs",
-    label: "QPC Hafs",
-    description: "King Fahd Complex Unicode script",
-    mushafId: 5,
-    rendering: "unicode",
-    unicodeField: "text_qpc_hafs",
-    staticFontFamily: "UthmanicHafs",
-    staticFontUrl: `${QURAN_FONT_CDN}/uthmanic_hafs/UthmanicHafs1Ver18.woff2`,
-    useGlyphLineJoin: false,
-    basmallahMode: "unicode",
     totalPages: 604,
   },
   {
@@ -120,7 +93,38 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
   },
 ];
 
-export const DEFAULT_MUSHAF_FONT_ID: MushafFontId = "uthmani";
+export const DEFAULT_MUSHAF_FONT_ID: MushafFontId = "qcf_v2";
+
+const REMOVED_MUSHAF_FONT_IDS = new Set(["uthmani", "qpc_hafs"]);
+
+export function normalizeMushafFontId(id: string): MushafFontId {
+  if (REMOVED_MUSHAF_FONT_IDS.has(id)) {
+    return DEFAULT_MUSHAF_FONT_ID;
+  }
+  if (MUSHAF_FONT_OPTIONS.some((option) => option.id === id)) {
+    return id as MushafFontId;
+  }
+  return DEFAULT_MUSHAF_FONT_ID;
+}
+
+export function isBuiltinTajweedFont(id: MushafFontId): boolean {
+  return id === "qcf_tajweed_v4";
+}
+
+export function getBasmallahGlyphText(config: MushafFontConfig): string | null {
+  if (config.basmallahMode !== "glyph") return null;
+  if (config.glyphField === "code_v1") return BASMALLAH_GLYPH_V1;
+  if (config.glyphField === "code_v2") return BASMALLAH_GLYPH_V2;
+  return null;
+}
+
+export function getBasmallahUnicodeText(_config?: MushafFontConfig): string {
+  return MUSHAF_BISMILLAH;
+}
+
+export function getBasmallahUnicodeFontFamily(_config?: MushafFontConfig): string {
+  return END_MARKER_FONT_FAMILY;
+}
 
 /** Shared word fields requested for all font modes (superset for cache reuse). */
 export const MUSHAF_WORD_FIELDS =
@@ -129,7 +133,7 @@ export const MUSHAF_WORD_FIELDS =
 export function getMushafFontConfig(id: MushafFontId): MushafFontConfig {
   const config = MUSHAF_FONT_OPTIONS.find((entry) => entry.id === id);
   if (!config) {
-    return MUSHAF_FONT_OPTIONS[0]!;
+    return getMushafFontConfig(DEFAULT_MUSHAF_FONT_ID);
   }
   return config;
 }
@@ -179,10 +183,7 @@ function getUnicodePrimary(word: QcfWord, field: MushafFontConfig["unicodeField"
   if (field === "text_indopak") {
     return word.text_indopak || getUnicodeFallback(word);
   }
-  if (field === "text_qpc_hafs") {
-    return word.text_qpc_hafs || word.qpc_uthmani_hafs || word.text_uthmani || "";
-  }
-  return word.text_uthmani || getUnicodeFallback(word);
+  return getUnicodeFallback(word);
 }
 
 export function getWordDisplayText(
