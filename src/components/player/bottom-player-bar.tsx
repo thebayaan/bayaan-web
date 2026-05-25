@@ -106,7 +106,7 @@ export function BottomPlayerBar() {
         {/* Track Info — Left. Title + artwork open the full player; the
           artist link jumps to the reciter page so it still works even
           when the rest of the row is acting as a big button. */}
-        <div className="flex min-w-0 shrink items-center gap-2 sm:w-[240px] sm:gap-3">
+        <div className="flex min-w-0 shrink items-center gap-2 sm:flex-1 sm:gap-3">
           <button
             onClick={() => setShowFullPlayer(true)}
             className="bg-muted hidden h-12 w-12 shrink-0 overflow-hidden rounded-lg sm:block"
@@ -122,21 +122,24 @@ export function BottomPlayerBar() {
               />
             )}
           </button>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
+            {reciterSlug ? (
+              <Link
+                href={`/reciter/${reciterSlug}`}
+                className="block w-full min-w-0 truncate text-sm font-medium hover:underline"
+              >
+                {currentTrack.artist}
+              </Link>
+            ) : (
+              <span className="block w-full min-w-0 truncate text-sm font-medium">
+                {currentTrack.artist}
+              </span>
+            )}
             <button
               onClick={() => setShowFullPlayer(true)}
-              className="block w-full min-w-0 truncate text-left text-sm font-medium hover:underline"
+              className="text-muted-foreground flex w-full min-w-0 items-center gap-1.5 text-left text-xs hover:underline"
             >
-              {currentTrack.title}
-            </button>
-            <div className="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs">
-              {reciterSlug ? (
-                <Link href={`/reciter/${reciterSlug}`} className="min-w-0 truncate hover:underline">
-                  {currentTrack.artist}
-                </Link>
-              ) : (
-                <span className="min-w-0 truncate">{currentTrack.artist}</span>
-              )}
+              <span className="shrink-0 truncate">{currentTrack.title}</span>
               {rewayahName ? (
                 <>
                   <span aria-hidden className="hidden shrink-0 opacity-50 sm:inline">
@@ -147,7 +150,7 @@ export function BottomPlayerBar() {
                   </span>
                 </>
               ) : null}
-            </div>
+            </button>
           </div>
           <HeartToggle
             target={{
@@ -186,7 +189,7 @@ export function BottomPlayerBar() {
         </div>
 
         {/* Volume + Queue Toggle — Right */}
-        <div className="hidden items-center justify-end gap-2 sm:flex sm:w-[200px]">
+        <div className="hidden items-center justify-end gap-2 sm:flex sm:flex-1">
           <button
             onClick={() => setShowQueue(!showQueue)}
             className="text-muted-foreground hover:text-foreground p-2 transition-colors"
