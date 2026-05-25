@@ -14,6 +14,8 @@ export interface ReadingSettingsState {
   showWordByWord: boolean;
   showTajweed: boolean;
   mushafPage: number;
+  /** Bumped on explicit mushaf jumps so MushafView remounts even on the same surah route. */
+  mushafJumpSeq: number;
   viewMode: ReaderViewMode;
   /**
    * Last surah the user opened in the reading view, plus the ISO
@@ -31,6 +33,7 @@ export interface ReadingSettingsState {
   toggleWordByWord: () => void;
   toggleTajweed: () => void;
   setMushafPage: (page: number) => void;
+  jumpToMushafPage: (page: number) => void;
   setViewMode: (mode: ReaderViewMode) => void;
   markSurahRead: (surahId: number) => void;
 }
@@ -47,6 +50,7 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       showWordByWord: false,
       showTajweed: false,
       mushafPage: 1,
+      mushafJumpSeq: 0,
       viewMode: "reading",
       lastReadSurahId: null,
       lastReadSurahAt: null,
@@ -59,6 +63,12 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       toggleWordByWord: () => set((s) => ({ showWordByWord: !s.showWordByWord })),
       toggleTajweed: () => set((s) => ({ showTajweed: !s.showTajweed })),
       setMushafPage: (page) => set({ mushafPage: page }),
+      jumpToMushafPage: (page) =>
+        set((s) => ({
+          mushafPage: page,
+          viewMode: "mushaf",
+          mushafJumpSeq: s.mushafJumpSeq + 1,
+        })),
       setViewMode: (mode) => set({ viewMode: mode }),
       markSurahRead: (surahId) =>
         set({ lastReadSurahId: surahId, lastReadSurahAt: new Date().toISOString() }),

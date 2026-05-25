@@ -8,7 +8,7 @@ import { useReciters } from "@/hooks/use-reciters";
 import { getCategories } from "@/data/adhkar-data";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
-import { parseMushafSearchQuery } from "@/lib/mushaf-navigation";
+import { parseMushafSearchQuery, navigateToMushafPage } from "@/lib/mushaf-navigation";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 type CommandKind = "surah" | "reciter" | "adhkar" | "verse" | "page" | "juz" | "mushaf-verse";
@@ -20,6 +20,7 @@ interface Command {
   subtitle?: string;
   href: string;
   keywords: string;
+  mushafPage?: number;
 }
 
 const VERSE_REFERENCE = /^(\d{1,3})\s*:\s*(\d{1,3})$/;
@@ -122,6 +123,7 @@ export function CommandPalette() {
       subtitle: result.subtitle,
       href: result.href,
       keywords: result.title,
+      mushafPage: result.type === "page" || result.type === "juz" ? result.page : undefined,
     }));
 
     const fuseResults = fuse
@@ -155,7 +157,11 @@ export function CommandPalette() {
   function selectAt(index: number): void {
     const command = results[index];
     if (!command) return;
-    router.push(command.href);
+    if (command.mushafPage != null) {
+      navigateToMushafPage(command.mushafPage, router);
+    } else {
+      router.push(command.href);
+    }
     setOpen(false);
   }
 

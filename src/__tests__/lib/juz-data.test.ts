@@ -6,7 +6,7 @@ import {
   getJuzName,
   JUZ_START_PAGES,
 } from "@/data/juz-data";
-import { parseMushafSearchQuery } from "@/lib/mushaf-navigation";
+import { getMushafReaderPath, parseMushafSearchQuery } from "@/lib/mushaf-navigation";
 
 describe("juz-data", () => {
   it("maps pages to juz and hizb", () => {
@@ -28,8 +28,14 @@ describe("juz-data", () => {
 
 describe("parseMushafSearchQuery", () => {
   it("parses page and juz queries", () => {
-    expect(parseMushafSearchQuery("page 42")[0]?.href).toBe("/mushaf/42");
-    expect(parseMushafSearchQuery("juz 5")[0]?.href).toBe("/mushaf/82");
+    expect(parseMushafSearchQuery("page 42")[0]?.href).toBe("/quran/2");
+    expect(parseMushafSearchQuery("juz 5")[0]?.href).toBe("/quran/4");
+  });
+
+  it("builds reader paths for mushaf pages", () => {
+    expect(getMushafReaderPath(1)).toBe("/quran/1");
+    expect(getMushafReaderPath(42)).toBe("/quran/2");
+    expect(getMushafReaderPath(582)).toBe("/quran/78");
   });
 
   it("parses verse references", () => {

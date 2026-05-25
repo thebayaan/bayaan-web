@@ -27,7 +27,7 @@ describe("PagePicker", () => {
     expect(pushMock).not.toHaveBeenCalled();
   });
 
-  it("navigates to standalone mushaf route and updates settings", async () => {
+  it("navigates to the surah reader for the target page and updates settings", async () => {
     const user = userEvent.setup();
     const onOpenChange = vi.fn();
     render(<PagePicker open onOpenChange={onOpenChange} />);
@@ -37,13 +37,13 @@ describe("PagePicker", () => {
 
     expect(useReadingSettingsStore.getState().mushafPage).toBe(42);
     expect(useReadingSettingsStore.getState().viewMode).toBe("mushaf");
-    expect(pushMock).toHaveBeenCalledWith("/mushaf/42");
+    expect(pushMock).toHaveBeenCalledWith("/quran/2");
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it("navigates within surah reader when surahId is provided", async () => {
+  it("navigates to the surah reader that contains the target page", async () => {
     const user = userEvent.setup();
-    render(<PagePicker open onOpenChange={vi.fn()} surahId={2} />);
+    render(<PagePicker open onOpenChange={vi.fn()} />);
 
     await user.type(screen.getByLabelText("Mushaf page number"), "17");
     await user.click(screen.getByRole("button", { name: "Go to page" }));

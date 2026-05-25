@@ -10,10 +10,12 @@ interface MushafPageClientProps {
 
 export function MushafPageClient({ initialPage }: MushafPageClientProps) {
   const setMushafPage = useReadingSettingsStore((s) => s.setMushafPage);
+  const setViewMode = useReadingSettingsStore((s) => s.setViewMode);
 
   useEffect(() => {
     setMushafPage(initialPage);
-  }, [initialPage, setMushafPage]);
+    setViewMode("mushaf");
+  }, [initialPage, setMushafPage, setViewMode]);
 
-  return <MushafView />;
+  return <MushafView key={initialPage} entryPage={initialPage} />;
 }

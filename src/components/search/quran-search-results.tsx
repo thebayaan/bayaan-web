@@ -2,7 +2,12 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { parseMushafSearchQuery, type MushafSearchResult } from "@/lib/mushaf-navigation";
+import { useRouter } from "next/navigation";
+import {
+  navigateToMushafPage,
+  parseMushafSearchQuery,
+  type MushafSearchResult,
+} from "@/lib/mushaf-navigation";
 import { useQuranTextSearch } from "@/hooks/use-quran-text-search";
 
 interface QuranSearchResultsProps {
@@ -64,9 +69,18 @@ export function QuranSearchResults({ query }: QuranSearchResultsProps) {
 }
 
 function MushafSearchResultRow({ result }: { result: MushafSearchResult }) {
+  const router = useRouter();
+
+  function handleClick(event: React.MouseEvent<HTMLAnchorElement>): void {
+    if (result.type !== "page" && result.type !== "juz") return;
+    event.preventDefault();
+    navigateToMushafPage(result.page, router);
+  }
+
   return (
-    <Link
+    <a
       href={result.href}
+      onClick={handleClick}
       className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
     >
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--text-alpha-06)] text-xs font-semibold uppercase">
@@ -82,6 +96,6 @@ function MushafSearchResultRow({ result }: { result: MushafSearchResult }) {
         <p className="text-sm font-medium">{result.title}</p>
         <p className="text-muted-foreground text-xs">{result.subtitle}</p>
       </div>
-    </Link>
+    </a>
   );
 }

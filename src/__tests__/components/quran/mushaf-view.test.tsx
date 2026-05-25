@@ -92,9 +92,26 @@ describe("MushafView", () => {
 
   it("ignores surahId when none is provided (legacy /mushaf/{page} flow)", () => {
     useReadingSettingsStore.setState({ mushafPage: 42 });
-    render(<MushafView />);
+    render(<MushafView entryPage={42} />);
     expect(screen.getByLabelText("Mushaf page 42")).toBeInTheDocument();
     expect(useReadingSettingsStore.getState().lastReadSurahId).toBeNull();
+  });
+
+  it("opens on entryPage even when the persisted store still says page 1", () => {
+    useReadingSettingsStore.setState({ mushafPage: 1 });
+    render(<MushafView entryPage={22} />);
+    expect(screen.getByLabelText("Mushaf page 22")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Mushaf page 1")).not.toBeInTheDocument();
+  });
+
+  it("jumps within the current surah when mushafPage changes in scoped mode", () => {
+    useReadingSettingsStore.setState({ mushafPage: 30, mushafJumpSeq: 0 });
+    const { rerender } = render(<MushafView surahId={2} />);
+    expect(screen.getByLabelText("Mushaf page 30")).toBeInTheDocument();
+
+    useReadingSettingsStore.getState().jumpToMushafPage(35);
+    rerender(<MushafView key="jump-35" surahId={2} />);
+    expect(screen.getByLabelText("Mushaf page 35")).toBeInTheDocument();
   });
 
   it("does not preload pages past the surah's last page when scoped", () => {

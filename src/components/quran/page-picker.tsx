@@ -2,20 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useReadingSettingsStore } from "@/stores/reading-settings-store";
+import { navigateToMushafPage } from "@/lib/mushaf-navigation";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface PagePickerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** When set, navigate within surah reader instead of standalone mushaf route. */
-  surahId?: number;
 }
 
-export function PagePicker({ open, onOpenChange, surahId }: PagePickerProps) {
+export function PagePicker({ open, onOpenChange }: PagePickerProps) {
   const router = useRouter();
-  const setMushafPage = useReadingSettingsStore((s) => s.setMushafPage);
-  const setViewMode = useReadingSettingsStore((s) => s.setViewMode);
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -27,17 +23,10 @@ export function PagePicker({ open, onOpenChange, surahId }: PagePickerProps) {
       return;
     }
 
-    setMushafPage(page);
-    setViewMode("mushaf");
+    navigateToMushafPage(page, router);
     onOpenChange(false);
     setValue("");
     setError(null);
-
-    if (surahId) {
-      router.push(`/quran/${surahId}`);
-      return;
-    }
-    router.push(`/mushaf/${page}`);
   }
 
   return (

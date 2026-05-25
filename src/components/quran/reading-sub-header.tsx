@@ -99,7 +99,7 @@ export function ReadingSubHeader({ surah }: Props): React.JSX.Element {
       </div>
 
       <ReadingSettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} />
-      <PagePicker open={pagePickerOpen} onOpenChange={setPagePickerOpen} surahId={surah.id} />
+      <PagePicker open={pagePickerOpen} onOpenChange={setPagePickerOpen} />
     </>
   );
 }

@@ -38,7 +38,7 @@ describe("QuranSearchResults", () => {
     expect(screen.getByText("Mushaf navigation")).toBeInTheDocument();
     expect(screen.getByText("Page 50")).toBeInTheDocument();
     const link = screen.getByRole("link", { name: /page 50/i });
-    expect(link).toHaveAttribute("href", "/mushaf/50");
+    expect(link).toHaveAttribute("href", "/quran/3");
   });
 
   it("renders mushaf navigation rows for verse references", () => {

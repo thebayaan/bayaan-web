@@ -1,18 +1,27 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { JuzIndexEntry } from "@/data/juz-data";
+import { getMushafReaderPath, navigateToMushafPage } from "@/lib/mushaf-navigation";
 
 interface JuzIndexCardProps {
   entry: JuzIndexEntry;
 }
 
 export function JuzIndexCard({ entry }: JuzIndexCardProps) {
+  const router = useRouter();
   const [surahId, ayah] = entry.startVerseKey.split(":");
+  const href = getMushafReaderPath(entry.startPage);
+
+  function handleClick(event: React.MouseEvent<HTMLAnchorElement>): void {
+    event.preventDefault();
+    navigateToMushafPage(entry.startPage, router);
+  }
 
   return (
-    <Link
-      href={`/mushaf/${entry.startPage}`}
+    <a
+      href={href}
+      onClick={handleClick}
       className="border-border bg-surface hover:bg-surface-raised duration-fast ease-standard group flex items-start gap-4 rounded-xl border p-4 transition-colors"
     >
       <div className="bg-brand-light text-brand-main flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-sm font-bold tabular-nums">
@@ -30,6 +39,6 @@ export function JuzIndexCard({ entry }: JuzIndexCardProps) {
       <span className="text-muted-foreground text-xs tabular-nums">
         {surahId}:{ayah}
       </span>
-    </Link>
+    </a>
   );
 }
