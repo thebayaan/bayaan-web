@@ -1,4 +1,5 @@
 import rawData from "./adhkar.json";
+import { adhkarAudioUrl } from "@/lib/adhkar-audio";
 
 interface RawCategory {
   id: string;
@@ -46,7 +47,9 @@ export interface Dhikr {
   instruction: string;
   repeatCount: number;
   orderIndex: number;
-  audioUrl: string;
+  audioFile: string;
+  /** Legacy hisnmuslim.com URL from seed data; prefer {@link getDhikrPlaybackUrl}. */
+  audioUrl: string | null;
 }
 
 function toCategory(raw: RawCategory): AdhkarCategory {
@@ -69,7 +72,8 @@ function toDhikr(raw: RawDhikr): Dhikr {
     instruction: raw.instruction,
     repeatCount: raw.repeat_count || 1,
     orderIndex: raw.order_index,
-    audioUrl: raw.audio_url,
+    audioFile: raw.audio_file,
+    audioUrl: raw.audio_url || null,
   };
 }
 
@@ -99,6 +103,11 @@ export function getDhikrByCategory(categoryId: string): Dhikr[] {
 
 export function getDhikrById(id: string): Dhikr | undefined {
   return adhkarById.get(id);
+}
+
+/** CDN playback URL for a dhikr clip (matches the mobile app's bundled audio). */
+export function getDhikrPlaybackUrl(dhikr: Pick<Dhikr, "audioFile">): string | null {
+  return adhkarAudioUrl(dhikr.audioFile);
 }
 
 const TAG_COLORS: Record<string, string> = {

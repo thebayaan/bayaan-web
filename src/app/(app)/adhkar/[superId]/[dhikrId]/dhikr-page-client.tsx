@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getDhikrById } from "@/data/adhkar-data";
+import { getDhikrById, getDhikrPlaybackUrl } from "@/data/adhkar-data";
 import { ALL_ADHKAR_SUPER, resolveAdhkarSuperSlug } from "@/data/adhkar-super-categories";
+import { AdhkarAudioControls } from "@/components/adhkar/adhkar-audio-controls";
 import { TasbeehCounter } from "@/components/adhkar/tasbeeh-counter";
 
 interface DhikrPageClientProps {
@@ -23,6 +24,8 @@ export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
     ? superCategory.categoryIds.includes(dhikr.categoryId)
     : dhikr.categoryId === superId;
   if (!matches) notFound();
+
+  const playbackUrl = getDhikrPlaybackUrl(dhikr);
 
   return (
     <div className="flex min-h-[70vh] flex-col items-center p-6">
@@ -48,6 +51,8 @@ export function DhikrPageClient({ superId, dhikrId }: DhikrPageClientProps) {
         <p className="text-muted-foreground mb-8 max-w-xl text-center text-sm">
           {dhikr.translation}
         </p>
+
+        {playbackUrl ? <AdhkarAudioControls audioUrl={playbackUrl} /> : null}
 
         <TasbeehCounter dhikrId={dhikr.id} target={dhikr.repeatCount} />
 
