@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from "react";
 import type { QcfVerse } from "@/types/quran-api";
-import type { Reciter, Rewayat } from "@/types/reciter";
+import type { ResolvedReciter } from "@/components/quran/reciter-picker-dialog";
 import { useReciters } from "@/hooks/use-reciters";
 import { useReaderPlayerStore } from "@/stores/reader-player-store";
 import { usePlayerStore } from "@/stores/player-store";
@@ -15,11 +15,6 @@ import {
   rewayatHasTimestamps,
 } from "@/lib/timestamp-fetch";
 import type { AyahTimestamp } from "@/types/timestamps";
-
-interface ResolvedReaderReciter {
-  reciter: Reciter;
-  rewayat: Rewayat;
-}
 
 interface AudioUrlResponse {
   data: { url: string };
@@ -45,39 +40,44 @@ export function usePlayFromAyah(surahId: number, surahName: string) {
   const pause = usePlayerStore((s) => s.pause);
   const stopWordAudio = useWordAudioStore((s) => s.stop);
 
-  const resolved = useMemo<ResolvedReaderReciter | null>(() => {
+  const availableReciters = useMemo<ResolvedReciter[]>(() => {
+    return reciters
+      .map((reciter) => {
+        const rewayat = reciter.rewayat.find(
+          (entry) => entry.surah_list.includes(surahId) && rewayatHasTimestamps(entry, surahId),
+        );
+        return rewayat ? { reciter, rewayat } : null;
+      })
+      .filter((entry): entry is ResolvedReciter => entry !== null);
+  }, [reciters, surahId]);
+
+  const resolved = useMemo<ResolvedReciter | null>(() => {
     if (!lastReciterId) return null;
 
-    const reciter = reciters.find((entry) => entry.id === lastReciterId);
-    if (!reciter) return null;
-
-    const rewayat =
-      reciter.rewayat.find(
+    return (
+      availableReciters.find(
         (entry) =>
-          entry.surah_list.includes(surahId) &&
-          (lastRewayatId === null || entry.id === lastRewayatId),
-      ) ?? reciter.rewayat.find((entry) => entry.surah_list.includes(surahId));
+          entry.reciter.id === lastReciterId &&
+          (lastRewayatId === null || entry.rewayat.id === lastRewayatId),
+      ) ?? null
+    );
+  }, [availableReciters, lastReciterId, lastRewayatId]);
 
-    return rewayat ? { reciter, rewayat } : null;
-  }, [reciters, lastReciterId, lastRewayatId, surahId]);
-
-  const canPlayFromAyah = useMemo(() => {
-    if (!resolved) return false;
-    return rewayatHasTimestamps(resolved.rewayat, surahId);
-  }, [resolved, surahId]);
+  const canPlayFromAyah = availableReciters.length > 0;
 
   const playFromAyah = useCallback(
-    async (verse: QcfVerse): Promise<void> => {
-      if (!resolved) {
-        throw new Error("Choose a reciter from the header player first.");
+    async (verse: QcfVerse, choice?: ResolvedReciter): Promise<void> => {
+      const target = choice ?? resolved;
+      if (!target) {
+        throw new Error("Choose a reciter first.");
       }
-      if (!rewayatHasTimestamps(resolved.rewayat, surahId)) {
+      if (!rewayatHasTimestamps(target.rewayat, surahId)) {
         throw new Error("Timestamps are not available for this reciter.");
       }
 
       stopWordAudio();
 
-      const timestamps = await fetchAyahTimestamps(resolved.rewayat.id, surahId);
+      const timestamps = await fetchAyahTimestamps(target.rewayat.id, surahId);
       const ayahTimestamp = findAyahTimestamp(timestamps, surahId, verse.verse_number);
 
       if (!ayahTimestamp) {
@@ -87,19 +87,19 @@ export function usePlayFromAyah(surahId: number, surahName: string) {
       let audioUrl: string;
       try {
         const audioResponse = await fetchBayaan<AudioUrlResponse>(
-          `audio-url?rewayat_id=${resolved.rewayat.id}&surah=${surahId}`,
+          `audio-url?rewayat_id=${target.rewayat.id}&surah=${surahId}`,
         );
         audioUrl = audioResponse.data.url;
       } catch {
-        audioUrl = createTrack(resolved.reciter, resolved.rewayat, surahId, surahName).url;
+        audioUrl = createTrack(target.reciter, target.rewayat, surahId, surahName).url;
       }
 
       const track = {
-        ...createTrack(resolved.reciter, resolved.rewayat, surahId, surahName),
+        ...createTrack(target.reciter, target.rewayat, surahId, surahName),
         url: audioUrl,
       };
 
-      setLastReciter(resolved.reciter.id, resolved.rewayat.id);
+      setLastReciter(target.reciter.id, target.rewayat.id);
       await updateQueue([track]);
       pause();
       seekTo(ayahTimestamp.timestamp_from);
@@ -111,6 +111,7 @@ export function usePlayFromAyah(surahId: number, surahName: string) {
   return {
     playFromAyah,
     canPlayFromAyah,
+    availableReciters,
     resolvedReciter: resolved,
   };
 }
