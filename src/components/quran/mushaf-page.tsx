@@ -3,6 +3,7 @@ import { Fragment, useMemo } from "react";
 import type { QcfVerse, QcfWord } from "@/types/quran-api";
 import type { MushafFontResolver } from "@/lib/mushaf-fonts";
 import {
+  getMushafFontScale,
   getMushafLineAlignment,
   getMushafPageSurah,
   isMushafFramedPage,
@@ -10,6 +11,7 @@ import {
   surahHasInlineBasmallah,
 } from "./mushaf-layout";
 import { MushafFramedPage } from "./mushaf-framed-page";
+import { MushafPageScaler } from "./mushaf-page-scaler";
 import { MushafBasmallah, MushafSurahHeader } from "./mushaf-surah-header";
 import { VerseText } from "./verse-text";
 import { cn } from "@/lib/utils";
@@ -64,6 +66,11 @@ export function MushafPage({
   const isFramed = isMushafFramedPage(pageNumber);
   const surahNumber = getMushafPageSurah(pageNumber);
   const lineAlignment = getMushafLineAlignment(pageNumber);
+  const { scale, renderFontSizeRem } = getMushafFontScale(
+    parseFloat(fontSize),
+    fontResolver.config.rendering,
+  );
+  const renderFontSize = `${renderFontSizeRem}rem`;
 
   // Map each line-number to the surah whose first ayah starts on it.
   // A line is a "surah start" when any word on it is `verse_number=1`
@@ -111,7 +118,7 @@ export function MushafPage({
         mushafMode
         lineAlignment={lineAlignment}
         selectable
-        fontSize={fontSize}
+        fontSize={renderFontSize}
         className="w-full"
         playbackActiveVerseKey={playbackActiveVerseKey}
       />
@@ -121,7 +128,7 @@ export function MushafPage({
       <Fragment key={`line-${lineNumber}`}>
         <MushafSurahHeader surahNumber={surahStart} />
         {surahHasInlineBasmallah(surahStart) ? (
-          <MushafBasmallah fontSize={fontSize} fontResolver={fontResolver} />
+          <MushafBasmallah fontSize={renderFontSize} fontResolver={fontResolver} />
         ) : null}
         {verseText}
       </Fragment>
@@ -130,21 +137,23 @@ export function MushafPage({
 
   return (
     <article aria-label={`Mushaf page ${pageNumber}`}>
-      {isFramed && surahNumber ? (
-        <MushafFramedPage
-          pageNumber={pageNumber}
-          surahNumber={surahNumber}
-          fontResolver={fontResolver}
-          fontSize={fontSize}
-        >
-          {lineElements}
-        </MushafFramedPage>
-      ) : (
-        <div className={cn(`${MUSHAF_PAGE_CLASS} flex min-h-[min(85vh,960px)] flex-col py-10`)}>
-          <div className="flex flex-1 flex-col justify-center gap-0.5">{lineElements}</div>
-        </div>
-      )}
-      <p className="text-muted-foreground mt-4 text-center text-sm tabular-nums">{pageNumber}</p>
+      <MushafPageScaler scale={scale}>
+        {isFramed && surahNumber ? (
+          <MushafFramedPage
+            pageNumber={pageNumber}
+            surahNumber={surahNumber}
+            fontResolver={fontResolver}
+            fontSize={renderFontSize}
+          >
+            {lineElements}
+          </MushafFramedPage>
+        ) : (
+          <div className={cn(`${MUSHAF_PAGE_CLASS} flex min-h-[min(85vh,960px)] flex-col py-10`)}>
+            <div className="flex flex-1 flex-col justify-center gap-0.5">{lineElements}</div>
+          </div>
+        )}
+        <p className="text-muted-foreground mt-4 text-center text-sm tabular-nums">{pageNumber}</p>
+      </MushafPageScaler>
     </article>
   );
 }
