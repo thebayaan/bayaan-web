@@ -135,6 +135,12 @@ export function MushafPage({
     );
   });
 
+  const pageWidthScale = fontResolver.config.mushafPageWidthScale;
+  const pageClass = pageWidthScale ? "mx-auto w-full" : MUSHAF_PAGE_CLASS;
+  const pageStyle = pageWidthScale
+    ? { maxWidth: `${pageWidthScale * parseFloat(fontSize)}rem` }
+    : undefined;
+
   return (
     <article aria-label={`Mushaf page ${pageNumber}`}>
       <MushafPageScaler scale={scale}>
@@ -148,7 +154,10 @@ export function MushafPage({
             {lineElements}
           </MushafFramedPage>
         ) : (
-          <div className={cn(`${MUSHAF_PAGE_CLASS} flex min-h-[min(85vh,960px)] flex-col py-10`)}>
+          <div
+            className={cn(`${pageClass} flex min-h-[min(85vh,960px)] flex-col py-10`)}
+            style={pageStyle}
+          >
             <div className="flex flex-1 flex-col justify-center gap-0.5">{lineElements}</div>
           </div>
         )}
