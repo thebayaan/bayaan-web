@@ -22,12 +22,8 @@ export function useMushafFontResolver(pageNumbers: number[]) {
   const loader = useMushafFont(pageNumbers, quranFontId, tajweedTheme);
 
   return useMemo(
-    () =>
-      createMushafFontResolver(config, loader, {
-        fontPalette:
-          quranFontId === "qcf_tajweed_v4" ? `--mushaf-tajweed-${tajweedTheme}` : undefined,
-      }),
-    [config, loader, quranFontId, tajweedTheme],
+    () => createMushafFontResolver(config, loader, { tajweedTheme }),
+    [config, loader, tajweedTheme],
   );
 }
 

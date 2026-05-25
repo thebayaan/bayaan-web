@@ -101,7 +101,9 @@ export function MushafBasmallah({
         style={{
           fontFamily: fontResolver.getFontFamily(1),
           fontSize,
-          ...(fontResolver.fontPalette ? { fontPalette: fontResolver.fontPalette } : undefined),
+          ...(fontResolver.getPageFontPalette?.(1)
+            ? { fontPalette: fontResolver.getPageFontPalette(1) }
+            : undefined),
         }}
       >
         {BASMALLAH_CODE_V2}

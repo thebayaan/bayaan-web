@@ -102,6 +102,7 @@ function MushafLine({
     sortedWords.some((word) => word.verse_key === playbackActiveVerseKey);
 
   const useJoinedLine = fontResolver.useGlyphLineJoin && isFontLoaded;
+  const lineFontPalette = fontResolver.getPageFontPalette?.(pageNum);
   const isCenter = lineAlignment === "center";
   const lineClassName = cn(
     "w-full whitespace-nowrap transition-colors",
@@ -134,7 +135,7 @@ function MushafLine({
         style={{
           fontFamily,
           fontSize,
-          ...(fontResolver.fontPalette ? { fontPalette: fontResolver.fontPalette } : undefined),
+          ...(lineFontPalette ? { fontPalette: lineFontPalette } : undefined),
           ...(isCenter
             ? null
             : {

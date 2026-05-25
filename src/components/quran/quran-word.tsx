@@ -88,6 +88,7 @@ export function QuranWord({
   const hasPopover = Boolean(word.translation?.text || word.transliteration?.text);
   const showHoverPopover = showWordByWord && hasPopover && !isWordActive;
   const showTapPopover = isWordActive && hasPopover;
+  const fontPalette = fontResolver.getPageFontPalette?.(pageNum);
 
   return (
     <span
@@ -105,9 +106,7 @@ export function QuranWord({
         ...(isFontLoaded && !useTajweedRendering
           ? {
               fontFamily: isEndMarker ? END_MARKER_FONT_FAMILY : fontFamily,
-              ...(fontResolver.fontPalette && !isEndMarker
-                ? { fontPalette: fontResolver.fontPalette }
-                : undefined),
+              ...(fontPalette && !isEndMarker ? { fontPalette } : undefined),
             }
           : undefined),
         ...(highlight

@@ -8,8 +8,9 @@ import {
   getPageFontName,
   resolveTajweedTheme,
 } from "@/lib/mushaf-fonts";
+import { ensureTajweedV4FontPalettes } from "@/lib/tajweed-v4-palettes";
 
-/** Module-level cache keyed by `${fontId}:${page}` or `${fontId}:static`. */
+/** Module-level cache keyed by `${fontId}:${suffix}`. */
 const loadedFontKeys = new Set<string>();
 
 /** Exposed only for test teardown — do not call in production code. */
@@ -19,6 +20,17 @@ export function _clearLoadedFontsForTesting(): void {
 
 function cacheKey(fontId: MushafFontId, suffix: string): string {
   return `${fontId}:${suffix}`;
+}
+
+function pageCacheSuffix(
+  config: ReturnType<typeof getMushafFontConfig>,
+  pageNum: number,
+  theme: "light" | "dark" | "sepia",
+): string {
+  if (config.cdnVersion === "v4") {
+    return `${theme}:${pageNum}`;
+  }
+  return String(pageNum);
 }
 
 export function useMushafFont(
@@ -32,16 +44,7 @@ export function useMushafFont(
   loadedPages: Set<number>;
 } {
   const config = getMushafFontConfig(fontId);
-  const [loadedPages, setLoadedPages] = useState<Set<number>>(() => {
-    if (config.rendering !== "glyph-per-page") return new Set();
-    const initial = new Set<number>();
-    pageNumbers.forEach((page) => {
-      if (loadedFontKeys.has(cacheKey(fontId, String(page)))) {
-        initial.add(page);
-      }
-    });
-    return initial;
-  });
+  const [loadedPages, setLoadedPages] = useState<Set<number>>(() => new Set());
   const [isStaticFontLoaded, setIsStaticFontLoaded] = useState(() =>
     config.rendering === "unicode" ? loadedFontKeys.has(cacheKey(fontId, "static")) : true,
   );
@@ -79,16 +82,26 @@ export function useMushafFont(
     }
 
     const toLoad = pageNumbers.filter((pageNum) => {
-      const key = cacheKey(fontId, String(pageNum));
+      const key = cacheKey(fontId, pageCacheSuffix(config, pageNum, theme));
       return !loadedFontKeys.has(key) && !loadingRef.current.has(key);
     });
 
-    if (toLoad.length === 0) return;
+    if (toLoad.length === 0) {
+      const readyPages = pageNumbers.filter((pageNum) =>
+        loadedFontKeys.has(cacheKey(fontId, pageCacheSuffix(config, pageNum, theme))),
+      );
+      setLoadedPages(new Set(readyPages));
+      return;
+    }
 
     toLoad.forEach((pageNum) => {
-      const key = cacheKey(fontId, String(pageNum));
+      const suffix = pageCacheSuffix(config, pageNum, theme);
+      const key = cacheKey(fontId, suffix);
       loadingRef.current.add(key);
       const fontName = getPageFontName(config, pageNum);
+      if (config.cdnVersion === "v4") {
+        ensureTajweedV4FontPalettes(fontName);
+      }
       const fontUrl = getPageFontCdnUrl(config, pageNum, theme);
       const fontFace = new FontFace(fontName, `url('${fontUrl}') format('woff2')`);
       document.fonts.add(fontFace);
@@ -110,9 +123,9 @@ export function useMushafFont(
   const isPageFontLoaded = useCallback(
     (pageNum: number) => {
       if (config.rendering === "unicode") return isStaticFontLoaded;
-      return loadedFontKeys.has(cacheKey(fontId, String(pageNum)));
+      return loadedFontKeys.has(cacheKey(fontId, pageCacheSuffix(config, pageNum, theme)));
     },
-    [config.rendering, fontId, isStaticFontLoaded],
+    [config, fontId, isStaticFontLoaded, theme],
   );
 
   const getFontFamily = useCallback(

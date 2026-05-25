@@ -1,4 +1,5 @@
 import type { QcfWord } from "@/types/quran-api";
+import { getTajweedV4FontPalette, type TajweedPaletteTheme } from "@/lib/tajweed-v4-palettes";
 
 /** Quran.com-compatible mushaf / script options. */
 export type MushafFontId =
@@ -245,8 +246,8 @@ export interface MushafFontResolver extends MushafFontLoader {
   config: MushafFontConfig;
   getWordText: (word: QcfWord) => string | null;
   getWordFontFamily: (word: QcfWord) => string;
+  getPageFontPalette?: (pageNum: number) => string | undefined;
   useGlyphLineJoin: boolean;
-  fontPalette?: string;
 }
 
 /** @deprecated Use MushafFontResolver */
@@ -255,7 +256,7 @@ export type QcfFontResolver = Pick<MushafFontResolver, "isPageFontLoaded" | "get
 export function createMushafFontResolver(
   config: MushafFontConfig,
   loader: MushafFontLoader,
-  options?: { fontPalette?: string },
+  options?: { tajweedTheme?: TajweedPaletteTheme },
 ): MushafFontResolver {
   const isReady = (pageNum: number) =>
     config.rendering === "unicode" ? loader.isStaticFontLoaded : loader.isPageFontLoaded(pageNum);
@@ -269,9 +270,15 @@ export function createMushafFontResolver(
         : loader.getFontFamily(pageNum),
     isStaticFontLoaded: loader.isStaticFontLoaded,
     useGlyphLineJoin: config.useGlyphLineJoin,
-    fontPalette: options?.fontPalette,
     getWordText: (word) => getWordDisplayText(word, config, isReady(word.page_number)),
     getWordFontFamily: (word) => getWordFontFamily(word, config, loader),
+    getPageFontPalette:
+      config.id === "qcf_tajweed_v4" && options?.tajweedTheme
+        ? (pageNum) => {
+            const fontFamily = getPageFontName(config, pageNum);
+            return getTajweedV4FontPalette(fontFamily, options.tajweedTheme!);
+          }
+        : undefined,
   };
 }
 
