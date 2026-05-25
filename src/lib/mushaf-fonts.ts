@@ -110,7 +110,7 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
     mushafWordSeparator: " ",
     basmallahMode: "unicode",
     totalPages: 604,
-    mushafPageWidthScale: 18,
+    mushafPageWidthScale: 20,
   },
 ];
 

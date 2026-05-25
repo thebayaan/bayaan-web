@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import type { QcfWord } from "@/types/quran-api";
 import { QuranWord } from "./quran-word";
 import { MushafBasmallah } from "./mushaf-surah-header";
@@ -84,10 +84,33 @@ function MushafLine({
   const useFlexCenter = fontResolver.mushafLineCenter;
   const useTextCenter = lineAlignment === "center" && !useFlexCenter;
   const useJustifiedLine = fontResolver.mushafLineJustify && lineAlignment !== "center";
+  const useCssJustify = useJustifiedLine && fontResolver.useGlyphLineJoin;
+  const useWordSpacingJustify = useJustifiedLine && !fontResolver.useGlyphLineJoin;
   const lineText = joinMushafLineText(sortedWords, fontResolver.config, (word) =>
     fontResolver.getWordText(word),
   );
   const lineFontFamily = isFontLoaded ? fontFamily : END_MARKER_FONT_FAMILY;
+
+  useLayoutEffect(() => {
+    const el = lineRef.current;
+    if (!useWordSpacingJustify || !el) return;
+
+    el.style.wordSpacing = "normal";
+    el.style.width = "fit-content";
+    const naturalWidth = el.offsetWidth;
+    el.style.width = "";
+    const containerWidth = el.offsetWidth;
+
+    if (naturalWidth >= containerWidth || containerWidth <= 0) {
+      el.style.wordSpacing = "";
+      return;
+    }
+
+    const wordCount = lineText.split(/\s+/).filter(Boolean).length;
+    const gaps = Math.max(wordCount - 1, 1);
+    const extraPerGap = (containerWidth - naturalWidth) / gaps;
+    el.style.wordSpacing = extraPerGap <= 10 ? `${extraPerGap}px` : "";
+  }, [useWordSpacingJustify, lineText, fontSize]);
 
   const lineNode = (
     <div
@@ -120,7 +143,7 @@ function MushafLine({
         fontFamily: lineFontFamily,
         fontSize,
         ...(lineFontPalette ? { fontPalette: lineFontPalette } : undefined),
-        ...(useJustifiedLine
+        ...(useCssJustify
           ? {
               textAlign: "justify",
               textAlignLast: "justify",
