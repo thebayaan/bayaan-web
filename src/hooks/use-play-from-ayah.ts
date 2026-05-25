@@ -9,7 +9,7 @@ import { usePlayerStore } from "@/stores/player-store";
 import { useWordAudioStore } from "@/stores/word-audio-store";
 import { createTrack } from "@/lib/audio-utils";
 import { fetchBayaan } from "@/lib/api";
-import { findAyahTimestamp, rewayatHasTimestamps } from "@/lib/timestamp-fetch";
+import { findAyahTimestamp, normalizeTimestampsPayload, rewayatHasTimestamps } from "@/lib/timestamp-fetch";
 import type { AyahTimestamp } from "@/types/timestamps";
 
 interface ResolvedReaderReciter {
@@ -26,8 +26,8 @@ async function fetchAyahTimestamps(rewayatId: string, surah: number): Promise<Ay
   if (!response.ok) {
     throw new Error(`Timestamps unavailable (${response.status})`);
   }
-  const body = (await response.json()) as { data: { timestamps: AyahTimestamp[] } };
-  return body.data.timestamps;
+  const body = (await response.json()) as { data: { timestamps: unknown } };
+  return normalizeTimestampsPayload(surah, body.data.timestamps);
 }
 
 export function usePlayFromAyah(surahId: number, surahName: string) {
