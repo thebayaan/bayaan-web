@@ -87,10 +87,9 @@ describe("GET /api/timestamps/[rewayatId]/[surah]", () => {
         ),
       )
       .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify([{ ayah: 2, start_time: 6800, end_time: 11700 }]),
-          { status: 200 },
-        ),
+        new Response(JSON.stringify([{ ayah: 2, start_time: 6800, end_time: 11700 }]), {
+          status: 200,
+        }),
       );
 
     const response = await callRoute("rw-1", "1");
@@ -125,9 +124,7 @@ describe("GET /api/timestamps/[rewayatId]/[surah]", () => {
 
   it("falls back when the CDN returns a non-array payload", async () => {
     fetchMock
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ not: "an array" }), { status: 200 }),
-      )
+      .mockResolvedValueOnce(new Response(JSON.stringify({ not: "an array" }), { status: 200 }))
       .mockResolvedValueOnce(
         new Response(
           JSON.stringify({
@@ -141,10 +138,7 @@ describe("GET /api/timestamps/[rewayatId]/[surah]", () => {
         ),
       )
       .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify([{ ayah: 1, start_time: 0, end_time: 1000 }]),
-          { status: 200 },
-        ),
+        new Response(JSON.stringify([{ ayah: 1, start_time: 0, end_time: 1000 }]), { status: 200 }),
       );
 
     const response = await callRoute("rw-1", "1");

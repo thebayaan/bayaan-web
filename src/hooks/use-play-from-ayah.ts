@@ -9,7 +9,11 @@ import { usePlayerStore } from "@/stores/player-store";
 import { useWordAudioStore } from "@/stores/word-audio-store";
 import { createTrack } from "@/lib/audio-utils";
 import { fetchBayaan } from "@/lib/api";
-import { findAyahTimestamp, normalizeTimestampsPayload, rewayatHasTimestamps } from "@/lib/timestamp-fetch";
+import {
+  findAyahTimestamp,
+  normalizeTimestampsPayload,
+  rewayatHasTimestamps,
+} from "@/lib/timestamp-fetch";
 import type { AyahTimestamp } from "@/types/timestamps";
 
 interface ResolvedReaderReciter {

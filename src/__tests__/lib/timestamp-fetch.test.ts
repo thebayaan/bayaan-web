@@ -63,9 +63,9 @@ describe("normalizeTimestampsPayload", () => {
   });
 
   it("normalizes MP3Quran rows when surah is provided", () => {
-    expect(
-      normalizeTimestampsPayload(1, [{ ayah: 2, start_time: 6800, end_time: 11700 }]),
-    ).toEqual([{ verse_key: "1:2", timestamp_from: 6800, timestamp_to: 11700 }]);
+    expect(normalizeTimestampsPayload(1, [{ ayah: 2, start_time: 6800, end_time: 11700 }])).toEqual(
+      [{ verse_key: "1:2", timestamp_from: 6800, timestamp_to: 11700 }],
+    );
   });
 
   it("returns an empty array for non-array payloads", () => {
