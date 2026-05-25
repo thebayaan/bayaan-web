@@ -4,12 +4,12 @@ Bayaan Web is distributed under **AGPL-3.0-or-later**. This file lists the depen
 
 ## License distribution
 
-Across **775 packages** (prod + dev, all depths), distribution is:
+Across **760 packages** (prod + dev, all depths), distribution is:
 
-- **MIT** — 662
+- **MIT** — 649
 - **ISC** — 39
 - **Apache-2.0** — 31
-- **BSD-2-Clause** — 14
+- **BSD-2-Clause** — 13
 - **BSD-3-Clause** — 11
 - **BlueOak-1.0.0** — 4
 - **MPL-2.0** — 3
@@ -28,7 +28,6 @@ Across **775 packages** (prod + dev, all depths), distribution is:
 | Package                    | License                 |
 | -------------------------- | ----------------------- |
 | `@base-ui/react`           | MIT                     |
-| `@clerk/nextjs`            | MIT                     |
 | `@dnd-kit/core`            | MIT                     |
 | `@dnd-kit/sortable`        | MIT                     |
 | `@dnd-kit/utilities`       | MIT                     |
