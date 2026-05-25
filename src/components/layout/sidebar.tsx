@@ -1,11 +1,12 @@
 "use client";
 
-import { HomeIcon, QuranIcon, CollectionIcon, SettingsIcon } from "@/components/icons";
+import { HomeIcon, QuranIcon, CollectionIcon, ProfileIcon, SettingsIcon } from "@/components/icons";
 import { SidebarNavItem } from "./sidebar-nav-item";
 import { ContinueReadingCard } from "./continue-reading-card";
 
 const NAV_ITEMS = [
   { href: "/", icon: HomeIcon, label: "Home" },
+  { href: "/reciters", icon: ProfileIcon, label: "Reciters" },
   // The Read Quran icon's artwork fills its viewBox edge-to-edge, so it
   // looks bigger than its neighbours at the same `size`. Render slightly smaller.
   { href: "/quran", icon: QuranIcon, label: "Read Quran", iconSize: 17 },
