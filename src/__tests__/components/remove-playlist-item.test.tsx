@@ -1,33 +1,25 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { removePlaylistItem } from "@/hooks/use-playlist";
-import { server } from "@/__tests__/mocks/server";
-import { http, HttpResponse } from "msw";
-
-const API = "http://localhost:3000/api";
+import { useLibraryStore } from "@/stores/library-store";
+import { resetLibraryStore } from "@/__tests__/helpers/reset-library-store";
 
 describe("removePlaylistItem", () => {
-  it("DELETEs the correct playlist/item path", async () => {
-    let captured: { playlistId: string; itemId: string } | null = null;
-    server.use(
-      http.delete(`${API}/bayaan/user/playlists/:playlistId/items/:itemId`, ({ params }) => {
-        captured = {
-          playlistId: String(params.playlistId),
-          itemId: String(params.itemId),
-        };
-        return HttpResponse.json({ data: { deleted: true } });
-      }),
-    );
-
-    await removePlaylistItem("p-1", "item-1");
-    expect(captured).toEqual({ playlistId: "p-1", itemId: "item-1" });
+  beforeEach(() => {
+    resetLibraryStore();
   });
 
-  it("propagates server errors so the UI can show a message", async () => {
-    server.use(
-      http.delete(`${API}/bayaan/user/playlists/:playlistId/items/:itemId`, () =>
-        HttpResponse.json({ error: { message: "boom" } }, { status: 500 }),
-      ),
-    );
-    await expect(removePlaylistItem("p-1", "item-1")).rejects.toThrow();
+  it("removes the item from the local store", async () => {
+    const playlist = useLibraryStore.getState().createPlaylist({ name: "Test" });
+    const item = useLibraryStore.getState().addPlaylistItem(playlist.id, {
+      reciter_id: "r-1",
+      rewayat_id: "rw-1",
+      surah_id: 1,
+    });
+
+    await removePlaylistItem(playlist.id, item.id);
+
+    expect(
+      useLibraryStore.getState().playlistItems.filter((entry) => entry.playlist_id === playlist.id),
+    ).toHaveLength(0);
   });
 });

@@ -8,6 +8,8 @@ export interface ReadingSettingsState {
   lightThemeId: string;
   darkThemeId: string;
   translationIds: string;
+  /** Quran.com v4 tafsir resource id (default Ibn Kathir abridged). */
+  tafsirId: string;
   showTransliteration: boolean;
   showWordByWord: boolean;
   showTajweed: boolean;
@@ -24,6 +26,7 @@ export interface ReadingSettingsState {
   setLightTheme: (id: string) => void;
   setDarkTheme: (id: string) => void;
   setTranslationIds: (ids: string) => void;
+  setTafsirId: (id: string) => void;
   toggleTransliteration: () => void;
   toggleWordByWord: () => void;
   toggleTajweed: () => void;
@@ -39,6 +42,7 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       lightThemeId: "default",
       darkThemeId: "dark-default",
       translationIds: "131",
+      tafsirId: "169",
       showTransliteration: false,
       showWordByWord: false,
       showTajweed: false,
@@ -50,6 +54,7 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       setLightTheme: (id) => set({ lightThemeId: id }),
       setDarkTheme: (id) => set({ darkThemeId: id }),
       setTranslationIds: (ids) => set({ translationIds: ids }),
+      setTafsirId: (id) => set({ tafsirId: id }),
       toggleTransliteration: () => set((s) => ({ showTransliteration: !s.showTransliteration })),
       toggleWordByWord: () => set((s) => ({ showWordByWord: !s.showWordByWord })),
       toggleTajweed: () => set((s) => ({ showTajweed: !s.showTajweed })),

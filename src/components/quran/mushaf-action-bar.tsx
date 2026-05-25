@@ -5,6 +5,7 @@ import { useVerseSelectionStore } from "@/stores/verse-selection-store";
 import { BookmarkToggle } from "./bookmark-toggle";
 import { HighlightPicker } from "./highlight-picker";
 import { NoteEditorButton } from "./note-editor";
+import { TafsirSheet } from "./tafsir-sheet";
 import type { QcfVerse } from "@/types/quran-api";
 
 function buildArabicText(verse: QcfVerse): string {
@@ -24,6 +25,7 @@ export function MushafActionBar({ verses }: { verses: QcfVerse[] }) {
   const anchorRect = useVerseSelectionStore((s) => s.anchorRect);
   const clear = useVerseSelectionStore((s) => s.clear);
   const [copied, setCopied] = useState(false);
+  const [tafsirOpen, setTafsirOpen] = useState(false);
   // Position above the clicked word using CSS transform for centering.
   // anchorRect is in document coordinates (includes scrollY).
   const anchorCenterX = anchorRect ? anchorRect.left + anchorRect.width / 2 : 0;
@@ -90,6 +92,16 @@ export function MushafActionBar({ verses }: { verses: QcfVerse[] }) {
         {verse.verse_key}
       </span>
       <BookmarkToggle verseKey={verse.verse_key} className={COMMON} />
+      <button
+        onClick={() => setTafsirOpen(true)}
+        aria-label={`Tafsir for ${verse.verse_key}`}
+        className={COMMON}
+      >
+        <svg width={14} height={14} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+      </button>
       <HighlightPicker verseKey={verse.verse_key} className={COMMON} />
       <NoteEditorButton verseKey={verse.verse_key} className={COMMON} />
       <button
@@ -124,6 +136,7 @@ export function MushafActionBar({ verses }: { verses: QcfVerse[] }) {
           <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
         </svg>
       </button>
+      <TafsirSheet verseKey={verse.verse_key} open={tafsirOpen} onOpenChange={setTafsirOpen} />
     </div>
   );
 }

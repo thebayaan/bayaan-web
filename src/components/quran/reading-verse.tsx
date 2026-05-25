@@ -5,7 +5,9 @@ import type { QcfFontResolver } from "./quran-word";
 import { VerseText } from "./verse-text";
 import { VerseActions } from "./verse-actions";
 import { useHighlights, HIGHLIGHT_SWATCH } from "@/hooks/use-highlights";
+import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { VerseTransliteration } from "./verse-transliteration";
 
 interface ReadingVerseProps {
   verse: QcfVerse;
@@ -13,13 +15,26 @@ interface ReadingVerseProps {
   fontSize: string;
   showTranslation: boolean;
   isTarget?: boolean;
+  isPlaybackActive?: boolean;
+  surahId: number;
+  surahName: string;
 }
 
 export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(function ReadingVerse(
-  { verse, fontResolver, fontSize, showTranslation, isTarget = false },
+  {
+    verse,
+    fontResolver,
+    fontSize,
+    showTranslation,
+    isTarget = false,
+    isPlaybackActive = false,
+    surahId,
+    surahName,
+  },
   ref,
 ) {
   const { getHighlight } = useHighlights();
+  const showTransliteration = useReadingSettingsStore((s) => s.showTransliteration);
   const highlight = getHighlight(verse.verse_key);
   const highlightColor = highlight ? HIGHLIGHT_SWATCH[highlight.color] : null;
 
@@ -27,9 +42,13 @@ export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(functi
     <div
       ref={ref}
       id={verse.verse_key}
-      aria-current={isTarget ? "true" : undefined}
+      aria-current={isTarget || isPlaybackActive ? "true" : undefined}
       className={`border-b border-[var(--text-alpha-06)] py-4 transition-colors ${
-        isTarget ? "-mx-2 rounded-lg bg-[var(--text-alpha-06)] px-2" : ""
+        isPlaybackActive
+          ? "-mx-2 rounded-lg bg-[var(--brand-light)] px-2 ring-1 ring-[var(--brand-main)]/25"
+          : isTarget
+            ? "-mx-2 rounded-lg bg-[var(--text-alpha-06)] px-2"
+            : ""
       }`}
       style={
         highlightColor
@@ -42,11 +61,18 @@ export const ReadingVerse = forwardRef<HTMLDivElement, ReadingVerseProps>(functi
     >
       <div className="mb-2 flex items-center justify-between gap-2">
         <span className="text-muted-foreground text-xs font-medium">{verse.verse_key}</span>
-        <VerseActions verse={verse} />
+        <VerseActions verse={verse} surahId={surahId} surahName={surahName} />
       </div>
       <div className="mb-3">
-        <VerseText words={verse.words} fontResolver={fontResolver} fontSize={fontSize} />
+        <VerseText
+          words={verse.words}
+          fontResolver={fontResolver}
+          fontSize={fontSize}
+          wordAudioEnabled
+          playbackActiveVerseKey={isPlaybackActive ? verse.verse_key : null}
+        />
       </div>
+      {showTransliteration ? <VerseTransliteration verseKey={verse.verse_key} /> : null}
       {showTranslation &&
         verse.translations?.map((translation) => (
           <div key={translation.id} className="text-muted-foreground mt-3 text-sm leading-relaxed">

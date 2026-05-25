@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
-import { ReadingView } from "@/components/quran/reading-view";
+import { ReaderContent } from "@/components/quran/reader-content";
 import { ReadingSubHeader } from "@/components/quran/reading-sub-header";
 import { surahOgBackground, type OgTheme } from "@/lib/og";
 const surahs = surahData as unknown as Surah[];
@@ -63,7 +63,7 @@ export default async function QuranAyahPage({
   return (
     <>
       <ReadingSubHeader surah={match} />
-      <ReadingView surahId={resolved.surahId} targetAyah={resolved.ayahId} />
+      <ReaderContent surahId={resolved.surahId} targetAyah={resolved.ayahId} />
     </>
   );
 }

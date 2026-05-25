@@ -4,7 +4,7 @@ import type { VersesResponse } from "@/types/quran-api";
 const BASE_URL = typeof window !== "undefined" ? "" : "http://localhost:3000";
 
 const WORD_FIELDS =
-  "verse_key,verse_id,page_number,location,text_uthmani,text_imlaei_simple,code_v2,qpc_uthmani_hafs";
+  "verse_key,verse_id,page_number,location,audio_url,text_uthmani,text_imlaei_simple,code_v2,qpc_uthmani_hafs";
 
 const PER_PAGE = 50;
 

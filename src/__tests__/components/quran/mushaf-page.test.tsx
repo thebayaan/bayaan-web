@@ -43,7 +43,12 @@ function makeWord(spec: WordFixtureSpec): QcfWord {
   };
 }
 
-function makeVerse(verseKey: string, verseId: number, verseNumber: number, words: QcfWord[]): QcfVerse {
+function makeVerse(
+  verseKey: string,
+  verseId: number,
+  verseNumber: number,
+  words: QcfWord[],
+): QcfVerse {
   const [surahStr] = verseKey.split(":");
   return {
     id: verseId,
@@ -71,7 +76,14 @@ describe("MushafPage", () => {
     const verses: QcfVerse[] = [
       makeVerse("7:1", 954, 1, [
         makeWord({ page: 151, line: 3, position: 1, verseKey: "7:1", verseId: 954 }),
-        makeWord({ page: 151, line: 3, position: 2, verseKey: "7:1", verseId: 954, charType: "end" }),
+        makeWord({
+          page: 151,
+          line: 3,
+          position: 2,
+          verseKey: "7:1",
+          verseId: 954,
+          charType: "end",
+        }),
       ]),
       makeVerse("7:2", 955, 2, [
         makeWord({ page: 151, line: 4, position: 1, verseKey: "7:2", verseId: 955 }),
@@ -93,7 +105,14 @@ describe("MushafPage", () => {
     const verses: QcfVerse[] = [
       makeVerse("4:176", 593, 176, [
         makeWord({ page: 106, line: 1, position: 1, verseKey: "4:176", verseId: 593 }),
-        makeWord({ page: 106, line: 5, position: 2, verseKey: "4:176", verseId: 593, charType: "end" }),
+        makeWord({
+          page: 106,
+          line: 5,
+          position: 2,
+          verseKey: "4:176",
+          verseId: 593,
+          charType: "end",
+        }),
       ]),
       makeVerse("5:1", 670, 1, [
         makeWord({ page: 106, line: 8, position: 1, verseKey: "5:1", verseId: 670 }),
@@ -112,22 +131,19 @@ describe("MushafPage", () => {
     // than asserting raw sibling positions, which break the moment we
     // wrap or unwrap a layout div.
     const anchors = Array.from(
-      container.querySelectorAll('[role="button"], [aria-label="Surah 5"], [aria-label="Bismillah ar-Rahman ar-Raheem"]'),
+      container.querySelectorAll(
+        '[role="button"], [aria-label="Surah 5"], [aria-label="Bismillah ar-Rahman ar-Raheem"]',
+      ),
     );
-    const tags = anchors.map((el) =>
-      el.getAttribute("aria-label") ?? (el.getAttribute("role") === "button" ? "ayah" : "?"),
+    const tags = anchors.map(
+      (el) =>
+        el.getAttribute("aria-label") ?? (el.getAttribute("role") === "button" ? "ayah" : "?"),
     );
     // Fixture produces 2 An-Nisa ayah lines (line 1 + line 5) followed
     // by 1 Al-Ma'idah ayah line (line 8). The Al-Ma'idah header must
     // land between them — not at the top of the page and not below the
     // first Al-Ma'idah ayah.
-    expect(tags).toEqual([
-      "ayah",
-      "ayah",
-      "Surah 5",
-      "Bismillah ar-Rahman ar-Raheem",
-      "ayah",
-    ]);
+    expect(tags).toEqual(["ayah", "ayah", "Surah 5", "Bismillah ar-Rahman ar-Raheem", "ayah"]);
   });
 
   it("omits the inline basmallah for At-Tawbah (surah 9)", () => {

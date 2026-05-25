@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
-import { useUser, CLERK_ENABLED } from "@/lib/auth";
 import { useThemeStore, type ThemeMode, getResolvedTheme } from "@/stores/theme-store";
 import { useCommandPaletteStore } from "@/stores/command-palette-store";
 import { LogoIcon, SearchIcon } from "@/components/icons";
@@ -48,57 +46,11 @@ export function TopBar() {
         type="button"
         onClick={cycleTheme}
         aria-label={`Cycle theme (currently ${themeMode})`}
-        className="border-border hover:bg-surface-raised duration-fast ease-standard hidden h-9 w-9 items-center justify-center rounded-lg border transition-colors sm:flex"
+        className="border-border hover:bg-surface-raised duration-fast ease-standard flex h-9 w-9 items-center justify-center rounded-lg border transition-colors"
       >
         <ThemeGlyph mode={themeMode} />
       </button>
-      <div className="bg-border-divider mx-1 hidden h-6 w-px sm:block" />
-      <UserChip />
     </header>
-  );
-}
-
-function UserChip() {
-  const { user, isSignedIn } = useUser();
-
-  // When Clerk isn't configured for this deployment, suppress the
-  // sign-in CTA entirely — the route would 404 anyway.
-  if (!CLERK_ENABLED) return null;
-
-  if (!isSignedIn || !user) {
-    return (
-      <Link
-        href="/sign-in"
-        className="bg-brand-main text-brand-main-foreground hover:bg-brand-strong duration-fast ease-standard rounded-full px-4 py-1.5 text-sm font-semibold transition-colors"
-      >
-        Sign in
-      </Link>
-    );
-  }
-  const displayName =
-    user.firstName ?? user.username ?? user.primaryEmailAddress?.emailAddress ?? "Account";
-  return (
-    <div className="border-border bg-surface-raised flex items-center gap-2 rounded-full border py-1 pr-3 pl-1">
-      <UserButton
-        appearance={{
-          elements: { avatarBox: "w-7 h-7" },
-        }}
-      />
-      <span className="text-foreground hidden text-sm font-semibold md:inline">{displayName}</span>
-      <svg
-        width="12"
-        height="12"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-muted-foreground"
-      >
-        <polyline points="6 9 12 15 18 9" />
-      </svg>
-    </div>
   );
 }
 

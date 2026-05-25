@@ -42,11 +42,7 @@ export function MushafFramedPage({
           </div>
         ) : null}
         {showBismillah ? (
-          <MushafBasmallah
-            fontSize={fontSize}
-            fontResolver={fontResolver}
-            className="mb-6"
-          />
+          <MushafBasmallah fontSize={fontSize} fontResolver={fontResolver} className="mb-6" />
         ) : null}
       </div>
       <div className={cn("flex flex-col gap-0 px-5 pb-8", showBismillah ? "" : "pt-2")}>

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useBookmarks } from "@/hooks/use-bookmarks";
-import { useAuthGate } from "@/hooks/use-auth-gate";
 
 interface BookmarkToggleProps {
   verseKey: string;
@@ -11,7 +10,6 @@ interface BookmarkToggleProps {
 
 export function BookmarkToggle({ verseKey, className }: BookmarkToggleProps) {
   const { isBookmarked, toggleBookmark } = useBookmarks();
-  const gate = useAuthGate();
   const [pending, setPending] = useState(false);
   const bookmarked = isBookmarked(verseKey);
 
@@ -35,7 +33,7 @@ export function BookmarkToggle({ verseKey, className }: BookmarkToggleProps) {
 
   return (
     <button
-      onClick={gate(() => void handleClick())}
+      onClick={() => void handleClick()}
       aria-label={bookmarked ? `Remove bookmark from ${verseKey}` : `Bookmark ${verseKey}`}
       aria-pressed={bookmarked}
       disabled={pending}

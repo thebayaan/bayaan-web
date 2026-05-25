@@ -8,9 +8,10 @@ import { useReciters } from "@/hooks/use-reciters";
 import { getCategories } from "@/data/adhkar-data";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
+import { parseMushafSearchQuery } from "@/lib/mushaf-navigation";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
-type CommandKind = "surah" | "reciter" | "adhkar" | "verse";
+type CommandKind = "surah" | "reciter" | "adhkar" | "verse" | "page" | "juz" | "mushaf-verse";
 
 interface Command {
   kind: CommandKind;
@@ -67,6 +68,9 @@ const KIND_LABEL: Record<CommandKind, string> = {
   reciter: "Reciter",
   adhkar: "Adhkar",
   verse: "Verse",
+  page: "Page",
+  juz: "Juz",
+  "mushaf-verse": "Verse",
 };
 
 export function CommandPalette() {
@@ -103,12 +107,30 @@ export function CommandPalette() {
   const results = useMemo(() => {
     const trimmed = query.trim();
     if (!trimmed) return commands.slice(0, 20);
+
+    const mushafResults = parseMushafSearchQuery(trimmed).map<Command>((result) => ({
+      kind:
+        result.type === "page"
+          ? "page"
+          : result.type === "juz"
+            ? "juz"
+            : result.type === "verse"
+              ? "mushaf-verse"
+              : "surah",
+      id: `${result.type}:${result.href}`,
+      title: result.title,
+      subtitle: result.subtitle,
+      href: result.href,
+      keywords: result.title,
+    }));
+
     const fuseResults = fuse
       .search(trimmed)
       .slice(0, 30)
       .map((r) => r.item);
     const verseCommand = parseVerseReference(trimmed);
-    return verseCommand ? [verseCommand, ...fuseResults] : fuseResults;
+    const base = verseCommand ? [verseCommand, ...fuseResults] : fuseResults;
+    return mushafResults.length > 0 ? [...mushafResults, ...base] : base;
   }, [query, fuse, commands]);
 
   useEffect(() => {
@@ -163,7 +185,7 @@ export function CommandPalette() {
             aria-activedescendant={
               results[activeIndex] ? `command-${results[activeIndex]!.id}` : undefined
             }
-            placeholder="Search surahs, reciters, adhkar…"
+            placeholder="Search surahs, pages, juz, verses…"
             value={query}
             onChange={(e) => handleQueryChange(e.target.value)}
             onKeyDown={handleKeyDown}

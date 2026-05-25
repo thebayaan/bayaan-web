@@ -3,7 +3,9 @@
 import { useMemo, useState } from "react";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
+import { getJuzIndexEntries } from "@/data/juz-data";
 import { SurahIndexCard } from "./surah-index-card";
+import { JuzIndexCard } from "./juz-index-card";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 
 const surahs = surahData as unknown as Surah[];
@@ -23,7 +25,9 @@ export function SurahIndexGrid() {
     return list;
   }, [tab]);
 
-  const filtered = useMemo(() => {
+  const juzEntries = useMemo(() => getJuzIndexEntries(), []);
+
+  const filteredSurahs = useMemo(() => {
     const f = filter.trim().toLowerCase();
     if (!f) return sorted;
     return sorted.filter(
@@ -34,6 +38,18 @@ export function SurahIndexGrid() {
         s.name_arabic.includes(filter.trim()),
     );
   }, [sorted, filter]);
+
+  const filteredJuz = useMemo(() => {
+    const f = filter.trim().toLowerCase();
+    if (!f) return juzEntries;
+    return juzEntries.filter(
+      (entry) =>
+        String(entry.juz).includes(f) ||
+        entry.label.toLowerCase().includes(f) ||
+        String(entry.startPage).includes(f) ||
+        entry.startVerseKey.includes(f),
+    );
+  }, [juzEntries, filter]);
 
   return (
     <div className="px-4 pb-20 sm:px-10">
@@ -64,15 +80,17 @@ export function SurahIndexGrid() {
           type="text"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          placeholder="Filter surahs"
+          placeholder={tab === "juz" ? "Filter juz" : "Filter surahs"}
           className="border-border bg-surface-sunken duration-fast ease-standard w-60 rounded-lg border px-3 py-2 text-sm transition-colors focus:ring-2 focus:ring-[var(--brand-weak)] focus:outline-none"
         />
       </div>
 
       <div className="grid grid-cols-1 gap-3 pt-7 md:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((s) => (
-          <SurahIndexCard key={s.id} surah={s} isResume={lastReadSurahId === s.id} />
-        ))}
+        {tab === "juz"
+          ? filteredJuz.map((entry) => <JuzIndexCard key={entry.juz} entry={entry} />)
+          : filteredSurahs.map((s) => (
+              <SurahIndexCard key={s.id} surah={s} isResume={lastReadSurahId === s.id} />
+            ))}
       </div>
     </div>
   );

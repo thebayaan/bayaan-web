@@ -7,8 +7,11 @@ import {
   type ReadingSettingsState,
 } from "@/stores/reading-settings-store";
 import { useVerseSelectionStore } from "@/stores/verse-selection-store";
+import { useAyahTrackerStore } from "@/stores/ayah-tracker-store";
+import { usePlayerStore } from "@/stores/player-store";
 import { MushafActionBar } from "./mushaf-action-bar";
 import { MushafPageSection } from "./mushaf-page-section";
+import { ReaderPlaybackSync } from "./reader-playback-sync";
 import { MUSHAF_PAGE_CLASS } from "./mushaf-layout";
 import { mushafSurahAnchorId } from "./mushaf-surah-header";
 import type { QcfVerse } from "@/types/quran-api";
@@ -64,10 +67,7 @@ function resolveInitialPage(surahId: number | undefined, storedPage: number): nu
  * Needed on shared pages where the new surah starts halfway down a page
  * that also carries the previous surah's tail (e.g. An-Nahl on page 267).
  */
-function shouldScrollToSurahAnchor(
-  surahId: number | undefined,
-  storedPage: number,
-): boolean {
+function shouldScrollToSurahAnchor(surahId: number | undefined, storedPage: number): boolean {
   if (!surahId || surahId === 1 || surahId === 2) return false;
   const surah = surahs.find((s) => s.id === surahId);
   if (!surah) return false;
@@ -88,13 +88,25 @@ interface MushafViewProps {
    * "open whatever page is in the store" behaviour.
    */
   surahId?: number;
+  /** Deep-link ayah to scroll to and highlight when opening in mushaf mode. */
+  targetAyah?: number;
 }
 
-export function MushafView({ surahId }: MushafViewProps = {}) {
+export function MushafView({ surahId, targetAyah }: MushafViewProps = {}) {
   const mushafPage = useReadingSettingsStore((s) => s.mushafPage);
   const setMushafPage = useReadingSettingsStore((s) => s.setMushafPage);
   const fontSize = useReadingSettingsStore((s) => s.fontSize);
   const clearSelection = useVerseSelectionStore((s) => s.clear);
+  const activeVerseKey = useAyahTrackerStore((s) => s.activeVerseKey);
+  const trackedSurahId = useAyahTrackerStore((s) => s.trackedSurahId);
+  const isPlaying = usePlayerStore((s) => s.playback.isPlaying);
+  const playbackActiveVerseKey =
+    surahId != null && trackedSurahId === surahId ? activeVerseKey : null;
+  const targetVerseKey =
+    surahId != null && targetAyah != null && targetAyah >= 1 ? `${surahId}:${targetAyah}` : null;
+  const highlightedVerseKey = playbackActiveVerseKey ?? targetVerseKey;
+  const lastScrolledAyahRef = useRef<string | null>(null);
+  const lastScrolledTargetRef = useRef<string | null>(null);
 
   // Bounds the scroll window. When surahId is provided we clamp to the
   // surah's first/last mushaf page so the continuous scroll stops at
@@ -111,6 +123,26 @@ export function MushafView({ surahId }: MushafViewProps = {}) {
   );
   const [visiblePage, setVisiblePage] = useState(() => resolveInitialPage(surahId, mushafPage));
   const [allVerses, setAllVerses] = useState<QcfVerse[]>([]);
+  const targetPageLoadedRef = useRef(false);
+
+  useEffect(() => {
+    if (!surahId || !targetAyah || targetPageLoadedRef.current) return;
+    const verseKey = `${surahId}:${targetAyah}`;
+    targetPageLoadedRef.current = true;
+
+    void fetch(`/api/quran/verses/by_key/${encodeURIComponent(verseKey)}?fields=page_number`)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body: { verse?: { page_number?: number } } | null) => {
+        const page = body?.verse?.page_number;
+        if (!page || page < minPage || page > maxPage) return;
+        setMushafPage(page);
+        setVisiblePage(page);
+        setLoadedPages(buildInitialPages(page, minPage, maxPage));
+      })
+      .catch(() => {
+        targetPageLoadedRef.current = false;
+      });
+  }, [surahId, targetAyah, minPage, maxPage, setMushafPage]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
@@ -124,9 +156,7 @@ export function MushafView({ surahId }: MushafViewProps = {}) {
   );
   // Surah banner anchor scroll — consumed once the inline header mounts
   // after verses load (see the effect below keyed on `allVerses`).
-  const pendingScrollAnchor = useRef<number | null>(
-    scrollToAnchor && surahId ? surahId : null,
-  );
+  const pendingScrollAnchor = useRef<number | null>(scrollToAnchor && surahId ? surahId : null);
   const versesByPageRef = useRef<Map<number, QcfVerse[]>>(new Map());
 
   // Always include page 1 in the font-load set: the KFGQPC p1-v2 font
@@ -149,10 +179,13 @@ export function MushafView({ surahId }: MushafViewProps = {}) {
     }
   }, []);
 
-  const handleVersesLoaded = useCallback((pageNumber: number, verses: QcfVerse[]) => {
-    versesByPageRef.current.set(pageNumber, verses);
-    setAllVerses(loadedPages.flatMap((page) => versesByPageRef.current.get(page) ?? []));
-  }, [loadedPages]);
+  const handleVersesLoaded = useCallback(
+    (pageNumber: number, verses: QcfVerse[]) => {
+      versesByPageRef.current.set(pageNumber, verses);
+      setAllVerses(loadedPages.flatMap((page) => versesByPageRef.current.get(page) ?? []));
+    },
+    [loadedPages],
+  );
 
   useEffect(() => {
     setAllVerses(loadedPages.flatMap((page) => versesByPageRef.current.get(page) ?? []));
@@ -245,8 +278,46 @@ export function MushafView({ surahId }: MushafViewProps = {}) {
     return () => observer.disconnect();
   }, [loadedPages, setMushafPage]);
 
+  useEffect(() => {
+    if (!isPlaying || !playbackActiveVerseKey) {
+      lastScrolledAyahRef.current = null;
+      return;
+    }
+    if (lastScrolledAyahRef.current === playbackActiveVerseKey) return;
+
+    const verse = allVerses.find((entry) => entry.verse_key === playbackActiveVerseKey);
+    if (!verse) return;
+
+    const pageEl = pageRefs.current.get(verse.page_number);
+    if (!pageEl) return;
+
+    lastScrolledAyahRef.current = playbackActiveVerseKey;
+    pageEl.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [playbackActiveVerseKey, allVerses, isPlaying]);
+
+  useEffect(() => {
+    if (!targetVerseKey) {
+      lastScrolledTargetRef.current = null;
+      return;
+    }
+    if (lastScrolledTargetRef.current === targetVerseKey) return;
+
+    const verse = allVerses.find((entry) => entry.verse_key === targetVerseKey);
+    if (!verse) return;
+
+    const line = document.querySelector(`[data-verse-key="${targetVerseKey}"]`);
+    if (line && typeof line.scrollIntoView === "function") {
+      line.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      const pageEl = pageRefs.current.get(verse.page_number);
+      pageEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    lastScrolledTargetRef.current = targetVerseKey;
+  }, [targetVerseKey, allVerses]);
+
   return (
     <div className="relative flex h-full flex-col">
+      <ReaderPlaybackSync surahId={surahId ?? 0} scrollContainerRef={scrollContainerRef} />
       <div className="border-border sticky top-0 z-10 border-b bg-[var(--background)]/95 px-4 py-2 backdrop-blur-sm">
         <div className={cn(`${MUSHAF_PAGE_CLASS} flex items-center justify-between gap-3`)}>
           <span className="text-muted-foreground text-sm">Mushaf</span>
@@ -264,20 +335,16 @@ export function MushafView({ surahId }: MushafViewProps = {}) {
                 pageNumber={pageNumber}
                 fontResolver={fontResolver}
                 fontSize={`${fontSize}rem`}
+                playbackActiveVerseKey={highlightedVerseKey}
                 onVersesLoaded={handleVersesLoaded}
                 registerPageRef={registerPageRef}
                 onReachTop={prependPreviousPage}
                 onReachBottom={appendNextPage}
                 showTopSentinel={index === 0 && pageNumber > minPage}
-                showBottomSentinel={
-                  index === loadedPages.length - 1 && pageNumber < maxPage
-                }
+                showBottomSentinel={index === loadedPages.length - 1 && pageNumber < maxPage}
               />
               {index < loadedPages.length - 1 ? (
-                <div
-                  className="my-8 border-t border-[var(--text-alpha-10)]"
-                  aria-hidden="true"
-                />
+                <div className="my-8 border-t border-[var(--text-alpha-10)]" aria-hidden="true" />
               ) : null}
             </div>
           ))}

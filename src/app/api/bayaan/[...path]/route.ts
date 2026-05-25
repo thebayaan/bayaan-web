@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 
 // Use internal Railway URL in production (faster, no public internet hop)
 const BAYAAN_API_URL =
@@ -7,7 +6,6 @@ const BAYAAN_API_URL =
   process.env.NEXT_PUBLIC_BAYAAN_API_URL ??
   "https://api.thebayaan.com";
 const BAYAAN_API_KEY = process.env.BAYAAN_API_KEY ?? "";
-const CLERK_ENABLED = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 async function proxyToBayaan(
   request: NextRequest,
@@ -15,10 +13,12 @@ async function proxyToBayaan(
 ): Promise<NextResponse> {
   const path = params.path.join("/");
 
-  // User-specific routes require a signed-in user. On deployments without
-  // Clerk configured there's no way to authenticate these, so return 401.
-  if (path.startsWith("user/") && !CLERK_ENABLED) {
-    return NextResponse.json({ error: "Auth not configured on this deployment" }, { status: 401 });
+  // User library data is stored locally in the browser (localStorage).
+  if (path.startsWith("user/")) {
+    return NextResponse.json(
+      { error: { message: "User library is stored locally in the browser." } },
+      { status: 410 },
+    );
   }
 
   const url = new URL(`/v1/${path}`, BAYAAN_API_URL);
@@ -28,18 +28,8 @@ async function proxyToBayaan(
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${BAYAAN_API_KEY}`,
   };
-
-  // For user-specific routes, use Clerk JWT. For everything else, use API key.
-  if (path.startsWith("user/")) {
-    const { getToken } = await auth();
-    const clerkToken = await getToken();
-    if (clerkToken) {
-      headers["Authorization"] = `Bearer ${clerkToken}`;
-    }
-  } else {
-    headers["Authorization"] = `Bearer ${BAYAAN_API_KEY}`;
-  }
 
   const fetchOptions: RequestInit = {
     method: request.method,

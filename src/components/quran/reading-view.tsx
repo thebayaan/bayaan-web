@@ -6,8 +6,10 @@ import {
   useReadingSettingsStore,
   type ReadingSettingsState,
 } from "@/stores/reading-settings-store";
+import { useAyahTrackerStore } from "@/stores/ayah-tracker-store";
 import { ReadingVerse } from "./reading-verse";
 import { SurahHeader } from "./surah-header";
+import { ReaderPlaybackSync } from "./reader-playback-sync";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 
@@ -51,6 +53,10 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
     [isPageFontLoaded, getFontFamily],
   );
 
+  const activeVerseKey = useAyahTrackerStore((s) => s.activeVerseKey);
+  const trackedSurahId = useAyahTrackerStore((s) => s.trackedSurahId);
+  const playbackActiveVerseKey = trackedSurahId === surahId ? activeVerseKey : null;
+
   if (isLoading) {
     return (
       <div className="mx-auto max-w-3xl animate-pulse px-6 py-8">
@@ -67,6 +73,7 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-8">
+      <ReaderPlaybackSync surahId={surahId} />
       {surah && (
         <SurahHeader
           surahNumber={surah.id}
@@ -86,6 +93,9 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
               fontSize={`${fontSize}rem`}
               showTranslation={true}
               isTarget={isTarget}
+              isPlaybackActive={playbackActiveVerseKey === verse.verse_key}
+              surahId={surahId}
+              surahName={surah?.name ?? `Surah ${surahId}`}
             />
           );
         })}

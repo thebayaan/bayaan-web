@@ -6,7 +6,6 @@ import { useMemo, type MouseEvent } from "react";
 import { useRecentlyPlayedStore } from "@/stores/recently-played-store";
 import { useReciters } from "@/hooks/use-reciters";
 import { usePlayerStore } from "@/stores/player-store";
-import { useAuthGate } from "@/hooks/use-auth-gate";
 import { createQueueFromSurah } from "@/lib/audio-utils";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
@@ -30,7 +29,6 @@ export function RecentlyPlayedSection() {
   const pause = usePlayerStore((s) => s.pause);
   const isPlaying = usePlayerStore((s) => s.playback.isPlaying);
   const currentTrack = usePlayerStore((s) => s.queue.tracks[s.queue.currentIndex]);
-  const gate = useAuthGate();
 
   const visible = useMemo(() => entries.slice(0, MAX_VISIBLE), [entries]);
 
@@ -112,7 +110,7 @@ export function RecentlyPlayedSection() {
               <button
                 type="button"
                 disabled={!playReady && recitersLoading}
-                onClick={gate(handlePlay(entry.reciterId, entry.rewayatId, entry.surahId))}
+                onClick={handlePlay(entry.reciterId, entry.rewayatId, entry.surahId)}
                 aria-label={
                   active
                     ? `Pause ${entry.surahName} by ${entry.reciterName}`

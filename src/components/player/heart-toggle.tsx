@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useFavorites, type FavoriteRef } from "@/hooks/use-favorites";
-import { useAuthGate } from "@/hooks/use-auth-gate";
 import { HeartIcon } from "@/components/icons";
 
 interface HeartToggleProps {
@@ -13,7 +12,6 @@ interface HeartToggleProps {
 
 export function HeartToggle({ target, trackTitle, className }: HeartToggleProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
-  const gate = useAuthGate();
   const favorited = isFavorite(target);
   // In-flight guard prevents a second click from firing a duplicate POST
   // while the first request is still in transit. SWR cache only updates
@@ -43,9 +41,9 @@ export function HeartToggle({ target, trackTitle, className }: HeartToggleProps)
       aria-label={
         favorited ? `Remove ${trackTitle} from favorites` : `Save ${trackTitle} to favorites`
       }
-      onClick={gate(() => {
+      onClick={() => {
         void handleClick();
-      })}
+      }}
       className={
         className ??
         `duration-fast ease-standard rounded-full p-1.5 transition-colors disabled:opacity-60 ${

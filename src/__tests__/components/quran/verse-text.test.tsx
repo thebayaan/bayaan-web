@@ -158,12 +158,7 @@ describe("VerseText", () => {
   it("centers mushaf lines on framed pages when requested", () => {
     const fontResolver = { isPageFontLoaded: () => true, getFontFamily: () => "p1-v2" };
     const { container } = render(
-      <VerseText
-        words={mockWords}
-        fontResolver={fontResolver}
-        mushafMode
-        lineAlignment="center"
-      />,
+      <VerseText words={mockWords} fontResolver={fontResolver} mushafMode lineAlignment="center" />,
     );
     expect(container.firstElementChild?.className).toContain("text-center");
   });

@@ -58,7 +58,7 @@ export function MushafSurahHeader({
       className={cn(
         // scroll-mt offsets the sticky mushaf header so anchor scrolls
         // don't tuck the banner underneath it.
-        "flex w-full items-center justify-center py-2 select-none scroll-mt-16",
+        "flex w-full scroll-mt-16 items-center justify-center py-2 select-none",
         className,
       )}
       aria-label={`Surah ${surahNumber}`}
@@ -97,7 +97,7 @@ export function MushafBasmallah({
         dir="rtl"
         lang="ar"
         aria-label={ariaLabel}
-        className={cn("w-full text-center leading-[1.4] py-1 select-none", className)}
+        className={cn("w-full py-1 text-center leading-[1.4] select-none", className)}
         style={{ fontFamily: BASMALLAH_FONT_FAMILY, fontSize }}
       >
         {BASMALLAH_CODE_V2}
