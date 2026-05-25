@@ -143,8 +143,7 @@ export function getPageFontCdnUrl(
   }
 
   if (config.cdnVersion === "v4") {
-    const isFirefox =
-      typeof navigator !== "undefined" && /firefox/i.test(navigator.userAgent);
+    const isFirefox = typeof navigator !== "undefined" && /firefox/i.test(navigator.userAgent);
     if (isFirefox) {
       return `${QURAN_FONT_CDN}/v4/ot-svg/${theme}/woff2/p${pageNum}.woff2`;
     }
@@ -160,11 +159,7 @@ export function getPageFontName(config: MushafFontConfig, pageNum: number): stri
 
 function getUnicodeFallback(word: QcfWord): string {
   return (
-    word.qpc_uthmani_hafs ||
-    word.text_qpc_hafs ||
-    word.text_uthmani ||
-    word.text_indopak ||
-    ""
+    word.qpc_uthmani_hafs || word.text_qpc_hafs || word.text_uthmani || word.text_indopak || ""
   );
 }
 
@@ -199,17 +194,11 @@ export function getWordDisplayText(
   return glyph || getUnicodeFallback(word);
 }
 
-export function joinMushafGlyphLine(
-  words: QcfWord[],
-  config: MushafFontConfig,
-): string {
+export function joinMushafGlyphLine(words: QcfWord[], config: MushafFontConfig): string {
   const hairSpace = "\u200A";
   return words
     .map((word) => {
-      const glyph =
-        config.glyphField === "code_v1"
-          ? (word.code_v1 ?? "")
-          : (word.code_v2 ?? "");
+      const glyph = config.glyphField === "code_v1" ? (word.code_v1 ?? "") : (word.code_v2 ?? "");
       return glyph.replace(/ /g, hairSpace);
     })
     .join(hairSpace);
@@ -229,10 +218,7 @@ export interface MushafFontResolver extends MushafFontLoader {
 }
 
 /** @deprecated Use MushafFontResolver */
-export type QcfFontResolver = Pick<
-  MushafFontResolver,
-  "isPageFontLoaded" | "getFontFamily"
->;
+export type QcfFontResolver = Pick<MushafFontResolver, "isPageFontLoaded" | "getFontFamily">;
 
 export function createMushafFontResolver(
   config: MushafFontConfig,

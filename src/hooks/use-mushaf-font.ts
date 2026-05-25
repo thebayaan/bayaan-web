@@ -43,9 +43,7 @@ export function useMushafFont(
     return initial;
   });
   const [isStaticFontLoaded, setIsStaticFontLoaded] = useState(() =>
-    config.rendering === "unicode"
-      ? loadedFontKeys.has(cacheKey(fontId, "static"))
-      : true,
+    config.rendering === "unicode" ? loadedFontKeys.has(cacheKey(fontId, "static")) : true,
   );
   const loadingRef = useRef<Set<string>>(new Set());
 
@@ -122,9 +120,7 @@ export function useMushafFont(
       if (config.rendering === "unicode") {
         return config.staticFontFamily ?? "UthmanicHafs";
       }
-      return isPageFontLoaded(pageNum)
-        ? getPageFontName(config, pageNum)
-        : "UthmanicHafs";
+      return isPageFontLoaded(pageNum) ? getPageFontName(config, pageNum) : "UthmanicHafs";
     },
     [config, isPageFontLoaded],
   );

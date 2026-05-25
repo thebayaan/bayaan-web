@@ -42,12 +42,10 @@ export function QuranWord({
   const showTajweed = useReadingSettingsStore((s) => s.showTajweed);
   const tajweedWord = useTajweedStore((s) => s.byLocation?.[word.location]);
   const ensureTajweedLoaded = useTajweedStore((s) => s.ensureLoaded);
-  const useJsonTajweed =
-    showTajweed && quranFontId !== "qcf_tajweed_v4" && Boolean(tajweedWord);
+  const useJsonTajweed = showTajweed && quranFontId !== "qcf_tajweed_v4" && Boolean(tajweedWord);
   const useTajweedRendering = useJsonTajweed;
   const text = useTajweedRendering ? null : fontResolver.getWordText(word);
-  const usesUnicodeFont =
-    !fontResolver.useGlyphLineJoin || !isFontLoaded || useTajweedRendering;
+  const usesUnicodeFont = !fontResolver.useGlyphLineJoin || !isFontLoaded || useTajweedRendering;
   const toggle = useVerseSelectionStore((s) => s.toggle);
   const selectedVerseKey = useVerseSelectionStore((s) => s.selectedVerseKey);
   const activeLocation = useWordAudioStore((s) => s.activeLocation);
@@ -104,9 +102,7 @@ export function QuranWord({
         ...(isFontLoaded && !useTajweedRendering
           ? {
               fontFamily,
-              ...(fontResolver.fontPalette
-                ? { fontPalette: fontResolver.fontPalette }
-                : undefined),
+              ...(fontResolver.fontPalette ? { fontPalette: fontResolver.fontPalette } : undefined),
             }
           : undefined),
         ...(highlight

@@ -25,9 +25,7 @@ export function useMushafFontResolver(pageNumbers: number[]) {
     () =>
       createMushafFontResolver(config, loader, {
         fontPalette:
-          quranFontId === "qcf_tajweed_v4"
-            ? `--mushaf-tajweed-${tajweedTheme}`
-            : undefined,
+          quranFontId === "qcf_tajweed_v4" ? `--mushaf-tajweed-${tajweedTheme}` : undefined,
       }),
     [config, loader, quranFontId, tajweedTheme],
   );

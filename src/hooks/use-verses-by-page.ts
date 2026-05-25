@@ -30,9 +30,7 @@ export function useVersesByPage(pageNumber: number): {
   });
 
   const { data, error, isLoading } = useSWR<VersesResponse>(
-    pageNumber > 0
-      ? `verses/by_page/${pageNumber}?${params.toString()}&font=${quranFontId}`
-      : null,
+    pageNumber > 0 ? `verses/by_page/${pageNumber}?${params.toString()}&font=${quranFontId}` : null,
     fetchVersesByPage,
     { revalidateOnFocus: false, dedupingInterval: 300000 },
   );

@@ -35,7 +35,11 @@ const mockWord: QcfWord = {
 describe("QuranWord", () => {
   beforeEach(() => {
     playMock.mockClear();
-    useReadingSettingsStore.setState({ showTajweed: false, showWordByWord: false, quranFontId: "qcf_v2" });
+    useReadingSettingsStore.setState({
+      showTajweed: false,
+      showWordByWord: false,
+      quranFontId: "qcf_v2",
+    });
     useTajweedStore.setState({
       byLocation: null,
       indexedTajweedData: null,

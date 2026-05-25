@@ -107,8 +107,7 @@ function MushafLine({
     "w-full whitespace-nowrap transition-colors",
     isCenter ? "text-center leading-[1.85]" : "leading-[2.35]",
     selectable && "cursor-pointer",
-    lineHasPlaybackAyah &&
-      "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
+    lineHasPlaybackAyah && "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
     className,
   );
 
