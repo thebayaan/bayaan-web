@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/thebayaan/bayaan-web/security/advisories/new
+    about: Report a security issue privately. See SECURITY.md for scope and SLA.
+  - name: Code of Conduct concern
+    url: mailto:conduct@thebayaan.com
+    about: Report behaviour that violates the Code of Conduct.
+  - name: Questions and discussion
+    url: https://github.com/thebayaan/bayaan-web/discussions
+    about: Ask questions, share ideas, or get help from the community.

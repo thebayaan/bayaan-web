@@ -8,6 +8,9 @@
     "url": "https://github.com/thebayaan/bayaan-web.git"
   },
   "homepage": "https://app.thebayaan.com",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
