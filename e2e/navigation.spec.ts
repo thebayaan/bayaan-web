@@ -13,12 +13,14 @@ test("sidebar links to quran index", async ({ page }) => {
   await expect(page.getByText(/Read the Quran/i).first()).toBeVisible({ timeout: 15_000 });
 });
 
-test("sidebar links to adhkar", async ({ page }) => {
+test("sidebar links to collection", async ({ page }) => {
   await page.goto("/");
-  const link = page.getByRole("link", { name: /Adhkar/i }).first();
+  const link = page.getByRole("link", { name: /Collection/i }).first();
   await link.click();
-  await expect(page).toHaveURL(/\/adhkar(\/.*)?$/);
-  await expect(page.getByText(/Adhkar/i).first()).toBeVisible({ timeout: 15_000 });
+  await expect(page).toHaveURL(/\/collection(\/.*)?$/);
+  await expect(page.getByText(/Favorites|Bookmarks|Playlists|Collection/i).first()).toBeVisible({
+    timeout: 15_000,
+  });
 });
 
 test("404 page renders without error", async ({ page }) => {

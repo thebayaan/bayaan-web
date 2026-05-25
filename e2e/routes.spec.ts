@@ -44,12 +44,11 @@ for (const route of PUBLIC_ROUTES) {
 }
 
 test("mushaf route mounts", async ({ page }) => {
-  // The mushaf route may redirect to the last-read page; just verify it lands
-  // on a /mushaf URL and the page mounts.
-  const response = await page.goto("/mushaf");
+  // /mushaf only handles /mushaf/[page]; navigate directly to page 1.
+  const response = await page.goto("/mushaf/1");
   expect(response).not.toBeNull();
   expect(response!.status()).toBeLessThan(400);
-  await expect(page).toHaveURL(/\/mushaf(\/\d+)?$/);
+  await expect(page).toHaveURL(/\/mushaf\/\d+$/);
   await expect(page.locator("body")).not.toBeEmpty();
 });
 
