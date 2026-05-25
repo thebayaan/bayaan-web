@@ -65,7 +65,7 @@ describe("mushaf-fonts", () => {
   });
 
   it("uses Uthmani basmallah text for all unicode fonts", () => {
-    expect(getBasmallahUnicodeText(getMushafFontConfig("indopak"))).toBe(MUSHAF_BISMILLAH);
+    expect(getBasmallahUnicodeText()).toBe(MUSHAF_BISMILLAH);
   });
 
   it("falls back to unicode text while glyph fonts load", () => {

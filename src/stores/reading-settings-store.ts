@@ -61,7 +61,7 @@ export const useReadingSettingsStore = create<ReadingSettingsState>()(
       lastReadSurahAt: null,
       setFontSize: (size) => set({ fontSize: size }),
       setQuranFontId: (id) =>
-        set((s) => ({
+        set(() => ({
           quranFontId: id,
           ...(!supportsTajweedColoring(id) ? { showTajweed: false } : {}),
         })),

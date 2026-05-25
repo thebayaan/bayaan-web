@@ -1,6 +1,6 @@
 "use client";
 
-import { MUSHAF_FONT_OPTIONS, type MushafFontId } from "@/lib/mushaf-fonts";
+import { MUSHAF_FONT_OPTIONS, normalizeMushafFontId } from "@/lib/mushaf-fonts";
 import { useReadingSettingsStore } from "@/stores/reading-settings-store";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +20,7 @@ export function QuranFontPicker({ className }: QuranFontPickerProps): React.JSX.
       <select
         id="quran-font"
         value={quranFontId}
-        onChange={(event) => setQuranFontId(event.target.value as MushafFontId)}
+        onChange={(event) => setQuranFontId(normalizeMushafFontId(event.target.value))}
         className="border-border bg-surface-sunken w-full rounded-lg border px-3 py-2 text-sm"
         aria-label="Quran font"
       >

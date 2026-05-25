@@ -70,8 +70,8 @@ function resolveBasmallahRender(fontResolver?: MushafFontResolver): {
 
   return {
     mode: "unicode",
-    text: getBasmallahUnicodeText(config),
-    fontFamily: getBasmallahUnicodeFontFamily(config),
+    text: getBasmallahUnicodeText(),
+    fontFamily: getBasmallahUnicodeFontFamily(),
   };
 }
 

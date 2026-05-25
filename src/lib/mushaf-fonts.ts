@@ -144,11 +144,11 @@ export function getBasmallahGlyphText(config: MushafFontConfig): string | null {
   return null;
 }
 
-export function getBasmallahUnicodeText(_config?: MushafFontConfig): string {
+export function getBasmallahUnicodeText(): string {
   return MUSHAF_BISMILLAH;
 }
 
-export function getBasmallahUnicodeFontFamily(_config?: MushafFontConfig): string {
+export function getBasmallahUnicodeFontFamily(): string {
   return END_MARKER_FONT_FAMILY;
 }
 
