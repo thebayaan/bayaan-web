@@ -17,7 +17,9 @@ afterAll(() => {
 describe("GET /api/quran-v4/[...path]", () => {
   async function callRoute(path: string[], search = "") {
     const { GET } = await import("@/app/api/quran-v4/[...path]/route");
-    const request = new NextRequest(`http://localhost:3000/api/quran-v4/${path.join("/")}${search}`);
+    const request = new NextRequest(
+      `http://localhost:3000/api/quran-v4/${path.join("/")}${search}`,
+    );
     return GET(request, { params: Promise.resolve({ path }) });
   }
 

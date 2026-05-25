@@ -258,7 +258,13 @@ export const handlers = [
             verse_id: 295,
             text: "Allah - there is no deity except Him",
             highlighted: "Allah",
-            translations: [{ text: "Allah — there is no deity except Him", resource_id: 131, resource_name: "Clear Quran" }],
+            translations: [
+              {
+                text: "Allah — there is no deity except Him",
+                resource_id: 131,
+                resource_name: "Clear Quran",
+              },
+            ],
           },
         ],
         pagination: { current_page: 0, total_pages: 1, total_records: 1 },
@@ -269,7 +275,13 @@ export const handlers = [
   http.get(`${API}/quran-v4/tafsirs/:tafsirId/by_ayah/:verseKey`, ({ params }) =>
     HttpResponse.json({
       tafsir: {
-        verses: [{ resource_id: Number(params.tafsirId), verse_key: String(params.verseKey), text: "<p>Mock tafsir text</p>" }],
+        verses: [
+          {
+            resource_id: Number(params.tafsirId),
+            verse_key: String(params.verseKey),
+            text: "<p>Mock tafsir text</p>",
+          },
+        ],
       },
     }),
   ),
@@ -277,7 +289,13 @@ export const handlers = [
   http.get(`${API}/quran/resources/translations`, () =>
     HttpResponse.json({
       translations: [
-        { id: 131, name: "Clear Quran", author_name: "Dr. Mustafa Khattab", slug: "en-clear-quran", language_name: "english" },
+        {
+          id: 131,
+          name: "Clear Quran",
+          author_name: "Dr. Mustafa Khattab",
+          slug: "en-clear-quran",
+          language_name: "english",
+        },
       ],
     }),
   ),

@@ -83,9 +83,9 @@ describe("useAyahTracker", () => {
   });
 
   it("does not poll when playback is paused", () => {
-    useAyahTrackerStore.getState().setTimestamps("rw:1", 1, [
-      { verse_key: "1:1", timestamp_from: 0, timestamp_to: 5000 },
-    ]);
+    useAyahTrackerStore
+      .getState()
+      .setTimestamps("rw:1", 1, [{ verse_key: "1:1", timestamp_from: 0, timestamp_to: 5000 }]);
     usePlayerStore.setState({
       playback: {
         isPlaying: false,

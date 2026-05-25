@@ -136,7 +136,12 @@ describe("usePlayFromAyah", () => {
     useReaderPlayerStore.setState({ lastReciterId: "reciter-1", lastRewayatId: "rewayat-1" });
     fetchBayaanMock.mockRejectedValue(new Error("network"));
     const updateQueue = vi.fn().mockResolvedValue(undefined);
-    usePlayerStore.setState({ updateQueue, seekTo: vi.fn(), pause: vi.fn(), play: vi.fn() } as never);
+    usePlayerStore.setState({
+      updateQueue,
+      seekTo: vi.fn(),
+      pause: vi.fn(),
+      play: vi.fn(),
+    } as never);
 
     const { result } = renderHook(() => usePlayFromAyah(1, "Al-Fatiha"));
 
@@ -163,12 +168,18 @@ describe("usePlayFromAyah", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(
         JSON.stringify({
-          data: { rewayat_id: "rewayat-1", surah: 1, timestamps: [{ verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 }] },
+          data: {
+            rewayat_id: "rewayat-1",
+            surah: 1,
+            timestamps: [{ verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 }],
+          },
         }),
         { status: 200 },
       ),
     );
     const { result } = renderHook(() => usePlayFromAyah(1, "Al-Fatiha"));
-    await expect(result.current.playFromAyah(sampleVerse)).rejects.toThrow("No timing data for verse 1:2.");
+    await expect(result.current.playFromAyah(sampleVerse)).rejects.toThrow(
+      "No timing data for verse 1:2.",
+    );
   });
 });

@@ -14,7 +14,9 @@ describe("JuzIndexCard", () => {
 
   it("shows start page and verse metadata", () => {
     render(<JuzIndexCard entry={entry} />);
-    expect(screen.getByText(`Page ${entry.startPage} · ${entry.startVerseKey}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`Page ${entry.startPage} · ${entry.startVerseKey}`),
+    ).toBeInTheDocument();
     const [surahId, ayah] = entry.startVerseKey.split(":");
     expect(screen.getByText(`${surahId}:${ayah}`)).toBeInTheDocument();
   });

@@ -14,7 +14,13 @@ vi.mock("@/hooks/use-quran-text-search", () => ({
           verse_id: 295,
           text: "Allah",
           highlighted: "Allah",
-          translations: [{ text: "Allah — there is no deity except Him", resource_id: 131, resource_name: "Clear Quran" }],
+          translations: [
+            {
+              text: "Allah — there is no deity except Him",
+              resource_id: 131,
+              resource_name: "Clear Quran",
+            },
+          ],
         },
       ],
     };

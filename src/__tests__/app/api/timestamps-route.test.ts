@@ -75,7 +75,9 @@ describe("GET /api/timestamps/[rewayatId]/[surah]", () => {
     const response = await callRoute("rw-1", "1");
     expect(response.status).toBe(200);
     const body = await response.json();
-    expect(body.data.timestamps).toEqual([{ verse_key: "1:1", timestamp_from: 0, timestamp_to: 5000 }]);
+    expect(body.data.timestamps).toEqual([
+      { verse_key: "1:1", timestamp_from: 0, timestamp_to: 5000 },
+    ]);
   });
 
   it("returns 404 when rewayat is not found", async () => {
@@ -89,13 +91,14 @@ describe("GET /api/timestamps/[rewayatId]/[surah]", () => {
   });
 
   it("returns 404 when no timestamps are available from fallback", async () => {
-    fetchMock
-      .mockResolvedValueOnce(new Response(null, { status: 404 }))
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ data: { id: "rw-1", mp3quran_read_id: null, qdc_reciter_id: null } }), {
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 404 })).mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({ data: { id: "rw-1", mp3quran_read_id: null, qdc_reciter_id: null } }),
+        {
           status: 200,
-        }),
-      );
+        },
+      ),
+    );
 
     const response = await callRoute("rw-1", "1");
     expect(response.status).toBe(404);

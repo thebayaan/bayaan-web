@@ -27,9 +27,11 @@ describe("useTimestampLoader", () => {
   });
 
   it("clears tracker state when there is no current track", () => {
-    useAyahTrackerStore.getState().setTimestamps("rewayat-1:1", 1, [
-      { verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 },
-    ]);
+    useAyahTrackerStore
+      .getState()
+      .setTimestamps("rewayat-1:1", 1, [
+        { verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 },
+      ]);
     renderHook(() => useTimestampLoader());
     expect(useAyahTrackerStore.getState().timestamps).toEqual([]);
     expect(useAyahTrackerStore.getState().cacheKey).toBeNull();
@@ -50,9 +52,11 @@ describe("useTimestampLoader", () => {
   });
 
   it("skips reload when timestamps are already cached for the track", async () => {
-    useAyahTrackerStore.getState().setTimestamps("rewayat-1:1", 1, [
-      { verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 },
-    ]);
+    useAyahTrackerStore
+      .getState()
+      .setTimestamps("rewayat-1:1", 1, [
+        { verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 },
+      ]);
     usePlayerStore.setState({
       queue: { tracks: [sampleTrack], currentIndex: 0, shuffleOrder: null, shufflePosition: 0 },
     });
