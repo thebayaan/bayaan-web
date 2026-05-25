@@ -131,21 +131,18 @@ export function BottomPlayerBar() {
             </button>
             <div className="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs">
               {reciterSlug ? (
-                <Link
-                  href={`/reciter/${reciterSlug}`}
-                  className="min-w-0 flex-1 truncate hover:underline"
-                >
+                <Link href={`/reciter/${reciterSlug}`} className="min-w-0 truncate hover:underline">
                   {currentTrack.artist}
                 </Link>
               ) : (
-                <span className="min-w-0 flex-1 truncate">{currentTrack.artist}</span>
+                <span className="min-w-0 truncate">{currentTrack.artist}</span>
               )}
               {rewayahName ? (
                 <>
                   <span aria-hidden className="hidden shrink-0 opacity-50 sm:inline">
                     ·
                   </span>
-                  <span className="hidden max-w-[7rem] shrink-0 truncate capitalize sm:inline">
+                  <span className="hidden min-w-0 truncate capitalize sm:inline">
                     {rewayahName}
                   </span>
                 </>
