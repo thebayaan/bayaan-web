@@ -1,37 +1,39 @@
-export type AudioSource = "main" | "mushaf" | "none";
+export type AudioSource = "main" | "mushaf" | "adhkar" | "none";
+
+type PlayableSource = Exclude<AudioSource, "none">;
 
 export class AudioCoordinator {
   private activeSource: AudioSource = "none";
-  private onPauseMain: (() => void) | null = null;
-  private onPauseMushaf: (() => void) | null = null;
+  private pauseHandlers: Partial<Record<PlayableSource, () => void>> = {};
 
   getActiveSource(): AudioSource {
     return this.activeSource;
   }
 
-  registerPauseHandler(source: "main" | "mushaf", handler: () => void): void {
-    if (source === "main") {
-      this.onPauseMain = handler;
-    } else {
-      this.onPauseMushaf = handler;
+  registerPauseHandler(source: PlayableSource, handler: () => void): void {
+    this.pauseHandlers[source] = handler;
+  }
+
+  private claimSource(next: PlayableSource): void {
+    if (this.activeSource !== "none" && this.activeSource !== next) {
+      this.pauseHandlers[this.activeSource]?.();
     }
+    this.activeSource = next;
   }
 
   mainWillPlay(): void {
-    if (this.activeSource === "mushaf" && this.onPauseMushaf) {
-      this.onPauseMushaf();
-    }
-    this.activeSource = "main";
+    this.claimSource("main");
   }
 
   mushafWillPlay(): void {
-    if (this.activeSource === "main" && this.onPauseMain) {
-      this.onPauseMain();
-    }
-    this.activeSource = "mushaf";
+    this.claimSource("mushaf");
   }
 
-  sourceDidStop(source: AudioSource): void {
+  adhkarWillPlay(): void {
+    this.claimSource("adhkar");
+  }
+
+  sourceDidStop(source: PlayableSource): void {
     if (this.activeSource === source) {
       this.activeSource = "none";
     }

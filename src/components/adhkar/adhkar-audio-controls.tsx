@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PlayIcon, PauseIcon, RepeatIcon } from "@/components/icons";
 import { Slider } from "@/components/ui/slider";
-import { usePlayerStore } from "@/stores/player-store";
+import { audioCoordinator } from "@/services/audio/audio-coordinator";
 import { cn } from "@/lib/utils";
+
+const LOAD_ERROR_MESSAGE = "Couldn't load audio";
 
 function formatTime(seconds: number): string {
   if (!seconds || !Number.isFinite(seconds)) return "0:00";
@@ -27,6 +29,19 @@ export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: Adh
   const [duration, setDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragValue, setDragValue] = useState(0);
+  const [errorForUrl, setErrorForUrl] = useState<{ url: string; message: string } | null>(null);
+  const error = errorForUrl?.url === audioUrl ? errorForUrl.message : null;
+
+  const reportError = useCallback(
+    (message: string) => {
+      setErrorForUrl({ url: audioUrl, message });
+    },
+    [audioUrl],
+  );
+
+  const clearError = useCallback(() => {
+    setErrorForUrl((current) => (current?.url === audioUrl ? null : current));
+  }, [audioUrl]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -43,15 +58,38 @@ export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: Adh
   }, [isLooping]);
 
   useEffect(() => {
+    const pause = () => {
+      audioRef.current?.pause();
+    };
+    audioCoordinator.registerPauseHandler("adhkar", pause);
+    return () => {
+      audioCoordinator.sourceDidStop("adhkar");
+    };
+  }, []);
+
+  const startPlayback = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio) return false;
+
+    audioCoordinator.adhkarWillPlay();
+    try {
+      await audio.play();
+      clearError();
+      return true;
+    } catch {
+      reportError(LOAD_ERROR_MESSAGE);
+      audioCoordinator.sourceDidStop("adhkar");
+      return false;
+    }
+  }, [clearError, reportError]);
+
+  useEffect(() => {
     if (!autoPlay) return;
     const audio = audioRef.current;
     if (!audio) return;
 
     const tryPlay = () => {
-      usePlayerStore.getState().pause();
-      void audio.play().catch(() => {
-        // Browser blocked autoplay or the clip failed to load.
-      });
+      void startPlayback();
     };
 
     if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
@@ -61,7 +99,7 @@ export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: Adh
 
     audio.addEventListener("loadedmetadata", tryPlay, { once: true });
     return () => audio.removeEventListener("loadedmetadata", tryPlay);
-  }, [audioUrl, autoPlay]);
+  }, [audioUrl, autoPlay, startPlayback]);
 
   const togglePlay = useCallback(async () => {
     const audio = audioRef.current;
@@ -69,16 +107,12 @@ export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: Adh
 
     if (isPlaying) {
       audio.pause();
+      audioCoordinator.sourceDidStop("adhkar");
       return;
     }
 
-    usePlayerStore.getState().pause();
-    try {
-      await audio.play();
-    } catch {
-      // Browser blocked autoplay or the clip failed to load.
-    }
-  }, [isPlaying]);
+    await startPlayback();
+  }, [isPlaying, startPlayback]);
 
   const seekToProgress = useCallback(
     (progress: number) => {
@@ -117,14 +151,28 @@ export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: Adh
         onTimeUpdate={() => {
           if (!isDragging) setCurrentTime(audioRef.current?.currentTime ?? 0);
         }}
-        onLoadedMetadata={() => setDuration(audioRef.current?.duration ?? 0)}
+        onLoadedMetadata={() => {
+          setDuration(audioRef.current?.duration ?? 0);
+          clearError();
+        }}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
+        onError={() => {
+          reportError(LOAD_ERROR_MESSAGE);
+          audioCoordinator.sourceDidStop("adhkar");
+        }}
         onEnded={() => {
           setIsPlaying(false);
+          audioCoordinator.sourceDidStop("adhkar");
           onEnded?.();
         }}
       />
+
+      {error ? (
+        <p className="text-destructive mb-4 text-center text-xs" role="alert">
+          {error}
+        </p>
+      ) : null}
 
       <div className="mb-4 flex w-full items-center gap-2">
         <span className="text-muted-foreground w-10 shrink-0 text-right text-[10px] tabular-nums">
@@ -134,6 +182,7 @@ export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: Adh
           value={displayProgress}
           max={100}
           step={0.1}
+          disabled={Boolean(error)}
           onValueChange={handleValueChange}
           onValueCommitted={handleValueCommitted}
           className="flex-1"
@@ -147,7 +196,8 @@ export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: Adh
         <button
           type="button"
           onClick={() => void togglePlay()}
-          className="text-foreground flex h-10 w-10 items-center justify-center rounded-full bg-[var(--text-alpha-06)] transition-transform hover:scale-105"
+          disabled={Boolean(error)}
+          className="text-foreground flex h-10 w-10 items-center justify-center rounded-full bg-[var(--text-alpha-06)] transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label={isPlaying ? "Pause audio" : "Play audio"}
         >
           {isPlaying ? <PauseIcon size={20} /> : <PlayIcon size={20} />}
@@ -156,8 +206,9 @@ export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: Adh
         <button
           type="button"
           onClick={() => setIsLooping((value) => !value)}
+          disabled={Boolean(error)}
           className={cn(
-            "rounded-full p-2 transition-colors",
+            "rounded-full p-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50",
             isLooping ? "text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
           aria-label={isLooping ? "Disable loop" : "Enable loop"}

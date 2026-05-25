@@ -1,19 +1,14 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-const pauseMock = vi.fn();
 const mushafWillPlayMock = vi.fn();
 const sourceDidStopMock = vi.fn();
-
-vi.mock("@/stores/player-store", () => ({
-  usePlayerStore: {
-    getState: () => ({ pause: pauseMock }),
-  },
-}));
+const registerPauseHandlerMock = vi.fn();
 
 vi.mock("@/services/audio/audio-coordinator", () => ({
   audioCoordinator: {
     mushafWillPlay: mushafWillPlayMock,
     sourceDidStop: sourceDidStopMock,
+    registerPauseHandler: registerPauseHandlerMock,
   },
 }));
 
@@ -46,9 +41,9 @@ let mockAudio: ReturnType<typeof createMockAudio>;
 
 beforeEach(async () => {
   vi.resetModules();
-  pauseMock.mockClear();
   mushafWillPlayMock.mockClear();
   sourceDidStopMock.mockClear();
+  registerPauseHandlerMock.mockClear();
   mockAudio = createMockAudio();
   vi.stubGlobal(
     "Audio",
@@ -59,7 +54,7 @@ beforeEach(async () => {
 });
 
 describe("useWordAudioStore", () => {
-  it("pauses the main player and plays word audio", async () => {
+  it("claims mushaf playback and plays word audio", async () => {
     const { useWordAudioStore } = await import("@/stores/word-audio-store");
 
     await useWordAudioStore.getState().play({
@@ -78,7 +73,7 @@ describe("useWordAudioStore", () => {
       location: "1:1:1",
     });
 
-    expect(pauseMock).toHaveBeenCalled();
+    expect(registerPauseHandlerMock).toHaveBeenCalledWith("mushaf", expect.any(Function));
     expect(mushafWillPlayMock).toHaveBeenCalled();
     expect(mockAudio.src).toBe("https://audio.qurancdn.com/wbw/001_001_001.mp3");
     expect(mockAudio.play).toHaveBeenCalled();
