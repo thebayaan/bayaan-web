@@ -33,9 +33,6 @@ export function AdhkarAudioControls({ audioUrl, autoPlay = false, onEnded }: Adh
     if (!audio) return;
 
     audio.pause();
-    setIsPlaying(false);
-    setCurrentTime(0);
-    setDuration(0);
     audio.src = audioUrl;
     audio.load();
   }, [audioUrl]);
