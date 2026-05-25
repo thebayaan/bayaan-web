@@ -55,6 +55,14 @@ docs/superpowers/
 # Git worktrees
 .worktrees/
 
+# Claude Code: machine-local operational paths and credentials. Forks that
+# want to ship project-versioned skills or scheduled tasks should add
+# negation rules — see CONTRIBUTING.md.
+.claude/
+
+# Scaffolding leftovers
+.oneshot
+
 # Dev / screenshot artifacts — not part of the project
 /*.png
 /bayaan-brand-playground.html
