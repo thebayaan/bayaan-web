@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { JuzIndexEntry } from "@/data/juz-data";
 import { getMushafReaderPath, navigateToMushafPage } from "@/lib/mushaf-navigation";
@@ -19,7 +20,7 @@ export function JuzIndexCard({ entry }: JuzIndexCardProps) {
   }
 
   return (
-    <a
+    <Link
       href={href}
       onClick={handleClick}
       className="border-border bg-surface hover:bg-surface-raised duration-fast ease-standard group flex items-start gap-4 rounded-xl border p-4 transition-colors"
@@ -39,6 +40,6 @@ export function JuzIndexCard({ entry }: JuzIndexCardProps) {
       <span className="text-muted-foreground text-xs tabular-nums">
         {surahId}:{ayah}
       </span>
-    </a>
+    </Link>
   );
 }

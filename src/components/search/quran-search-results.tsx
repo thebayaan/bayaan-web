@@ -78,7 +78,7 @@ function MushafSearchResultRow({ result }: { result: MushafSearchResult }) {
   }
 
   return (
-    <a
+    <Link
       href={result.href}
       onClick={handleClick}
       className="flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-[var(--text-alpha-04)]"
@@ -96,6 +96,6 @@ function MushafSearchResultRow({ result }: { result: MushafSearchResult }) {
         <p className="text-sm font-medium">{result.title}</p>
         <p className="text-muted-foreground text-xs">{result.subtitle}</p>
       </div>
-    </a>
+    </Link>
   );
 }
