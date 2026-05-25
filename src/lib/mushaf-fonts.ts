@@ -105,7 +105,7 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
     staticFontFamily: "IndoPak",
     staticFontUrl: `${QURAN_FONT_CDN}/nastaleeq/indopak/indopak-nastaleeq-waqf-lazim-v4.2.1.woff2`,
     useGlyphLineJoin: false,
-    mushafLineJustify: true,
+    mushafLineJustify: false,
     mushafLineCenter: false,
     mushafWordSeparator: " ",
     basmallahMode: "unicode",
