@@ -194,4 +194,19 @@ describe("MushafPage", () => {
     expect(screen.queryByLabelText(/^Surah \d+$/)).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Bismillah ar-Rahman ar-Raheem")).not.toBeInTheDocument();
   });
+
+  it("keeps QCF lines at the design font size when zooming via fontSize", () => {
+    const verses: QcfVerse[] = [
+      makeVerse("2:1", 8, 1, [
+        makeWord({ page: 2, line: 3, position: 1, verseKey: "2:1", verseId: 8 }),
+      ]),
+    ];
+    const { container } = render(
+      <MushafPage verses={verses} pageNumber={2} fontResolver={fontResolver} fontSize="2.4rem" />,
+    );
+    const line = container.querySelector("[dir='rtl']") as HTMLElement;
+    expect(line.style.fontSize).toBe("1.8rem");
+    const scaled = container.querySelector("[style*='transform: scale']") as HTMLElement | null;
+    expect(scaled?.style.transform).toContain("scale(1.333");
+  });
 });
