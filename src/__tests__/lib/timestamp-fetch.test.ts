@@ -8,37 +8,28 @@ const sampleTimestamps: AyahTimestamp[] = [
 ];
 
 describe("rewayatHasTimestamps", () => {
-  it("returns true when mp3quran_read_id is set", () => {
+  it("returns false when has_timestamps is false or missing", () => {
+    expect(rewayatHasTimestamps({ id: "rw-1", has_timestamps: false }, 1)).toBe(false);
+    expect(rewayatHasTimestamps({ id: "rw-1" }, 1)).toBe(false);
+  });
+
+  it("returns true for any surah when has_timestamps is true and the surah_list is absent or empty", () => {
+    expect(rewayatHasTimestamps({ id: "rw-1", has_timestamps: true }, 1)).toBe(true);
     expect(
-      rewayatHasTimestamps({ id: "rw-1", mp3quran_read_id: 123, qdc_reciter_id: null }, 1),
+      rewayatHasTimestamps({ id: "rw-1", has_timestamps: true, timestamps_surah_list: [] }, 50),
     ).toBe(true);
   });
 
-  it("respects timestamps_surah_list when provided", () => {
-    expect(
-      rewayatHasTimestamps(
-        {
-          id: "rw-1",
-          mp3quran_read_id: null,
-          qdc_reciter_id: null,
-          has_timestamps: true,
-          timestamps_surah_list: [2, 3],
-        },
-        1,
-      ),
-    ).toBe(false);
-    expect(
-      rewayatHasTimestamps(
-        {
-          id: "rw-1",
-          mp3quran_read_id: null,
-          qdc_reciter_id: null,
-          has_timestamps: true,
-          timestamps_surah_list: [2, 3],
-        },
-        2,
-      ),
-    ).toBe(true);
+  it("respects timestamps_surah_list as a per-surah whitelist when present", () => {
+    const rewayat = {
+      id: "rw-1",
+      has_timestamps: true,
+      timestamps_surah_list: [2, 3],
+    };
+    expect(rewayatHasTimestamps(rewayat, 1)).toBe(false);
+    expect(rewayatHasTimestamps(rewayat, 2)).toBe(true);
+    expect(rewayatHasTimestamps(rewayat, 3)).toBe(true);
+    expect(rewayatHasTimestamps(rewayat, 4)).toBe(false);
   });
 });
 

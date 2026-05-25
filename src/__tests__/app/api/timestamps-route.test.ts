@@ -32,84 +32,45 @@ describe("GET /api/timestamps/[rewayatId]/[surah]", () => {
     expect(response.status).toBe(400);
   });
 
-  it("proxies timestamps from Bayaan when available", async () => {
-    const payload = {
-      data: {
-        rewayat_id: "rw-1",
-        surah: 1,
-        timestamps: [{ verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 }],
-      },
-    };
-    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(payload), { status: 200 }));
+  it("proxies the R2 JSON for a known rewayat + surah, pads the surah to 3 digits", async () => {
+    const timestamps = [{ verse_key: "1:1", timestamp_from: 0, timestamp_to: 1000 }];
+    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(timestamps), { status: 200 }));
 
     const response = await callRoute("rw-1", "1");
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual(payload);
+    expect(await response.json()).toEqual({
+      data: { rewayat_id: "rw-1", surah: 1, timestamps },
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining("/v1/timestamps/rw-1/1"),
-      expect.objectContaining({
-        headers: expect.objectContaining({ Authorization: expect.stringContaining("Bearer") }),
-      }),
+      "https://cdn.thebayaan.com/timestamps/rw-1/001.json",
+      expect.objectContaining({ next: { revalidate: 86400 } }),
     );
   });
 
-  it("falls back to external timestamp sources when Bayaan returns 404", async () => {
-    fetchMock
-      .mockResolvedValueOnce(new Response(null, { status: 404 }))
-      .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify({
-            data: {
-              id: "rw-1",
-              mp3quran_read_id: 11,
-              qdc_reciter_id: null,
-            },
-          }),
-          { status: 200 },
-        ),
-      )
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify([{ ayah: 1, start_time: 0, end_time: 5000 }]), { status: 200 }),
-      );
-
-    const response = await callRoute("rw-1", "1");
-    expect(response.status).toBe(200);
-    const body = await response.json();
-    expect(body.data.timestamps).toEqual([
-      { verse_key: "1:1", timestamp_from: 0, timestamp_to: 5000 },
-    ]);
-  });
-
-  it("returns 404 when rewayat is not found", async () => {
-    fetchMock
-      .mockResolvedValueOnce(new Response(null, { status: 404 }))
-      .mockResolvedValueOnce(new Response(null, { status: 404 }));
+  it("returns 404 when R2 has no JSON for this rewayat/surah", async () => {
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 404 }));
 
     const response = await callRoute("missing", "1");
-    expect(response.status).toBe(404);
-    expect(await response.json()).toEqual({ error: "Rewayat not found" });
-  });
-
-  it("returns 404 when no timestamps are available from fallback", async () => {
-    fetchMock.mockResolvedValueOnce(new Response(null, { status: 404 })).mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ data: { id: "rw-1", mp3quran_read_id: null, qdc_reciter_id: null } }),
-        {
-          status: 200,
-        },
-      ),
-    );
-
-    const response = await callRoute("rw-1", "1");
     expect(response.status).toBe(404);
     expect(await response.json()).toEqual({ error: "No timestamps available" });
   });
 
-  it("returns 502 when upstream throws", async () => {
+  it("returns 502 when the CDN throws", async () => {
     fetchMock.mockRejectedValueOnce(new Error("upstream down"));
 
     const response = await callRoute("rw-1", "1");
     expect(response.status).toBe(502);
     expect(await response.json()).toEqual({ error: "upstream down" });
+  });
+
+  it("returns 502 when the CDN returns a non-array payload", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ not: "an array" }), { status: 200 }),
+    );
+
+    const response = await callRoute("rw-1", "1");
+    expect(response.status).toBe(502);
+    expect(await response.json()).toEqual({ error: "Malformed timestamps payload" });
   });
 });
