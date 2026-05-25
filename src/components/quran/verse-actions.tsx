@@ -6,6 +6,7 @@ import { BookmarkToggle } from "./bookmark-toggle";
 import { HighlightPicker } from "./highlight-picker";
 import { NoteEditorButton } from "./note-editor";
 import { TafsirSheet } from "./tafsir-sheet";
+import { ReciterPickerDialog } from "./reciter-picker-dialog";
 import { usePlayFromAyah } from "@/hooks/use-play-from-ayah";
 import { CopyIcon, PlayIcon, ShareIcon, TafseerIcon } from "@/components/icons";
 
@@ -34,8 +35,12 @@ export function VerseActions({ verse, surahId, surahName }: VerseActionsProps) {
   const [copied, setCopied] = useState(false);
   const [playError, setPlayError] = useState<string | null>(null);
   const [isPlayingAyah, setIsPlayingAyah] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [tafsirOpen, setTafsirOpen] = useState(false);
-  const { playFromAyah, canPlayFromAyah, resolvedReciter } = usePlayFromAyah(surahId, surahName);
+  const { playFromAyah, canPlayFromAyah, availableReciters, resolvedReciter } = usePlayFromAyah(
+    surahId,
+    surahName,
+  );
 
   async function handleCopy(): Promise<void> {
     try {
@@ -71,11 +76,11 @@ export function VerseActions({ verse, surahId, surahName }: VerseActionsProps) {
     }
   }
 
-  async function handlePlayFromAyah(): Promise<void> {
+  async function startPlayFromAyah(choice?: (typeof availableReciters)[number]): Promise<void> {
     setPlayError(null);
     setIsPlayingAyah(true);
     try {
-      await playFromAyah(verse);
+      await playFromAyah(verse, choice);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Could not start playback from this ayah.";
@@ -86,9 +91,22 @@ export function VerseActions({ verse, surahId, surahName }: VerseActionsProps) {
     }
   }
 
+  async function handlePlayFromAyah(): Promise<void> {
+    if (!resolvedReciter) {
+      setPickerOpen(true);
+      return;
+    }
+    await startPlayFromAyah();
+  }
+
+  async function handlePickReciter(choice: (typeof availableReciters)[number]): Promise<void> {
+    setPickerOpen(false);
+    await startPlayFromAyah(choice);
+  }
+
   const playLabel = resolvedReciter
     ? `Play from ${verse.verse_key} (${resolvedReciter.reciter.name})`
-    : `Play from ${verse.verse_key} — choose a reciter in the header first`;
+    : `Play from ${verse.verse_key} — choose a reciter`;
 
   return (
     <>
@@ -147,6 +165,14 @@ export function VerseActions({ verse, surahId, surahName }: VerseActionsProps) {
           </span>
         ) : null}
       </div>
+      <ReciterPickerDialog
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        description={`Pick a reciter to play from verse ${verse.verse_key}. Your choice is remembered.`}
+        reciters={availableReciters}
+        selectedId={resolvedReciter?.reciter.id ?? null}
+        onPick={(choice) => void handlePickReciter(choice)}
+      />
       <TafsirSheet verseKey={verse.verse_key} open={tafsirOpen} onOpenChange={setTafsirOpen} />
     </>
   );

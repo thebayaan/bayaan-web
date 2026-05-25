@@ -5,11 +5,13 @@ import { useReaderPlayerStore } from "@/stores/reader-player-store";
 import { usePlayerStore } from "@/stores/player-store";
 import { useWordAudioStore } from "@/stores/word-audio-store";
 import type { QcfVerse } from "@/types/quran-api";
+import type { Reciter, Rewayat } from "@/types/reciter";
 
 const mockReciter = {
   id: "reciter-1",
   name: "Mishary Alafasy",
   slug: "mishary-alafasy",
+  is_featured: true,
   rewayat: [
     {
       id: "rewayat-1",
@@ -25,10 +27,14 @@ const mockReciter = {
       has_timestamps: true,
     },
   ],
-};
+} satisfies Reciter;
+
+const mockRewayat = mockReciter.rewayat[0] as Rewayat;
+
+const useRecitersMock = vi.fn(() => ({ reciters: [mockReciter], isLoading: false, featured: [] }));
 
 vi.mock("@/hooks/use-reciters", () => ({
-  useReciters: () => ({ reciters: [mockReciter], isLoading: false, featured: [] }),
+  useReciters: () => useRecitersMock(),
 }));
 
 const fetchBayaanMock = vi.fn();
@@ -54,6 +60,7 @@ const sampleVerse: QcfVerse = {
 
 describe("usePlayFromAyah", () => {
   beforeEach(() => {
+    useRecitersMock.mockReturnValue({ reciters: [mockReciter], isLoading: false, featured: [] });
     useReaderPlayerStore.setState({ lastReciterId: null, lastRewayatId: null });
     usePlayerStore.setState({
       queue: { tracks: [], currentIndex: 0, shuffleOrder: null, shufflePosition: 0 },
@@ -90,10 +97,17 @@ describe("usePlayFromAyah", () => {
     });
   });
 
-  it("canPlayFromAyah is false when no reciter is selected", () => {
+  it("canPlayFromAyah is true when timestamp-capable reciters exist for the surah", () => {
+    const { result } = renderHook(() => usePlayFromAyah(1, "Al-Fatiha"));
+    expect(result.current.canPlayFromAyah).toBe(true);
+    expect(result.current.availableReciters).toHaveLength(1);
+    expect(result.current.resolvedReciter).toBeNull();
+  });
+
+  it("canPlayFromAyah is false when no reciter supports timestamps for the surah", () => {
+    useRecitersMock.mockReturnValue({ reciters: [], isLoading: false, featured: [] });
     const { result } = renderHook(() => usePlayFromAyah(1, "Al-Fatiha"));
     expect(result.current.canPlayFromAyah).toBe(false);
-    expect(result.current.resolvedReciter).toBeNull();
   });
 
   it("canPlayFromAyah is true when last reciter supports timestamps for the surah", () => {
@@ -157,10 +171,29 @@ describe("usePlayFromAyah", () => {
     });
   });
 
+  it("playFromAyah accepts an explicit reciter choice without a remembered reciter", async () => {
+    const updateQueue = vi.fn().mockResolvedValue(undefined);
+    const seekTo = vi.fn();
+    usePlayerStore.setState({ updateQueue, seekTo, pause: vi.fn(), play: vi.fn() } as never);
+
+    const { result } = renderHook(() => usePlayFromAyah(1, "Al-Fatiha"));
+
+    await act(async () => {
+      await result.current.playFromAyah(sampleVerse, {
+        reciter: mockReciter,
+        rewayat: mockRewayat,
+      });
+    });
+
+    expect(updateQueue).toHaveBeenCalled();
+    expect(seekTo).toHaveBeenCalledWith(5000);
+    expect(useReaderPlayerStore.getState().lastReciterId).toBe("reciter-1");
+  });
+
   it("throws when no reciter is resolved", async () => {
     const { result } = renderHook(() => usePlayFromAyah(1, "Al-Fatiha"));
     await expect(result.current.playFromAyah(sampleVerse)).rejects.toThrow(
-      "Choose a reciter from the header player first.",
+      "Choose a reciter first.",
     );
   });
 

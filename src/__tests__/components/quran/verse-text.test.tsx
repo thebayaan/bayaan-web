@@ -203,7 +203,7 @@ describe("VerseText", () => {
     expect(el.style.textAlignLast).toBe("justify");
   });
 
-  it("centers IndoPak lines on the page with natural word spacing", () => {
+  it("justifies IndoPak lines with flexbox space-between", () => {
     const indopakWords: QcfWord[] = [
       {
         ...mockWords[0]!,
@@ -224,11 +224,11 @@ describe("VerseText", () => {
     const { container } = render(
       <VerseText words={indopakWords} fontResolver={fontResolver} mushafMode />,
     );
-    expect(container.firstElementChild?.className).toContain("justify-center");
     const el = container.querySelector("[dir='rtl']") as HTMLElement;
-    expect(el.textContent).toBe("الٓمّٓ ۚ");
-    expect(el.className).toContain("inline-block");
-    expect(el.className).not.toContain("w-full");
+    expect(el.className).toContain("flex");
+    expect(el.className).toContain("justify-between");
+    expect(el.className).toContain("w-full");
+    expect(el.querySelectorAll("span.inline-block").length).toBe(2);
     expect(el.style.textAlign).toBe("");
   });
 });

@@ -84,28 +84,65 @@ function MushafLine({
   const useFlexCenter = fontResolver.mushafLineCenter;
   const useTextCenter = lineAlignment === "center" && !useFlexCenter;
   const useJustifiedLine = fontResolver.mushafLineJustify && lineAlignment !== "center";
-  const lineText = joinMushafLineText(sortedWords, fontResolver.config, (word) =>
-    fontResolver.getWordText(word),
-  );
+  const useFlexJustify = useJustifiedLine && !fontResolver.useGlyphLineJoin;
+  const useCssJustify = useJustifiedLine && fontResolver.useGlyphLineJoin;
+  const lineText = useFlexJustify
+    ? ""
+    : joinMushafLineText(sortedWords, fontResolver.config, (word) =>
+        fontResolver.getWordText(word),
+      );
   const lineFontFamily = isFontLoaded ? fontFamily : END_MARKER_FONT_FAMILY;
+
+  const sharedProps = {
+    ref: lineRef,
+    dir: "rtl" as const,
+    role: selectable ? ("button" as const) : undefined,
+    tabIndex: selectable ? 0 : undefined,
+    onClick: selectable ? handleLineSelect : undefined,
+    onKeyDown: selectable
+      ? (event: React.KeyboardEvent) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleLineSelect();
+          }
+        }
+      : undefined,
+    "data-verse-key": lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined,
+  };
+
+  if (useFlexJustify) {
+    return (
+      <div
+        {...sharedProps}
+        className={cn(
+          "flex w-full justify-between leading-[2.35] whitespace-nowrap transition-colors",
+          selectable && "cursor-pointer",
+          lineHasPlaybackAyah &&
+            "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
+          className,
+        )}
+        style={{
+          fontFamily: lineFontFamily,
+          fontSize,
+          ...(lineFontPalette ? { fontPalette: lineFontPalette } : undefined),
+        }}
+      >
+        {sortedWords.map((word) => {
+          const text = fontResolver.getWordText(word);
+          if (!text) return null;
+          return (
+            <span key={`${word.verse_key}-${word.position}`} className="inline-block">
+              {text}
+            </span>
+          );
+        })}
+      </div>
+    );
+  }
 
   const lineNode = (
     <div
-      ref={lineRef}
-      dir="rtl"
-      role={selectable ? "button" : undefined}
-      tabIndex={selectable ? 0 : undefined}
-      onClick={selectable ? handleLineSelect : undefined}
-      onKeyDown={
-        selectable
-          ? (event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                handleLineSelect();
-              }
-            }
-          : undefined
-      }
+      {...sharedProps}
       className={cn(
         "whitespace-nowrap transition-colors",
         useFlexCenter && "inline-block leading-[2.5]",
@@ -115,12 +152,11 @@ function MushafLine({
         lineHasPlaybackAyah && "rounded bg-[var(--brand-light)] ring-1 ring-[var(--brand-main)]/25",
         !useFlexCenter && className,
       )}
-      data-verse-key={lineHasPlaybackAyah ? (playbackActiveVerseKey ?? undefined) : undefined}
       style={{
         fontFamily: lineFontFamily,
         fontSize,
         ...(lineFontPalette ? { fontPalette: lineFontPalette } : undefined),
-        ...(useJustifiedLine
+        ...(useCssJustify
           ? {
               textAlign: "justify",
               textAlignLast: "justify",

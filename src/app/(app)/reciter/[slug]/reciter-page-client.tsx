@@ -6,8 +6,7 @@ import { useFavoriteReciters } from "@/hooks/use-favorites";
 import { usePlayerStore } from "@/stores/player-store";
 import { ReciterHeader } from "@/components/reciter-header";
 import { SurahListItem } from "@/components/surah-list-item";
-import { ReciterMoreMenu } from "@/components/reciter-more-menu";
-import { HeartIcon, PlayIcon, ShareIcon } from "@/components/icons";
+import { PlayIcon, QueueIcon, ShareIcon, ShuffleIcon, StarIcon } from "@/components/icons";
 import { createQueueFromSurah } from "@/lib/audio-utils";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
@@ -43,6 +42,23 @@ const surahNameMap = Object.fromEntries(surahs.map((s) => [s.id, s.name])) as Re
   string
 >;
 
+function SurahListHeader() {
+  return (
+    <div
+      role="presentation"
+      className="border-border-divider text-muted-foreground flex w-full items-center gap-3 border-b px-3 pb-2 text-[11px] font-semibold tracking-wider uppercase sm:px-4"
+    >
+      <div className="w-8 shrink-0 text-center sm:w-10">#</div>
+      <div className="min-w-0 flex-1">Surah</div>
+      {/* spacer for heart + 3-dot column: two w-8 buttons (32px) + gap-1 (4px) = 68px */}
+      <div className="w-[68px] shrink-0" aria-hidden="true" />
+      <div className="hidden w-32 shrink-0 sm:block">English</div>
+      <div className="hidden w-24 shrink-0 sm:block">Revelation</div>
+      <div className="hidden w-12 shrink-0 text-right sm:block">Ayahs</div>
+    </div>
+  );
+}
+
 interface ReciterPageClientProps {
   slug: string;
 }
@@ -60,7 +76,14 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
   }, [shareToast]);
 
   const updateQueue = usePlayerStore((s) => s.updateQueue);
+  const addToQueue = usePlayerStore((s) => s.addToQueue);
   const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
+  const [queueToast, setQueueToast] = useState(false);
+  useEffect(() => {
+    if (!queueToast) return undefined;
+    const t = window.setTimeout(() => setQueueToast(false), 1800);
+    return () => window.clearTimeout(t);
+  }, [queueToast]);
   const isShuffle = usePlayerStore((s) => s.settings.shuffle);
   const currentTrack = usePlayerStore((s) => {
     const tracks = s.queue.tracks;
@@ -123,6 +146,16 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
     void updateQueue(tracks);
   }
 
+  function handleEnqueueAll(): void {
+    if (!reciter || !selectedRewayat) return;
+    const firstSurah = selectedRewayat.surah_list[0];
+    if (firstSurah === undefined) return;
+    const { tracks } = createQueueFromSurah(reciter, selectedRewayat, firstSurah, surahNameMap);
+    if (tracks.length === 0) return;
+    void addToQueue(tracks);
+    setQueueToast(true);
+  }
+
   return (
     <div>
       <ReciterHeader reciter={reciter} totalSurahs={totalSurahs} />
@@ -146,22 +179,7 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
             isShuffle ? "text-brand-main border-[var(--brand-weak)]" : ""
           }`}
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="16 3 21 3 21 8" />
-            <line x1="4" y1="20" x2="21" y2="3" />
-            <polyline points="21 16 21 21 16 21" />
-            <line x1="15" y1="15" x2="21" y2="21" />
-            <line x1="4" y1="4" x2="9" y2="9" />
-          </svg>
+          <ShuffleIcon size={16} color="currentColor" />
           Shuffle
         </button>
         <button
@@ -171,13 +189,11 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
           onClick={() => {
             void toggleFavoriteReciter(reciter.id);
           }}
-          className={`border-border hover:bg-brand-light duration-fast ease-standard flex h-12 w-12 items-center justify-center rounded-full border transition-colors ${
-            isFavorited
-              ? "text-brand-main bg-brand-light border-[var(--brand-weak)]"
-              : "text-muted-foreground"
+          className={`border-border hover:bg-surface-raised duration-fast ease-standard flex h-12 w-12 items-center justify-center rounded-full border transition-colors ${
+            isFavorited ? "border-[#FFD700] text-[#FFD700]" : "text-muted-foreground"
           }`}
         >
-          <HeartIcon size={18} color="currentColor" filled={isFavorited} />
+          <StarIcon size={18} color="currentColor" filled={isFavorited} />
         </button>
         <div className="relative">
           <button
@@ -200,12 +216,30 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
             </span>
           ) : null}
         </div>
-        <ReciterMoreMenu
-          reciter={reciter}
-          rewayat={selectedRewayat}
-          surahNameMap={surahNameMap}
-          className="border-border hover:bg-surface-raised duration-fast ease-standard text-muted-foreground flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
-        />
+        <div className="relative">
+          <button
+            type="button"
+            aria-label="Add all surahs to queue"
+            disabled={!selectedRewayat || selectedRewayat.surah_list.length === 0}
+            onClick={handleEnqueueAll}
+            className="border-border hover:bg-surface-raised duration-fast ease-standard text-muted-foreground flex h-12 w-12 items-center justify-center rounded-full border transition-colors disabled:opacity-50"
+          >
+            <span className="rotate-180">
+              <QueueIcon size={18} color="currentColor" filled aria-hidden="true" />
+            </span>
+          </button>
+          <span role="status" aria-live="polite" className="sr-only">
+            {queueToast ? `Added all surahs by ${reciter.name} to the queue` : ""}
+          </span>
+          {queueToast ? (
+            <span
+              aria-hidden="true"
+              className="bg-foreground text-background pointer-events-none absolute right-0 -bottom-9 z-30 rounded-md px-2.5 py-1 text-xs font-medium whitespace-nowrap shadow-lg"
+            >
+              Added to queue
+            </span>
+          ) : null}
+        </div>
       </div>
 
       <div className="border-border-divider flex items-center gap-5 overflow-x-auto border-b px-4 sm:gap-7 sm:px-10">
@@ -232,26 +266,22 @@ export function ReciterPageClient({ slug }: ReciterPageClientProps) {
         </span>
       </div>
 
-      <div className="px-4 pt-4 pb-24">
+      <div className="px-4 pt-2 pb-24">
+        <SurahListHeader />
         {filteredSurahs.map((surah) => {
           const isCurrent =
             currentTrack?.reciterId === reciter.id &&
             currentTrack?.surahId === surah.id &&
             currentTrack?.rewayatId === selectedRewayat?.id;
           return (
-            <div key={surah.id} className="group">
-              <SurahListItem
-                surah={surah}
-                onPlay={handlePlaySurah}
-                isPlaying={isPlaying && isCurrent}
-                isCurrentTrack={isCurrent}
-                playlistItem={
-                  selectedRewayat
-                    ? { reciter_id: reciter.id, rewayat_id: selectedRewayat.id }
-                    : undefined
-                }
-              />
-            </div>
+            <SurahListItem
+              key={surah.id}
+              surah={surah}
+              onPlay={handlePlaySurah}
+              isPlaying={isPlaying && isCurrent}
+              isCurrentTrack={isCurrent}
+              actions={selectedRewayat ? { reciter, rewayat: selectedRewayat } : undefined}
+            />
           );
         })}
       </div>
