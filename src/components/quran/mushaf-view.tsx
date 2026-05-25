@@ -328,7 +328,11 @@ export function MushafView({ surahId, targetAyah, entryPage }: MushafViewProps =
     <div className="relative flex h-full flex-col">
       <ReaderPlaybackSync surahId={surahId ?? 0} scrollContainerRef={scrollContainerRef} />
       <div className="border-border sticky top-0 z-10 border-b bg-[var(--background)]/95 px-4 py-2 backdrop-blur-sm">
-        <div className={cn(`${MUSHAF_PAGE_CLASS} flex items-center justify-between gap-3`)}>
+        <div
+          className={cn(
+            `${fontResolver.config.mushafPageClass ?? MUSHAF_PAGE_CLASS} flex items-center justify-between gap-3`,
+          )}
+        >
           <span className="text-muted-foreground text-sm">Mushaf</span>
           <span className="text-sm font-medium tabular-nums">
             Page {visiblePage} / {TOTAL_PAGES}
@@ -337,7 +341,11 @@ export function MushafView({ surahId, targetAyah, entryPage }: MushafViewProps =
       </div>
 
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
-        <div className={cn(`${MUSHAF_PAGE_CLASS} flex flex-col px-4 py-6`)}>
+        <div
+          className={cn(
+            `${fontResolver.config.mushafPageClass ?? MUSHAF_PAGE_CLASS} flex flex-col px-4 py-6`,
+          )}
+        >
           {loadedPages.map((pageNumber, index) => (
             <div key={pageNumber}>
               <MushafPageSection

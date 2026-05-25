@@ -140,7 +140,11 @@ export function MushafPage({
           {lineElements}
         </MushafFramedPage>
       ) : (
-        <div className={cn(`${MUSHAF_PAGE_CLASS} flex min-h-[min(85vh,960px)] flex-col py-10`)}>
+        <div
+          className={cn(
+            `${fontResolver.config.mushafPageClass ?? MUSHAF_PAGE_CLASS} flex min-h-[min(85vh,960px)] flex-col py-10`,
+          )}
+        >
           <div className="flex flex-1 flex-col justify-center gap-0.5">{lineElements}</div>
         </div>
       )}

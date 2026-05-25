@@ -40,6 +40,8 @@ export interface MushafFontConfig {
   /** Decorative basmallah ligature from page-1 QCF glyphs. */
   basmallahMode: "glyph" | "unicode";
   totalPages: number;
+  /** Tailwind classes for the page container width. Overrides MUSHAF_PAGE_CLASS when set. */
+  mushafPageClass?: string;
 }
 
 const QURAN_FONT_CDN = "https://verses.quran.foundation/fonts/quran/hafs";
@@ -108,6 +110,7 @@ export const MUSHAF_FONT_OPTIONS: MushafFontConfig[] = [
     mushafWordSeparator: " ",
     basmallahMode: "unicode",
     totalPages: 604,
+    mushafPageClass: "mx-auto w-full max-w-[700px]",
   },
 ];
 
