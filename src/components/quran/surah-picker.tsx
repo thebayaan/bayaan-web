@@ -93,7 +93,7 @@ const ChipButton = function ChipButton({
       aria-haspopup="dialog"
       aria-expanded={open}
       aria-label={`Change surah (current: ${surah.name})`}
-      className="border-border bg-surface hover:bg-surface-raised duration-fast ease-standard flex items-center gap-2.5 rounded-xl border px-3 py-2 transition-colors"
+      className="hover:bg-surface-raised duration-fast ease-standard flex items-center gap-2.5 rounded-xl px-3 py-2 transition-colors"
     >
       <span className="bg-brand-light text-brand-main flex h-7 w-7 items-center justify-center rounded-md text-[12px] font-bold tabular-nums">
         {String(surah.id).padStart(2, "0")}

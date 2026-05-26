@@ -20,15 +20,15 @@ export function SurahHeader({
   const glyph = surahGlyphMap[surahNumber];
   return (
     <div className="py-4 text-center">
-      <div className="inline-flex items-center justify-center rounded-xl border border-[var(--text-alpha-06)] bg-[var(--text-alpha-04)] px-8 py-2">
+      <div className="inline-flex items-center justify-center px-4">
         {glyph ? (
-          <span className="font-surah-names text-3xl">{glyph}</span>
+          <span className="font-surah-names text-4xl leading-none">{glyph}</span>
         ) : (
           <span className="text-lg font-semibold">{surahName}</span>
         )}
       </div>
       {showBismillah && surahNumber !== 9 && surahNumber !== 1 ? (
-        <MushafBasmallah fontSize={fontSize} fontResolver={fontResolver} className="mt-4" />
+        <MushafBasmallah fontSize={fontSize} fontResolver={fontResolver} className="mt-3" />
       ) : null}
     </div>
   );
