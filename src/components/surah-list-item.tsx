@@ -1,6 +1,5 @@
 "use client";
 
-import type { KeyboardEvent } from "react";
 import type { Surah } from "@/types/quran";
 import type { Reciter, Rewayat } from "@/types/reciter";
 import { surahGlyphMap } from "@/data/surah-glyph-map";
@@ -25,49 +24,47 @@ export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack, action
     : null;
   const isLoved = favoriteRef ? isFavorite(favoriteRef) : false;
 
-  function handleRowKey(e: KeyboardEvent<HTMLDivElement>): void {
-    if (e.target !== e.currentTarget) return;
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      onPlay(surah.id);
-    }
-  }
-
   return (
     <div
-      role="button"
-      tabIndex={0}
-      aria-label={`Play ${surah.name}`}
-      onClick={() => onPlay(surah.id)}
-      onKeyDown={handleRowKey}
-      className={`hover:bg-surface-raised duration-fast ease-standard group/row flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors focus-visible:ring-2 focus-visible:ring-[var(--brand-weak)] focus-visible:outline-none sm:px-4 ${
+      // Plain wrapper — no role, no tabindex. The play affordance is the
+      // <button> below. Nesting the heart/more-menu inside an outer
+      // role="button" violates ARIA's interactive-in-interactive rule.
+      className={`hover:bg-surface-raised duration-fast ease-standard group/row flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-colors sm:px-4 ${
         isCurrentTrack ? "bg-brand-light" : ""
       }`}
     >
-      {/* # column */}
-      <div
-        className={`w-8 shrink-0 text-center text-sm font-semibold tabular-nums sm:w-10 ${
-          isCurrentTrack ? "text-brand-main" : "text-muted-foreground"
-        }`}
+      {/* Play affordance covers the # column + SURAH cell. */}
+      <button
+        type="button"
+        aria-label={`Play ${surah.name}`}
+        onClick={() => onPlay(surah.id)}
+        className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-md text-left focus-visible:ring-2 focus-visible:ring-[var(--brand-weak)] focus-visible:outline-none"
       >
-        {isPlaying && isCurrentTrack ? <EqualizerGlyph /> : paddedIndex}
-      </div>
-
-      {/* SURAH column: English name on the left, Arabic glyph on the right */}
-      <div className="flex min-w-0 flex-1 items-center gap-2">
         <span
-          className={`min-w-0 flex-1 truncate text-[15px] font-semibold ${
-            isCurrentTrack ? "text-brand-main" : "text-foreground"
+          className={`w-8 shrink-0 text-center text-sm font-semibold tabular-nums sm:w-10 ${
+            isCurrentTrack ? "text-brand-main" : "text-muted-foreground"
           }`}
         >
-          {surah.name}
+          {isPlaying && isCurrentTrack ? <EqualizerGlyph /> : paddedIndex}
         </span>
-        <span className="font-surah-names text-foreground shrink-0 text-[18px] leading-none">
-          {surahGlyphMap[surah.id] ?? surah.name_arabic}
-        </span>
-      </div>
 
-      {/* Actions column: heart + 3-dot, always visible */}
+        {/* SURAH cell: English name on the left, Arabic glyph on the right. */}
+        <span className="flex min-w-0 flex-1 items-center gap-2">
+          <span
+            className={`min-w-0 flex-1 truncate text-[15px] font-semibold ${
+              isCurrentTrack ? "text-brand-main" : "text-foreground"
+            }`}
+          >
+            {surah.name}
+          </span>
+          <span className="font-surah-names text-foreground shrink-0 text-[18px] leading-none">
+            {surahGlyphMap[surah.id] ?? surah.name_arabic}
+          </span>
+        </span>
+      </button>
+
+      {/* Actions column: heart + 3-dot. Siblings of the play button so AT
+       * users get clean, distinct controls without nested interactives. */}
       <div className="flex shrink-0 items-center gap-1">
         {favoriteRef ? (
           <button
@@ -76,10 +73,7 @@ export function SurahListItem({ surah, onPlay, isPlaying, isCurrentTrack, action
               isLoved ? `Remove ${surah.name} from favorites` : `Add ${surah.name} to favorites`
             }
             aria-pressed={isLoved}
-            onClick={(e) => {
-              e.stopPropagation();
-              void toggleFavorite(favoriteRef);
-            }}
+            onClick={() => void toggleFavorite(favoriteRef)}
             className={`duration-fast ease-standard flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-[var(--text-alpha-10)] ${
               isLoved ? "text-[#ef4444]" : "text-muted-foreground hover:text-foreground"
             }`}
@@ -119,11 +113,11 @@ function EqualizerGlyph() {
   return (
     <span
       aria-label="Currently playing"
-      className="inline-flex h-4 w-4 items-end justify-center gap-[2px]"
+      className="inline-flex h-4 w-4 items-end justify-center gap-[2px] motion-reduce:animate-none"
     >
-      <span className="bg-brand-main inline-block h-2 w-[3px] animate-[eq-bounce_900ms_ease-in-out_infinite]" />
-      <span className="bg-brand-main inline-block h-3 w-[3px] animate-[eq-bounce_900ms_ease-in-out_infinite_150ms]" />
-      <span className="bg-brand-main inline-block h-[6px] w-[3px] animate-[eq-bounce_900ms_ease-in-out_infinite_300ms]" />
+      <span className="bg-brand-main inline-block h-2 w-[3px] animate-[eq-bounce_900ms_ease-in-out_infinite] motion-reduce:animate-none" />
+      <span className="bg-brand-main inline-block h-3 w-[3px] animate-[eq-bounce_900ms_ease-in-out_infinite_150ms] motion-reduce:animate-none" />
+      <span className="bg-brand-main inline-block h-[6px] w-[3px] animate-[eq-bounce_900ms_ease-in-out_infinite_300ms] motion-reduce:animate-none" />
     </span>
   );
 }
