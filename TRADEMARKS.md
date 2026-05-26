@@ -9,7 +9,7 @@ This separation is standard for open-source projects. It lets anyone study, run,
 ## What this policy covers
 
 - The word mark **"Bayaan"** (including common variations like "Bayaan App").
-- The Bayaan logo, app icon, splash screen artwork, and any associated brand marks in `assets/`.
+- The Bayaan logo, app icon, splash screen artwork, and any associated brand marks. See [`src/app/ASSETS.md`](src/app/ASSETS.md) for the specific files in this repo.
 - Any stylized use of "Bayaan" that suggests the project endorses a product, fork, or service.
 
 ---
@@ -18,11 +18,30 @@ This separation is standard for open-source projects. It lets anyone study, run,
 
 If you fork, modify, or redistribute Bayaan, you must:
 
-1. **Choose a new name.** Your fork cannot be called "Bayaan", "Bayaan 2", "Bayaan Plus", "New Bayaan", "Bayaan Pro", or any confusingly similar variant.
-2. **Use your own icons and splash artwork.** Replace `assets/images/icon.png`, the adaptive icons, and the splash images. You may not ship builds using the original Bayaan icons.
-3. **Use your own bundle identifier.** Change the iOS bundle ID and Android application ID from `com.bayaan.app` to your own. Builds submitted to the App Store or Google Play must not reuse Bayaan's identifiers.
-4. **Remove or replace brand strings.** If your fork displays "Bayaan" anywhere in its UI, settings, or metadata, replace those strings with your own product name.
-5. **Comply with the AGPL.** The code license applies whether or not you comply with this policy; this policy is additional.
+1. **Choose a new name.** Your fork cannot be called "Bayaan", "Bayaan 2", "Bayaan Plus", "New Bayaan", "Bayaan Pro", or any confusingly similar variant. Set `NEXT_PUBLIC_APP_NAME` (and `NEXT_PUBLIC_APP_TAGLINE` if you change the tagline) so the new name flows into page titles, OG, manifest, and About copy automatically via [`src/config/branding.ts`](src/config/branding.ts).
+2. **Use your own icons and brand artwork.** Replace `src/app/icon.svg`, `src/app/apple-icon.svg`, `src/app/favicon.ico`, the `STAR_PATH` glyph in `src/app/opengraph-image.tsx`, and the wordmark text in `src/components/layout/top-bar.tsx`. You may not ship builds using the original Bayaan icons. See [`src/app/ASSETS.md`](src/app/ASSETS.md) for the canonical list.
+3. **Use your own bundle identifier and Team ID.** Change `IOS_BUNDLE_ID`, `APPLE_TEAM_ID`, and `ANDROID_PACKAGE_NAME` away from `com.bayaan.app` (the universal-link routes at `/.well-known/apple-app-site-association` and `/.well-known/assetlinks.json` automatically return 404 if these are unset, so the upstream Bayaan iOS/Android app cannot claim deep links into your fork's domain).
+4. **Do not banner users into the upstream Bayaan iOS app.** Leave `NEXT_PUBLIC_IOS_APP_ID` unset unless you have shipped your own iOS app, otherwise visitors on iOS get the `apple-itunes-app` smart banner pointing at the official Bayaan listing.
+5. **Set `NEXT_PUBLIC_SOURCE_REPO_URL`** to _your_ fork's public source so the AGPL §13 link in About points at the code you are running, not at the upstream Bayaan repo.
+6. **Remove or replace brand strings.** Anything that grep finds for "Bayaan" outside `branding.ts` overrides and the legal/governance files (LICENSE, CODE_OF_CONDUCT, SECURITY, GOVERNANCE, TRADEMARKS, CHANGELOG, THIRD_PARTY_LICENSES) should be checked.
+7. **Comply with the AGPL.** The code license applies whether or not you comply with this policy; this policy is additional.
+
+### Strings already wired through `branding.ts`
+
+Once you set the env vars in step 1–5, these surfaces update automatically:
+
+| Surface                                          | Env var                                                                       |
+| ------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `<title>`, OG `siteName`, OG/Twitter card titles | `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_TAGLINE`                             |
+| `metadataBase`, sitemap, robots, OG image origin | `NEXT_PUBLIC_SITE_URL`                                                        |
+| Reciter catalogue + audio backend                | `NEXT_PUBLIC_BAYAAN_API_URL`, `BAYAAN_INTERNAL_API_URL`                       |
+| Audio + reciter-image CDN                        | `NEXT_PUBLIC_BAYAAN_CDN_URL`                                                  |
+| "View source" link in About                      | `NEXT_PUBLIC_SOURCE_REPO_URL`                                                 |
+| Support / Terms / Privacy links                  | `NEXT_PUBLIC_SUPPORT_URL`, `NEXT_PUBLIC_TERMS_URL`, `NEXT_PUBLIC_PRIVACY_URL` |
+| iOS smart banner                                 | `NEXT_PUBLIC_IOS_APP_ID`, `NEXT_PUBLIC_IOS_APP_URL`                           |
+| Universal-link bundle ids                        | `APPLE_TEAM_ID`, `IOS_BUNDLE_ID`, `ANDROID_PACKAGE_NAME`                      |
+
+Any string the codebase still hardcodes as "Bayaan" outside this list is a bug — please open a PR.
 
 ---
 
