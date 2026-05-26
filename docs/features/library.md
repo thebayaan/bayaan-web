@@ -45,8 +45,14 @@ See `src/stores/library-store.ts` for the exact TypeScript shape.
 
 ## Testing
 
-- `src/__tests__/stores/library-store.test.ts` covers the action surface.
 - `src/__tests__/hooks/use-favorites.test.tsx` covers the favorites hook.
+- `src/__tests__/hooks/use-playlists.test.tsx` and
+  `src/__tests__/hooks/use-bookmarks.test.tsx` cover the playlist and
+  bookmark hooks.
+- `src/__tests__/components/add-to-playlist.test.tsx` and
+  `src/__tests__/components/remove-playlist-item.test.tsx` exercise the
+  playlist UI surface. The shared `src/__tests__/helpers/reset-library-store.ts`
+  resets state between tests.
 
 ## Future work
 

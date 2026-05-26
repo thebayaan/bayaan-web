@@ -61,17 +61,20 @@ TypeScript checker needs the heap.
 
 - Releases are tagged `vX.Y.Z` following semver.
 - The [CHANGELOG.md](../../CHANGELOG.md) is the canonical history.
-- We use Conventional Commits (`feat:`, `fix:`, `chore:`, etc.). A future
-  RFC may automate releases via `release-please`.
+- We use Conventional Commits (`feat:`, `fix:`, `chore:`, etc.). Releases
+  are automated via [`release-please`](../../.github/workflows/release-please.yml).
 
 ## Universal links
 
 For deep-linking from the Bayaan iOS or Android app into the web app:
 
-- iOS: edit `public/.well-known/apple-app-site-association` with your Team
-  ID and bundle.
+Both endpoints are dynamic App Router routes, not static files in `public/`.
+
+- iOS: edit `src/app/.well-known/apple-app-site-association/route.ts` with
+  your Team ID and bundle. The route serves `/.well-known/apple-app-site-association`.
 - Android: set `ANDROID_SHA256_CERT` to your app's signing fingerprint; the
-  `/.well-known/assetlinks.json` route renders this dynamically.
+  route at `src/app/.well-known/assetlinks.json/route.ts` renders
+  `/.well-known/assetlinks.json` dynamically.
 
 If you are running a fork that does not have a companion mobile app, leave
 both blank.
