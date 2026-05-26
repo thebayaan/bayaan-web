@@ -45,7 +45,13 @@ export function ReadingView({ surahId, targetAyah }: ReadingViewProps) {
 
   useEffect(() => {
     if (!targetKey || isLoading || !targetRef.current) return;
-    targetRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    targetRef.current.scrollIntoView({
+      behavior: prefersReduced ? "auto" : "smooth",
+      block: "center",
+    });
   }, [targetKey, isLoading]);
 
   const activeVerseKey = useAyahTrackerStore((s) => s.activeVerseKey);

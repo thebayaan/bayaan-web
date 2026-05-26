@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { navigateToMushafPage } from "@/lib/mushaf-navigation";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 interface PagePickerProps {
   open: boolean;
@@ -33,8 +33,10 @@ export function PagePicker({ open, onOpenChange }: PagePickerProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
         <div className="space-y-2">
-          <h2 className="text-lg font-semibold">Go to page</h2>
-          <p className="text-muted-foreground text-sm">Jump to a mushaf page between 1 and 604.</p>
+          <DialogTitle className="text-lg font-semibold">Go to page</DialogTitle>
+          <DialogDescription className="text-muted-foreground text-sm">
+            Jump to a mushaf page between 1 and 604.
+          </DialogDescription>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

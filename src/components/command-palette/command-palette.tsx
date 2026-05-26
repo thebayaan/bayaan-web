@@ -9,7 +9,7 @@ import { getCategories } from "@/data/adhkar-data";
 import surahData from "@/data/surah-data.json";
 import type { Surah } from "@/types/quran";
 import { parseMushafSearchQuery, navigateToMushafPage } from "@/lib/mushaf-navigation";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 type CommandKind = "surah" | "reciter" | "adhkar" | "verse" | "page" | "juz" | "mushaf-verse";
 
@@ -181,6 +181,11 @@ export function CommandPalette() {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-xl overflow-hidden p-0">
+        <DialogTitle className="sr-only">Command palette</DialogTitle>
+        <DialogDescription className="sr-only">
+          Search surahs, pages, juz, and verses. Use the arrow keys to navigate results and Enter to
+          open.
+        </DialogDescription>
         <div className="border-b border-[var(--text-alpha-06)] px-4">
           <input
             ref={inputRef}
