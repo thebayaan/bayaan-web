@@ -33,13 +33,15 @@ export default defineConfig({
         "src/app/**/sitemap.ts",
         "src/app/**/robots.ts",
       ],
-      // Conservative floor below current measured coverage. Ratchet up over
-      // time as new tests land; do not lower without team discussion.
+      // Floor set ~2pp below current measured coverage on main
+      // (60.14 / 52.37 / 60.55 / 61.15 as of the latest CI run).
+      // Ratchet up over time as new tests land; do not lower without
+      // team discussion.
       thresholds: {
-        statements: 55,
-        branches: 45,
-        functions: 55,
-        lines: 55,
+        statements: 58,
+        branches: 50,
+        functions: 58,
+        lines: 58,
       },
     },
   },
