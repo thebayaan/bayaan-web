@@ -1,4 +1,5 @@
 import { SettingsShell } from "@/components/settings/settings-shell";
+import { branding } from "@/config/branding";
 
 interface CreditItem {
   title: string;
@@ -62,7 +63,7 @@ const CREDIT_GROUPS: { section: string; items: CreditItem[] }[] = [
     items: [
       {
         title: "Next.js",
-        description: "React framework powering the Bayaan web app.",
+        description: `React framework powering the ${branding.appName} web app.`,
         href: "https://nextjs.org",
       },
       {
@@ -82,7 +83,7 @@ const CREDIT_GROUPS: { section: string; items: CreditItem[] }[] = [
     items: [
       {
         title: "Our Contributors",
-        description: "Everyone who helped make Bayaan better.",
+        description: `Everyone who helped make ${branding.appName} better.`,
       },
       {
         title: "Beta Testers",
@@ -99,7 +100,7 @@ const CREDIT_GROUPS: { section: string; items: CreditItem[] }[] = [
     items: [
       {
         title: "Dr. Naoki Yamamoto",
-        description: "Custom designed splash screen calligraphy for Bayaan.",
+        description: `Custom designed splash screen calligraphy for ${branding.appName}.`,
         href: "https://twitter.com/NaokiQYamamoto",
       },
     ],
@@ -110,7 +111,7 @@ export default function CreditsSettingsPage() {
   return (
     <SettingsShell
       title="Credits & Shoutouts"
-      description="Bayaan would not be possible without these projects, organizations, and people."
+      description={`${branding.appName} would not be possible without these projects, organizations, and people.`}
     >
       <div className="space-y-6">
         {CREDIT_GROUPS.map((group) => (
@@ -158,7 +159,7 @@ export default function CreditsSettingsPage() {
         ))}
 
         <p className="text-muted-foreground text-center text-sm">
-          Made with care by the Bayaan team.
+          Made with care by the {branding.appName} team.
         </p>
       </div>
     </SettingsShell>
