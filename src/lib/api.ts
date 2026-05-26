@@ -30,7 +30,7 @@ function friendlyForStatus(status: number): string {
   if (status === 403) return "You don't have permission to do that.";
   if (status === 404) return "We couldn't find that.";
   if (status === 429) return "Too many requests — try again in a moment.";
-  if (status >= 500) return "Bayaan's server hit an error. Please try again.";
+  if (status >= 500) return "The server hit an error. Please try again.";
   return `Request failed (${status}).`;
 }
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { branding } from "@/config/branding";
 
 type SettingsItem = {
   href: string;
@@ -44,7 +45,7 @@ const SETTING_GROUPS: { section: string; items: SettingsItem[] }[] = [
       {
         href: "/settings/storage",
         title: "Storage",
-        description: "View and manage local browser data used by Bayaan.",
+        description: `View and manage local browser data used by ${branding.appName}.`,
       },
     ],
   },
@@ -52,51 +53,51 @@ const SETTING_GROUPS: { section: string; items: SettingsItem[] }[] = [
     section: "Feedback",
     items: [
       {
-        href: "https://thebayaan.com/support",
+        href: branding.supportUrl,
         title: "Feature Requests",
         description: "Suggest improvements and new features.",
         external: true,
       },
       {
-        href: "https://thebayaan.com/support",
+        href: branding.supportUrl,
         title: "Help & Support",
-        description: "Get assistance with using Bayaan.",
+        description: `Get assistance with using ${branding.appName}.`,
         external: true,
       },
     ],
   },
   {
-    section: "About Bayaan",
+    section: `About ${branding.appName}`,
     items: [
       {
         href: "/settings/whats-new",
         title: "What's New",
-        description: "Everything in the first public release of Bayaan for the web.",
+        description: `Everything in the first public release of ${branding.appName} for the web.`,
       },
       {
         href: "/settings/about",
-        title: "About Bayaan",
+        title: `About ${branding.appName}`,
         description: "Mission, version, features, and project links.",
       },
       {
         href: "/settings/credits",
         title: "Credits & Shoutouts",
-        description: "Projects, contributors, and communities that make Bayaan possible.",
+        description: `Projects, contributors, and communities that make ${branding.appName} possible.`,
       },
       {
-        href: "https://github.com/thebayaan/bayaan-web",
+        href: branding.sourceRepoUrl,
         title: "Contribute on GitHub",
         description: "Star, report issues, or submit a pull request.",
         external: true,
       },
       {
-        href: "https://thebayaan.com/terms",
+        href: branding.termsUrl,
         title: "Terms of Service",
         description: "Read our terms of service.",
         external: true,
       },
       {
-        href: "https://thebayaan.com/privacy",
+        href: branding.privacyUrl,
         title: "Privacy Policy",
         description: "View our privacy policy.",
         external: true,

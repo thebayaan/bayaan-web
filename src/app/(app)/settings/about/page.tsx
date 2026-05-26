@@ -1,11 +1,12 @@
 import { SettingsShell } from "@/components/settings/settings-shell";
+import { branding } from "@/config/branding";
 
 const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "dev";
 
 const FEATURES = [
   {
     title: "Quran recitation",
-    description: "Listen to renowned reciters and Bayaan collections from the web app.",
+    description: `Listen to renowned reciters and ${branding.appName} collections from the web app.`,
   },
   {
     title: "Reading tools",
@@ -25,14 +26,17 @@ const COMING_SOON = [
 
 export default function AboutSettingsPage() {
   return (
-    <SettingsShell title="About Bayaan" description="Your companion for Quranic recitation.">
+    <SettingsShell
+      title={`About ${branding.appName}`}
+      description="Your companion for Quranic recitation."
+    >
       <div className="space-y-8">
         <section className="rounded-xl bg-[var(--text-alpha-04)] p-4">
           <h2 className="text-sm font-semibold">Alhamdulillah</h2>
           <p className="text-muted-foreground mt-2 text-sm leading-6">
             All praise is due to Allah for blessing us with the opportunity to serve His Book and
-            the Ummah. Bayaan is dedicated to making beautiful Quran recitation accessible through a
-            calm, intuitive experience.
+            the Ummah. {branding.appName} is dedicated to making beautiful Quran recitation
+            accessible through a calm, intuitive experience.
           </p>
         </section>
 
@@ -93,7 +97,7 @@ export default function AboutSettingsPage() {
               <dt className="text-muted-foreground">Source code</dt>
               <dd>
                 <a
-                  href="https://github.com/thebayaan/bayaan-web"
+                  href={branding.sourceRepoUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="underline underline-offset-2"
@@ -106,7 +110,7 @@ export default function AboutSettingsPage() {
               <dt className="text-muted-foreground">License</dt>
               <dd>
                 <a
-                  href="https://github.com/thebayaan/bayaan-web/blob/main/LICENSE"
+                  href={`${branding.sourceRepoUrl}/blob/main/LICENSE`}
                   target="_blank"
                   rel="noreferrer"
                   className="underline underline-offset-2"
@@ -115,19 +119,21 @@ export default function AboutSettingsPage() {
                 </a>
               </dd>
             </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-muted-foreground">Mobile app</dt>
-              <dd>
-                <a
-                  href="https://apps.apple.com/app/bayaan/id6740906213"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="underline underline-offset-2"
-                >
-                  App Store
-                </a>
-              </dd>
-            </div>
+            {branding.iosAppId ? (
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted-foreground">Mobile app</dt>
+                <dd>
+                  <a
+                    href={`https://apps.apple.com/app/id${branding.iosAppId}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline underline-offset-2"
+                  >
+                    App Store
+                  </a>
+                </dd>
+              </div>
+            ) : null}
           </dl>
         </section>
       </div>
