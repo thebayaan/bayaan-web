@@ -62,13 +62,18 @@ ANDROID_SHA256_CERT=...   # SHA-256 fingerprint of your Android signing key
 
 If your fork has a companion mobile app and wants universal-link behaviour:
 
-- **iOS:** edit `public/.well-known/apple-app-site-association` with your
-  Apple Developer Team ID and bundle identifier.
-- **Android:** the assetlinks file is rendered dynamically from
-  `ANDROID_SHA256_CERT`. Just set the env var.
+Both endpoints are dynamic App Router routes, not static files in `public/`.
 
-If you do not have a mobile app, remove the iOS file and leave the Android
-fingerprint blank. Browsers will treat all Bayaan links as plain web URLs.
+- **iOS:** edit `src/app/.well-known/apple-app-site-association/route.ts`
+  with your Apple Developer Team ID and bundle identifier. The route serves
+  `/.well-known/apple-app-site-association`.
+- **Android:** `src/app/.well-known/assetlinks.json/route.ts` reads
+  `ANDROID_SHA256_CERT` from the env and renders `/.well-known/assetlinks.json`.
+  Just set the env var.
+
+If you do not have a mobile app, return `new Response(null, { status: 404 })`
+from the iOS route and leave the Android fingerprint blank. Browsers will
+treat all Bayaan links as plain web URLs.
 
 ## Step 5: deploy
 

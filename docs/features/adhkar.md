@@ -31,10 +31,12 @@ counter and CDN-backed audio playback.
 
 ## Data attribution
 
-The bundled adhkar dataset is sourced from
-[Hisnul Muslim by Sa'id ibn 'Ali ibn Wahf al-Qahtani](https://www.dorar.net/),
-in the public translation. Rights-holder contact for content concerns is in
-[THIRD_PARTY_LICENSES.md](../../THIRD_PARTY_LICENSES.md).
+The bundled adhkar dataset is sourced from **Hisn al-Muslim ("Fortress
+of the Muslim") by Sa'id ibn 'Ali ibn Wahf al-Qahtani** in its public
+translation, mirrored from <https://hisnmuslim.com>. CDN audio recordings
+played in the adhkar pages are likewise drawn from publicly available
+HisnMuslim sources. Rights-holder contact for content concerns is in
+[THIRD_PARTY_LICENSES.md](../../THIRD_PARTY_LICENSES.md#adhkar-content).
 
 ## Testing
 

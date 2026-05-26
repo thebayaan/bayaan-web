@@ -40,12 +40,18 @@ Top-level API routes under `src/app/api/`:
 - `api/bayaan/[...path]/route.ts` — proxy to the Bayaan backend. Adds
   `Authorization: Bearer ${BAYAAN_API_KEY}` and forwards requests. Legacy
   `/v1/user/*` paths return `410 Gone` since there is no auth.
-- `api/quran-v4/[...path]/route.ts` — proxy to the public Quran.com API for
-  reader text, translations, and tafsir.
+- `api/quran/[...path]/route.ts` — generic Quran.com proxy.
+- `api/quran-v4/[...path]/route.ts` — proxy to the public Quran.com API v4
+  for reader text, translations, and tafsir.
+- `api/timestamps/[rewayatId]/[surah]/route.ts` — serves R2-mirrored ayah
+  timestamps with MP3Quran / QDC fallback when the CDN payload is missing.
+- `api/og-proxy/[...path]/route.ts` — caches assets used in OG images so
+  the renderer can fetch them server-side.
 
-`middleware.ts` is currently a pass-through. Static asset and
-`.well-known` paths are excluded via the matcher so the
-`apple-app-site-association` and `assetlinks.json` files serve correctly.
+`middleware.ts` is currently a pass-through. Static asset paths are
+excluded via the matcher; the well-known endpoints are App Router routes
+at `src/app/.well-known/{apple-app-site-association,assetlinks.json}/route.ts`
+that render those files dynamically.
 
 ## Server vs client split
 
@@ -116,9 +122,9 @@ verses.
 
 - `src/app/opengraph-image.tsx` is the root OG generator. Per-route OG images
   live alongside their pages (`src/app/(app)/.../opengraph-image.tsx`).
-- Universal links are configured via
-  `public/.well-known/apple-app-site-association` (iOS) and
-  `public/.well-known/assetlinks.json` (Android, signed with
+- Universal links are configured via App Router routes at
+  `src/app/.well-known/apple-app-site-association/route.ts` (iOS) and
+  `src/app/.well-known/assetlinks.json/route.ts` (Android, signed with
   `ANDROID_SHA256_CERT`).
 - `sitemap.ts` and `robots.ts` at the app root produce the public SEO surfaces.
 
