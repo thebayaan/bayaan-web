@@ -22,20 +22,19 @@ export function useMushafFontResolver(pageNumbers: number[]) {
   const config = getMushafFontConfig(quranFontId);
   const tajweedTheme = resolveTajweedTheme(colorMode, lightThemeId, resolvedTheme);
   const loader = useMushafFont(pageNumbers, quranFontId, tajweedTheme);
-  const needsBasmallahGlyphLoader = config.rendering === "unicode";
+  // Always preload the ornate KFGQPC basmallah glyph so it can render in
+  // contexts where page 1's main font isn't otherwise needed — e.g. the
+  // list-mode reader on any surah > 1, where the native glyph path requires
+  // page 1 to be loaded for the active mushaf font.
   const basmallahLoader = useMushafFont(
-    needsBasmallahGlyphLoader ? [BASMALLAH_GLYPH_PAGE] : [],
+    [BASMALLAH_GLYPH_PAGE],
     BASMALLAH_GLYPH_FONT_ID,
     tajweedTheme,
   );
 
   return useMemo(
-    () =>
-      createMushafFontResolver(config, loader, {
-        tajweedTheme,
-        basmallahLoader: needsBasmallahGlyphLoader ? basmallahLoader : undefined,
-      }),
-    [config, loader, tajweedTheme, basmallahLoader, needsBasmallahGlyphLoader],
+    () => createMushafFontResolver(config, loader, { tajweedTheme, basmallahLoader }),
+    [config, loader, tajweedTheme, basmallahLoader],
   );
 }
 
