@@ -10,6 +10,11 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Default to read-only. Jobs that need write access should opt in
+# explicitly in their own `permissions:` block.
+permissions:
+  contents: read
+
 jobs:
   verify:
     name: Lint, typecheck, format, test
