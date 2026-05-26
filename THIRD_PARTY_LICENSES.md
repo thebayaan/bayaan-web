@@ -71,11 +71,11 @@ Across **760 packages** (production + dev, all transitive depths):
 
 ### Bundled in `public/fonts/`
 
-| Font          | License                                                           | Source                                |
-| ------------- | ----------------------------------------------------------------- | ------------------------------------- |
-| Manrope       | Apache-2.0                                                        | <https://github.com/sharanda/manrope> |
-| UthmanicHafs  | King Fahd Glorious Qur'an Printing Complex (used with permission) | KFGQPC (Madinah, Saudi Arabia)        |
-| `surah_names` | Custom glyphs bundled with this project under AGPL-3.0-or-later   | This repository                       |
+| Font          | License                                                                                                                  | Source                                |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------- |
+| Manrope       | SIL Open Font License 1.1 (see [`public/fonts/OFL.txt`](public/fonts/OFL.txt))                                           | <https://github.com/sharanda/manrope> |
+| UthmanicHafs  | KFGQPC font, used with permission (see [`public/fonts/UthmanicHafs-LICENSE.txt`](public/fonts/UthmanicHafs-LICENSE.txt)) | KFGQPC (Madinah, Saudi Arabia)        |
+| `surah_names` | KFGQPC SurahNames font (PUA-mapped Arabic surah glyphs), used with permission                                            | KFGQPC / Quran Foundation             |
 
 ### Fetched at runtime
 
