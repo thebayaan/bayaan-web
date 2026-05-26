@@ -2,12 +2,19 @@
 
 **Open-source web client for Bayaan — listen to, read, and study the Holy Qur'an in the browser.**
 
-Bayaan Web is the Next.js companion to the Bayaan mobile app. It offers the same reciter catalogue, full Uthmani Mushaf, adhkar, playlists, bookmarks, and library features in a responsive web experience.
+Bayaan Web is the Next.js companion to the [Bayaan mobile app (Expo / React Native)](https://github.com/thebayaan/bayaan-mobile). It offers the same reciter catalogue, full Uthmani Mushaf, adhkar, playlists, bookmarks, and library features in a responsive web experience.
 
+[![CI](https://github.com/thebayaan/bayaan-web/actions/workflows/ci.yml/badge.svg)](https://github.com/thebayaan/bayaan-web/actions/workflows/ci.yml)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js)](https://nextjs.org)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
+
+![Reciter screen](docs/assets/screenshot-reciter.png)
+
+**Community:** [Code of Conduct](CODE_OF_CONDUCT.md) · [Security policy](SECURITY.md) · [Governance](GOVERNANCE.md) · [Contributing](CONTRIBUTING.md) · [Architecture & feature docs](docs/README.md)
+
+> **Status:** Bayaan Web is under active development. The library (favorites, bookmarks, playlists, notes) is browser-local — there is no cloud sync yet. Translation and tafsir coverage tracks what the Quran.com public API provides. **Privacy:** Bayaan Web ships with zero telemetry — no PostHog, no Sentry, no Google Analytics.
 
 ---
 

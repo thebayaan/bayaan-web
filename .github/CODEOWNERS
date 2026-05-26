@@ -1,0 +1,30 @@
+# Bayaan Web — code ownership
+# Documentation: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Owners listed here are auto-requested as reviewers on PRs that touch
+# matching paths. The first matching pattern wins; later, more specific
+# patterns can re-assign ownership for sub-trees.
+
+# Default owner for everything else.
+*                            @osmansaeday
+
+# CI and release plumbing — must not change without owner review,
+# even if other paths in a PR are auto-approvable.
+/.github/workflows/**        @osmansaeday
+/.github/release-please/**   @osmansaeday
+/.github/dependabot.yml      @osmansaeday
+/.github/CODEOWNERS          @osmansaeday
+
+# Legal, governance, and policy files — same treatment.
+/LICENSE                     @osmansaeday
+/THIRD_PARTY_LICENSES.md     @osmansaeday
+/SECURITY.md                 @osmansaeday
+/CODE_OF_CONDUCT.md          @osmansaeday
+/GOVERNANCE.md               @osmansaeday
+/TRADEMARKS.md               @osmansaeday
+/CHANGELOG.md                @osmansaeday
+
+# Branding config — controls every "Bayaan" string forks override.
+# Changes here can break downstream forks; require owner sign-off.
+/src/config/branding.ts      @osmansaeday
+/src/app/ASSETS.md           @osmansaeday
