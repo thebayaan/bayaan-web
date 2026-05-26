@@ -1,0 +1,26 @@
+UthmanicHafs (UthmanicHafs1Ver18.woff2)
+KFGQPC SurahNames (surah_names.ttf)
+
+These Qur'anic typefaces are produced and copyrighted by the King Fahd
+Glorious Qur'an Printing Complex (KFGQPC), Madinah, Saudi Arabia.
+They are bundled here, and used in the Bayaan project, with permission.
+
+Source: <https://fonts.qurancomplex.gov.sa/>
+
+Bayaan does not relicense these fonts. They remain the property of
+KFGQPC and are governed by the original KFGQPC End-User License
+Agreement. Forks, derivatives, and redistributions of this repository
+that include these binary font files must preserve this notice and may
+need to seek their own permission from KFGQPC for uses that go beyond
+direct distribution alongside the Bayaan source code.
+
+If you are repackaging Bayaan and you have not obtained KFGQPC
+permission for your distribution channel, either:
+
+  (a) remove these font files from `public/fonts/` and adjust the
+      font-loading code in `src/lib/mushaf-fonts.ts` accordingly, or
+  (b) contact KFGQPC directly to confirm your permitted use.
+
+The full UthmanicHafs and SurahNames font specifications and the
+KFGQPC permission notice (in Arabic) are maintained by KFGQPC at the
+URL above.
